@@ -1,0 +1,11 @@
+/*
+角色信息
+*/
+struct Role_Info {
+	int64_t role_id;
+	std::string account;
+	std::string role_name;
+	uint8_t career;
+	uint8_t gender;
+	uint16_t level;
+};

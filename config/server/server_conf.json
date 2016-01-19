@@ -1,0 +1,23 @@
+{
+	"client_heartbeat_sec" : 900,
+   "log_server" : {
+    	"port" : 7500
+    },
+   "db_server" : {
+    	"port" : 7501
+    },
+   "login_server" : {
+    	"client_port" : 7502,
+    	"gate_port" : 7503
+    },
+   "master_server" : {
+    	"gate_port" : 7504,
+    	"game_port" : 7505
+    },
+   "game_server" : {
+    	"gate_port" : 7506
+    },
+   "gate_server" : {
+    	"client_port" : 7507
+    }
+}

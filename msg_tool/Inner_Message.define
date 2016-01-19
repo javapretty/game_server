@@ -1,0 +1,6 @@
+/*
+配制文件热更消息
+*/
+struct MSG_410001 {
+	std::string module;
+};

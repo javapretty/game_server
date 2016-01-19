@@ -1,0 +1,7 @@
+1.ls -al ~/.ssh
+2.ssh-keygen -t rsa -b 4096 -C "jice1990@163.com"
+3.ssh-agent -s
+  eval $(ssh-agent -s)
+   ssh-add ~/.ssh/id_rsa
+4.cat /root/.ssh/id_rsa.pub  copy content to github
+5.ssh -T git@github.com

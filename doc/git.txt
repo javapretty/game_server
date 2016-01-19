@@ -1,0 +1,76 @@
+平常提交上传代码步骤：
+git add .
+git commit -m "注释内容"
+git push origin master
+
+change your romote url from https to ssh:
+git remote set-url origin git@github.com:jice1001/server.git
+git remote -v
+
+change your romote url from ssh to https:
+git remote set-url origin https://github.com/jice1001/server.git
+git remote -v
+
+本地提交项目到github
+1、本地配置
+git config --global user.name 'onovps'  
+git config --global user.email 'onovps@onovps.com' #全局联系方式，可选  
+2、新建Git项目并提交到Github。
+[plain] view plaincopy
+mkdir testdir & cd testdir  
+touch README.md  
+git init #初始化一个本地库  
+git add README.md #添加文件到本地仓库  
+git rm README.md #本地倒库内删除  
+git commit -m "first commit" #提交到本地库并备注，此时变更仍在本地。  
+git commit -a  ##自动更新变化的文件，a可以理解为auto  
+git remote add xxx git@github.com:xxx/xxx.git  #增加一个远程服务器的别名。  
+git remote rm xxx   ##删除远程版本库的别名  
+git push -u remotename master #将本地文件提交到Github的remoname版本库中。此时才更新了本地变更到github服务上。  
+
+1.创建一个新的repository：
+先在github上创建并写好相关名字，描述。
+cd ~/hello-world        //到hello-world目录,本地目录名与repository的名字不一定相同
+git init                //初始化
+git add .               //把所有文件加入到索引（不想把所有文件加入，可以用gitignore或add文件
+git commit               //提交到本地仓库，然后会填写更新日志( -m “更新日志”也可，如$git commit -m “my first vesion of ...”)
+git remote add origin git@github.com:WadeLeng/hello-world.git        //增加到remote
+git push origin master    //push到github上
+2.更新项目（新加了文件）：
+cd ~/hello-world
+git add .               //这样可以自动判断新加了哪些文件，或者手动加入文件名字
+git commit              //提交到本地仓库，不加参数会提示，注意:^=Ctrl，按照提示来就好了～～～
+git push origin master    //不是新创建的，不用再add 到remote上了
+3.更新项目（没新加文件，只有删除或者修改文件）：
+cd ~/hello-world
+git commit -a          //记录删除或修改了哪些文件
+git push origin master  //提交到github
+4.忽略一些文件，比如*.o等:
+cd ~/hello-world
+vim .gitignore     //把文件类型加入到.gitignore中，保存
+然后就可以git add . 能自动过滤这种文件
+5.clone代码到本地：
+git clone git@github.com:WadeLeng/hello-world.git
+假如本地已经存在了代码，而仓库里有更新，把更改的合并到本地的项目：
+git fetch origin    //获取远程更新
+git merge origin/master //把更新的内容合并到本地分支
+6.撤销
+git reset
+7.删除
+git rm  * // 不是用rm
+
+分支版本操作
+1、创建和合并分支
+git branch #显示当前分支是master  
+git branch new-feature  #创建分支  
+git checkout new-feature  #切换到新分支  
+vi page_cache.inc.php  
+git add page_cache.inc.php  
+git commit -a -m "added initial version of page cache"  
+git push origin new-feature  ##把分支提交到远程服务器，只是把分支结构和内容提交到远程，并没有发生和主干的合并行为。  
+2、如果new-feature分支成熟了，觉得有必要合并进master
+[plain] view plaincopy
+git checkout master  #切换到新主干  
+git merge new-feature  ##把分支合并到主干  
+git branch #显示当前分支是master  
+git push  #此时主干中也合并了new-feature的代码  

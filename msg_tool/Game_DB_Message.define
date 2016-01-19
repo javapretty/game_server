@@ -1,0 +1,34 @@
+//加载 db_cache
+struct MSG_150000 {
+};
+
+struct MSG_550000 {
+	std::vector<Player_DB_Cache> cache_vector;
+};
+
+//加载玩家信息
+struct MSG_150001 {
+	Account_Info account_info;
+};
+
+struct MSG_550001 {
+	Player_Data player_data;
+};
+
+//创建玩家
+struct MSG_150002 {
+	Game_Player_Info player_info;
+};
+
+struct MSG_550002 {
+	Player_Data player_data;
+};
+
+//保存玩家信息
+struct MSG_150003 {
+	Player_Data player_data;
+};
+
+struct MSG_550003 {
+	int64_t role_id;
+};

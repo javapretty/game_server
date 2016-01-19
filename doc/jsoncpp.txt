@@ -1,0 +1,15 @@
+安装Jsoncpp动态库：
+
+1、解压jsoncpp-bin-0.5.0.tar.bz2文件。
+
+2、将其中include/json目录拷贝到/usr/local/include。
+
+3、将其中libs/linux-gcc-4.4.6/libjson_linux-gcc-4.4.6_libmt.so文件拷贝到/usr/local/lib64。
+
+4、建立软连接
+# cd /usr/local/lib64
+# ln -s libjson_linux-gcc-4.4.6_libmt.so libjsoncpp.so
+
+5、编辑/etc/ld.so.conf，在最后添加/usr/local/lib64。
+
+6、运行ldconfig刷新动态库缓存。

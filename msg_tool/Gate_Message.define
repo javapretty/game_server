@@ -1,0 +1,15 @@
+//gate同步玩家掉线到game
+struct MSG_113000 {
+	int64_t role_id;
+};
+
+//gate-->login校验玩家accout session数据
+struct MSG_112000{
+	std::string account;
+	std::string session;
+};
+
+//login-->gate校验玩家结果
+struct MSG_112001{
+	std::string account;
+};

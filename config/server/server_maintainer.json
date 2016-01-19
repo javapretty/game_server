@@ -1,0 +1,32 @@
+{
+    "game_server_label" : "226-test", /// 服标识, 用于一机多服情况标识
+    "game_open_time" : 1381370400,
+    "game_md5_key" : "",
+    "agent_num" : 100,
+    "server_num" : 1000,
+    "mongodb_server" : {
+        "ip" : "127.0.0.1",
+        "port" : 27017
+    },
+    "mysql_server" : {
+        "ip" : "127.0.0.1",
+        "port" : 3306,
+        "user" : "root",
+        "password" : "root"
+    },
+    "gate_server_list" : {
+        "0" : {
+            "ip" : "127.0.0.1",
+            "port" : 7507
+        },
+        "1" : {
+           "ip" : "127.0.0.1",
+           "port" : 7507
+        },
+	"2" : {
+	   "ip" : "127.0.0.1",
+           "port" : 7507
+	}
+    }
+}
+

@@ -1,0 +1,22 @@
+1、安装MongoDB（安装到/root/mongodb）
+tar zxvf mongodb-linux-x86_64-2.4.9.tgz
+mv mongodb-linux-x86_64-2.4.9 mongodb
+mkdir /data
+cd data
+mkdir db
+mkdir log
+2、开机自动启动mongodb
+vi /etc/rc.d/rc.local
+/root/mongodb/bin/mongod --dbpath /data/db --port 27017 &
+3、启动mongodb客户端测试
+#进入mongodb的shell模式 /root/mongodb/bin/mongo
+#查看数据库列表 
+show dbs
+#当前db版本 
+db.version();
+
+1、编译使用
+将libmongoclient.so拷贝到/usr/local/lib64,执行ldconfig
+2、运行
+开启mongodb服务器  /root/mongodb/bin/mongod --dbpath /data/db --port 27017 &
+启动mongodb客户端  /root/mongdb/bin/mongo

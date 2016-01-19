@@ -1,0 +1,36 @@
+//获取角色信息
+struct MSG_120001 {
+	std::string account;
+	int64_t role_id;
+	std::string timestamp;
+	std::string ip;
+	int32_t agent_num;
+	int32_t server_num;
+};
+
+/*
+获取角色信息(返回)
+备注：
+状态：0：有角色，1：无角色
+*/
+struct MSG_520001 {
+	Role_Info role_info;
+};
+
+/*
+创建角色
+*/
+struct MSG_120002 {
+	std::string account;/**/
+	std::string role_name;/**/
+	uint8_t gender;/*0 女，1 男*/
+	int32_t agent_num;/*平台*/
+	int32_t server_num;/*服*/
+};
+
+/*
+创建角色(返回)
+*/
+struct MSG_520002 {
+	int64_t role_id;
+};

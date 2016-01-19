@@ -1,0 +1,7 @@
+struct MSG_160001 {
+	Master_Player_Info player_info;
+};
+
+struct MSG_160002 {
+	int64_t role_id;
+};
