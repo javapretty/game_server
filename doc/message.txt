@@ -1,17 +1,14 @@
 服务器代码结构
 
-以Gate_Client_Server为例，讲解下消息流程，包括客户端消息--->服务器，服务器消息--->客户端流程。
-Gate_Client_Server类，该类实现了Gate_Client_Server监听通信的所有功能，是最主要的类。看代码可以从此类开始。
+以Server为例，讲解下消息流程，包括客户端消息--->服务器，服务器消息--->客户端流程。
 该类包括四个线程：
-acceptor_接受连接线程，
-receiver_接收数据线程，线程内开启epoll_watch，监听EPOLLIN事件
-sender_发送数据线程，线程内开启epoll_watch，监听EPOLLOUT事件
-packer_解包消息线程，
+accept_接受连接线程，
+receive_接收数据线程，线程内开启epoll_watch，监听EPOLLIN事件
+send_发送数据线程，线程内开启epoll_watch，监听EPOLLOUT事件
+pack_解包消息线程，
 包含两个数据结构，用来处理svc连接
-Typedef Object_Po0l<Gate_Client_Server_Svc, Spin_Lock> Server_Svc_Pool;
-Typedef Svc_Static_List<Gate_Client_Server_Svc *, Spin_Lock> Svc_List;
-svc_static_list_ 存放svc的列表，所有client到server的连接都保存在这里
-svc_pool_  svc的内存管理类
+Object_Po0l<Server_Svc, Spin_Lock> svc_static_list_ 	存放svc的列表，所有client到server的连接都保存在这里
+Svc_Static_List<Server_Svc *, Spin_Lock>  svc_pool_  	svc的内存管理类
 
 Socket流程简介：
 客户端：
@@ -27,100 +24,84 @@ Accept线程启动后，会在run_handler函数里面调用server_listen进行�
 然后调用register_recv_handler将该svc注册到receiver线程的epoll里面，
 调用register_send_handler将该svc注册到sender线程的epoll里面，等待接受和发送数据。
 流程如下：
-Acceptor::thread_create->
-Acceptor::run_handler->
-Acceptor::server_listen->
-Acceptor::server_accept->
-Gate_Server_Acceptor::accept_svc->
+Accept::thread_create->run_handler->server_listen->server_accept->
+Server_Accept::accept_svc->
 Svc_Static_List::record_svc->
-Gate_Server_Svc::register_recv_handler->
-Gate_Server_Svc::register_send_handler
+Server_Svc::register_recv_handler->register_send_handler
 
 2、接收数据
-Receiver线程里面的epoll_watch在监听到EPOLLIN事件后，会触发Event_Hander的handle_input事件，
-因为Svc继承Event_Handler类，receiver的epoll监听了该svc，会调用Svc的recv_data函数，
+Receive线程里面的epoll_watch在监听到EPOLLIN事件后，会触发Event_Hander的handle_input事件，
+因为Svc继承Event_Handler类，receive的epoll监听了该svc，会调用Svc的recv_data函数，
 从socket缓冲区读取到的数据Block_Buffer通过push_recv_block函数放到Svc类的recv_block_list_里面
 然后调用recv_handler将该连接的cid_通过push_packing_cid放到Packer线程的packing_list_里面,供packer线程循环处理
 流程如下：
-Gate_Server_Svc::register_recv_handler->
-Receive::register_svc->{reactor_->add(svc, Epoll_Watcher::EVENT_INPUT)}
-Epoll_Watcher::watcher_loop->
-Epoll_Watcher::handle_input->
-Svc::revc_data->
-Svc::push_recv_block->Svc::recv_block_list_(该结构存储接收到的数据BlockBuffer)
-Gate_Server_Svc::recv_handler->
-Gate_Server_Packer::push_packing_cid->Stream_Packer::packing_list_(该结构存储接收到数据的cid)
+Server_Svc::register_recv_handler->
+Receive::register_svc->(reactor_->add(svc, Epoll_Watcher::EVENT_INPUT))
+Epoll_Watcher::watcher_loop->handle_input->
+Svc::revc_data->push_recv_block->recv_block_list_(该结构存储接收到的数据BlockBuffer)
+Server_Svc::recv_handler->
+Server_Packer::push_packing_cid->Stream_Packer::packing_list_(该结构存储接收到数据的cid)
 
 3、解包数据
-Packer线程在创建后，在run_handler函数里面调用process进行解包，然后循环调用process_packing_list进行解包，
+Pack线程在创建后，在run_handler函数里面循环调用process_packing_list进行解包，
 从packing_list_里面取到最新的cid，找到对应的Svc然后调用svc的pack_recv_data进行解包，循环从recv_block_list_里面取出包，
-然后进行处理，处理完成通过packed_data_handler里面的push_Gate_data_block放到Gate_Manager里面的Gate_data_list_里面。
+然后进行处理，处理完成通过packed_data_handler放到Server的block_list_里面。
 流程如下：
-Packer:thread_create->
-Stream_Packer::run_handler->
-Stream_Packer::process->
-Stream_Packer::process_packing_list->
+Pack:thread_create->run_handler->process->process_packing_list->
 Svc::pack_recv_data->Svc::recv_block_list_(从这个包的列表中循环取出包进行处理)
-Gate_Server_Packer::packed_data_handler->
-Gate_Manager::push_Gate_data_block->Gate_Manager::Gate_data_list_
+Server_Pack::packed_data_handler->
+Server::block_list_
 
-4、逻辑处理数据
-GateManager线程在创建后，通过run_handler调用process_list进行数据处理，循环从Gate_data_list_取出Block_Buffer，
-然后调用Gate_CLIENT_MESSAGER的process_block进行消息处理，从Block_Buffer里面读出msg_id，根据msg_id进行不同的函数逻辑处理。
-到此，客户端发到服务器的消息处理完毕。
+4、数据放到逻辑线程，进行逻辑处理
+以Game_Gate_Server为例，在启动时候，会开启一个循环，循环从Server的block_list_中取数据，通过
+GAME_MANAGER->push_game_gate_data(buf)放到Game_Manager的game_gate_data_list_中。
+Game_Manager线程在创建后，通过run_handler调用process_list进行数据处理，循环从game_gate_data_list_取出Block_Buffer，
+然后调用Game_Client_Message的process_block进行消息处理，从Block_Buffer里面读出msg_id，根据msg_id进行不同的函数逻辑处理。
+处理结果通过gate返回给客户端,到此，客户端发到服务器的消息处理完毕。
 流程如下：
-GateManger:thread_create->
-Gate_Manager::run_handler->
-Gate_Manager::process_list->
-Gate_Manager::Gate_data_list_->
-Gate_Client_Messager::process_block->逻辑功能处理
+Game_Gate_Server:thread_create->run_handler->process_list->
+Game_Manager::push_game_gate_data
+
+Game_Manager::thread_create->run_handler->process_list->game_gate_data_list_.pop_front
+Game_Client_Messager::process_block->逻辑功能处理
 
 5、发送数据
-当有数据需要发送给客户端时候，调用Gate_Manger里面的send_to_client，然后将数据发送给sender_，
-存到append_list_里面，当sender_线程里面epoll监听的定时器时间到期时候，会调用sender的hanlder_timeout函数，
+当有数据需要发送给客户端时候，调用Gate_Manger里面的send_to_client，然后将数据发送给send_，
+存到append_list_里面，当send_线程里面epoll监听的定时器时间到期时候，会调用send的hanlder_timeout函数，
 该函数先调用append_send_block将append_list_里面的数据传送到svc的send_block_list_里面，
 然后通过svc的send_data将数据发送到socket缓冲区，然后通过网络发送给客户端。
 流程如下：
-Gate_Manger::send_to_client->
-Sender::push_data_block_with_len->Svc::append_list_(该结构存放待发送的Block_Buffer)
+Game_Manager::send_to_client->
+Send::push_data_block_with_len->
+Svc::append_list_(该结构存放待发送的Block_Buffer)
 
-Sender:thread_create->
-Sender::run_handler->
-Sender::register_self_timer->
+Send:thread_create->run_handler->register_self_timer->
 Epoll_Watcher::watcher_loop->
-Sender::handle_timeout	->
-Sender::append_send_block->
-Svc::push_send_block->Svc::send_block_list_(循环从list中取出数据通过socket发送)
+Send::handle_timeout->append_send_block->
+Svc::push_send_block->send_block_list_(循环从list中取出数据通过socket发送)
 Svc::send_data
 
 6、连接关闭流程
-Receiver里面注册了个io心跳超时事件，当epoll监听到该事件时候，说明已经无法连接到客户端，服务器会主动关闭该连接，
+Receive里面注册了个io心跳超时事件，当epoll监听到该事件时候，说明已经无法连接到客户端，服务器会主动关闭该连接，
 首先调用epoll_watch里面的handle_timeout函数，然后调用到svc类里面的handle_close函数，
-然后调用Gate_Server_Svc里面的close_handler，该函数会通知receiver掉线的cid，放到drop_list_里面，
-在receiver的epoll处理drop_list_时候，又会通过Gate_Server_Receiver的drop_handler函数通知sender处理掉线，
-放到sender的drop_list_里面，sender超时函数处理时候，又会通过Gate_Server_Sender的drop_handler函数通知packer处理掉线，
-最后在Gate_Server_Packer的drop_handler里面，会回收svc，关闭fd，通知Gate_Manger，
-通过Gate_Manger的process_drop_cid让Gate_Player掉线。
+然后调用Server_Svc里面的close_handler，该函数会通知Receive掉线的cid，放到drop_list_里面，
+在Receive的epoll处理drop_list_时候，又会通过Server_Receive的drop_handler函数通知Send处理掉线，
+放到Send的drop_list_里面，Send超时函数处理时候，又会通过Server_Send的drop_handler函数通知Pack处理掉线，
+最后在Server_Pack的drop_handler里面，会回收svc，关闭fd，通知Game_Manger，
+通过Game_Manger的process_drop_cid让Game_Player掉线。
 流程如下：
-Receiver::init->Epoll_Watcher::WITH_IO_HEARTBEAT
-Epoll_Watcher::watch_loop->
-Epoll_Watcher::handle_timeout->
+Receive::init->Epoll_Watcher::WITH_IO_HEARTBEAT
+Epoll_Watcher::watch_loop->handle_timeout->
 svc:handle_close->
-Gate_Server_Svc::close_handler->
-Receiver::push_drop->
-Receive::drop_list->
-Gate_Server_Receiver::drop_handler->
-
-Sender::push_drop_->	
-Gate_Server_Sender:drop_handler->
-	
-Stream_Packer::push_drop->		
-Stream_Packer::drop_list_
-Gate_Server_Packer::drop_handler->
-Gate_Manager::push_drop_cid->	
-Gate_Manager::drop_cid_list_->	
-Gate_server::svc_static_list_-> 
-Svc_Static_List::erase_svc
+Server_Svc::close_handler->
+Receive::push_drop->drop_list->
+Server_Receive::drop_handler->
+Send::push_drop_->	
+Server_Send:drop_handler->
+Pack::push_drop->drop_list_
+Server_Pack::drop_handler->
+Game_Manager::push_drop_cid->drop_cid_list_->	
+Server::svc_static_list_-> erase_svc
 
 
 关于cid
