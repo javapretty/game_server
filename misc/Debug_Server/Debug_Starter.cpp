@@ -24,6 +24,7 @@
 #include "Gate_Server.h"
 #include "Gate_Connector.h"
 #include "Gate_Manager.h"
+#include "V8_Test.h"
 
 Debug_Starter::Debug_Starter(void)
 : server_reactor_(0),
@@ -221,6 +222,8 @@ int Debug_Starter::start(int argc, char *argv[]) {
 		MSG_ABORT("gate_master_connector fail cid:%d,port:%d", cid, master_gate_port);
 	}
 	GATE_MASTER_CONNECTOR->thr_create();
+
+	//v8_test();
 
 	return server_reactor_->loop();
 }

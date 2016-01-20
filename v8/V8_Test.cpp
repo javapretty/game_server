@@ -13,6 +13,7 @@
 #include "My_Class_Template.h"
 #include "Object_Wrap.h"
 #include "V8_Test.h"
+#include "V8_Base.h"
 
 using namespace v8;
 
@@ -42,7 +43,7 @@ const char* jsCode =
 "xixi();\n";
 
 
-int test_v8() {
+int v8_test() {
   // Initialize V8.
   V8::InitializeICU();
   V8::InitializeExternalStartupData("");
@@ -68,7 +69,12 @@ int test_v8() {
   Context::Scope context_scope(context);
 
   // Create a string containing the JavaScript source code.
-  Local<String> source =	String::NewFromUtf8(isolate, jsCode, NewStringType::kNormal).ToLocalChecked();
+  //Local<String> source =	String::NewFromUtf8(isolate, jsCode, NewStringType::kNormal).ToLocalChecked();
+  Local<String> source;
+  if (!ReadFile(isolate, "test.js").ToLocal(&source)) {
+    fprintf(stderr, "Error reading test.js.\n");
+    return 1;
+   }
 
   // Compile the source code.
   Local<Script> script = Script::Compile(context, source).ToLocalChecked();

@@ -23,7 +23,6 @@ v8::MaybeLocal<v8::String> ReadFile(v8::Isolate* isolate, const std::string& nam
 void Load(const v8::FunctionCallbackInfo<v8::Value>& args);
 void Quit(const v8::FunctionCallbackInfo<v8::Value>& args);
 void Version(const v8::FunctionCallbackInfo<v8::Value>& args);
-v8::MaybeLocal<v8::String> ReadFile(v8::Isolate* isolate, const char* name);
 bool ExecuteString(v8::Isolate* isolate, v8::Local<v8::String> source,
                    v8::Local<v8::Value> name, bool print_result,
                    bool report_exceptions);

@@ -8,7 +8,6 @@
 #include "V8_Base.h"
 #include "V8_Process.h"
 
-
 static void LogCallback(const v8::FunctionCallbackInfo<v8::Value>& args) {
   if (args.Length() < 1) return;
   HandleScope scope(args.GetIsolate());
@@ -16,7 +15,6 @@ static void LogCallback(const v8::FunctionCallbackInfo<v8::Value>& args) {
   String::Utf8Value value(arg);
   HttpRequestProcessor::Log(*value);
 }
-
 
 // Execute the script and fetch the Process method.
 bool JsHttpRequestProcessor::Initialize(map<string, string>* opts,
@@ -75,7 +73,6 @@ bool JsHttpRequestProcessor::Initialize(map<string, string>* opts,
   return true;
 }
 
-
 bool JsHttpRequestProcessor::ExecuteScript(Local<String> script) {
   HandleScope handle_scope(GetIsolate());
 
@@ -106,7 +103,6 @@ bool JsHttpRequestProcessor::ExecuteScript(Local<String> script) {
   return true;
 }
 
-
 bool JsHttpRequestProcessor::InstallMaps(map<string, string>* opts,
                                          map<string, string>* output) {
   HandleScope handle_scope(GetIsolate());
@@ -135,7 +131,6 @@ bool JsHttpRequestProcessor::InstallMaps(map<string, string>* opts,
 
   return true;
 }
-
 
 bool JsHttpRequestProcessor::Process(HttpRequest* request) {
   // Create a handle scope to keep the temporary object references.
@@ -170,7 +165,6 @@ bool JsHttpRequestProcessor::Process(HttpRequest* request) {
   }
 }
 
-
 JsHttpRequestProcessor::~JsHttpRequestProcessor() {
   // Dispose the persistent handles.  When noone else has any
   // references to the objects stored in the handles they will be
@@ -179,14 +173,9 @@ JsHttpRequestProcessor::~JsHttpRequestProcessor() {
   process_.Reset();
 }
 
-
 Global<ObjectTemplate> JsHttpRequestProcessor::request_template_;
 Global<ObjectTemplate> JsHttpRequestProcessor::map_template_;
 
-
-// -----------------------------------
-// --- A c c e s s i n g   M a p s ---
-// -----------------------------------
 
 // Utility function that wraps a C++ http request object in a
 // JavaScript object.
@@ -221,7 +210,6 @@ Local<Object> JsHttpRequestProcessor::WrapMap(map<string, string>* obj) {
   return handle_scope.Escape(result);
 }
 
-
 // Utility function that extracts the C++ map pointer from a wrapper
 // object.
 map<string, string>* JsHttpRequestProcessor::UnwrapMap(Local<Object> obj) {
@@ -230,14 +218,12 @@ map<string, string>* JsHttpRequestProcessor::UnwrapMap(Local<Object> obj) {
   return static_cast<map<string, string>*>(ptr);
 }
 
-
 // Convert a JavaScript string to a std::string.  To not bother too
 // much with string encodings we just use ascii.
 string ObjectToString(Local<Value> value) {
   String::Utf8Value utf8_value(value);
   return string(*utf8_value);
 }
-
 
 void JsHttpRequestProcessor::MapGet(Local<Name> name,
                                     const PropertyCallbackInfo<Value>& info) {
@@ -262,7 +248,6 @@ void JsHttpRequestProcessor::MapGet(Local<Name> name,
                           NewStringType::kNormal,
                           static_cast<int>(value.length())).ToLocalChecked());
 }
-
 
 void JsHttpRequestProcessor::MapSet(Local<Name> name, Local<Value> value_obj,
                                     const PropertyCallbackInfo<Value>& info) {
@@ -294,11 +279,6 @@ Local<ObjectTemplate> JsHttpRequestProcessor::MakeMapTemplate(
   // Again, return the result through the current handle scope.
   return handle_scope.Escape(result);
 }
-
-
-// -------------------------------------------
-// --- A c c e s s i n g   R e q u e s t s ---
-// -------------------------------------------
 
 /**
  * Utility function that wraps a C++ http request object in a
@@ -335,7 +315,6 @@ Local<Object> JsHttpRequestProcessor::WrapRequest(HttpRequest* request) {
   return handle_scope.Escape(result);
 }
 
-
 /**
  * Utility function that extracts the C++ http request object from a
  * wrapper object.
@@ -345,7 +324,6 @@ HttpRequest* JsHttpRequestProcessor::UnwrapRequest(Local<Object> obj) {
   void* ptr = field->Value();
   return static_cast<HttpRequest*>(ptr);
 }
-
 
 void JsHttpRequestProcessor::GetPath(Local<String> name,
                                      const PropertyCallbackInfo<Value>& info) {
@@ -362,7 +340,6 @@ void JsHttpRequestProcessor::GetPath(Local<String> name,
                           static_cast<int>(path.length())).ToLocalChecked());
 }
 
-
 void JsHttpRequestProcessor::GetReferrer(
     Local<String> name,
     const PropertyCallbackInfo<Value>& info) {
@@ -374,7 +351,6 @@ void JsHttpRequestProcessor::GetReferrer(
                           static_cast<int>(path.length())).ToLocalChecked());
 }
 
-
 void JsHttpRequestProcessor::GetHost(Local<String> name,
                                      const PropertyCallbackInfo<Value>& info) {
   HttpRequest* request = UnwrapRequest(info.Holder());
@@ -384,7 +360,6 @@ void JsHttpRequestProcessor::GetHost(Local<String> name,
                           NewStringType::kNormal,
                           static_cast<int>(path.length())).ToLocalChecked());
 }
-
 
 void JsHttpRequestProcessor::GetUserAgent(
     Local<String> name,
@@ -396,7 +371,6 @@ void JsHttpRequestProcessor::GetUserAgent(
                           NewStringType::kNormal,
                           static_cast<int>(path.length())).ToLocalChecked());
 }
-
 
 Local<ObjectTemplate> JsHttpRequestProcessor::MakeRequestTemplate(
     Isolate* isolate) {
@@ -468,7 +442,6 @@ StringHttpRequest kSampleRequests[kSampleSize] = {
   StringHttpRequest("/", "localhost", "yahoo.com", "firefox")
 };
 
-
 bool ProcessEntries(v8::Platform* platform, HttpRequestProcessor* processor,
                     int count, StringHttpRequest* reqs) {
   for (int i = 0; i < count; i++) {
@@ -480,14 +453,12 @@ bool ProcessEntries(v8::Platform* platform, HttpRequestProcessor* processor,
   return true;
 }
 
-
 void PrintMap(map<string, string>* m) {
   for (map<string, string>::iterator i = m->begin(); i != m->end(); i++) {
     pair<string, string> entry = *i;
     printf("%s: %s\n", entry.first.c_str(), entry.second.c_str());
   }
 }
-
 
 int process(int argc, char* argv[]) {
   v8::V8::InitializeICU();
