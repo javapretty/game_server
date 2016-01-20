@@ -1,4 +1,6 @@
-//获取角色信息
+/*
+获取角色信息
+*/
 struct MSG_120001 {
 	std::string account;
 	int64_t role_id;

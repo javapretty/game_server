@@ -1,14 +1,14 @@
 /*
- *注册请求
- * */
+注册请求
+*/
 struct MSG_110000 {
 	std::string account;/*账号*/
 	std::string password;/*密码*/
 };
 
 /*
- *注册回复
- * */
+注册回复
+*/
 struct MSG_510000 {
 	std::string ip;/*gate ip*/
 	int32_t port;/*gate port*/
@@ -16,16 +16,16 @@ struct MSG_510000 {
 };
 
 /*
- *登录请求
- * */
+登录请求
+*/
 struct MSG_110001 {
 	std::string account;/*账号*/
 	std::string password;/*密码*/
 };
 
 /*
- *登录回复
- * */
+登录回复
+*/
 struct MSG_510001 {
 	std::string ip;/*gate ip*/
 	int32_t port;/*gate port*/

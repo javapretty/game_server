@@ -1,21 +1,29 @@
-//心跳
+/*
+心跳
+*/
 struct MSG_111000 {
 	int32_t client_time;
 };
 
-//心跳(返回)
+/*
+心跳(返回)
+*/
 struct MSG_511000 {
 	int32_t client_time;
 	int32_t server_time;
 };
 
-//客户端登录消息
+/*
+客户端登录消息
+*/
 struct MSG_111001 {
 	std::string account;
 	std::string session;		//登录验证的seesion
 };
 
-//客户端登录消息(返回)
+/*
+客户端登录消息(返回)
+*/
 struct MSG_511001 {
 	std::string account;
 };
