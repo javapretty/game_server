@@ -13,7 +13,6 @@
 #include "include/v8.h"
 
 v8::Local<v8::Context> CreateShellContext(v8::Isolate* isolate);
-
 void UnregisterAll();
 
 #endif /* MY_CLASS_TEMPLATE_H_ */

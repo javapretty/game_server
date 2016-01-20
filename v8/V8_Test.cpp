@@ -12,7 +12,7 @@
 #include "include/v8.h"
 #include "My_Class_Template.h"
 #include "Object_Wrap.h"
-#include "test.h"
+#include "V8_Test.h"
 
 using namespace v8;
 
