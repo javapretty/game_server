@@ -842,4 +842,4 @@ fi
 
 main
 
-echo "<<<<<<<generate file over!!>>>>>>>"
+echo "generate ${_SRC_FILE_} over!!"
