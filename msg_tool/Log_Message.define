@@ -42,3 +42,4 @@ struct MSG_185001 {
 	uint32_t logout_time;/*退出时间戳*/
 	uint32_t online_time;/*在线时长*/
 };
+
