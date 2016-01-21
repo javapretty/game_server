@@ -32,7 +32,7 @@ inline void bag_insert_item_to_msg(const Item_Info &item, MSG_300100 &item_msg, 
 	item_msg.item_info_vec.rbegin()->index = new_index;
 }
 
-void bag_merge_item_array(std::vector<Item_Info*> &item_array, Bag_Type bag_type,
+void bag_merge_item_array(std::vector<Item_Info> &item_array, Bag_Type bag_type,
 		MERGE_WAY merge_way, UInt_Set &changed_set);
 bool bag_merge_equal_item(Item_Info &item_des, Item_Info &item_src);
 bool bag_merge_similar_item(Item_Info &item_des, Item_Info &item_src);

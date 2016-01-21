@@ -93,8 +93,8 @@ int DB_Manager::push_data_block(Block_Buffer *buf) {
 	}
 	}
 
-	MSG_DEBUG("db message load_player_num_=%d, create_player_num_=%d, save_player_num_=%d",
-			load_player_num_, create_player_num_, save_player_num_);
+	MSG_DEBUG("db message load_player_num_=%d, create_player_num_=%d, save_player_num_=%d, db_data_num_=%d",
+			load_player_num_, create_player_num_, save_player_num_, db_data_num_);
 
 	return 0;
 }

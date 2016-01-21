@@ -37,12 +37,36 @@ struct Role_Fields {
 	static const std::string IP;
 };
 
+struct Bag_Fields {
+	static const std::string COLLECTION;
+	static const std::string ROLE_ID;
+	static const std::string BAG_CAPACITY;
+	static const std::string STORAGE_CAPACITY;
+
+	static const std::string MONEY;
+	struct Money {
+		static const std::string BIND_COPPER;
+		static const std::string COPPER;
+		static const std::string COUPON;
+		static const std::string GOLD;
+	};
+
+	static const std::string ITEM;
+	struct Item {
+		// 共有属性
+		static const std::string INDEX;
+		static const std::string ID;
+		static const std::string AMOUNT;
+		static const std::string BIND;
+	};
+};
+
 struct Mail_Fields {
     static const std::string COLLECTION;
     static const std::string ROLE_ID;
     static const std::string TOTAL_COUNT;
-    static const std::string MAIL_INFO;
 
+    static const std::string MAIL_DETAIL;
 		struct Mail_Detail {
     	static const std::string MAIL_ID;
     	static const std::string PICKUP;

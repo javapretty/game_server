@@ -54,8 +54,6 @@ struct Item_Basic_Info {
 
 	uint32_t index;/*位置标识符*/
 
-	uint32_t seq;/*序列，绝不重复*/
-
 	uint32_t id;/*道具id（图标id整合到此id）*/
 
 	int32_t amount;/*总量*/

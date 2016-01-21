@@ -220,7 +220,6 @@ void Item_Info::set_basic(const uint32_t index, const uint32_t id, const int32_t
 	item_basic.id = id;
 	item_basic.amount = (amount > 0)? amount : 0;
 	item_basic.bind = bind;
-	// get item type
 	init();
 }
 
@@ -265,7 +264,7 @@ int Bag_Info::serialize(Block_Buffer &buffer) const {
 	uint16_t item_count = item_map.size();
 	buffer.write_uint16(item_count);
 	for (Item_Map::const_iterator it = item_map.begin(); it != item_map.end(); ++it) {
-		it->second->serialize(buffer);
+		it->second.serialize(buffer);
 	}
 	buffer.write_int8((int8_t)is_change_);
 	return 0;
@@ -280,9 +279,9 @@ int Bag_Info::deserialize(Block_Buffer &buffer) {
 	uint16_t item_count = 0;
 	buffer.read_uint16(item_count);
 	for (int i = 0; i < item_count; ++i) {
-		Item_Info *item = GAME_MANAGER->pop_item();
-		item->deserialize(buffer);
-		item_map[item->item_basic.index] = item;
+		Item_Info item;
+		item.deserialize(buffer);
+		item_map[item.item_basic.index] = item;
 	}
 
 	buffer.read_int8((int8_t &)is_change_);
@@ -291,12 +290,12 @@ int Bag_Info::deserialize(Block_Buffer &buffer) {
 }
 
 int Bag_Info::load(void) {
-	return 0; //CACHED_INSTANCE->load_package(this->role_id, *this);
+	return CACHED_INSTANCE->load_bag_info(*this);
 }
 
 int Bag_Info::save(void) {
 	if (is_change_)
-		return 0; //CACHED_INSTANCE->save_package(*this);
+		return CACHED_INSTANCE->save_bag_info(*this);
 	else
 		return 0;
 }
@@ -306,10 +305,6 @@ void Bag_Info::reset(void) {
 	capacity.bag_cap = BAG_INIT_CAPACITY;
 	capacity.storage_cap = STORAGE_INIT_CAPACITY;
 	money_info.reset();
-
-	for (Item_Map::const_iterator it = item_map.begin(); it != item_map.end(); ++it) {
-		GAME_MANAGER->push_item(it->second);
-	}
 	item_map.clear();
 	money_lock_map.clear();
 	item_lock_map.clear();
@@ -320,19 +315,8 @@ Bag_Info &Bag_Info::operator=(Bag_Info &detail) {
 	role_id = detail.role_id;
 	capacity = detail.capacity;
 	money_info = detail.money_info;
-
-	Item_Info *item = 0;
 	for (Item_Map::iterator it = detail.item_map.begin(); it != detail.item_map.end(); ++it) {
-		item = GAME_MANAGER->pop_item();
-		if (! item) {
-			MSG_USER("item_pool().pop() return 0.");
-			continue;
-		}
-
-		item->reset();
-		(*item) = *(it->second);
-
-		item_map[item->item_basic.index] = item;
+		item_map[it->second.item_basic.index] = it->second;
 	}
 
 	is_change_ = detail.is_change_;
@@ -343,19 +327,16 @@ Bag_Info &Bag_Info::operator=(Bag_Info &detail) {
 void Bag_Info::erase(uint32_t index) {
 	Item_Map::iterator it = item_map.find(index);
 	if (it != item_map.end()) {
-		GAME_MANAGER->push_item(it->second);
 		item_map.erase(it);
 	}
 }
 
 void Bag_Info::erase(Item_Map::iterator iter) {
-	GAME_MANAGER->push_item(iter->second);
 	item_map.erase(iter);
 }
 
 void Bag_Info::erase(Item_Map::iterator begin, Item_Map::iterator end) {
 	for (Item_Map::iterator it = begin; it != end; ) {
-		GAME_MANAGER->push_item(it->second);
 		item_map.erase(it++);
 	}
 }

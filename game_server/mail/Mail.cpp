@@ -19,12 +19,12 @@ int Mail::init(Game_Player *player) {
 	return 0;
 }
 
-int Mail::load_detail(Player_Data &data) {
+int Mail::load_data(Player_Data &data) {
 	mail_info_ = data.mail_info;
 	return 0;
 }
 
-int Mail::save_detail(Player_Data &data) {
+int Mail::save_data(Player_Data &data) {
 	data.mail_info = mail_info_;
 	mail_info_.is_change_ = false;
 	return 0;
@@ -129,11 +129,11 @@ int Mail::send_mail(MSG_120203 &msg) {
 	std::vector<Item_Info> item_vector;
 	for (std::vector<Item_Basic_Info>::iterator it = msg.mail_detail.item_vector.begin();
 			it != msg.mail_detail.item_vector.end(); ++it) {
-		const Item_Info *item = player_->bag().bag_get_const_item(it->index);
-		if (item == NULL) {
+		Bag_Info::Item_Map::const_iterator iter = player_->bag().bag_info().item_map.find(it->index);
+		if (iter == player_->bag().bag_info().item_map.end()) {
 			return player_->respond_error_result(RES_SEND_MAIL, ERROR_CLIENT_PARAM);
 		}
-		item_vector.push_back(*item);
+		item_vector.push_back(iter->second);
 		break;
 	}
 

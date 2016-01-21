@@ -38,12 +38,11 @@ void Item_Basic_Info::serialize(Block_Buffer & w) const {
 	w.write_int32(amount);
 	w.write_uint8(bind);
 	w.write_uint32(index);
-	w.write_uint32(seq);
 	w.write_uint32(id);
 }
 
 int Item_Basic_Info::deserialize(Block_Buffer & r) {
-	if (r.read_int32(amount) || r.read_uint8(bind) || r.read_uint32(index) || r.read_uint32(seq) || r.read_uint32(id)){
+	if (r.read_int32(amount) || r.read_uint8(bind) || r.read_uint32(index) || r.read_uint32(id)){
 		return -1;
 	}
 	return 0;
@@ -53,7 +52,6 @@ void Item_Basic_Info::reset(){
 	amount = 0;
 	bind = 0;
 	index = 0;
-	seq = 0;
 	id = 0;
 }
 

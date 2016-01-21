@@ -12,30 +12,9 @@
 #include "Configurator.h"
 #include "Log.h"
 
-Bag::Bag(void) : player_(0), seq_generator_(0) { }
+Bag::Bag(void) : player_(0){ }
 
 Bag::~Bag(void) { }
-
-void Bag::reset(void) {
-	seq_generator_ = 0;
-	bag_info_.reset();
-}
-
-int Bag::load_detail(Player_Data &data) {
-	bag_info_ = data.bag_info;
-	for (Bag_Info::Item_Map::iterator it = bag_info_.item_map.begin();
-			it != bag_info_.item_map.end(); ++it) {
-		it->second->item_basic.seq = ++seq_generator_;
-	}
-
-	return 0;
-}
-
-int Bag::save_detail(Player_Data &data) {
-	data.bag_info = bag_info_;
-	bag_info_.is_change_ = false;
-	return 0;
-}
 
 int Bag::init(Game_Player *player) {
 	player_ = player;
@@ -47,6 +26,21 @@ int Bag::init(Game_Player *player) {
 		bag_info_.capacity.storage_cap = Bag_Info::STORAGE_INIT_CAPACITY;
 	}
 	return 0;
+}
+
+int Bag::load_data(Player_Data &data) {
+	bag_info_ = data.bag_info;
+	return 0;
+}
+
+int Bag::save_data(Player_Data &data) {
+	data.bag_info = bag_info_;
+	bag_info_.is_change_ = false;
+	return 0;
+}
+
+void Bag::reset(void) {
+	bag_info_.reset();
 }
 
 int Bag::bag_fetch_bag_info(const MSG_120100 &msg) {
@@ -68,7 +62,7 @@ int Bag::bag_fetch_bag_info(const MSG_120100 &msg) {
 	bag_get_iter(bag_type, it_begin, it_end);
 
 	for (Bag_Info::Item_Map::iterator item_it = it_begin; item_it != it_end; ++item_it) {
-		bag_insert_item_to_msg(*item_it->second, msg_back);
+		bag_insert_item_to_msg(item_it->second, msg_back);
 	}
 
 	Block_Buffer buf;
@@ -163,8 +157,12 @@ int Bag::bag_discard_item(const MSG_120102 &msg) {
 	}
 
 	for (std::vector<uint32_t>::const_iterator it = msg.item_index_vec.begin(); it != msg.item_index_vec.end(); ++it) {
-		const Item_Info *item = bag_get_const_item(*it);
-		if (CONFIG_INSTANCE->item(item->item_basic.id)["destroy"].asInt() == 1) {
+		Bag_Info::Item_Map::iterator iter = bag_info_.item_map.find(*it);
+		if (iter == bag_info_.item_map.end()) {
+			return player_->respond_error_result(RES_DISCARD_ITEM, ERROR_ITEM_NOT_EXIST);
+		}
+
+		if (CONFIG_INSTANCE->item(iter->second.item_basic.id)["destroy"].asInt() == 1) {
 			return player_->respond_error_result(RES_DISCARD_ITEM, ERROR_ITEM_FORBID_DROP);
 		}
 	}
@@ -201,21 +199,20 @@ int Bag::bag_split_item(const MSG_120104 &msg) {
 		return player_->respond_error_result(RES_SPLIT_ITEM, ERROR_BAG_LOCK);
 	}
 
-	Bag_Info::Item_Map::iterator it = bag_info_.item_map.find(msg.index);
-	if (it == bag_info_.item_map.end()) {
+	Bag_Info::Item_Map::iterator iter = bag_info_.item_map.find(msg.index);
+	if (iter == bag_info_.item_map.end()) {
 		return player_->respond_error_result(RES_SPLIT_ITEM, ERROR_CLIENT_OPERATE);
-	} else if (Item_Info::get_item_stack_upper(it->second->item_basic.id) <= 1
-			|| msg.split_num - it->second->item_basic.amount >= 0) {
+	} else if (Item_Info::get_item_stack_upper(iter->second.item_basic.id) <= 1
+			|| msg.split_num - iter->second.item_basic.amount >= 0) {
 		return player_->respond_error_result(RES_SPLIT_ITEM, ERROR_CLIENT_OPERATE);
 	}
 
 	UInt_Set changed_set;
-	Item_Info item(*it->second);
-	item.item_basic.amount = msg.split_num;
+	iter->second.item_basic.amount = msg.split_num;
 
-	int result = bag_insert_to_empty_index_direct(BAG_T_BAG_INDEX, item, &changed_set, GENERATE_SEQ);
+	int result = bag_insert_to_empty_index_direct(BAG_T_BAG_INDEX, iter->second, &changed_set);
 	if (result == 0) {
-		it->second->item_basic.amount -= msg.split_num;
+		iter->second.item_basic.amount -= msg.split_num;
 		changed_set.insert(msg.index);
 		bag_active_update_item_detail(&changed_set);
 	}
@@ -248,14 +245,15 @@ int Bag::bag_sell_item(const MSG_120107 &msg) {
 	}
 
 	std::vector<Id_Amount> id_amount_list;
-	std::vector<const Item_Info*> item_vec;
 	int item_nums = msg.item_index_vec.size();
 	id_amount_list.resize(item_nums);
-	item_vec.resize(item_nums);
 	for (int i = 0; i < item_nums; ++i) {
-		item_vec[i] = bag_get_const_item(msg.item_index_vec[i]);
-		id_amount_list[i].id = item_vec[i]->item_basic.id;
-		id_amount_list[i].amount = item_vec[i]->item_basic.amount;
+		Bag_Info::Item_Map::iterator iter = bag_info_.item_map.find(msg.item_index_vec[i]);
+		if (iter == bag_info_.item_map.end()) {
+			return player_->respond_error_result(RES_SELL_ITEM, ERROR_ITEM_NOT_EXIST);
+		}
+		id_amount_list[i].id = iter->second.item_basic.id;
+		id_amount_list[i].amount = iter->second.item_basic.amount;
 	}
 
 	std::vector<Money_Add_Info> add_info;
@@ -272,8 +270,8 @@ int Bag::bag_sell_item(const MSG_120107 &msg) {
 }
 
 struct Item_Detail_PtrLess {
-	bool operator() (const Item_Info *item1, const Item_Info *item2) const {
-		return *item1 < *item2;
+	bool operator() (const Item_Info &item1, const Item_Info &item2) const {
+		return item1 < item2;
 	}
 };
 int Bag::bag_sort_item(const Bag_Type bag_type, MERGE_WAY merge_way) {
@@ -281,8 +279,7 @@ int Bag::bag_sort_item(const Bag_Type bag_type, MERGE_WAY merge_way) {
 		return ERROR_BAG_LOCK;
 	}
 
-	std::vector<Item_Info*> item_array;
-
+	std::vector<Item_Info> item_array;
 	Bag_Info::Item_Map::iterator it_begin;
 	Bag_Info::Item_Map::iterator it_end;
 	bag_get_iter(bag_type, it_begin, it_end);
@@ -300,15 +297,13 @@ int Bag::bag_sort_item(const Bag_Type bag_type, MERGE_WAY merge_way) {
 		bag_merge_item_array(item_array, bag_type, MERGE_WAY_EQUAL, changed_set);
 	}
 
-	// 不将指针归还对象池，仅归还合并掉的
+	// 归还合并掉的
 	bag_info_.item_map.erase(it_begin, it_end);
 	const uint32_t array_size = item_array.size();
 	Bag_Info::Item_Map::iterator it_pos = bag_info_.item_map.upper_bound(bag_type);
 	for (uint32_t i = 0; i < array_size; ++i) {
-		if (item_array[i]->item_basic.amount > 0) {
-			it_pos = bag_info_.item_map.insert(it_pos, std::make_pair(item_array[i]->item_basic.index, item_array[i]));
-		} else {
-			GAME_MANAGER->push_item(item_array[i]);
+		if (item_array[i].item_basic.amount > 0) {
+			it_pos = bag_info_.item_map.insert(it_pos, std::make_pair(item_array[i].item_basic.index, item_array[i]));
 		}
 	}
 
@@ -376,15 +371,15 @@ int Bag::bag_erase_item(const Bag_Type bag_type, const Id_Amount &id_amount, UIn
 		if (is_item_lock(it->first)) {
 			continue;
 		}
-		if (bag_is_req_item(*it->second, id_amount.id, bind_verify)) {
-			dec_per_once = std::min(it->second->item_basic.amount, amount_temp);
-			it->second->item_basic.amount -= dec_per_once;
+		if (bag_is_req_item(it->second, id_amount.id, bind_verify)) {
+			dec_per_once = std::min(it->second.item_basic.amount, amount_temp);
+			it->second.item_basic.amount -= dec_per_once;
 
 			amount_temp -= dec_per_once;
 			if (NULL != changed_set) {
 				changed_set->insert(it->first);
 			}
-			if (it->second->item_basic.amount == 0) {
+			if (it->second.item_basic.amount == 0) {
 				erase_index.push_back(it->first);
 			}
 		}
@@ -395,15 +390,15 @@ int Bag::bag_erase_item(const Bag_Type bag_type, const Id_Amount &id_amount, UIn
 			if (is_item_lock(it->first)) {
 				continue;
 			}
-			if (bag_is_req_item(*it->second, id_amount.id, UNBIND_ONLY)) {
-				dec_per_once = std::min(it->second->item_basic.amount, amount_temp);
-				it->second->item_basic.amount -= dec_per_once;
+			if (bag_is_req_item(it->second, id_amount.id, UNBIND_ONLY)) {
+				dec_per_once = std::min(it->second.item_basic.amount, amount_temp);
+				it->second.item_basic.amount -= dec_per_once;
 
 				amount_temp -= dec_per_once;
 				if (NULL != changed_set) {
 					changed_set->insert(it->first);
 				}
-				if (it->second->item_basic.amount == 0) {
+				if (it->second.item_basic.amount == 0) {
 					erase_index.push_back(it->first);
 				}
 			}
@@ -437,10 +432,10 @@ int Bag::bag_erase_item(const Index_Amount &index_amount, UInt_Set *changed_set,
 	}
 
 	Bag_Info::Item_Map::iterator it = bag_info_.item_map.find(index_amount.index);
-	if (it->second->item_basic.amount == index_amount.amount) {
+	if (it->second.item_basic.amount == index_amount.amount) {
 		bag_info_.erase(it);
 	} else {
-		it->second->item_basic.amount -= index_amount.amount;
+		it->second.item_basic.amount -= index_amount.amount;
 	}
 
 	if (NULL != changed_set) {
@@ -476,8 +471,8 @@ int Bag::bag_try_insert_item(const Bag_Type bag_type, const std::vector<Item_Inf
 		Bag_Info::Item_Map::iterator it_end;
 		bag_get_iter(bag_type, it_begin, it_end);
 		for (Bag_Info::Item_Map::iterator it = it_begin; it != it_end; ++it) {
-			if (is_equal_item(map_it->first, *it->second)) {
-				stackable += stack_upper - it->second->item_basic.amount;
+			if (is_equal_item(map_it->first, it->second)) {
+				stackable += stack_upper - it->second.item_basic.amount;
 			}
 		}
 
@@ -497,14 +492,14 @@ int Bag::bag_try_insert_item(const Bag_Type bag_type, const std::vector<Item_Inf
 }
 
 int Bag::bag_insert_to_exist_index_first(const Bag_Type bag_type, const std::vector<Item_Info> &item_list, UInt_Set *changed_set,
-		Seq_Type seq_type, Pack_Try bag_try) {
+		Pack_Try bag_try) {
 	if (bag_try == WITH_TRY) {
 		int result = bag_try_insert_item(bag_type, item_list);
 		if (result != 0) return result;
 	}
 
 	for (std::vector<Item_Info>::const_iterator it = item_list.begin(); it != item_list.end(); ++it) {
-		if (bag_insert_to_exist_index_first(bag_type, *it, changed_set, seq_type, WITHOUT_TRY) != 0) {
+		if (bag_insert_to_exist_index_first(bag_type, *it, changed_set, WITHOUT_TRY) != 0) {
 			MSG_USER("bag insert error.");
 		}
 	}
@@ -513,7 +508,7 @@ int Bag::bag_insert_to_exist_index_first(const Bag_Type bag_type, const std::vec
 }
 
 int Bag::bag_insert_to_exist_index_first(const Bag_Type bag_type, const Item_Info &item,
-		UInt_Set *changed_set, Seq_Type seq_type, Pack_Try bag_try) {
+		UInt_Set *changed_set, Pack_Try bag_try) {
 	if (bag_try == WITH_TRY) {
 		int result = bag_try_insert_item(bag_type, item);
 		if (result != 0) return result;
@@ -528,13 +523,13 @@ int Bag::bag_insert_to_exist_index_first(const Bag_Type bag_type, const Item_Inf
 		if (amount == 0) {
 			break;
 		}
-		if (is_equal_item(*it->second, item) && stack_upper - it->second->item_basic.amount > 0) {
-			int remain_space = stack_upper - it->second->item_basic.amount;
-			if (amount - (stack_upper - it->second->item_basic.amount) > 0) {
+		if (is_equal_item(it->second, item) && stack_upper - it->second.item_basic.amount > 0) {
+			int remain_space = stack_upper - it->second.item_basic.amount;
+			if (amount - (stack_upper - it->second.item_basic.amount) > 0) {
 				amount -= remain_space;
-				it->second->item_basic.amount += remain_space;
+				it->second.item_basic.amount += remain_space;
 			} else {
-				it->second->item_basic.amount += amount;
+				it->second.item_basic.amount += amount;
 				amount = 0;
 			}
 			if (NULL != changed_set) {
@@ -546,7 +541,7 @@ int Bag::bag_insert_to_exist_index_first(const Bag_Type bag_type, const Item_Inf
 	if (amount != 0) {
 		Item_Info item_temp(item);
 		item_temp.item_basic.amount = amount;
-		return bag_insert_to_empty_index_direct(bag_type, item_temp, changed_set, seq_type, WITHOUT_TRY);
+		return bag_insert_to_empty_index_direct(bag_type, item_temp, changed_set, WITHOUT_TRY);
 	}
 
 	return 0;
@@ -578,7 +573,7 @@ void Bag::bag_get_indexes(const Bag_Type bag_type, const uint32_t id, Int_Vec &i
 	bag_get_iter(bag_type, it_begin, it_end);
 
 	for (Bag_Info::Item_Map::iterator it = it_begin; it != it_end; ++it) {
-		if (it->second->item_basic.id == id) {
+		if (it->second.item_basic.id == id) {
 			indexes.push_back(it->first);
 		}
 	}
@@ -588,19 +583,11 @@ int Bag::bag_calc_item(const uint32_t index) {
 	int amount = 0;
 	Bag_Info::Item_Map::iterator it = bag_info_.item_map.find(index);
 	if (it != bag_info_.item_map.end()) {
-		amount = it->second->item_basic.amount;
+		amount = it->second.item_basic.amount;
 	}
 
 	if (amount < 0) MSG_USER("item amount < 0 in index %d.\n", index);
 	return amount;
-}
-
-Item_Info *Bag::bag_get_item(const uint32_t index) {
-	return bag_get_item_pointer(index);
-}
-
-const Item_Info *Bag::bag_get_const_item(const uint32_t index) {
-	return bag_get_item_pointer(index);
 }
 
 int Bag::bag_is_bag_type(const int32_t index, Bag_Type bag_type) {
@@ -628,7 +615,7 @@ int Bag::bag_get_bag_type(const int32_t index, Bag_Type &bag_type) {
 int Bag::bag_get_item_id(const uint32_t index, uint32_t &id) {
 	Bag_Info::Item_Map::iterator it = bag_info_.item_map.find(index);
 	if (it != bag_info_.item_map.end()) {
-		id = it->second->item_basic.id;
+		id = it->second.item_basic.id;
 		return 0;
 	}
 	return ERROR_ITEM_NOT_EXIST;
@@ -640,10 +627,14 @@ int Bag::bag_move_item(const uint32_t index_from, const Bag_Type bag_type_to, UI
 		if (result != 0) return result;
 	}
 
-	Item_Info item = *(bag_get_const_item(index_from));
+	Bag_Info::Item_Map::iterator iter = bag_info_.item_map.find(index_from);
+	if (iter == bag_info_.item_map.end()) {
+		return ERROR_ITEM_NOT_EXIST;
+	}
+
 	changed.insert(index_from);
 	bag_info_.erase(index_from);
-	bag_insert_to_exist_index_first(bag_type_to, item, &changed, DONT_GENERATE_SEQ, WITHOUT_TRY);
+	bag_insert_to_exist_index_first(bag_type_to, iter->second, &changed, WITHOUT_TRY);
 
 	return 0;
 }
@@ -654,11 +645,15 @@ int Bag::bag_move_item(const uint32_t index_from, const Bag_Type bag_type_to, Pa
 		if (result != 0) return result;
 	}
 
-	Item_Info item = *(bag_get_const_item(index_from));
+	Bag_Info::Item_Map::iterator iter = bag_info_.item_map.find(index_from);
+	if (iter == bag_info_.item_map.end()) {
+		return -1;
+	}
+
 	UInt_Set changed_set;
 	changed_set.insert(index_from);
 	bag_info_.erase(index_from);
-	bag_insert_to_exist_index_first(bag_type_to, item, &changed_set, DONT_GENERATE_SEQ, WITHOUT_TRY);
+	bag_insert_to_exist_index_first(bag_type_to, iter->second, &changed_set, WITHOUT_TRY);
 
 	return bag_active_update_item_detail(&changed_set);
 }
@@ -676,12 +671,12 @@ int Bag::bag_move_item(const Bag_Type bag_type_from, const Bag_Type bag_type_to,
 	UInt_Set changed_set;
 	std::vector<Item_Info> item_list;
 	for (Bag_Info::Item_Map::iterator it = it_begin; it != it_end; ++it) {
-		item_list.push_back(*it->second);
+		item_list.push_back(it->second);
 		changed_set.insert(it->first);
 	}
 
 	bag_info_.erase(it_begin, it_end);
-	bag_insert_to_exist_index_first(bag_type_to, item_list, &changed_set, DONT_GENERATE_SEQ, WITHOUT_TRY);
+	bag_insert_to_exist_index_first(bag_type_to, item_list, &changed_set, WITHOUT_TRY);
 
 	return bag_active_update_item_detail(&changed_set);
 }
@@ -701,7 +696,7 @@ int Bag::bag_attempt_move_everyitem(const Bag_Type bag_type_from, const Bag_Type
 
 	std::vector<Index_Amount> item_vec;
 	for (Bag_Info::Item_Map::iterator it = it_begin; it != it_end; ++it) {
-		item_vec.push_back(Index_Amount(it->first, it->second->item_basic.amount));
+		item_vec.push_back(Index_Amount(it->first, it->second.item_basic.amount));
 	}
 
 	// 尝试移动每个道具
@@ -722,7 +717,7 @@ int Bag::bag_attempt_move_everyitem(const Bag_Type bag_type_from, const Bag_Type
 }
 
 int Bag::bag_insert_to_empty_index_direct(const Bag_Type bag_type, const Item_Info &item,
-		UInt_Set *changed_set, Seq_Type seq_type, Pack_Try bag_try) {
+		UInt_Set *changed_set, Pack_Try bag_try) {
 	if (bag_try == WITH_TRY) {
 		int result = bag_try_insert_to_empty_index_direct(bag_type, item);
 		if (result != 0) {
@@ -738,14 +733,10 @@ int Bag::bag_insert_to_empty_index_direct(const Bag_Type bag_type, const Item_In
 	bag_get_index(bag_type, index_begin, index_end);
 	for (uint32_t i = index_begin; amount > 0 && i < index_end; ++i) {
 		if (!is_item_exist(i)) {
-			Item_Info *item_temp = GAME_MANAGER->pop_item();
-			*item_temp = item;
-			item_temp->item_basic.index = i;
-			item_temp->item_basic.amount = std::min(amount, stack_upper);
-			amount -= item_temp->item_basic.amount;
-			if (seq_type == GENERATE_SEQ) {
-				item_temp->item_basic.seq = ++seq_generator_;
-			}
+			Item_Info item_temp(item);
+			item_temp.item_basic.index = i;
+			item_temp.item_basic.amount = std::min(amount, stack_upper);
+			amount -= item.item_basic.amount;
 			bag_info_.item_map.insert(std::make_pair(i, item_temp));
 			if (NULL != changed_set) {
 				changed_set->insert(i);
@@ -763,7 +754,7 @@ int Bag::bag_calc_item(const Bag_Type bag_type) {
 
 	uint32_t item_amount = 0;
 	for (Bag_Info::Item_Map::iterator it = it_begin; it != it_end; ++it) {
-		item_amount += it->second->item_basic.amount;
+		item_amount += it->second.item_basic.amount;
 	}
 
 	return item_amount;
@@ -776,8 +767,8 @@ int Bag::bag_calc_item(const Bag_Type bag_type, const uint32_t id, Bind_Verify b
 
 	uint32_t item_amount = 0;
 	for (Bag_Info::Item_Map::iterator it = it_begin; it != it_end; ++it) {
-		if (bag_is_req_item(*it->second, id, bind_verify)) {
-			item_amount += it->second->item_basic.amount;
+		if (bag_is_req_item(it->second, id, bind_verify)) {
+			item_amount += it->second.item_basic.amount;
 		}
 	}
 
@@ -791,9 +782,9 @@ int Bag::bag_calc_unlock_item(const Bag_Type bag_type, const uint32_t id, Bind_V
 
 	uint32_t item_amount = 0;
 	for (Bag_Info::Item_Map::iterator it = it_begin; it != it_end; ++it) {
-		if (bag_is_req_item(*it->second, id, bind_verify)) {
+		if (bag_is_req_item(it->second, id, bind_verify)) {
 			if (!is_item_lock(it->first)) {
-				item_amount += it->second->item_basic.amount;
+				item_amount += it->second.item_basic.amount;
 			}
 		}
 	}
@@ -838,7 +829,7 @@ int Bag::bag_active_update_item_detail(const UInt_Set *changed_index) {
 		if (item_it == bag_info_.item_map.end()) {
 			erase_item_msg_map[type].item_index_vec.push_back(*index_it);
 		} else {
-			bag_insert_item_to_msg(*item_it->second, update_item_msg_map[type], update_addit_msg_map[type]);
+			bag_insert_item_to_msg(item_it->second, update_item_msg_map[type], update_addit_msg_map[type]);
 		}
 	}
 
@@ -1094,9 +1085,9 @@ int Bag::bag_insert_item(const Bag_Type bag_type, const Item_Info &item, Pack_Tr
 	UInt_Set changed_set;
 	// 若物品可堆叠，优先叠放
 	if (Item_Info::get_item_stack_upper(item.item_basic.id) > 1) {
-		result = bag_insert_to_exist_index_first(bag_type, item, &changed_set, GENERATE_SEQ, bag_try);
+		result = bag_insert_to_exist_index_first(bag_type, item, &changed_set, bag_try);
 	} else {
-		result = bag_insert_to_empty_index_direct(bag_type, item, &changed_set, GENERATE_SEQ, bag_try);
+		result = bag_insert_to_empty_index_direct(bag_type, item, &changed_set, bag_try);
 	}
 
 	if (result == 0) {
@@ -1109,7 +1100,7 @@ int Bag::bag_insert_item(const Bag_Type bag_type, const Item_Info &item, Pack_Tr
 int Bag::bag_insert_item(const Bag_Type bag_type, const std::vector<Item_Info> &item_list, Pack_Try bag_try) {
 	int result = 0;
 	UInt_Set changed_set;
-	result = this->bag_insert_to_exist_index_first(bag_type, item_list, &changed_set, GENERATE_SEQ, bag_try);
+	result = this->bag_insert_to_exist_index_first(bag_type, item_list, &changed_set, bag_try);
 
 	if (result == 0) {
 		bag_active_update_item_detail(&changed_set);
@@ -1247,12 +1238,14 @@ int Bag::bag_try_erase_item(const Index_Amount &index_amount) {
 		return ERROR_CLIENT_OPERATE;
 	}
 
-	const Item_Info *item = bag_get_const_item(index_amount.index);
-	// 检测存在物品
-	if (NULL == item) return ERROR_ITEM_NOT_EXIST;
+	Bag_Info::Item_Map::iterator iter = bag_info_.item_map.find(index_amount.index);
+	if (iter == bag_info_.item_map.end()) {
+		return ERROR_ITEM_NOT_EXIST;
+	}
+
 	// 检测物品数量
-	if (bag_is_req_item(*item, item->item_basic.id, index_amount.bind_verify)) {
-		if (index_amount.amount > item->item_basic.amount) return ERROR_ITEM_NOT_ENOUGH;
+	if (bag_is_req_item(iter->second, iter->second.item_basic.id, index_amount.bind_verify)) {
+		if (index_amount.amount > iter->second.item_basic.amount) return ERROR_ITEM_NOT_ENOUGH;
 	} else {
 		if (index_amount.bind_verify == UNBIND_ONLY) return ERROR_UNBIND_ITEM_NOT_ENOUGH;
 		if (index_amount.bind_verify == BIND_ONLY) return ERROR_BIND_ITEM_NOT_ENOUGH;
@@ -1380,16 +1373,16 @@ int Bag::bag_move_item(const uint32_t index_from, const uint32_t index_to, Pack_
 		bag_info_.item_map.insert(std::make_pair(index_to, it_from->second));
 		bag_info_.item_map.erase(it_from);
 	} else {
-		uint32_t id_to = it_to->second->item_basic.id;
+		uint32_t id_to = it_to->second.item_basic.id;
 		int32_t stack_upper_to = Item_Info::get_item_stack_upper(id_to);
-		int32_t remain_space = stack_upper_to - it_to->second->item_basic.amount;
-		if (!is_equal_item(*it_from->second, *it_to->second) || stack_upper_to <= 1) {
+		int32_t remain_space = stack_upper_to - it_to->second.item_basic.amount;
+		if (!is_equal_item(it_from->second, it_to->second) || stack_upper_to <= 1) {
 			std::swap(it_to->second, it_from->second);
 		} else if (remain_space == 0){
 			return 0;
 		} else{
-			bag_merge_equal_item(*it_to->second, *it_from->second);
-			if (it_from->second->item_basic.amount == 0) {
+			bag_merge_equal_item(it_to->second, it_from->second);
+			if (it_from->second.item_basic.amount == 0) {
 				bag_info_.erase(it_from);
 			}
 		}
@@ -1398,11 +1391,11 @@ int Bag::bag_move_item(const uint32_t index_from, const uint32_t index_to, Pack_
 	// index不交换
 	it_to = bag_info_.item_map.find(index_to);
 	if (it_to != bag_info_.item_map.end()) {
-		it_to->second->item_basic.index = index_to;
+		it_to->second.item_basic.index = index_to;
 	}
 	it_from = bag_info_.item_map.find(index_from);
 	if (it_from != bag_info_.item_map.end()) {
-		it_from->second->item_basic.index = index_from;
+		it_from->second.item_basic.index = index_from;
 	}
 
 	UInt_Set changed_set;
@@ -1418,10 +1411,12 @@ int Bag::bag_try_move_item(const uint32_t index_from, const Bag_Type bag_type_to
 	if (is_item_lock(index_from)) {
 		return ERROR_BAG_LOCK;
 	}
-	const Item_Info* item = bag_get_const_item(index_from);
-	if (NULL == item) return ERROR_ITEM_NOT_EXIST;
+	Bag_Info::Item_Map::iterator iter = bag_info_.item_map.find(index_from);
+	if (iter == bag_info_.item_map.end()) {
+		return ERROR_ITEM_NOT_EXIST;
+	}
 
-	return bag_try_insert_item(bag_type_to, *item);
+	return bag_try_insert_item(bag_type_to, iter->second);
 }
 
 int Bag::bag_try_move_item(const Bag_Type bag_type_from, const Bag_Type bag_type_to) {
@@ -1436,7 +1431,7 @@ int Bag::bag_try_move_item(const Bag_Type bag_type_from, const Bag_Type bag_type
 	UInt_Set changed_set;
 	std::vector<Item_Info> item_list;
 	for (Bag_Info::Item_Map::iterator it = it_begin; it != it_end; ++it) {
-		item_list.push_back(*it->second);
+		item_list.push_back(it->second);
 	}
 
 	return bag_try_insert_item(bag_type_to, item_list);

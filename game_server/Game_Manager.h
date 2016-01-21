@@ -24,7 +24,6 @@ class Game_Manager: public Thread {
 public:
 	typedef Object_Pool<Block_Buffer, Thread_Mutex> Block_Pool;
 	typedef Object_Pool<Game_Player, Spin_Lock> Game_Player_Pool;
-	typedef Object_Pool<Item_Info, Spin_Lock> Item_Pool;
 	typedef Block_List<Thread_Mutex> Data_List;
 	typedef List<int, Thread_Mutex> Int_List;
 
@@ -55,9 +54,6 @@ public:
 
 	Game_Player *pop_game_player(void);
 	int push_game_player(Game_Player *player);
-
-	Item_Info *pop_item(void);
-	int push_item(Item_Info *item_detail);
 
 	/// 发送数据接口
 	int send_to_gate(int cid, Block_Buffer &buf);
@@ -133,7 +129,6 @@ private:
 
 	Block_Pool block_pool_;
 	Game_Player_Pool game_player_pool_;
-	Item_Pool item_pool_;
 
 	Data_List loaded_player_data_list_; 			//玩家登录从数据库加载数据
 	Int_List drop_gate_cid_list_;						//掉线gate_cid列表,让通过该gate连接到game的所有玩家掉线
@@ -165,14 +160,6 @@ private:
 #define GAME_MANAGER Game_Manager::instance()
 
 ////////////////////////////////////////////////////////////////////////////////
-inline Item_Info *Game_Manager::pop_item(void) {
-	return item_pool_.pop();
-}
-
-inline int Game_Manager::push_item(Item_Info *item_info) {
-	return item_pool_.push(item_info);
-}
-
 inline Game_Manager::Logining_Map &Game_Manager::logining_map(void) {
 	return logining_map_;
 }

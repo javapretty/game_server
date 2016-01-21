@@ -327,6 +327,80 @@ int DB_Operator::save_player_info(Game_Player_Info &player_info) {
 	return 0;
 }
 
+int DB_Operator::load_bag_info(Bag_Info &bag_info) {
+	BSONObj res = CACHED_CONNECTION.findOne(Bag_Fields::COLLECTION,
+			MONGO_QUERY(Role_Fields::ROLE_ID << (long long int)bag_info.role_id));
+	if (res.isEmpty()) {
+		return -1;
+	}
+
+	bag_info.capacity.bag_cap = res[Bag_Fields::BAG_CAPACITY].numberInt();
+	bag_info.capacity.storage_cap = res[Bag_Fields::STORAGE_CAPACITY].numberInt();
+
+	BSONObj money = res.getObjectField(Bag_Fields::MONEY.c_str());
+	bag_info.money_info.bind_copper = money[Bag_Fields::Money::BIND_COPPER].numberInt();
+	bag_info.money_info.copper = money[Bag_Fields::Money::COPPER].numberInt();
+	bag_info.money_info.coupon = money[Bag_Fields::Money::COUPON].numberInt();
+	bag_info.money_info.gold = money[Bag_Fields::Money::GOLD].numberInt();
+
+	BSONObjIterator iter(res.getObjectField(Bag_Fields::ITEM.c_str()));
+	BSONObj obj;
+	while (iter.more()){
+		obj = iter.next().embeddedObject();
+		Item_Info item;
+		if (load_item_detail(obj, item) == 0) {
+			bag_info.item_map[item.item_basic.index] = item;
+		}
+	}
+	return 0;
+}
+
+int DB_Operator::save_bag_info(Bag_Info &bag_info) {
+	std::vector<BSONObj> vc_item;
+	BSONObj obj;
+	for (Bag_Info::Item_Map::const_iterator iter = bag_info.item_map.begin(); iter != bag_info.item_map.end(); ++iter) {
+		save_item_detail(iter->second, obj);
+		vc_item.push_back(obj);
+	}
+
+	BSONObjBuilder tmp_builder;
+	tmp_builder << Bag_Fields::BAG_CAPACITY << bag_info.capacity.bag_cap
+		<< Bag_Fields::STORAGE_CAPACITY << bag_info.capacity.storage_cap
+		<< Bag_Fields::MONEY << BSON(Bag_Fields::Money::BIND_COPPER << bag_info.money_info.bind_copper
+		<< Bag_Fields::Money::COPPER << bag_info.money_info.copper
+		<< Bag_Fields::Money::COUPON << bag_info.money_info.coupon
+		<< Bag_Fields::Money::GOLD << bag_info.money_info.gold)
+		<< Bag_Fields::ITEM << vc_item;
+
+	CACHED_CONNECTION.update(Bag_Fields::COLLECTION, MONGO_QUERY(Role_Fields::ROLE_ID << (long long int)bag_info.role_id),
+			BSON("$set" << tmp_builder.obj()), true);
+
+	return 0;
+}
+
+int DB_Operator::load_item_detail(const BSONObj &obj, Item_Info &item) {
+	int result = -1;
+	if (obj.hasField(Bag_Fields::Item::INDEX.c_str()) && obj.hasField(Bag_Fields::Item::ID.c_str())
+			&& obj.hasField(Bag_Fields::Item::AMOUNT.c_str()) && obj.hasField(Bag_Fields::Item::BIND.c_str())) {
+		result = 0;
+		item.reset();
+		// set_basic为指针以及固定的值如hole分配了空间
+		item.set_basic(obj[Bag_Fields::Item::INDEX].numberInt(), obj[Bag_Fields::Item::ID].numberInt(),
+				obj[Bag_Fields::Item::AMOUNT].numberInt(), obj[Bag_Fields::Item::BIND].numberInt());
+	}
+
+	return result;
+}
+
+int DB_Operator::save_item_detail(const Item_Info &item, mongo::BSONObj &obj) {
+	BSONObjBuilder item_builder;
+	item_builder << Bag_Fields::Item::INDEX << item.item_basic.index << Bag_Fields::Item::ID
+			<< item.item_basic.id << Bag_Fields::Item::AMOUNT << item.item_basic.amount
+			<< Bag_Fields::Item::BIND << item.item_basic.bind;
+	obj = item_builder.obj();
+	return 0;
+}
+
 int DB_Operator::load_mail_info(Mail_Info &mail_info) {
 	BSONObj res = CACHED_CONNECTION.findOne(Mail_Fields::COLLECTION, MONGO_QUERY(Role_Fields::ROLE_ID << (long long int)mail_info.role_id));
 	if (res.isEmpty()) {
@@ -335,7 +409,7 @@ int DB_Operator::load_mail_info(Mail_Info &mail_info) {
 
 	mail_info.total_count = res[Mail_Fields::TOTAL_COUNT.c_str()].numberInt();
 
-	BSONObj mail = res.getObjectField(Mail_Fields::MAIL_INFO.c_str());
+	BSONObj mail = res.getObjectField(Mail_Fields::MAIL_DETAIL.c_str());
 	BSONObjIterator iter(mail);
 	while (iter.more()) {
 		BSONObj obj = iter.next().embeddedObject();
@@ -358,9 +432,9 @@ int DB_Operator::load_mail_info(Mail_Info &mail_info) {
 		while (item_iter.more()) {
 			BSONObj item_obj = item_iter.next().embeddedObject();
 			Item_Info item;
-			//int result = load_item_detail(item_obj, item);
-			//if (result != 0)
-			//	continue;
+			int result = load_item_detail(item_obj, item);
+			if (result != 0)
+				continue;
 			mail_detail.item_vector.push_back(item.item_basic);
 		}
 		mail_info.mail_map.insert(std::make_pair(mail_detail.mail_id, mail_detail));
@@ -378,7 +452,7 @@ int DB_Operator::save_mail_info(Mail_Info &mail_info) {
 		BSONObj obj;
 		for (std::vector<Item_Basic_Info>::const_iterator it = iter->second.item_vector.begin();
 				it != iter->second.item_vector.end(); ++it) {
-			//save_item_detail(*it, obj);
+			save_item_detail(Item_Info(*it), obj);
 			item_vector.push_back(obj);
 		}
 
@@ -399,7 +473,7 @@ int DB_Operator::save_mail_info(Mail_Info &mail_info) {
 
 	BSONObjBuilder set_builder;
 	set_builder << Mail_Fields::TOTAL_COUNT << mail_info.total_count
-			<< Mail_Fields::MAIL_INFO << mail_vector;
+			<< Mail_Fields::MAIL_DETAIL << mail_vector;
 
 	CACHED_CONNECTION.update(Mail_Fields::COLLECTION, MONGO_QUERY(Role_Fields::ROLE_ID << (long long int)mail_info.role_id),
 			BSON("$set" << set_builder.obj() ), true);

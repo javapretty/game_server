@@ -76,5 +76,4 @@ struct Money_Sub_Info {
 	int nums;
 };
 
-
 #endif /* PACKER_STRUCT_H_ */

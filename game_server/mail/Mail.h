@@ -18,8 +18,8 @@ public:
 	virtual ~Mail(void);
 
 	int init(Game_Player *player);
-	int load_detail(Player_Data &data);
-	int save_detail(Player_Data &data);
+	int load_data(Player_Data &data);
+	int save_data(Player_Data &data);
 	void reset(void);
 
 	Mail_Info &mail_info(void) { return mail_info_;}

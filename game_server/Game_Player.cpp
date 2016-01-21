@@ -20,16 +20,6 @@ Game_Player::~Game_Player(void) { }
 
 const Time_Value Game_Player::game_player_save_interval_ = Time_Value(30, 0);
 
-int Game_Player::load_player_info(Player_Data &data) {
-	player_info_ = data.game_player_info;
-	return 0;
-}
-
-int Game_Player::save_player_info(Player_Data &data) {
-	data.game_player_info = player_info_;
-	return 0;
-}
-
 int Game_Player::respond_success_result(int msg_id, Block_Buffer *buf) {
 		return respond_error_result(msg_id, 0, buf);
 }
@@ -99,7 +89,10 @@ void Game_Player::reset(void) {
 	is_register_timer_ = false;
 	recycle_tick_.reset();
 	last_save_timestamp_ = Time_Value::zero;
+
 	player_info_.reset();
+	bag_.reset();
+	mail_.reset();
 }
 
 int Game_Player::sync_signin_to_master(void) {
@@ -152,7 +145,9 @@ int Game_Player::unregister_timer(void) {
 
 int Game_Player::load_player_data(Player_Data &player_data) {
 	GAME_MANAGER->logining_map().erase(player_data.game_player_info.account);
-	load_player_info(player_data);
+	player_info_ = player_data.game_player_info;
+	bag_.load_data(player_data);
+	mail_.load_data(player_data);
 
 	return 0;
 }
@@ -164,7 +159,9 @@ int Game_Player::save_player_data(Player_Data &player_data, bool is_logout) {
 	}
 
 	player_data.role_id = player_info_.role_id;
-	save_player_info(player_data);
+	player_data.game_player_info = player_info_;
+	bag_.save_data(player_data);
+	mail_.save_data(player_data);
 
 	return 0;
 }

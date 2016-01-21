@@ -9,7 +9,7 @@
 #include "Configurator.h"
 #include "Log.h"
 
-void bag_merge_item_array(std::vector<Item_Info*> &item_array, Bag_Type bag_type,
+void bag_merge_item_array(std::vector<Item_Info> &item_array, Bag_Type bag_type,
 		MERGE_WAY merge_way, UInt_Set &changed_set) {
 	const uint32_t array_size = item_array.size();
 	// 模拟人的的操作，不停将道具从index_now合并至index_pre
@@ -19,23 +19,23 @@ void bag_merge_item_array(std::vector<Item_Info*> &item_array, Bag_Type bag_type
 	for (index_pre = 0; index_now < array_size; ++index_now) {
 		bool merged = false;
 		if (merge_way == MERGE_WAY_SIMILAR) {
-			merged = bag_merge_similar_item(*item_array[index_pre], *item_array[index_now]);
+			merged = bag_merge_similar_item(item_array[index_pre], item_array[index_now]);
 		} else {
-			merged = bag_merge_equal_item(*item_array[index_pre], *item_array[index_now]);
+			merged = bag_merge_equal_item(item_array[index_pre], item_array[index_now]);
 		}
 
 		if (merged) {
 			// 如果合并了，那么前后2个位置均改变了
-			changed_set.insert(item_array[index_pre]->item_basic.index);
-			changed_set.insert(item_array[index_now]->item_basic.index);
-			if (item_array[index_now]->item_basic.amount <= 0) {
+			changed_set.insert(item_array[index_pre].item_basic.index);
+			changed_set.insert(item_array[index_now].item_basic.index);
+			if (item_array[index_now].item_basic.amount <= 0) {
 				continue;
 			}
 		}
 		// 如果次序不对
-		if (item_array[index_pre]->item_basic.index != index_flag) {
-			changed_set.insert(item_array[index_pre]->item_basic.index);
-			item_array[index_pre]->item_basic.index = index_flag;
+		if (item_array[index_pre].item_basic.index != index_flag) {
+			changed_set.insert(item_array[index_pre].item_basic.index);
+			item_array[index_pre].item_basic.index = index_flag;
 			changed_set.insert(index_flag);
 		}
 		index_pre = index_now;
@@ -44,9 +44,9 @@ void bag_merge_item_array(std::vector<Item_Info*> &item_array, Bag_Type bag_type
 
 	if (index_pre < array_size) {
 		// 如果次序不对
-		if (item_array[index_pre]->item_basic.index != index_flag) {
-			changed_set.insert(item_array[index_pre]->item_basic.index);
-			item_array[index_pre]->item_basic.index = index_flag;
+		if (item_array[index_pre].item_basic.index != index_flag) {
+			changed_set.insert(item_array[index_pre].item_basic.index);
+			item_array[index_pre].item_basic.index = index_flag;
 			changed_set.insert(index_flag);
 		}
 	}

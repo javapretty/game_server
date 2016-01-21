@@ -32,7 +32,6 @@ enum MERGE_WAY {
 	MERGE_WAY_SIMILAR
 };
 
-// 若已经调用了TRY的接口了，则不需要在内部重复调用
 enum Pack_Try {
 	WITH_TRY = 0,
 	WITHOUT_TRY = 1
@@ -45,13 +44,6 @@ enum Money_Opt_Type {
 
 enum {
 	MAX_LOCK_SEC = 5,
-	Move_All = 999,
-};
-
-// 由于存在交易的情况，不能依据SEQ是否为0来判断是否需要生成SEQ，故用枚举指定是否生成SEQ
-enum Seq_Type {
-	GENERATE_SEQ,
-	DONT_GENERATE_SEQ
 };
 
 // 增加money bind_copper/copper/...
@@ -301,8 +293,7 @@ inline std::size_t hash_value(const Item_Info &item) {
 }
 
 struct Bag_Info {
-	typedef std::map<uint32_t, Item_Info*> Item_Map;
-	typedef boost::unordered_map<uint32_t, Item_Info*> Item_Seq_Map;
+	typedef std::map<uint32_t, Item_Info> Item_Map;
 
 	enum {
 		BAG_MAX_CAPACITY = 210,

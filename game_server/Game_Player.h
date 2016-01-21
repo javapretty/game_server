@@ -18,9 +18,6 @@ public:
 	Game_Player(void);
 	virtual ~Game_Player(void);
 
-	int load_player_info(Player_Data &data);
-	int save_player_info(Player_Data &data);
-
 	void set_cid_info(Cid_Info &cid_info);
 	Cid_Info &cid_info(void);
 
