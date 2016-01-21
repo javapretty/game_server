@@ -33,7 +33,7 @@ struct MSG_300000 {
 */
 struct MSG_300100 {
 
-	std::vector<Item_Basic_Info> item_info;
+	std::vector<Item_Basic_Info> item_info_vec;
 
 	MSG_300100(void);
 
@@ -101,7 +101,7 @@ struct MSG_300103 {
 */
 struct MSG_300104 {
 
-	std::vector<uint32_t> erase_item_vec;/*被删除的物品位置*/
+	std::vector<uint32_t> item_index_vec;/*被删除的物品位置*/
 
 	MSG_300104(void);
 

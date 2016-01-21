@@ -167,7 +167,7 @@ int DB_Operator::load_db_cache(int cid) {
 		db_cache.gender = obj[Role_Fields::ROLE_GENDER].numberInt();
 		db_cache.career = obj[Role_Fields::CAREER].numberInt();
 		db_cache.level = obj[Role_Fields::LEVEL].numberInt();
-		msg.cache_vector.push_back(db_cache);
+		msg.db_cache_vec.push_back(db_cache);
 	}
 
 	Block_Buffer buf;

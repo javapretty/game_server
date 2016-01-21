@@ -20,31 +20,31 @@ MSG_300100::MSG_300100(void){
 }
 
 void MSG_300100::serialize(Block_Buffer & w) const {
-	uint16_t __item_info_vec_size = item_info.size();
-	w.write_uint16(__item_info_vec_size);
-	for(uint16_t i = 0; i < __item_info_vec_size; ++i) {
-		item_info[i].serialize(w);
+	uint16_t __item_info_vec_vec_size = item_info_vec.size();
+	w.write_uint16(__item_info_vec_vec_size);
+	for(uint16_t i = 0; i < __item_info_vec_vec_size; ++i) {
+		item_info_vec[i].serialize(w);
 	}
 
 }
 
 int MSG_300100::deserialize(Block_Buffer & r) {
-	uint16_t __item_info_vec_size;
-	if(r.read_uint16(__item_info_vec_size)  )
+	uint16_t __item_info_vec_vec_size;
+	if(r.read_uint16(__item_info_vec_vec_size)  )
 		return -1;
-	item_info.reserve(__item_info_vec_size);
-	for(uint16_t i = 0; i < __item_info_vec_size; ++i) {
+	item_info_vec.reserve(__item_info_vec_vec_size);
+	for(uint16_t i = 0; i < __item_info_vec_vec_size; ++i) {
 		Item_Basic_Info v;
 		if(v.deserialize(r))
 			return -1;
-		item_info.push_back(v);
+		item_info_vec.push_back(v);
 	}
 
 	return 0;
 }
 
 void MSG_300100::reset(){
-	item_info.clear();
+	item_info_vec.clear();
 }
 
 MSG_300101::MSG_300101(void){
@@ -111,31 +111,31 @@ MSG_300104::MSG_300104(void){
 }
 
 void MSG_300104::serialize(Block_Buffer & w) const {
-	uint16_t __erase_item_vec_vec_size = erase_item_vec.size();
-	w.write_uint16(__erase_item_vec_vec_size);
-	for(uint16_t i = 0; i < __erase_item_vec_vec_size; ++i) {
-		w.write_int32(erase_item_vec[i]);
+	uint16_t __item_index_vec_vec_size = item_index_vec.size();
+	w.write_uint16(__item_index_vec_vec_size);
+	for(uint16_t i = 0; i < __item_index_vec_vec_size; ++i) {
+		w.write_int32(item_index_vec[i]);
 	}
 
 }
 
 int MSG_300104::deserialize(Block_Buffer & r) {
-	uint16_t __erase_item_vec_vec_size;
-	if(r.read_uint16(__erase_item_vec_vec_size) )
+	uint16_t __item_index_vec_vec_size;
+	if(r.read_uint16(__item_index_vec_vec_size) )
 		return -1;
-	erase_item_vec.reserve(__erase_item_vec_vec_size);
-	for(uint16_t i = 0; i < __erase_item_vec_vec_size; ++i) {
+	item_index_vec.reserve(__item_index_vec_vec_size);
+	for(uint16_t i = 0; i < __item_index_vec_vec_size; ++i) {
 		int32_t v;
 		if(r.read_int32(v) )
 			return -1;
-		erase_item_vec.push_back(v);
+		item_index_vec.push_back(v);
 	}
 
 	return 0;
 }
 
 void MSG_300104::reset(){
-	erase_item_vec.clear();
+	item_index_vec.clear();
 }
 
 MSG_300200::MSG_300200(void){

@@ -20,31 +20,31 @@ MSG_550000::MSG_550000(void){
 }
 
 void MSG_550000::serialize(Block_Buffer & w) const {
-	uint16_t __cache_vector_vec_size = cache_vector.size();
-	w.write_uint16(__cache_vector_vec_size);
-	for(uint16_t i = 0; i < __cache_vector_vec_size; ++i) {
-		cache_vector[i].serialize(w);
+	uint16_t __db_cache_vec_vec_size = db_cache_vec.size();
+	w.write_uint16(__db_cache_vec_vec_size);
+	for(uint16_t i = 0; i < __db_cache_vec_vec_size; ++i) {
+		db_cache_vec[i].serialize(w);
 	}
 
 }
 
 int MSG_550000::deserialize(Block_Buffer & r) {
-	uint16_t __cache_vector_vec_size;
-	if(r.read_uint16(__cache_vector_vec_size)  )
+	uint16_t __db_cache_vec_vec_size;
+	if(r.read_uint16(__db_cache_vec_vec_size)  )
 		return -1;
-	cache_vector.reserve(__cache_vector_vec_size);
-	for(uint16_t i = 0; i < __cache_vector_vec_size; ++i) {
+	db_cache_vec.reserve(__db_cache_vec_vec_size);
+	for(uint16_t i = 0; i < __db_cache_vec_vec_size; ++i) {
 		Player_DB_Cache v;
 		if(v.deserialize(r))
 			return -1;
-		cache_vector.push_back(v);
+		db_cache_vec.push_back(v);
 	}
 
 	return 0;
 }
 
 void MSG_550000::reset(){
-	cache_vector.clear();
+	db_cache_vec.clear();
 }
 
 MSG_150001::MSG_150001(void){

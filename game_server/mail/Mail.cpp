@@ -57,14 +57,14 @@ int Mail::pickup_mail(MSG_120201 &msg) {
 		}
 		result = this->pickup_mail(iter->second);
 		if (result == 0) {
-			res_msg.pickup_mail_vec.push_back(msg.mail_id);
+			res_msg.mail_id_vec.push_back(msg.mail_id);
 		}
 	} else {
 		for (Mail_Info::Mail_Map::iterator iter = mail_info_.mail_map.begin();
 					iter != mail_info_.mail_map.end(); ++iter) {
 			result = this->pickup_mail(iter->second);
 			if (result == 0) {
-				res_msg.pickup_mail_vec.push_back(iter->first);
+				res_msg.mail_id_vec.push_back(iter->first);
 			}
 		}
 	}
@@ -87,7 +87,7 @@ int Mail::delete_mail(MSG_120202 &msg) {
 		}
 		result = this->pickup_mail(iter->second);
 		if (result == 0) {
-			res_msg.del_mail_vec.push_back(msg.mail_id);
+			res_msg.mail_id_vec.push_back(msg.mail_id);
 		}
 		mail_info_.mail_map.erase(iter);
 	} else {
@@ -95,7 +95,7 @@ int Mail::delete_mail(MSG_120202 &msg) {
 				iter != mail_info_.mail_map.end();) {
 			result = this->pickup_mail(iter->second);
 			if (result == 0) {
-				res_msg.del_mail_vec.push_back(msg.mail_id);
+				res_msg.mail_id_vec.push_back(msg.mail_id);
 			}
 			mail_info_.mail_map.erase(iter++);	//map erese后迭代器失效，所以要先将迭代器++
 		}

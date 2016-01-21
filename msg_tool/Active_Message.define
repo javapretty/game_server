@@ -6,7 +6,7 @@ struct MSG_300000 {
 备注：见type的说明
 */
 struct MSG_300100 {
-	std::vector<Item_Basic_Info> item_info;
+	std::vector<Item_Basic_Info> item_info_vec;
 };
 
 /*
@@ -36,7 +36,7 @@ struct MSG_300103 {
 备注：在某个格子中的物品全部被删除才会发送这条消息，若格子中还剩余物品，物品信息会在背包物品更新消息中发送。
 */
 struct MSG_300104 {
-	std::vector<uint32_t> erase_item_vec;/*被删除的物品位置*/
+	std::vector<uint32_t> item_index_vec;/*被删除的物品位置*/
 };
 
 /*

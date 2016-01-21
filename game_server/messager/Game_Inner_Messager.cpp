@@ -104,11 +104,11 @@ int Game_Inner_Messager::process_self_loop_block(Block_Buffer &buf) {
 int Game_Inner_Messager::process_load_db_cache(Block_Buffer &buf) {
 	MSG_550000 msg;
 	msg.deserialize(buf);
-	for (std::vector<Player_DB_Cache>::iterator iter = msg.cache_vector.begin(); iter != msg.cache_vector.end(); ++iter) {
+	for (std::vector<Player_DB_Cache>::iterator iter = msg.db_cache_vec.begin(); iter != msg.db_cache_vec.end(); ++iter) {
 		GAME_MANAGER->db_cache()->id_player_cache_map.insert(std::make_pair(iter->role_id, *iter));
 		GAME_MANAGER->db_cache()->account_player_cache_map.insert(std::make_pair(iter->account, *iter));
 	}
-	MSG_DEBUG("load_db_cache success, role count:%d", msg.cache_vector.size());
+	MSG_DEBUG("load_db_cache success, role count:%d", msg.db_cache_vec.size());
 	return 0;
 }
 int Game_Inner_Messager::process_loaded_player_data(Block_Buffer &buf) {

@@ -17,7 +17,7 @@ void merge_same_item(const std::vector<Item_Info> &item_vec_in, std::vector<Item
 inline void bag_insert_item_to_msg(const Item_Info &item, MSG_520100 &msg) {
 	switch (item.type) {
 	default:
-		msg.item_info.push_back(item.item_basic);
+		msg.item_info_vec.push_back(item.item_basic);
 		break;
 	}
 }
@@ -28,8 +28,8 @@ inline void bag_insert_item_to_msg(const Item_Info &item, MSG_300100 &item_msg, 
 	default:
 		break;
 	}
-	item_msg.item_info.push_back(item.item_basic);
-	item_msg.item_info.rbegin()->index = new_index;
+	item_msg.item_info_vec.push_back(item.item_basic);
+	item_msg.item_info_vec.rbegin()->index = new_index;
 }
 
 void bag_merge_item_array(std::vector<Item_Info*> &item_array, Bag_Type bag_type,

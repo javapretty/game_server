@@ -5,7 +5,7 @@ struct MSG_150000 {
 };
 
 struct MSG_550000 {
-	std::vector<Player_DB_Cache> cache_vector;
+	std::vector<Player_DB_Cache> db_cache_vec;
 };
 
 /*

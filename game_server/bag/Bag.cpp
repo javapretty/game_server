@@ -197,12 +197,12 @@ int Bag::bag_add_capacity(const MSG_120101 &msg) {
 }
 
 int Bag::bag_discard_item(const MSG_120102 &msg) {
-	int result = bag_try_erase_item(msg.index);
+	int result = bag_try_erase_item(msg.item_index_vec);
 	if (result != 0) {
 		return player_->respond_error_result(RES_DISCARD_ITEM, result);
 	}
 
-	bag_erase_item(msg.index, WITHOUT_TRY);
+	bag_erase_item(msg.item_index_vec, WITHOUT_TRY);
 	player_->respond_success_result(RES_DISCARD_ITEM);
 	return 0;
 }
@@ -275,18 +275,18 @@ int Bag::bag_merge_item(const MSG_120106 &msg) {
 
 int Bag::bag_sell_item(const MSG_120107 &msg) {
 	// 若能删除，则物品存在，下面无需判断
-	int result = bag_try_erase_item(msg.index);
+	int result = bag_try_erase_item(msg.item_index_vec);
 	if (result != 0) {
 		return player_->respond_error_result(RES_SELL_ITEM, result);
 	}
 
 	std::vector<Id_Amount> id_amount_list;
 	std::vector<const Item_Info*> item_vec;
-	int item_nums = msg.index.size();
+	int item_nums = msg.item_index_vec.size();
 	id_amount_list.resize(item_nums);
 	item_vec.resize(item_nums);
 	for (int i = 0; i < item_nums; ++i) {
-		item_vec[i] = bag_get_const_item(msg.index[i]);
+		item_vec[i] = bag_get_const_item(msg.item_index_vec[i]);
 		id_amount_list[i].id = item_vec[i]->item_basic.id;
 		id_amount_list[i].amount = item_vec[i]->item_basic.amount;
 	}
@@ -298,7 +298,7 @@ int Bag::bag_sell_item(const MSG_120107 &msg) {
 	}
 
 	// 删除指定位置物品
-	bag_erase_item(msg.index, WITHOUT_TRY);
+	bag_erase_item(msg.item_index_vec, WITHOUT_TRY);
 	bag_add_money(add_info);
 
 	return player_->respond_success_result(RES_SELL_ITEM);
@@ -870,7 +870,7 @@ int Bag::bag_active_update_item_detail(const UInt_Set *changed_index) {
 		bag_get_bag_type(*index_it, type);
 		Bag_Info::Item_Map::iterator item_it = bag_info_.item_map.find(*index_it);
 		if (item_it == bag_info_.item_map.end()) {
-			erase_item_msg_map[type].erase_item_vec.push_back(*index_it);
+			erase_item_msg_map[type].item_index_vec.push_back(*index_it);
 		} else {
 			bag_insert_item_to_msg(*item_it->second, update_item_msg_map[type], update_addit_msg_map[type]);
 		}
@@ -879,7 +879,7 @@ int Bag::bag_active_update_item_detail(const UInt_Set *changed_index) {
 	Block_Buffer buf;
 	for (std::map<Bag_Type, MSG_300104>::iterator it = erase_item_msg_map.begin(); it != erase_item_msg_map.end(); ++it) {
 		buf.reset();
-		if (it->second.erase_item_vec.size() > 0) {
+		if (it->second.item_index_vec.size() > 0) {
 			it->second.serialize(buf);
 			player_->respond_success_result(ACTIVE_ITEM_ERASE, &buf);
 		}
@@ -894,7 +894,7 @@ int Bag::bag_active_update_item_detail(const UInt_Set *changed_index) {
 
 	for (std::map<Bag_Type, MSG_300100>::iterator it = update_item_msg_map.begin(); it != update_item_msg_map.end(); ++it) {
 		buf.reset();
-		if (it->second.item_info.size() > 0) {
+		if (it->second.item_info_vec.size() > 0) {
 			it->second.serialize(buf);
 			player_->respond_success_result(ACTIVE_ITEM_INFO, &buf);
 		}

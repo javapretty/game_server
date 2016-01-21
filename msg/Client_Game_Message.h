@@ -149,7 +149,7 @@ struct MSG_120101 {
 */
 struct MSG_120102 {
 
-	std::vector<uint32_t> index;/*指定格子中的物品被丢弃*/
+	std::vector<uint32_t> item_index_vec;/*指定格子中的物品被丢弃*/
 
 	MSG_120102(void);
 
@@ -237,7 +237,7 @@ struct MSG_120106 {
 */
 struct MSG_120107 {
 
-	std::vector<uint32_t> index;/*指定格子中的物品被出售*/
+	std::vector<uint32_t> item_index_vec;/*指定格子中的物品被出售*/
 
 	MSG_120107(void);
 
@@ -257,7 +257,7 @@ struct MSG_520100 {
 
 	int16_t capacity;/*背包容量*/
 
-	std::vector<Item_Basic_Info> item_info;
+	std::vector<Item_Basic_Info> item_info_vec;
 
 	MSG_520100(void);
 
@@ -435,7 +435,7 @@ struct MSG_520200 {
 */
 struct MSG_520201 {
 
-	std::vector<int32_t> pickup_mail_vec;/*成功收取附件的邮件id*/
+	std::vector<int32_t> mail_id_vec;/*成功收取附件的邮件id*/
 
 	MSG_520201(void);
 
@@ -451,7 +451,7 @@ struct MSG_520201 {
 */
 struct MSG_520202 {
 
-	std::vector<int32_t> del_mail_vec;/*删除的邮件ID数组*/
+	std::vector<int32_t> mail_id_vec;/*删除的邮件ID数组*/
 
 	MSG_520202(void);
 
