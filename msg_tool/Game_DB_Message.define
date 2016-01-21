@@ -40,3 +40,11 @@ struct MSG_150003 {
 struct MSG_550003 {
 	int64_t role_id;
 };
+
+/*
+保存邮件信息
+*/
+struct MSG_150004 {
+	int64_t role_id;
+	Mail_Detail mail_detail;
+};

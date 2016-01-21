@@ -37,4 +37,27 @@ struct Role_Fields {
 	static const std::string IP;
 };
 
+struct Mail_Fields {
+    static const std::string COLLECTION;
+    static const std::string ROLE_ID;
+    static const std::string TOTAL_COUNT;
+    static const std::string MAIL_INFO;
+
+		struct Mail_Detail {
+    	static const std::string MAIL_ID;
+    	static const std::string PICKUP;
+    	static const std::string SEND_TIME;
+		static const std::string SENDER_TYPE;
+		static const std::string SENDER_ID;
+		static const std::string SENDER_NAME;
+		static const std::string MAIL_TITLE;
+		static const std::string MAIL_CONTENT;
+		static const std::string ITEM;
+		static const std::string COPPER;
+		static const std::string BIND_COPPER;
+		static const std::string GOLD;
+		static const std::string COUPON;
+	};
+};
+
 #endif

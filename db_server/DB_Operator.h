@@ -48,6 +48,9 @@ public:
 	int save_player_info(Game_Player_Info &player_info);
 	int load_player_info(Game_Player_Info &player_info);
 
+	int load_mail_info(Mail_Info &mail_info);
+	int save_mail_info(Mail_Info &mail_info);
+
 private:
 	DB_Operator(void);
 	virtual ~DB_Operator(void);

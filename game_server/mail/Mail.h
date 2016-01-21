@@ -22,8 +22,7 @@ public:
 	int save_detail(Player_Data &data);
 	void reset(void);
 
-	const Mail_Info &mail_info(void) { return mail_info_;}
-	void set_mail_info(const Mail_Info &mail_info) { mail_info_ = mail_info; }
+	Mail_Info &mail_info(void) { return mail_info_;}
 
   int fetch_mail_info(void);
   int pickup_mail(MSG_120201 &msg);

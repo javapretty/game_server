@@ -461,17 +461,19 @@ MSG_120203::MSG_120203(void){
 }
 
 void MSG_120203::serialize(Block_Buffer & w) const {
+	w.write_string(receiver_name);
 	mail_detail.serialize(w);
 }
 
 int MSG_120203::deserialize(Block_Buffer & r) {
-	if (mail_detail.deserialize(r)){
+	if (r.read_string(receiver_name) || mail_detail.deserialize(r)){
 		return -1;
 	}
 	return 0;
 }
 
 void MSG_120203::reset(){
+	receiver_name.clear();
 	mail_detail.reset();
 }
 

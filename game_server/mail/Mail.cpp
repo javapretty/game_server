@@ -107,17 +107,17 @@ int Mail::delete_mail(MSG_120202 &msg) {
 }
 
 int Mail::send_mail(MSG_120203 &msg) {
-	role_id_t receiver_id = 0;
-	if (receiver_id == 0)
+	Game_Player *player = GAME_MANAGER->find_role_name_game_player(msg.receiver_name);
+	if (!player) {
 		return player_->respond_error_result(RES_SEND_MAIL, ERROR_ROLE_NOT_EXIST);
+	}
+	role_id_t receiver_id = player->game_player_info().role_id;
 	if (receiver_id == mail_info_.role_id)
 		return player_->respond_error_result(RES_SEND_MAIL, ERROR_CLIENT_PARAM);
 	if (msg.mail_detail.mail_title.size() > 64 || msg.mail_detail.mail_content.size() > 512)
 		return player_->respond_error_result(RES_SEND_MAIL, ERROR_CLIENT_PARAM);
 
-	std::string sender_name = player_->game_player_info().role_name;
 	std::vector<Money_Sub_Info> money_sub_list;
-	money_sub_list.push_back(Money_Sub_Info(BIND_COPPER_FIRST, 150));
 	if (msg.mail_detail.money_info.copper > 0)
 		money_sub_list.push_back(Money_Sub_Info(COPPER_ONLY, msg.mail_detail.money_info.copper));
 	if (msg.mail_detail.money_info.gold > 0)
@@ -192,31 +192,22 @@ int Mail::send_mail(role_id_t receiver_id, Mail_Detail &mail_detail) {
 		result = ERROR_CLIENT_PARAM;
 	}
 
-	Mail_Info mail_info;
-	mail_info.reset();
-	mail_info.role_id = receiver_id;
 	Game_Player *receiver = GAME_MANAGER->find_role_id_game_player(receiver_id);
 	if (receiver) {
-		mail_info = receiver->mail().mail_info();
+		Mail_Info &mail_info = receiver->mail().mail_info();
+		mail_info.total_count++;
+		mail_detail.mail_id = mail_info.total_count + 1000000;
+		mail_detail.send_time = Time_Value::gettimeofday().sec();
+		mail_info.mail_map.insert(std::make_pair(mail_detail.mail_id, mail_detail));
 
 		//邮件数量超过100，删除最后一封
-		if (mail_info.mail_map.size() >= 100) {
+		if (mail_info.mail_map.size() > 100) {
 			for (Mail_Info::Mail_Map::iterator iter = mail_info.mail_map.begin();
 					iter != mail_info.mail_map.end(); ++iter) {
 				mail_info.mail_map.erase(iter);
 				break;
 			}
 		}
-		mail_info.total_count++;
-	}
-
-	mail_detail.send_time = Time_Value::gettimeofday().sec();
-	mail_detail.mail_id = mail_info.total_count + 1000000;
-	mail_info.mail_map.insert(std::make_pair(mail_detail.mail_id, mail_detail));
-
-	//处理邮件信息
-	if (receiver) {
-		receiver->mail().set_mail_info(mail_info);
 
 		Block_Buffer buf;
 		MSG_300200 msg;
@@ -224,6 +215,15 @@ int Mail::send_mail(role_id_t receiver_id, Mail_Detail &mail_detail) {
 		msg.mail_detail_vec.push_back(mail_detail);
 		msg.serialize(buf);
 		receiver->respond_success_result(ACTIVE_RECEIVE_MAIL, &buf);
+	} else {
+		Block_Buffer buf;
+		buf.make_message(SYNC_GAME_DB_SAVE_MAIL_INFO);
+		MSG_150004 msg;
+		msg.role_id = receiver_id;
+		msg.mail_detail = mail_detail;
+		msg.serialize(buf);
+		buf.finish_message();
+		GAME_MANAGER->send_to_db(buf);
 	}
 
 	return result;

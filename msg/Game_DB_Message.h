@@ -128,6 +128,24 @@ struct MSG_550003 {
 
 	void reset(void);
 };
+/*
+
+	保存邮件信息
+*/
+struct MSG_150004 {
+
+	int64_t role_id;
+
+	Mail_Detail mail_detail;
+
+	MSG_150004(void);
+
+	void serialize(Block_Buffer & w) const;
+
+	int deserialize(Block_Buffer & r);
+
+	void reset(void);
+};
 
 
 #endif

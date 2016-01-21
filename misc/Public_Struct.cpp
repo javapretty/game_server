@@ -393,12 +393,12 @@ int Mail_Info::deserialize(Block_Buffer &buffer) {
 }
 
 int Mail_Info::load(void) {
-	return 0; //CACHED_INSTANCE->load_mail(*this);
+	return CACHED_INSTANCE->load_mail_info(*this);
 }
 
 int Mail_Info::save(void) {
 	if (is_change_)
-		return 0; //CACHED_INSTANCE->save_mail(*this);
+		return CACHED_INSTANCE->save_mail_info(*this);
 	else
 		return 0;
 }

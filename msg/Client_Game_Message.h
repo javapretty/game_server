@@ -403,6 +403,8 @@ struct MSG_120202 {
 */
 struct MSG_120203 {
 
+	std::string receiver_name;
+
 	Mail_Detail mail_detail;
 
 	MSG_120203(void);

@@ -241,9 +241,30 @@ Game_Player *Game_Manager::find_role_id_game_player(role_id_t role_id) {
 		return 0;
 }
 
+int Game_Manager::bind_role_name_game_player(std::string &role_name, Game_Player &player) {
+	if (! player_role_name_map_.insert(std::make_pair(role_name, &player)).second) {
+		MSG_USER("insert failure");
+	}
+	return 0;
+}
+
+int Game_Manager::unbind_role_name_game_player(std::string &role_name) {
+	player_role_name_map_.erase(role_name);
+	return 0;
+}
+
+Game_Player *Game_Manager::find_role_name_game_player(std::string &role_name) {
+	Game_Player_Role_Name_Map::iterator it = player_role_name_map_.find(role_name);
+	if (it != player_role_name_map_.end())
+		return it->second;
+	else
+		return 0;
+}
+
 int Game_Manager::unbind_game_player(Game_Player &player) {
 	unbind_gate_cid_game_player(player.cid_info().gate_cid, player);
 	player_role_id_map_.erase(player.game_player_info().role_id);
+	player_role_name_map_.erase(player.game_player_info().role_name);
 	return 0;
 }
 

@@ -35,6 +35,7 @@ public:
 	typedef boost::unordered_set<Game_Player* > Player_Set;
 	typedef boost::unordered_map<int, Player_Set> Game_Player_Gate_Cid_Map;
 	typedef boost::unordered_map<role_id_t, Game_Player *> Game_Player_Role_Id_Map;
+	typedef boost::unordered_map<std::string, Game_Player *> Game_Player_Role_Name_Map;
 	typedef boost::unordered_map<int, int> Msg_Count_Map;
 
 public:
@@ -84,6 +85,11 @@ public:
 	int bind_role_id_game_player(role_id_t role_id, Game_Player &player);
 	int unbind_role_id_game_player(role_id_t role_id);
 	Game_Player *find_role_id_game_player(role_id_t role_id);
+
+	int bind_role_name_game_player(std::string &role_name, Game_Player &player);
+	int unbind_role_name_game_player(std::string &role_name);
+	Game_Player *find_role_name_game_player(std::string &role_name);
+
 	int unbind_game_player(Game_Player &player);
 
 	Logining_Map &logining_map(void);
@@ -141,8 +147,9 @@ private:
 	Logining_Map logining_map_; /// 正在上线加载流程中的帐号
 	Saving_Map saving_map_; /// 正在下线保存流程中的帐号
 
-	Game_Player_Gate_Cid_Map player_gate_cid_map_; /// gatecid - Game_Player map
-	Game_Player_Role_Id_Map player_role_id_map_; /// role_id - Game_Player map
+	Game_Player_Gate_Cid_Map player_gate_cid_map_; 		/// gatecid 	- Game_Player
+	Game_Player_Role_Id_Map player_role_id_map_; 			/// role_id 	- Game_Player
+	Game_Player_Role_Name_Map player_role_name_map_;	/// role_name - Game_Player
 
 	Tick_Info tick_info_;
 

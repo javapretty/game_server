@@ -114,6 +114,7 @@ enum Game_DB_Message {
 	SYNC_GAME_DB_LOAD_PLAYER_INFO			=	150001,	//加载玩家信息
 	SYNC_GAME_DB_CREATE_PLAYER					=	150002,	//创建玩家
 	SYNC_GAME_DB_SAVE_PLAYER_INFO			= 150003,	//保存玩家信息
+	SYNC_GAME_DB_SAVE_MAIL_INFO				= 150004,	//保存邮件信息
 };
 
 enum DB_Game_Message {

@@ -88,6 +88,12 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 		process_save_player(cid, msg.player_data);
 		break;
 	}
+	case SYNC_GAME_DB_SAVE_MAIL_INFO: {
+		MSG_150004 msg;
+		msg.deserialize(*buf);
+		process_save_mail(msg);
+		break;
+	}
 	default: {
 		MSG_USER("unknown msg_id = %d.", msg_id);
 		break;
@@ -161,5 +167,25 @@ int DB_Worker::process_save_player(int cid, Player_Data &player_data) {
 	} else {
 		player_data.save();
 	}
+	return 0;
+}
+
+int DB_Worker::process_save_mail(MSG_150004 &msg) {
+	Mail_Info mail_info;
+	mail_info.role_id = msg.role_id;
+	mail_info.load();
+	mail_info.total_count++;
+	msg.mail_detail.mail_id = 1000000 + mail_info.total_count;
+	msg.mail_detail.send_time = Time_Value::gettimeofday().sec();
+	mail_info.mail_map.insert(std::make_pair(msg.mail_detail.mail_id, msg.mail_detail));
+
+	if (mail_info.mail_map.size() > 100) {
+		for (Mail_Info::Mail_Map::iterator iter = mail_info.mail_map.begin();
+				iter != mail_info.mail_map.end(); ++iter) {
+			mail_info.mail_map.erase(iter);
+			break;
+		}
+	}
+	mail_info.save();
 	return 0;
 }

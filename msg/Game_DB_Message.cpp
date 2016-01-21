@@ -160,3 +160,24 @@ int MSG_550003::deserialize(Block_Buffer & r) {
 void MSG_550003::reset(){
 	role_id = 0;
 }
+
+MSG_150004::MSG_150004(void){
+	reset();
+}
+
+void MSG_150004::serialize(Block_Buffer & w) const {
+	w.write_int64(role_id);
+	mail_detail.serialize(w);
+}
+
+int MSG_150004::deserialize(Block_Buffer & r) {
+	if (r.read_int64(role_id) || mail_detail.deserialize(r)){
+		return -1;
+	}
+	return 0;
+}
+
+void MSG_150004::reset(){
+	role_id = 0;
+	mail_detail.reset();
+}

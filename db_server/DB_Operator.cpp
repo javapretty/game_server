@@ -132,6 +132,9 @@ int DB_Operator::create_index(void) {
 		CACHED_CONNECTION.createIndex(Role_Fields::COLLECTION, BSON(Role_Fields::ACCOUNT << 1 << Role_Fields::AGENT_NUM << 1 << Role_Fields::SERVER_NUM << 1));
 		CACHED_CONNECTION.createIndex(Role_Fields::COLLECTION, BSON(Role_Fields::ACCOUNT << 1 << Role_Fields::LEVEL << -1));
 	}
+	{ // mail index
+		CACHED_CONNECTION.createIndex(Mail_Fields::COLLECTION, BSON(Mail_Fields::ROLE_ID << 1));
+	}
 	return 0;
 }
 
@@ -320,6 +323,86 @@ int DB_Operator::save_player_info(Game_Player_Info &player_info) {
 
 	CACHED_CONNECTION.update(Role_Fields::COLLECTION, MONGO_QUERY(Role_Fields::ROLE_ID << (long long int)player_info.role_id),
 			BSON("$set" << builder.obj()), true);
+
+	return 0;
+}
+
+int DB_Operator::load_mail_info(Mail_Info &mail_info) {
+	BSONObj res = CACHED_CONNECTION.findOne(Mail_Fields::COLLECTION, MONGO_QUERY(Role_Fields::ROLE_ID << (long long int)mail_info.role_id));
+	if (res.isEmpty()) {
+		return -1;
+	}
+
+	mail_info.total_count = res[Mail_Fields::TOTAL_COUNT.c_str()].numberInt();
+
+	BSONObj mail = res.getObjectField(Mail_Fields::MAIL_INFO.c_str());
+	BSONObjIterator iter(mail);
+	while (iter.more()) {
+		BSONObj obj = iter.next().embeddedObject();
+		Mail_Detail mail_detail;
+		mail_detail.mail_id = obj[Mail_Fields::Mail_Detail::MAIL_ID].numberInt();
+		mail_detail.pickup = obj[Mail_Fields::Mail_Detail::PICKUP].numberInt();
+		mail_detail.send_time = obj[Mail_Fields::Mail_Detail::SEND_TIME].numberInt();
+		mail_detail.sender_type = obj[Mail_Fields::Mail_Detail::SENDER_TYPE].numberInt();
+		mail_detail.sender_id = obj[Mail_Fields::Mail_Detail::SENDER_ID].numberLong();
+		mail_detail.sender_name = obj[Mail_Fields::Mail_Detail::SENDER_NAME].valuestrsafe();
+		mail_detail.mail_title = obj[Mail_Fields::Mail_Detail::MAIL_TITLE].valuestrsafe();
+		mail_detail.mail_content = obj[Mail_Fields::Mail_Detail::MAIL_CONTENT].valuestrsafe();
+		mail_detail.money_info.copper = obj[Mail_Fields::Mail_Detail::COPPER].numberInt();
+		mail_detail.money_info.bind_copper = obj[Mail_Fields::Mail_Detail::BIND_COPPER].numberInt();
+		mail_detail.money_info.gold = obj[Mail_Fields::Mail_Detail::GOLD].numberInt();
+		mail_detail.money_info.coupon = obj[Mail_Fields::Mail_Detail::COUPON].numberInt();
+
+		//加载附件信息
+		BSONObjIterator item_iter(obj.getObjectField(Mail_Fields::Mail_Detail::ITEM.c_str()));
+		while (item_iter.more()) {
+			BSONObj item_obj = item_iter.next().embeddedObject();
+			Item_Info item;
+			//int result = load_item_detail(item_obj, item);
+			//if (result != 0)
+			//	continue;
+			mail_detail.item_vector.push_back(item.item_basic);
+		}
+		mail_info.mail_map.insert(std::make_pair(mail_detail.mail_id, mail_detail));
+	}
+
+	return 0;
+}
+
+int DB_Operator::save_mail_info(Mail_Info &mail_info) {
+	std::vector<BSONObj> mail_vector;
+	for (Mail_Info::Mail_Map::const_iterator iter = mail_info.mail_map.begin();
+			iter != mail_info.mail_map.end(); iter++) {
+
+		std::vector<BSONObj> item_vector;
+		BSONObj obj;
+		for (std::vector<Item_Basic_Info>::const_iterator it = iter->second.item_vector.begin();
+				it != iter->second.item_vector.end(); ++it) {
+			//save_item_detail(*it, obj);
+			item_vector.push_back(obj);
+		}
+
+		mail_vector.push_back(BSON(Mail_Fields::Mail_Detail::MAIL_ID << iter->second.mail_id
+				<< Mail_Fields::Mail_Detail::PICKUP << iter->second.pickup
+				<< Mail_Fields::Mail_Detail::SEND_TIME << iter->second.send_time
+				<< Mail_Fields::Mail_Detail::SENDER_TYPE << iter->second.sender_type
+				<< Mail_Fields::Mail_Detail::SENDER_ID << (long long int)iter->second.sender_id
+				<< Mail_Fields::Mail_Detail::SENDER_NAME << iter->second.sender_name
+				<< Mail_Fields::Mail_Detail::MAIL_TITLE << iter->second.mail_title
+				<< Mail_Fields::Mail_Detail::MAIL_CONTENT << iter->second.mail_content
+				<< Mail_Fields::Mail_Detail::ITEM << item_vector
+				<< Mail_Fields::Mail_Detail::COPPER << iter->second.money_info.copper
+				<< Mail_Fields::Mail_Detail::BIND_COPPER<< iter->second.money_info.bind_copper
+				<< Mail_Fields::Mail_Detail::GOLD << iter->second.money_info.gold
+				<< Mail_Fields::Mail_Detail::COUPON << iter->second.money_info.coupon));
+	}
+
+	BSONObjBuilder set_builder;
+	set_builder << Mail_Fields::TOTAL_COUNT << mail_info.total_count
+			<< Mail_Fields::MAIL_INFO << mail_vector;
+
+	CACHED_CONNECTION.update(Mail_Fields::COLLECTION, MONGO_QUERY(Role_Fields::ROLE_ID << (long long int)mail_info.role_id),
+			BSON("$set" << set_builder.obj() ), true);
 
 	return 0;
 }

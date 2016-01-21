@@ -12,8 +12,7 @@
 #include "Thread.h"
 #include "Thread_Mutex.h"
 #include "Block_List.h"
-
-class Block_Buffer;
+#include "Msg_Define.h"
 
 class DB_Worker: public Thread {
 public:
@@ -42,6 +41,8 @@ public:
 	int process_create_player(int cid, Game_Player_Info &player_info);
 	/// 保存玩家数据
 	int process_save_player(int cid, Player_Data &player_data);
+	/// 保存邮件信息
+	int process_save_mail(MSG_150004 &msg);
 
 private:
 	Data_List data_list_;						///通用数据保存列表
