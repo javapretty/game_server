@@ -1,26 +1,39 @@
-﻿/*
- * InnerMessage.h
+/**
+ * struct Inner_Message description
  *
- *  Created on: 2015年12月23日
- *      Author: zhangyalei
+ * [This file was auto-generated. PLEASE DONT EDIT]
+ *
+ * @copyright urentech.com
+ *
  */
 
-#ifndef MSG_INNER_MESSAGE_H_
-#define MSG_INNER_MESSAGE_H_
+
+
+#ifndef INNER_MESSAGE_H_
+#define INNER_MESSAGE_H_
 
 #include <cstring>
 #include "Block_Buffer.h"
+#include "Msg_Struct.h"
+#include "Public_Struct.h"
+
 
 /*
-配制文件热更消息
+
+	配制文件热更消息
 */
 struct MSG_410001 {
-	std::string module;/**/
 
-	MSG_410001(void) ;
-	void serialize(Block_Buffer& w) const ;
-	int deserialize(Block_Buffer& r);
-	void reset(void) ;
+	std::string module;
+
+	MSG_410001(void);
+
+	void serialize(Block_Buffer & w) const;
+
+	int deserialize(Block_Buffer & r);
+
+	void reset(void);
 };
 
-#endif /* MSG_INNER_MESSAGE_H_ */
+
+#endif

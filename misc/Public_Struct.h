@@ -14,6 +14,7 @@
 #include "Object_Pool.h"
 #include "Misc.h"
 #include "Public_Define.h"
+#include "Msg_Struct.h"
 
 struct Account_Info {
 	std::string account;
@@ -163,6 +164,140 @@ struct Game_Player_Info {
 	void reset(void);
 };
 
+struct Money_Info {
+	int32_t bind_copper;
+	int32_t copper;
+	int32_t coupon;
+	int32_t gold;
+
+	// 玩家之间的交易 不含系统
+	int32_t today_gold_pay;
+	int32_t today_gold_get;
+	int32_t today_copper_pay;
+	int32_t today_copper_get;
+
+	int serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+
+	Money money(void) const;
+};
+
+const int ITEM_INDEX_GAP = 100000000;
+struct Item_Info {
+	enum Item_Type {
+		NORMAL = 0,
+		EQUIP = 1,
+	};
+
+	enum Item_Index {
+		ITEM_START = 100000000,
+		ITEM_END = 400000000,
+		EQUIP_START = 100000000,
+		EQUIP_END = 200000000,
+	};
+
+	enum Bind_Type {
+		UNBIND = 0,
+		USED_BIND = 1,
+		BIND = 2,
+		DEFINE_BY_CFG = 3
+	};
+
+	Item_Info(void);
+	explicit Item_Info(uint32_t id, int32_t amount, uint8_t bind = DEFINE_BY_CFG);
+	explicit Item_Info(const Item_Basic_Info &item);
+	virtual ~Item_Info();
+	int init();
+
+	int serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+
+	void set_basic(const uint32_t index, const uint32_t id, const int32_t amount, const uint8_t bind = DEFINE_BY_CFG);
+
+	static int is_item_type(const uint32_t item_id, Item_Type item_type);
+	static int get_item_type(const uint32_t item_id, Item_Type &item_type);
+	static int32_t get_item_stack_upper(const uint32_t item_id);
+	int get_item_remain_amount(void) {
+		return get_item_stack_upper(item_basic.id) - item_basic.amount;
+	}
+
+	friend bool operator<(const Item_Info &item1, const Item_Info &item2);
+	bool operator == (const Item_Info &cmp) const;
+
+	// 同类道具，如都是白铁剑，但绑定状态不一样
+	friend bool is_similar_item(const Item_Info &item1, const Item_Info &item2) {
+		return item1.item_basic.id == item2.item_basic.id;
+	}
+
+	// 完全相等的道具
+	friend bool is_equal_item(const Item_Info &item1, const Item_Info &item2) {
+		if (item1.item_basic.id == item2.item_basic.id && item1.item_basic.bind == item2.item_basic.bind) {
+			if (0 == memcmp(&item1.addon, &item2.addon, sizeof(Addon))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	Item_Basic_Info item_basic;
+	Item_Type type;
+	union Addon {
+	};
+	Addon addon;
+};
+
+inline std::size_t hash_value(const Item_Info &item) {
+    std::size_t seed = 0;
+    boost::hash_combine(seed, item.item_basic.id);
+    boost::hash_combine(seed, item.item_basic.bind);
+    return seed;
+}
+
+struct Bag_Info {
+	typedef std::map<uint32_t, Item_Info*> Item_Map;
+	typedef boost::unordered_map<uint32_t, Item_Info*> Item_Seq_Map;
+
+	enum {
+		PACK_MAX_CAPACITY = 210,
+		STORAGE_MAX_CAPACITY = 210,
+		PACK_INIT_CAPACITY = 56,
+		STORAGE_INIT_CAPACITY = 40,
+	};
+
+	struct Capacity {
+		uint16_t pack_cap;
+		uint16_t storage_cap;
+		const static uint16_t equip_cap;
+	};
+
+	Bag_Info();
+	int serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	int load(void);
+	int save(void);
+	void reset(void);
+
+	inline void save_tick(void) { is_change_ = true; };
+
+	Bag_Info &operator=(Bag_Info &detail);
+
+	// 仅背包内部用!!
+	void erase(uint32_t index);
+	void erase(Item_Map::iterator iter);
+	void erase(Item_Map::iterator begin, Item_Map::iterator end);
+
+	role_id_t role_id;
+	Capacity capacity;
+	Money_Info money_info;
+	Item_Map item_map;
+	Int_Int_Map money_lock_map;		// 锁定后只能加不能减少
+	Int_Int_Map item_lock_map;
+	Time_Value last_wipe_time;
+	bool is_change_;
+};
+
 struct Player_Data {
 	enum{
 		NULL_STATUS,
@@ -177,8 +312,10 @@ struct Player_Data {
 	int8_t status;
 
 	Game_Player_Info game_player_info;
+	Bag_Info bag_info;
 
 	void set_all_detail_change_state(bool is_change) {
+		bag_info.is_change_ = is_change;
 	}
 
 	void set_role_id(role_id_t p_role_id) {
@@ -189,6 +326,7 @@ struct Player_Data {
 		role_id = p_role_id;
 
 		game_player_info.role_id = p_role_id;
+		bag_info.role_id = p_role_id;
 	}
 
 	Player_Data(void);

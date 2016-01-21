@@ -97,7 +97,7 @@ int Login_Client_Messager::process_110001(int cid, int msg_id, Block_Buffer &buf
 	int status = LOGIN_MANAGER->check_account().client_login(msg.account, msg.password);
 	if (status == 0){
 		//success
-		MSG_510000 res_msg;
+		MSG_510001 res_msg;
 		res_msg.reset();
 		LOGIN_MANAGER->get_gate_ip(msg.account, res_msg.ip, res_msg.port);
 		make_session(msg.account, res_msg.session);

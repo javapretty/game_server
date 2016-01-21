@@ -7,10 +7,9 @@
 #ifndef GAME_CLIENT_MESSAGER_H_
 #define GAME_CLIENT_MESSAGER_H_
 
-#include <Msg_Define.h>
-
-class Block_Buffer;
-class Game_Player;
+#include "Msg_Define.h"
+#include "Block_Buffer.h"
+#include "Game_Player.h"
 
 class Game_Client_Messager {
 public:
@@ -18,7 +17,8 @@ public:
 
 	int process_block(Block_Buffer &buf);
 	int process_init_block(int gate_cid, int player_cid, int msg_id, Block_Buffer &buf);
-	int process_client_block(int msg_id, Block_Buffer &buf);
+	int process_client_block(int msg_id, Block_Buffer &buf, Game_Player *player);
+	int process_bag_block(int msg_id, Block_Buffer &buf, Game_Player *player);
 
 	/// 获取角色信息
 	int process_120001(int gate_cid, int player_cid, MSG_120001 &msg);

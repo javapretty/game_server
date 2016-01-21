@@ -30,7 +30,7 @@ int Game_Player::save_player_info(Player_Data &data) {
 	return 0;
 }
 
-int Game_Player::respond_finer_result(int msg_id, Block_Buffer *buf) {
+int Game_Player::respond_success_result(int msg_id, Block_Buffer *buf) {
 		return respond_error_result(msg_id, 0, buf);
 }
 
@@ -76,6 +76,7 @@ int Game_Player::sign_in(std::string account) {
 	register_timer();
 	sync_signin_to_master();
 
+	bag_.init(this);
 	return 0;
 }
 

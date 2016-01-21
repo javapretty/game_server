@@ -8,6 +8,7 @@
 #define GAME_PLAYER_H_
 
 #include "Public_Struct.h"
+#include "Bag.h"
 
 class Game_Player {
 public:
@@ -24,9 +25,9 @@ public:
 
 	role_id_t role_id(void) { return player_info_.role_id; }
 	Game_Player_Info const &game_player_info(void) const;
+	Bag& bag(void) { return bag_; }
 
-	int respond_result(int msg_id, int result, Block_Buffer *buf = 0) { return respond_error_result(msg_id, result, buf); };
-	int respond_finer_result(int msg_id, Block_Buffer *buf = 0);
+	int respond_success_result(int msg_id, Block_Buffer *buf);
 	int respond_error_result(int msg_id, int err, Block_Buffer *buf = 0);
 
 	int sign_in(std::string account);
@@ -59,6 +60,8 @@ private:
 	Game_Player_Info player_info_;
 	Recycle_Tick recycle_tick_;
 	Time_Value last_save_timestamp_;
+
+	Bag bag_;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

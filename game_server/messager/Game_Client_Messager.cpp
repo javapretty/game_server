@@ -5,7 +5,6 @@
 
 #include "Game_Client_Messager.h"
 #include "Game_Manager.h"
-#include "Game_Player.h"
 #include "Common_Func.h"
 
 Game_Client_Messager::Game_Client_Messager(void) { }
@@ -37,7 +36,8 @@ int Game_Client_Messager::process_block(Block_Buffer &buf) {
 		return process_init_block(gate_cid, player_cid, msg_id, buf);
 	}
 
-	int ret = process_client_block(msg_id, buf);
+	Game_Player *player = 0;
+	int ret = process_client_block(msg_id, buf, player);
 	if (ret) {
 		Block_Buffer msg_buf;
 		msg_buf.make_message(ACTIVE_DISCONNECT, ERROR_CLIENT_PARAM, player_cid);
@@ -70,7 +70,7 @@ int Game_Client_Messager::process_init_block(int gate_cid, int player_cid, int m
 	return ret;
 }
 
-int Game_Client_Messager::process_client_block(int msg_id, Block_Buffer &buf) {
+int Game_Client_Messager::process_client_block(int msg_id, Block_Buffer &buf, Game_Player *player) {
 	Perf_Mon perf_mon(msg_id);
 	int ret = 0;
 	switch (msg_id) {
@@ -82,6 +82,7 @@ int Game_Client_Messager::process_client_block(int msg_id, Block_Buffer &buf) {
 		break;
 	}
 	default:
+		process_bag_block(msg_id, buf, player);
 		break;
 	}
 	return ret;

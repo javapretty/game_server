@@ -1,56 +1,91 @@
-/*
- * ClientToGate.h
+/**
+ * struct Client_Gate_Message description
  *
- *  Created on: 2016年1月6日
- *      Author: zhangyalei
+ * [This file was auto-generated. PLEASE DONT EDIT]
+ *
+ * @copyright urentech.com
+ *
  */
 
-#ifndef MSG_CLIENT_GATE_MESSAGE_H_
-#define MSG_CLIENT_GATE_MESSAGE_H_
+
+
+#ifndef CLIENT_GATE_MESSAGE_H_
+#define CLIENT_GATE_MESSAGE_H_
 
 #include <cstring>
 #include "Block_Buffer.h"
+#include "Msg_Struct.h"
+#include "Public_Struct.h"
 
-//心跳
+
+/*
+
+	心跳
+*/
 struct MSG_111000 {
+
 	int32_t client_time;
 
 	MSG_111000(void);
-	void serialize(Block_Buffer& w) const;
-	int deserialize(Block_Buffer& r);
+
+	void serialize(Block_Buffer & w) const;
+
+	int deserialize(Block_Buffer & r);
+
 	void reset(void);
 };
+/*
 
-//心跳(返回)
+	心跳(返回)
+*/
 struct MSG_511000 {
+
 	int32_t client_time;
+
 	int32_t server_time;
 
-	MSG_511000(void) ;
-	void serialize(Block_Buffer& w) const;
-	int deserialize(Block_Buffer& r);
+	MSG_511000(void);
+
+	void serialize(Block_Buffer & w) const;
+
+	int deserialize(Block_Buffer & r);
+
 	void reset(void);
 };
+/*
 
-//客户端登录消息
+	客户端登录消息
+*/
 struct MSG_111001 {
+
 	std::string account;
-	std::string session;		//登录验证的seesion
+
+	std::string session; //登录验证的seesion
 
 	MSG_111001(void);
-	void serialize(Block_Buffer& w) const;
-	int deserialize(Block_Buffer& r);
+
+	void serialize(Block_Buffer & w) const;
+
+	int deserialize(Block_Buffer & r);
+
 	void reset(void);
 };
+/*
 
-//客户端登录消息(返回)
+	客户端登录消息(返回)
+*/
 struct MSG_511001 {
+
 	std::string account;
 
-	MSG_511001(void) ;
-	void serialize(Block_Buffer& w) const;
-	int deserialize(Block_Buffer& r);
+	MSG_511001(void);
+
+	void serialize(Block_Buffer & w) const;
+
+	int deserialize(Block_Buffer & r);
+
 	void reset(void);
 };
 
-#endif /* MSG_CLIENT_GATE_MESSAGE_H_ */
+
+#endif
