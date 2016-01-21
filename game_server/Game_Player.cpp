@@ -77,6 +77,7 @@ int Game_Player::sign_in(std::string account) {
 	sync_signin_to_master();
 
 	bag_.init(this);
+	mail_.init(this);
 	return 0;
 }
 

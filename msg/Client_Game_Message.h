@@ -15,8 +15,6 @@
 #include <cstring>
 #include "Block_Buffer.h"
 #include "Msg_Struct.h"
-
-
 /*
 
 	获取角色信息
@@ -115,7 +113,7 @@ struct MSG_520002 {
 */
 struct MSG_120100 {
 
-	uint32_t bag_type;/*背包类型 背包：20000 仓库：30000*/
+	uint32_t bag_type;/*背包类型 背包：10000 仓库：20000*/
 
 	MSG_120100(void);
 
@@ -133,7 +131,7 @@ struct MSG_120101 {
 
 	uint8_t pay_type;/*0 包裹，1 超级包裹 2 礼券 3元宝*/
 
-	uint32_t bag_type;/*背包类型 背包：20000 仓库：30000 元神装备:320000 元神背包:330000*/
+	uint32_t bag_type;/*背包类型 背包：10000 仓库：20000*/
 
 	uint16_t add_capacity;/*请求扩大的容量*/
 
@@ -203,7 +201,7 @@ struct MSG_120104 {
 */
 struct MSG_120105 {
 
-	uint32_t bag_type;/*背包:20000 仓库:30000*/
+	uint32_t bag_type;/*背包:10000 仓库:20000*/
 
 	MSG_120105(void);
 
@@ -346,6 +344,130 @@ struct MSG_520106 {
 struct MSG_520107 {
 
 	MSG_520107(void);
+
+	void serialize(Block_Buffer & w) const;
+
+	int deserialize(Block_Buffer & r);
+
+	void reset(void);
+};
+/*
+
+	获取邮件信息
+*/
+struct MSG_120200 {
+
+	MSG_120200(void);
+
+	void serialize(Block_Buffer & w) const;
+
+	int deserialize(Block_Buffer & r);
+
+	void reset(void);
+};
+/*
+
+	收取附件
+*/
+struct MSG_120201 {
+
+	int32_t mail_id; /*邮件ID,收取所有邮件附件时候id为0*/
+
+	MSG_120201(void);
+
+	void serialize(Block_Buffer & w) const;
+
+	int deserialize(Block_Buffer & r);
+
+	void reset(void);
+};
+/*
+
+	删除邮件
+*/
+struct MSG_120202 {
+
+	int32_t mail_id;/*邮件ID,删除所有邮件时候id为0*/
+
+	MSG_120202(void);
+
+	void serialize(Block_Buffer & w) const;
+
+	int deserialize(Block_Buffer & r);
+
+	void reset(void);
+};
+/*
+
+	发送邮件
+*/
+struct MSG_120203 {
+
+	Mail_Detail mail_detail;
+
+	MSG_120203(void);
+
+	void serialize(Block_Buffer & w) const;
+
+	int deserialize(Block_Buffer & r);
+
+	void reset(void);
+};
+/*
+
+	获取邮件列表(返回)
+*/
+struct MSG_520200 {
+
+	std::vector<Mail_Detail> mail_detail_vec;
+
+	MSG_520200(void);
+
+	void serialize(Block_Buffer & w) const;
+
+	int deserialize(Block_Buffer & r);
+
+	void reset(void);
+};
+/*
+
+	收取附件(返回)
+*/
+struct MSG_520201 {
+
+	std::vector<int32_t> pickup_mail_vec;/*成功收取附件的邮件id*/
+
+	MSG_520201(void);
+
+	void serialize(Block_Buffer & w) const;
+
+	int deserialize(Block_Buffer & r);
+
+	void reset(void);
+};
+/*
+
+	删除邮件(返回)
+*/
+struct MSG_520202 {
+
+	std::vector<int32_t> del_mail_vec;/*删除的邮件ID数组*/
+
+	MSG_520202(void);
+
+	void serialize(Block_Buffer & w) const;
+
+	int deserialize(Block_Buffer & r);
+
+	void reset(void);
+};
+/*
+
+	发送邮件(返回)
+*/
+struct MSG_520203 {
+
+	MSG_520203(void);
 
 	void serialize(Block_Buffer & w) const;
 

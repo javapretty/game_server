@@ -15,8 +15,6 @@
 #include <cstring>
 #include "Block_Buffer.h"
 #include "Msg_Struct.h"
-
-
 /*
 
 	注册请求

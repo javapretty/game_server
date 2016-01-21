@@ -403,3 +403,184 @@ int MSG_520107::deserialize(Block_Buffer & r) {
 
 void MSG_520107::reset(){
 }
+
+MSG_120200::MSG_120200(void){
+	reset();
+}
+
+void MSG_120200::serialize(Block_Buffer & w) const {
+}
+
+int MSG_120200::deserialize(Block_Buffer & r) {
+	return 0;
+}
+
+void MSG_120200::reset(){
+}
+
+MSG_120201::MSG_120201(void){
+	reset();
+}
+
+void MSG_120201::serialize(Block_Buffer & w) const {
+	w.write_int32(mail_id);
+}
+
+int MSG_120201::deserialize(Block_Buffer & r) {
+	if (r.read_int32(mail_id)){
+		return -1;
+	}
+	return 0;
+}
+
+void MSG_120201::reset(){
+	mail_id = 0;
+}
+
+MSG_120202::MSG_120202(void){
+	reset();
+}
+
+void MSG_120202::serialize(Block_Buffer & w) const {
+	w.write_int32(mail_id);
+}
+
+int MSG_120202::deserialize(Block_Buffer & r) {
+	if (r.read_int32(mail_id)){
+		return -1;
+	}
+	return 0;
+}
+
+void MSG_120202::reset(){
+	mail_id = 0;
+}
+
+MSG_120203::MSG_120203(void){
+	reset();
+}
+
+void MSG_120203::serialize(Block_Buffer & w) const {
+	mail_detail.serialize(w);
+}
+
+int MSG_120203::deserialize(Block_Buffer & r) {
+	if (mail_detail.deserialize(r)){
+		return -1;
+	}
+	return 0;
+}
+
+void MSG_120203::reset(){
+	mail_detail.reset();
+}
+
+MSG_520200::MSG_520200(void){
+	reset();
+}
+
+void MSG_520200::serialize(Block_Buffer & w) const {
+	uint16_t __mail_detail_vec_vec_size = mail_detail_vec.size();
+	w.write_uint16(__mail_detail_vec_vec_size);
+	for(uint16_t i = 0; i < __mail_detail_vec_vec_size; ++i) {
+		mail_detail_vec[i].serialize(w);
+	}
+
+}
+
+int MSG_520200::deserialize(Block_Buffer & r) {
+	uint16_t __mail_detail_vec_vec_size;
+	if(r.read_uint16(__mail_detail_vec_vec_size)  )
+		return -1;
+	mail_detail_vec.reserve(__mail_detail_vec_vec_size);
+	for(uint16_t i = 0; i < __mail_detail_vec_vec_size; ++i) {
+		Mail_Detail v;
+		if(v.deserialize(r))
+			return -1;
+		mail_detail_vec.push_back(v);
+	}
+
+	return 0;
+}
+
+void MSG_520200::reset(){
+	mail_detail_vec.clear();
+}
+
+MSG_520201::MSG_520201(void){
+	reset();
+}
+
+void MSG_520201::serialize(Block_Buffer & w) const {
+	uint16_t __pickup_mail_vec_vec_size = pickup_mail_vec.size();
+	w.write_uint16(__pickup_mail_vec_vec_size);
+	for(uint16_t i = 0; i < __pickup_mail_vec_vec_size; ++i) {
+		w.write_int32(pickup_mail_vec[i]);
+	}
+
+}
+
+int MSG_520201::deserialize(Block_Buffer & r) {
+	uint16_t __pickup_mail_vec_vec_size;
+	if(r.read_uint16(__pickup_mail_vec_vec_size) )
+		return -1;
+	pickup_mail_vec.reserve(__pickup_mail_vec_vec_size);
+	for(uint16_t i = 0; i < __pickup_mail_vec_vec_size; ++i) {
+		int32_t v;
+		if(r.read_int32(v) )
+			return -1;
+		pickup_mail_vec.push_back(v);
+	}
+
+	return 0;
+}
+
+void MSG_520201::reset(){
+	pickup_mail_vec.clear();
+}
+
+MSG_520202::MSG_520202(void){
+	reset();
+}
+
+void MSG_520202::serialize(Block_Buffer & w) const {
+	uint16_t __del_mail_vec_vec_size = del_mail_vec.size();
+	w.write_uint16(__del_mail_vec_vec_size);
+	for(uint16_t i = 0; i < __del_mail_vec_vec_size; ++i) {
+		w.write_int32(del_mail_vec[i]);
+	}
+
+}
+
+int MSG_520202::deserialize(Block_Buffer & r) {
+	uint16_t __del_mail_vec_vec_size;
+	if(r.read_uint16(__del_mail_vec_vec_size) )
+		return -1;
+	del_mail_vec.reserve(__del_mail_vec_vec_size);
+	for(uint16_t i = 0; i < __del_mail_vec_vec_size; ++i) {
+		int32_t v;
+		if(r.read_int32(v) )
+			return -1;
+		del_mail_vec.push_back(v);
+	}
+
+	return 0;
+}
+
+void MSG_520202::reset(){
+	del_mail_vec.clear();
+}
+
+MSG_520203::MSG_520203(void){
+	reset();
+}
+
+void MSG_520203::serialize(Block_Buffer & w) const {
+}
+
+int MSG_520203::deserialize(Block_Buffer & r) {
+	return 0;
+}
+
+void MSG_520203::reset(){
+}

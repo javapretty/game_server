@@ -137,41 +137,6 @@ void Game_Player_Info::reset(void) {
 	ip.clear();
 }
 
-Money_Info::Money_Info(void) { reset(); }
-
-int Money_Info::serialize(Block_Buffer &buffer) const {
-	buffer.write_int32(bind_copper);
-	buffer.write_int32(copper);
-	buffer.write_int32(coupon);
-	buffer.write_int32(gold);
-	return 0;
-}
-
-int Money_Info::deserialize(Block_Buffer &buffer) {
-	buffer.read_int32(bind_copper);
-	buffer.read_int32(copper);
-	buffer.read_int32(coupon);
-	buffer.read_int32(gold);
-	return 0;
-}
-
-void Money_Info::reset(void) {
-	bind_copper = 0;
-	copper = 0;
-	coupon = 0;
-	gold = 0;
-}
-
-Money Money_Info::money(void) const {
-	Money money;
-	money.bind_copper = bind_copper;
-	money.copper = copper;
-	money.coupon = coupon;
-	money.gold = gold;
-
-	return money;
-}
-
 Item_Info::Item_Info(void) {
 	reset();
 }
@@ -395,6 +360,56 @@ void Bag_Info::erase(Item_Map::iterator begin, Item_Map::iterator end) {
 	}
 }
 
+Mail_Info::Mail_Info() { reset(); }
+
+int Mail_Info::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(role_id);
+	buffer.write_int32(total_count);
+
+	buffer.write_int16(mail_map.size());
+	for(Mail_Map::const_iterator it = mail_map.begin();
+			it != mail_map.end(); ++it) {
+		it->second.serialize(buffer);
+	}
+
+	buffer.write_int8((int8_t)is_change_);
+	return 0;
+}
+
+int Mail_Info::deserialize(Block_Buffer &buffer) {
+	buffer.read_int64(role_id);
+	buffer.read_int32(total_count);
+
+	int16_t n = 0;
+	buffer.read_int16(n);
+	Mail_Detail mail_detail;
+	for (int16_t i = 0; i < n; ++i) {
+		mail_detail.deserialize(buffer);
+		mail_map.insert(std::make_pair(mail_detail.mail_id, mail_detail));
+	}
+
+	buffer.read_int8((int8_t &)is_change_);
+	return 0;
+}
+
+int Mail_Info::load(void) {
+	return 0; //CACHED_INSTANCE->load_mail(*this);
+}
+
+int Mail_Info::save(void) {
+	if (is_change_)
+		return 0; //CACHED_INSTANCE->save_mail(*this);
+	else
+		return 0;
+}
+
+void Mail_Info::reset(void) {
+	role_id = 0;
+	total_count = 0;
+	mail_map.clear();
+	is_change_ = false;
+}
+
 Player_Data::Player_Data(void) { reset(); }
 
 int Player_Data::serialize(Block_Buffer &buffer) const {
@@ -403,6 +418,7 @@ int Player_Data::serialize(Block_Buffer &buffer) const {
 
 	game_player_info.serialize(buffer);
 	bag_info.serialize(buffer);
+	mail_info.serialize(buffer);
 	return 0;
 }
 
@@ -412,6 +428,7 @@ int Player_Data::deserialize(Block_Buffer &buffer) {
 
 	game_player_info.deserialize(buffer);
 	bag_info.deserialize(buffer);
+	mail_info.deserialize(buffer);
 	return 0;
 }
 
@@ -419,12 +436,14 @@ int Player_Data::load() {
 	game_player_info.role_id = role_id;
 	game_player_info.load();
 	bag_info.load();
+	mail_info.load();
 	return 0;
 }
 
 int Player_Data::save(void) {
 	game_player_info.save();
 	bag_info.save();
+	mail_info.save();
 	return 0;
 }
 
@@ -434,6 +453,7 @@ void Player_Data::reset(void) {
 
 	game_player_info.reset();
 	bag_info.reset();
+	mail_info.reset();
 }
 
 int Player_DB_Cache::serialize(Block_Buffer &buffer) const {

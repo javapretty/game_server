@@ -7,6 +7,7 @@
 #ifndef GAME_PLAYER_H_
 #define GAME_PLAYER_H_
 
+#include <mail/Mail.h>
 #include "Public_Struct.h"
 #include "Bag.h"
 
@@ -23,12 +24,12 @@ public:
 	void set_cid_info(Cid_Info &cid_info);
 	Cid_Info &cid_info(void);
 
-	role_id_t role_id(void) { return player_info_.role_id; }
+	int respond_success_result(int msg_id, Block_Buffer *buf = 0);
+	int respond_error_result(int msg_id, int err, Block_Buffer *buf = 0);
+
 	Game_Player_Info const &game_player_info(void) const;
 	Bag& bag(void) { return bag_; }
-
-	int respond_success_result(int msg_id, Block_Buffer *buf);
-	int respond_error_result(int msg_id, int err, Block_Buffer *buf = 0);
+	Mail& mail(void) { return mail_; }
 
 	int sign_in(std::string account);
 	int sign_out(void);
@@ -62,6 +63,7 @@ private:
 	Time_Value last_save_timestamp_;
 
 	Bag bag_;
+	Mail mail_;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

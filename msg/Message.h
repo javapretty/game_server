@@ -74,10 +74,13 @@ enum Client_Game_Message {
 	REQ_MOVE_ITEM 										= 120103,	//移动物品
 	REQ_SPLIT_ITEM 										= 120104,	//拆分物品
 	REQ_SORT_ITEM 										= 120105,	//整理物品
-	REQ_USE_ITEM 											= 120106,	//使用指定位置的物品
-	REQ_USE_GIFT 											= 120107,	//使用指定型礼包
-	REQ_MERGE_ITEM 										= 120108,	//合并物品
-	REQ_SELL_ITEM 										= 120109,	//出售物品
+	REQ_MERGE_ITEM 										= 120106,	//合并物品
+	REQ_SELL_ITEM 										= 120107,	//出售物品
+
+	REQ_FETCH_MAIL_INFO 							= 120200,	//获取邮件信息
+	REQ_PICKUP_MAIL 									= 120201,	//收取附件和金钱
+	REQ_DEL_MAIL 											= 120202,	//删除邮件
+	REQ_SEND_MAIL 										= 120203,	//发送邮件
 };
 
 enum Game_Client_Message {
@@ -90,10 +93,13 @@ enum Game_Client_Message {
 	RES_MOVE_ITEM 										= 520103,	//移动物品(返回)
 	RES_SPLIT_ITEM 										= 520104,	//拆分物品(返回)
 	RES_SORT_ITEM 										= 520105,	//整理物品(返回)
-	RES_USE_ITEM 											= 520106,	//使用指定位置的物品(返回)
-	RES_USE_GIFT 											= 520107,	//使用指定型礼包(返回)
-	RES_MERGE_ITEM 										= 520108,	//合并物品(返回)
-	RES_SELL_ITEM 										= 520109,	//出售物品(返回)
+	RES_MERGE_ITEM 										= 520106,	//合并物品(返回)
+	RES_SELL_ITEM 										= 520107,	//出售物品(返回)
+
+	RES_FETCH_MAIL_INFO								= 520200,	//获取邮件信息(返回)
+	RES_PICKUP_MAIL 									=	520201,	//收取附件(返回)
+	RES_DEL_MAIL 											= 520202,	//删除邮件(返回)
+	RES_SEND_MAIL 										= 520203,	//发送邮件(返回)
 };
 
 //此次包含login,game,chat,master与gate通信的消息
@@ -140,6 +146,8 @@ enum Active_Message{
 	ACTIVE_BAG_CAPACITY 							= 300102,	//背包容量改变
 	ACTIVE_MONEY_INFO 								= 300103,	//金钱更新
 	ACTIVE_ITEM_ERASE 								= 300104,	//物品删除
+
+	ACTIVE_RECEIVE_MAIL 							= 300200,	//收到邮件
 };
 
 enum Inner_Message{

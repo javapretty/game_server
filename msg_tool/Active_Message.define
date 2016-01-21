@@ -13,14 +13,14 @@ struct MSG_300100 {
 物品附加信息更新
 */
 struct MSG_300101 {
-	int8_t type;/*0:背包 1:商店 2:交易市场 3:邮件附件 4:交易系统*/
+	int8_t type;/*0:背包*/
 }
 
 /*
 背包容量改变
 */
 struct MSG_300102 {
-	int32_t type;/*区分背包、仓库......使用index的起始值。如PACKAGE_INDEX = 20000*/
+	int32_t type;/*区分背包、仓库使用index的起始值。如PACKAGE_INDEX = 10000*/
 	int16_t capacity;/*当前容量*/
 };
 
@@ -28,7 +28,7 @@ struct MSG_300102 {
 金钱更新
 */
 struct MSG_300103 {
-	Money money;
+	Money_Info money_info;
 };
 
 /*
@@ -36,5 +36,12 @@ struct MSG_300103 {
 备注：在某个格子中的物品全部被删除才会发送这条消息，若格子中还剩余物品，物品信息会在背包物品更新消息中发送。
 */
 struct MSG_300104 {
-	std::vector<uint32_t> item_erased;/*被删除的物品位置*/
+	std::vector<uint32_t> erase_item_vec;/*被删除的物品位置*/
+};
+
+/*
+收到邮件通知
+*/
+struct MSG_300200 {
+	std::vector<Mail_Detail> mail_detail_vec;
 };

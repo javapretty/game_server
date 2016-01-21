@@ -44,7 +44,7 @@ struct MSG_520002 {
 2、更新物品
 */
 struct MSG_120100 {
-	uint32_t bag_type;/*背包类型 背包：20000 仓库：30000*/
+	uint32_t bag_type;/*背包类型 背包：10000 仓库：20000*/
 };
 
 /*
@@ -102,7 +102,6 @@ struct MSG_120107 {
 	std::vector<uint32_t> index;/*指定格子中的物品被出售*/
 };
 
-
 /*
 获取背包信息(返回)
 */
@@ -146,4 +145,59 @@ struct MSG_520106 {
 请求出售物品(返回)
 */
 struct MSG_520107 {
+};
+
+/*
+获取邮件信息
+*/
+struct MSG_120200 {
+};
+
+/*
+收取附件
+*/
+struct MSG_120201 {
+	int32_t mail_id;	/*邮件ID,收取所有邮件附件时候id为0*/
+};
+
+/*
+删除邮件
+*/
+struct MSG_120202 {
+	int32_t mail_id;/*邮件ID,删除所有邮件时候id为0*/
+};
+
+/*
+发送邮件
+*/
+struct MSG_120203 {
+	Mail_Detail mail_detail;
+};
+
+/*
+获取邮件列表(返回)
+*/
+struct MSG_520200 {
+	std::vector<Mail_Detail> mail_detail_vec;
+};
+
+/*
+收取附件(返回)
+*/
+struct MSG_520201 {
+	std::vector<int32_t> pickup_mail_vec;/*成功收取附件的邮件id*/
+};
+
+
+/*
+删除邮件(返回)
+*/
+struct MSG_520202 {
+	std::vector<int32_t> del_mail_vec;/*删除的邮件ID数组*/
+};
+
+/*
+发送邮件(返回)
+*/
+struct MSG_520203 {
 };

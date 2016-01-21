@@ -14,8 +14,6 @@
 
 #include <cstring>
 #include "Block_Buffer.h"
-
-
 /*
 
 	角色信息
@@ -72,7 +70,7 @@ struct Item_Basic_Info {
 
 	void reset(void);
 };
-struct Money {
+struct Money_Info {
 
 	int32_t bind_copper;/*绑定铜钱*/
 
@@ -82,7 +80,37 @@ struct Money {
 
 	int32_t gold;/*元宝*/
 
-	Money(void);
+	Money_Info(void);
+
+	void serialize(Block_Buffer & w) const;
+
+	int deserialize(Block_Buffer & r);
+
+	void reset(void);
+};
+struct Mail_Detail {
+
+	int32_t mail_id; //邮件id
+
+	int8_t pickup; //是否收取过附件
+
+	int32_t send_time; //发邮件时间
+
+	int32_t sender_type; //发件人类型
+
+	int64_t sender_id; //发件人id
+
+	std::string sender_name; //发件人名字
+
+	std::string mail_title; //邮件标题
+
+	std::string mail_content; //邮件内容
+
+	Money_Info money_info; //金钱信息
+
+	std::vector<Item_Basic_Info> item_vector; //物品信息
+
+	Mail_Detail(void);
 
 	void serialize(Block_Buffer & w) const;
 

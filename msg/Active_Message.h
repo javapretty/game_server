@@ -15,8 +15,6 @@
 #include <cstring>
 #include "Block_Buffer.h"
 #include "Msg_Struct.h"
-
-
 struct MSG_300000 {
 
 	MSG_300000(void);
@@ -51,7 +49,7 @@ struct MSG_300100 {
 */
 struct MSG_300101 {
 
-	int8_t type;/*0:背包 1:商店 2:交易市场 3:邮件附件 4:交易系统*/
+	int8_t type;/*0:背包*/
 
 	MSG_300101(void);
 
@@ -67,7 +65,7 @@ struct MSG_300101 {
 */
 struct MSG_300102 {
 
-	int32_t type;/*区分背包、仓库......使用index的起始值。如PACKAGE_INDEX = 20000*/
+	int32_t type;/*区分背包、仓库使用index的起始值。如PACKAGE_INDEX = 10000*/
 
 	int16_t capacity;/*当前容量*/
 
@@ -85,7 +83,7 @@ struct MSG_300102 {
 */
 struct MSG_300103 {
 
-	Money money;
+	Money_Info money_info;
 
 	MSG_300103(void);
 
@@ -103,9 +101,25 @@ struct MSG_300103 {
 */
 struct MSG_300104 {
 
-	std::vector<uint32_t> item_erased;/*被删除的物品位置*/
+	std::vector<uint32_t> erase_item_vec;/*被删除的物品位置*/
 
 	MSG_300104(void);
+
+	void serialize(Block_Buffer & w) const;
+
+	int deserialize(Block_Buffer & r);
+
+	void reset(void);
+};
+/*
+
+	收到邮件通知
+*/
+struct MSG_300200 {
+
+	std::vector<Mail_Detail> mail_detail_vec;
+
+	MSG_300200(void);
 
 	void serialize(Block_Buffer & w) const;
 

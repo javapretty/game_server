@@ -8,7 +8,6 @@
 #ifndef PACKER_STRUCT_H_
 #define PACKER_STRUCT_H_
 
-#include "Bag_Def.h"
 #include "Public_Struct.h"
 
 struct Id_Amount {

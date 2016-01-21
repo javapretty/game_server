@@ -216,7 +216,7 @@ int Game_Manager::unbind_gate_cid_game_player(int gate_cid, Game_Player &player)
 	if (iter != player_gate_cid_map_.end()) {
 		iter->second.erase(&player);
 	} else {
-		MSG_USER("unbind_gatecid_game_player wrong, gate_cid=%d, role_id=%ld", gate_cid, player.role_id());
+		MSG_USER("unbind_gatecid_game_player wrong, gate_cid=%d, role_id=%ld", gate_cid, player.game_player_info().role_id);
 	}
 	return 0;
 }

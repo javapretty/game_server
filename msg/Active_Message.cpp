@@ -92,18 +92,18 @@ MSG_300103::MSG_300103(void){
 }
 
 void MSG_300103::serialize(Block_Buffer & w) const {
-	money.serialize(w);
+	money_info.serialize(w);
 }
 
 int MSG_300103::deserialize(Block_Buffer & r) {
-	if (money.deserialize(r)){
+	if (money_info.deserialize(r)){
 		return -1;
 	}
 	return 0;
 }
 
 void MSG_300103::reset(){
-	money.reset();
+	money_info.reset();
 }
 
 MSG_300104::MSG_300104(void){
@@ -111,29 +111,61 @@ MSG_300104::MSG_300104(void){
 }
 
 void MSG_300104::serialize(Block_Buffer & w) const {
-	uint16_t __item_erased_vec_size = item_erased.size();
-	w.write_uint16(__item_erased_vec_size);
-	for(uint16_t i = 0; i < __item_erased_vec_size; ++i) {
-		w.write_int32(item_erased[i]);
+	uint16_t __erase_item_vec_vec_size = erase_item_vec.size();
+	w.write_uint16(__erase_item_vec_vec_size);
+	for(uint16_t i = 0; i < __erase_item_vec_vec_size; ++i) {
+		w.write_int32(erase_item_vec[i]);
 	}
 
 }
 
 int MSG_300104::deserialize(Block_Buffer & r) {
-	uint16_t __item_erased_vec_size;
-	if(r.read_uint16(__item_erased_vec_size) )
+	uint16_t __erase_item_vec_vec_size;
+	if(r.read_uint16(__erase_item_vec_vec_size) )
 		return -1;
-	item_erased.reserve(__item_erased_vec_size);
-	for(uint16_t i = 0; i < __item_erased_vec_size; ++i) {
+	erase_item_vec.reserve(__erase_item_vec_vec_size);
+	for(uint16_t i = 0; i < __erase_item_vec_vec_size; ++i) {
 		int32_t v;
 		if(r.read_int32(v) )
 			return -1;
-		item_erased.push_back(v);
+		erase_item_vec.push_back(v);
 	}
 
 	return 0;
 }
 
 void MSG_300104::reset(){
-	item_erased.clear();
+	erase_item_vec.clear();
+}
+
+MSG_300200::MSG_300200(void){
+	reset();
+}
+
+void MSG_300200::serialize(Block_Buffer & w) const {
+	uint16_t __mail_detail_vec_vec_size = mail_detail_vec.size();
+	w.write_uint16(__mail_detail_vec_vec_size);
+	for(uint16_t i = 0; i < __mail_detail_vec_vec_size; ++i) {
+		mail_detail_vec[i].serialize(w);
+	}
+
+}
+
+int MSG_300200::deserialize(Block_Buffer & r) {
+	uint16_t __mail_detail_vec_vec_size;
+	if(r.read_uint16(__mail_detail_vec_vec_size)  )
+		return -1;
+	mail_detail_vec.reserve(__mail_detail_vec_vec_size);
+	for(uint16_t i = 0; i < __mail_detail_vec_vec_size; ++i) {
+		Mail_Detail v;
+		if(v.deserialize(r))
+			return -1;
+		mail_detail_vec.push_back(v);
+	}
+
+	return 0;
+}
+
+void MSG_300200::reset(){
+	mail_detail_vec.clear();
 }

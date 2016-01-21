@@ -8,7 +8,6 @@
 #ifndef BAG_FUNC_H_
 #define BAG_FUNC_H_
 
-#include "Bag_Def.h"
 #include "Bag_Struct.h"
 #include "Msg_Define.h"
 
@@ -73,8 +72,5 @@ inline int get_full_error_code(const Bag_Type bag_type) {
 		return ERROR_SERVER_INNER;
 	}
 }
-
-bool is_need_trade_pay_limit(const Money_Sub_Info &info);
-bool is_need_trade_get_limit(const Money_Add_Info &info);
 
 #endif /* BAG_FUNC_H_ */

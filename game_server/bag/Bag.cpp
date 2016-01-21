@@ -79,7 +79,7 @@ int Bag::bag_fetch_bag_info(const MSG_120100 &msg) {
 
 int Bag::bag_add_capacity(const MSG_120101 &msg) {
 	if (msg.add_capacity <= 0) {
-		return player_->respond_success_result(RES_ADD_CAPACITY, NULL);
+		return player_->respond_success_result(RES_ADD_CAPACITY);
 	}
 	int add = 0;
 	int price = 0;
@@ -203,7 +203,7 @@ int Bag::bag_discard_item(const MSG_120102 &msg) {
 	}
 
 	bag_erase_item(msg.index, WITHOUT_TRY);
-	player_->respond_success_result(RES_DISCARD_ITEM, NULL);
+	player_->respond_success_result(RES_DISCARD_ITEM);
 	return 0;
 }
 
@@ -301,7 +301,7 @@ int Bag::bag_sell_item(const MSG_120107 &msg) {
 	bag_erase_item(msg.index, WITHOUT_TRY);
 	bag_add_money(add_info);
 
-	return player_->respond_success_result(RES_SELL_ITEM, NULL);
+	return player_->respond_success_result(RES_SELL_ITEM);
 }
 
 struct Item_Detail_PtrLess {
@@ -849,12 +849,11 @@ int Bag::bag_active_update_capacity(const Bag_Type bag_type) {
 int Bag::bag_active_update_money(void) {
 	Block_Buffer buf;
 	MSG_300103 msg;
-	msg.money = bag_info_.money_info.money();
+	msg.money_info = bag_info_.money_info;
 	msg.serialize(buf);
 	player_->respond_success_result(ACTIVE_MONEY_INFO, &buf);
 
-	bag_info_.save_tick();
-
+	bag_info_.save_change();
 	return 0;
 }
 
@@ -871,7 +870,7 @@ int Bag::bag_active_update_item_detail(const UInt_Set *changed_index) {
 		bag_get_bag_type(*index_it, type);
 		Bag_Info::Item_Map::iterator item_it = bag_info_.item_map.find(*index_it);
 		if (item_it == bag_info_.item_map.end()) {
-			erase_item_msg_map[type].item_erased.push_back(*index_it);
+			erase_item_msg_map[type].erase_item_vec.push_back(*index_it);
 		} else {
 			bag_insert_item_to_msg(*item_it->second, update_item_msg_map[type], update_addit_msg_map[type]);
 		}
@@ -880,7 +879,7 @@ int Bag::bag_active_update_item_detail(const UInt_Set *changed_index) {
 	Block_Buffer buf;
 	for (std::map<Bag_Type, MSG_300104>::iterator it = erase_item_msg_map.begin(); it != erase_item_msg_map.end(); ++it) {
 		buf.reset();
-		if (it->second.item_erased.size() > 0) {
+		if (it->second.erase_item_vec.size() > 0) {
 			it->second.serialize(buf);
 			player_->respond_success_result(ACTIVE_ITEM_ERASE, &buf);
 		}
@@ -901,7 +900,7 @@ int Bag::bag_active_update_item_detail(const UInt_Set *changed_index) {
 		}
 	}
 
-	bag_info_.save_tick();
+	bag_info_.save_change();
 
 	return 0;
 }
