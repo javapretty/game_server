@@ -28,15 +28,18 @@ do
 	echo -e "#include <cstring>" >> ${_DST_FILE_H_}
 	echo -e "#include \"Block_Buffer.h\"" >> ${_DST_FILE_H_}
 	
+	if [ "${_FILE_NAME_}" != "Msg_Struct.define" ];then
+		echo -e "#include \"Msg_Struct.h\"" >> ${_DST_FILE_H_}
+	fi
+	
 	for var in ${_FILE_ARRAY_[@]};
 	do
 		if [ "${_FILE_NAME_}" =  "${var}" ];then
-			echo -e "#include \"Msg_Struct.h\"" >> ${_DST_FILE_H_}
+			echo -e "#include \"Public_Struct.h\"\n\n" >> ${_DST_FILE_H_}
 			break
 		fi
 	done
 	
-	echo -e "#include \"Public_Struct.h\"\n\n" >> ${_DST_FILE_H_}
 	echo -e "#include \"${_DST_FILE_H_}\"\n" > $_DST_FILE_C_
 	
 	./gen_msg.sh $_FILE_NAME_ $_DST_FILE_H_ $_DST_FILE_C_
