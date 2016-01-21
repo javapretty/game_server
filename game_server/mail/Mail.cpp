@@ -9,7 +9,6 @@
 #include "Game_Player.h"
 #include "Game_Manager.h"
 #include "Configurator.h"
-#include "DB_Manager.h"
 
 Mail::Mail(void):player_(0) { }
 

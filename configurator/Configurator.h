@@ -62,18 +62,35 @@ public:
 	};
 
 public:
-	struct Role_Config {
-		Config_Entry experience;
-
-		Config_Lock lock;
-	};
-
 	struct Server_Config {
 		Config_Entry log_misc;
 		Config_Entry server_conf;
 		Config_Entry server_list;
 		Config_Entry server_maintainer;
 		Config_Entry server_misc;
+
+		Config_Lock lock;
+	};
+
+	struct Role_Config {
+		Config_Entry experience;
+		Config_Entry bename;
+
+		Config_Lock lock;
+	};
+
+	struct Bag_Config {
+		Config_Entry bag;
+		Config_Entry item;
+		Config_Entry item_gift;
+		Config_Entry item_lottery;
+		Config_Entry item_prop;
+
+		Config_Lock lock;
+	};
+
+	struct Mail_Config {
+		Config_Entry mail;
 
 		Config_Lock lock;
 	};
@@ -91,9 +108,6 @@ public:
 	int hot_update_conf(std::string &module, int server = 0);
 	void load_all_config(void);
 
-	/// role
-	void load_role_config(void);
-
 	/// server
 	void load_server_config(void);
 	const Json::Value &log_misc(void);
@@ -101,6 +115,23 @@ public:
 	const Json::Value &server_list(void);
 	const Json::Value &server_maintainer(void);
 	const Json::Value &server_misc(void);
+
+	/// role
+	void load_role_config(void);
+	const Json::Value &bename_config(void);
+	const Json::Value &exp_config(void);
+
+	/// bag
+	void load_bag_config(void);
+	const Json::Value &bag_config(void);
+	const Json::Value &item(const int item_id);
+	const Json::Value &item_gift(const int item_id);
+	const Json::Value &item_lottery(const int item_id);
+	const Json::Value &item_prop(const int item_id);
+
+	/// mail
+	void load_mail_config(void);
+	const Json::Value &mail_config(const std::string &type_name);
 
 private:
 	Configurator(void);
@@ -112,8 +143,10 @@ private:
 	Json::Reader reader_;
 	static Configurator *instance_;
 
-	Role_Config role_config_;
 	Server_Config server_config_;
+	Role_Config role_config_;
+	Bag_Config bag_config_;
+	Mail_Config mail_config_;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

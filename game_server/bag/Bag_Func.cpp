@@ -1,5 +1,5 @@
 /*
- * Bag_Func.cpp
+* Bag_Func.cpp
  *
  *  Created on: 2016年1月19日
  *      Author: zhangyalei
@@ -148,6 +148,35 @@ void get_capacity_super_item_nums(int start, int end, int bag_type, int &item_nu
 	item_nums = item_nums_temp;
 }
 
-int get_capacity_price(Bag_Type bag_type, int use_type, int start, int end, int &price) {
+int get_capacity_price(Bag_Type bag_type, int pay_type, int start, int end, int &price) {
+	Json::Value cap_price = Json::Value::null;
+	if (pay_type == 0) {
+		cap_price = CONFIG_INSTANCE->bag_config()["package_cap_item_price"];
+	} else {
+		cap_price = CONFIG_INSTANCE->bag_config()["package_cap_price"];
+	}
+	if (cap_price == Json::Value::null) {
+		return ERROR_CONFIG_NOT_EXIST;
+	}
+
+	price = 0;
+	switch (bag_type) {
+	case BAG_T_BAG_INDEX:
+		start -= Bag_Info::BAG_INIT_CAPACITY;
+		end -= Bag_Info::BAG_INIT_CAPACITY;
+		break;
+	case BAG_T_STORAGE_INDEX:
+		start -= Bag_Info::STORAGE_INIT_CAPACITY;
+		end -= Bag_Info::STORAGE_INIT_CAPACITY;
+		break;
+	default:
+		MSG_USER("wrong pack type : %d", bag_type);
+		break;
+	}
+
+	for (int i = start; i < end; ++i) {
+		price += cap_price[i].asInt();
+	}
+
 	return 0;
 }

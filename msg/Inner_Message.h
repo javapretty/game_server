@@ -22,11 +22,11 @@
 
 	配制文件热更消息
 */
-struct MSG_410001 {
+struct MSG_400001 {
 
 	std::string module;
 
-	MSG_410001(void);
+	MSG_400001(void);
 
 	void serialize(Block_Buffer & w) const;
 

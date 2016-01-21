@@ -36,7 +36,7 @@ public:
 
 	////////////////////////////inner message/////////////////////
 	/// 配制文件热更消息
-	int process_410001(Block_Buffer &buf);
+	int process_400001(Block_Buffer &buf);
 
 private:
 	Game_Inner_Messager(void);

@@ -38,9 +38,8 @@ bool bag_merge_equal_item(Item_Info &item_des, Item_Info &item_src);
 bool bag_merge_similar_item(Item_Info &item_des, Item_Info &item_src);
 
 bool bag_is_req_item(const Item_Info &item, uint32_t id, Bind_Verify bind_verify = BIND_NONE);
-
-int get_capacity_price(Bag_Type bag_type, int use_type, int start, int end, int &price);
 void get_capacity_super_item_nums(int start, int end, int bag_type, int &item_nums);
+int get_capacity_price(Bag_Type bag_type, int pay_type, int start, int end, int &price);
 
 inline int get_sub_type_by_money_type(Money_Type money_type, Money_Sub_Type &sub_type) {
 	switch (money_type) {
@@ -61,8 +60,6 @@ inline int get_sub_type_by_money_type(Money_Type money_type, Money_Sub_Type &sub
 	}
 	return 0;
 }
-
-int get_item_color(const int item_id);
 
 inline int get_full_error_code(const Bag_Type bag_type) {
 	switch (bag_type) {

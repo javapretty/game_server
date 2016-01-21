@@ -25,7 +25,7 @@ public:
 	int process_160002(Block_Buffer &buf);
 
 	/// 配制文件热更消息
-	int process_410001(Block_Buffer &buf);
+	int process_400001(Block_Buffer &buf);
 
 private:
 	Master_Inner_Messager(void);

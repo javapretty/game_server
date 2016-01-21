@@ -11,7 +11,6 @@
 #include "Game_Player.h"
 #include "Configurator.h"
 #include "Log.h"
-#include "DB_Manager.h"
 
 Bag::Bag(void) : player_(0), seq_generator_(0) { }
 
@@ -89,40 +88,21 @@ int Bag::bag_add_capacity(const MSG_120101 &msg) {
 	switch (msg.bag_type) {
 	case BAG_T_BAG_INDEX:
 		caps = bag_info_.capacity.bag_cap;
-		if (msg.pay_type != 1) {
-			caps = std::min(static_cast<uint32_t>(Bag_Info::BAG_MAX_CAPACITY), caps + msg.add_capacity);
-			add = caps - bag_info_.capacity.bag_cap;
-		} else {
-			caps = caps + msg.add_capacity;
-			int caps_lose = caps % BAG_GRID_PER_LINE;
-			if (caps_lose != 0) {
-				return player_->respond_error_result(RES_ADD_CAPACITY, ERROR_CLIENT_OPERATE);
-			}
-			caps = std::min(static_cast<uint32_t>(Bag_Info::BAG_MAX_CAPACITY), caps);
-			add = caps - bag_info_.capacity.bag_cap;
-		}
+		caps = std::min(static_cast<uint32_t>(Bag_Info::BAG_MAX_CAPACITY), caps + msg.add_capacity);
+		add = caps - bag_info_.capacity.bag_cap;
 		if (add > 0) {
-			if (msg.pay_type != 1) {
-				result = get_capacity_price(bag_type, msg.pay_type, bag_info_.capacity.bag_cap, bag_info_.capacity.bag_cap + add, price);
-			}
+			result = get_capacity_price(bag_type, msg.pay_type, bag_info_.capacity.bag_cap, bag_info_.capacity.bag_cap + add, price);
 			if (result == 0) {
 				switch (msg.pay_type) {
 				case 0: {
-					int item_id = 0; //CONFIG_INSTANCE->bagage_config()["item_id"].asInt();
+					int item_id = CONFIG_INSTANCE->bag_config()["item_id"].asInt();
 					result = bag_erase_item(BAG_T_BAG_INDEX, Id_Amount(item_id, price));
 					break;
 				}
-				case 1: {
-					int item_id = 0; //CONFIG_INSTANCE->bagage_config()["super_item_id"].asInt();
-					int item_nums = 0;
-					get_capacity_super_item_nums(bag_info_.capacity.bag_cap, caps, BAG_T_BAG_INDEX, item_nums);
-					result = bag_erase_item(BAG_T_BAG_INDEX, Id_Amount(item_id, item_nums));
-					break;
-				}
-				case 2:
+				case 1:
 					result = bag_sub_money(Money_Sub_Info(COUPON_ONLY, price));
 					break;
-				case 3:
+				case 2:
 					result = bag_sub_money(Money_Sub_Info(GOLD_ONLY, price));
 					break;
 				default:
@@ -137,35 +117,16 @@ int Bag::bag_add_capacity(const MSG_120101 &msg) {
 		break;
 	case BAG_T_STORAGE_INDEX:
 		caps = bag_info_.capacity.storage_cap;
-		if (msg.pay_type != 1) {
-			caps = std::min(static_cast<uint32_t>(Bag_Info::STORAGE_MAX_CAPACITY), caps + msg.add_capacity);
-			add = caps - bag_info_.capacity.storage_cap;
-		} else {
-			caps = caps + msg.add_capacity;
-			int caps_lose = caps % STORAGE_GRID_PER_LINE;
-			if (caps_lose != 0) {
-				return player_->respond_error_result(RES_ADD_CAPACITY, ERROR_CLIENT_OPERATE);
-			}
-			caps = std::min(static_cast<uint32_t>(Bag_Info::STORAGE_MAX_CAPACITY), caps);
-			add = caps - bag_info_.capacity.storage_cap;
-		}
+		caps = std::min(static_cast<uint32_t>(Bag_Info::STORAGE_MAX_CAPACITY), caps + msg.add_capacity);
+		add = caps - bag_info_.capacity.storage_cap;
 
 		if (add > 0) {
-			if (msg.pay_type != 1) {
-				result = get_capacity_price(bag_type, msg.pay_type, bag_info_.capacity.storage_cap, bag_info_.capacity.storage_cap + add, price);
-			}
+			result = get_capacity_price(bag_type, msg.pay_type, bag_info_.capacity.storage_cap, bag_info_.capacity.storage_cap + add, price);
 			if (result == 0) {
 				switch (msg.pay_type) {
 				case 0: {
-					int item_id = 0; //CONFIG_INSTANCE->bagage_config()["item_id"].asInt();
+					int item_id = CONFIG_INSTANCE->bag_config()["item_id"].asInt();
 					result = bag_erase_item(BAG_T_BAG_INDEX, Id_Amount(item_id, price));
-					break;
-				}
-				case 1: {
-					int item_id = 0; //CONFIG_INSTANCE->bagage_config()["super_item_id"].asInt();
-					int item_nums = 0;
-					get_capacity_super_item_nums(bag_info_.capacity.storage_cap, caps, BAG_T_STORAGE_INDEX, item_nums);
-					result = bag_erase_item(BAG_T_BAG_INDEX, Id_Amount(item_id, item_nums));
 					break;
 				}
 				case 2:
@@ -190,7 +151,6 @@ int Bag::bag_add_capacity(const MSG_120101 &msg) {
 		break;
 	}
 	bag_info_.is_change_ = true;
-
 	this->bag_active_update_capacity(bag_type);
 
 	return player_->respond_error_result(RES_ADD_CAPACITY, result);
@@ -200,6 +160,13 @@ int Bag::bag_discard_item(const MSG_120102 &msg) {
 	int result = bag_try_erase_item(msg.item_index_vec);
 	if (result != 0) {
 		return player_->respond_error_result(RES_DISCARD_ITEM, result);
+	}
+
+	for (std::vector<uint32_t>::const_iterator it = msg.item_index_vec.begin(); it != msg.item_index_vec.end(); ++it) {
+		const Item_Info *item = bag_get_const_item(*it);
+		if (CONFIG_INSTANCE->item(item->item_basic.id)["destroy"].asInt() == 1) {
+			return player_->respond_error_result(RES_DISCARD_ITEM, ERROR_ITEM_FORBID_DROP);
+		}
 	}
 
 	bag_erase_item(msg.item_index_vec, WITHOUT_TRY);
@@ -484,12 +451,11 @@ int Bag::bag_erase_item(const Index_Amount &index_amount, UInt_Set *changed_set,
 }
 
 int Bag::bag_try_insert_item(const Bag_Type bag_type, const std::vector<Item_Info> &item_list) {
-	// item.json中不存在的item，id错误
 	for (std::vector<Item_Info>::const_iterator it = item_list.begin(); it != item_list.end(); ++it) {
-		//if (CONFIG_INSTANCE->item(it->item_basic.id) == Json::Value::null) {
-		//	MSG_USER("item %d config not exist", it->item_basic.id);
-		//	return ERROR_ITEM_NOT_EXIST;
-		//}
+		if (CONFIG_INSTANCE->item(it->item_basic.id) == Json::Value::null) {
+			MSG_USER("item %d config not exist", it->item_basic.id);
+			return ERROR_ITEM_NOT_EXIST;
+		}
 	}
 	// 合并可重复item
 	std::map<Item_Info, int32_t> amount_map;

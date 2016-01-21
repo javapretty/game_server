@@ -24,8 +24,8 @@
 180000-184999		Game--->Log			程序日志
 185000-189999		Game--->Stream		操作流水日志
 190000-199999
-310000-319999		ActiveMessage			服务器发到客户端主动消息
-410000-499999		InnerMessage			服务器内部消息
+300000-309999		ActiveMessage			服务器发到客户端主动消息
+400000-499999		InnerMessage			服务器内部消息
 
 510000-510999		Login->Client
 511000-511999		Gate->Client
@@ -151,8 +151,8 @@ enum Active_Message{
 };
 
 enum Inner_Message{
-	SYNC_INNER_TIMER_TICK 						= 	410000,	//定时器tick
-	SYNC_INNER_CONFIG_HOTUPDATE 				= 	410001,	//配制文件热更消息
+	SYNC_INNER_TIMER_TICK 						= 	400000,	//定时器tick
+	SYNC_INNER_CONFIG_HOTUPDATE 				= 	400001,	//配制文件热更消息
 };
 
 #endif /* MSG_MESSAGE_H_ */

@@ -129,7 +129,7 @@ struct MSG_120100 {
 */
 struct MSG_120101 {
 
-	uint8_t pay_type;/*0 包裹，1 超级包裹 2 礼券 3元宝*/
+	uint8_t pay_type;/*0包裹 1 礼券 2元宝*/
 
 	uint32_t bag_type;/*背包类型 背包：10000 仓库：20000*/
 

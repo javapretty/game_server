@@ -58,7 +58,7 @@ void Hot_Update::run_handler(void) {
 }
 
 int Hot_Update::notice_update(const std::string module) {
-	MSG_410001 inner_msg;
+	MSG_400001 inner_msg;
 	inner_msg.module = module;
 	Block_Buffer inner_buf;
 	inner_buf.make_message(SYNC_INNER_CONFIG_HOTUPDATE);

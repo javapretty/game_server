@@ -68,7 +68,7 @@ int Master_Inner_Messager::process_self_loop_block(Block_Buffer &buf) {
 		break;
 	}
 	case SYNC_INNER_CONFIG_HOTUPDATE: {
-		process_410001(buf);
+		process_400001(buf);
 		break;
 	}
 	default:
@@ -110,8 +110,8 @@ int Master_Inner_Messager::process_160002(Block_Buffer &buf) {
 	return 0;
 }
 
-int Master_Inner_Messager::process_410001(Block_Buffer &buf) {
-	MSG_410001 msg;
+int Master_Inner_Messager::process_400001(Block_Buffer &buf) {
+	MSG_400001 msg;
 	msg.deserialize(buf);
 	CONFIG_INSTANCE->hot_update_conf(msg.module, 1);
 	return 0;

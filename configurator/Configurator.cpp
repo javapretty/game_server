@@ -88,4 +88,6 @@ int Configurator::hot_update_conf(std::string &module, int server) {
 void Configurator::load_all_config(void) {
 	load_server_config();
 	load_role_config();
+	load_bag_config();
+	load_mail_config();
 }
