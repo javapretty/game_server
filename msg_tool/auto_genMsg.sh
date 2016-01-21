@@ -1,6 +1,7 @@
 #!/bin/sh
 
 _TARGET_DIR=msg
+_FILE_ARRAY_=("Game_DB_Message.define" "Game_Master_Message.define" "Gate_Message.define" "Inner_Message.define" "Log_Message.define")
 
 find ../${_TARGET_DIR} -type f -not \( -name 'Message.h' -or -name 'Err_Code.h' -or -name 'Msg_Define.h' \) -delete
 
@@ -26,7 +27,15 @@ do
 	echo -e "${_MACRO_Y_H_}\n" >> ${_DST_FILE_H_}
 	echo -e "#include <cstring>" >> ${_DST_FILE_H_}
 	echo -e "#include \"Block_Buffer.h\"" >> ${_DST_FILE_H_}
-	echo -e "#include \"Msg_Struct.h\"" >> ${_DST_FILE_H_}
+	
+	for var in ${_FILE_ARRAY_[@]};
+	do
+		if [ "${_FILE_NAME_}" =  "${var}" ];then
+			echo -e "#include \"Msg_Struct.h\"" >> ${_DST_FILE_H_}
+			break
+		fi
+	done
+	
 	echo -e "#include \"Public_Struct.h\"\n\n" >> ${_DST_FILE_H_}
 	echo -e "#include \"${_DST_FILE_H_}\"\n" > $_DST_FILE_C_
 	
