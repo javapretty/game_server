@@ -5,14 +5,18 @@
  *      Author: zhangyalei
  */
 
-#ifndef PACKER_DEF_H_
-#define PACKER_DEF_H_
+#ifndef BAG_DEF_H_
+#define BAG_DEF_H_
 
-const int PACK_INDEX_GAP = 10000;
+const int BAG_INDEX_GAP = 10000;				//背包索引间隔10000
+const int BAG_GRID_PER_LINE = 7;				//背包一行7个格子
+const int STORAGE_GRID_PER_LINE = 10;		//仓库一行10个格子
 
-// 一行有7个背包格子
-const int PACKAGE_GRID_PER_LINE = 7;
-const int STORAGE_GRID_PER_LINE = 8;
+enum Bind_Verify {
+	BIND_NONE = 0,
+	BIND_ONLY = 1,
+	UNBIND_ONLY = 2
+};
 
 enum MERGE_WAY {
 	MERGE_WAY_EQUAL,
@@ -20,11 +24,10 @@ enum MERGE_WAY {
 };
 
 // 指定包裹类型
-enum Packer_Type {
-	PACKER_T_EQUIP_INDEX 			= 10000,	//人物装备
-	PACKER_T_PACKAGE_INDEX 		= 20000,	//人物背包
-	PACKER_T_STORAGE_INDEX 		= 30000,	//人物背包
-	PACKER_T_ALL_INDEX = 0
+enum Bag_Type {
+	BAG_T_BAG_INDEX 				= 10000,	//玩家背包
+	BAG_T_STORAGE_INDEX 		= 20000,	//玩家仓库
+	BAG_T_ALL_INDEX = 0
 };
 
 // 增加money bind_copper/copper/...
@@ -60,10 +63,14 @@ enum {
 	MAX_LOCK_SEC = 5
 };
 
+enum {
+	Move_All = 999
+};
+
 // 由于存在交易的情况，不能依据SEQ是否为0来判断是否需要生成SEQ，故用枚举指定是否生成SEQ
 enum Seq_Type {
 	GENERATE_SEQ,
 	DONT_GENERATE_SEQ
 };
 
-#endif /* PACKER_DEF_H_ */
+#endif /* BAG_DEF_H_ */

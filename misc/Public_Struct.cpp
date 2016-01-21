@@ -137,17 +137,13 @@ void Game_Player_Info::reset(void) {
 	ip.clear();
 }
 
+Money_Info::Money_Info(void) { reset(); }
+
 int Money_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(bind_copper);
 	buffer.write_int32(copper);
 	buffer.write_int32(coupon);
 	buffer.write_int32(gold);
-
-	buffer.write_int32(today_gold_pay);
-	buffer.write_int32(today_gold_get);
-	buffer.write_int32(today_copper_pay);
-	buffer.write_int32(today_copper_get);
-
 	return 0;
 }
 
@@ -156,12 +152,6 @@ int Money_Info::deserialize(Block_Buffer &buffer) {
 	buffer.read_int32(copper);
 	buffer.read_int32(coupon);
 	buffer.read_int32(gold);
-
-	buffer.read_int32(today_gold_pay);
-	buffer.read_int32(today_gold_get);
-	buffer.read_int32(today_copper_pay);
-	buffer.read_int32(today_copper_get);
-
 	return 0;
 }
 
@@ -170,11 +160,6 @@ void Money_Info::reset(void) {
 	copper = 0;
 	coupon = 0;
 	gold = 0;
-
-	today_gold_pay = 0;
-	today_gold_get = 0;
-	today_copper_pay = 0;
-	today_copper_get = 0;
 }
 
 Money Money_Info::money(void) const {
@@ -220,10 +205,7 @@ int Item_Info::init() {
 	}
 
 	get_item_type(item_basic.id, type);
-	if (type == EQUIP) {
-	} else {
-		memset(&addon, 0x00, sizeof (addon));
-	}
+	memset(&addon, 0x00, sizeof (addon));
 	return 0;
 }
 
@@ -231,8 +213,6 @@ int Item_Info::serialize(Block_Buffer &buffer) const {
 	item_basic.serialize(buffer);
 	buffer.write_int32(type);
 	switch (type) {
-	case EQUIP:
-		break;
 	default:
 		break;
 	}
@@ -247,8 +227,6 @@ int Item_Info::deserialize(Block_Buffer &buffer){
 	buffer.read_int32(type_value);
 	type = static_cast<Item_Type>(type_value);
 	switch (type) {
-	case EQUIP:
-		break;
 	default:
 		break;
 	}
@@ -264,18 +242,11 @@ void Item_Info::reset(void){
 
 int Item_Info::is_item_type(const uint32_t item_id, Item_Type item_type) {
 	bool is_infer_type = false;
-	if (EQUIP_START <= item_id && item_id < EQUIP_END) {
-		is_infer_type = (item_type == EQUIP);
-	}
 	return is_infer_type? 0 : -1;
 }
 
 int Item_Info::get_item_type(const uint32_t item_id, Item_Type &item_type) {
-	if (EQUIP_START <= item_id && item_id < EQUIP_END) {
-		item_type = EQUIP;
-	} else {
-		item_type = NORMAL;
-	}
+	item_type = NORMAL;
 	return 0;
 }
 
@@ -291,7 +262,6 @@ void Item_Info::set_basic(const uint32_t index, const uint32_t id, const int32_t
 int32_t Item_Info::get_item_stack_upper(const uint32_t item_id) {
 	//if (CONFIG_INSTANCE->item(item_id)["overlap"].asInt() == 1) return 1;
 	// 若以后服务端客户端用不同的配置文件，此判断可以去掉，只保留一个机制（配置overlap），不引入如果是XX，那么堆叠是XX的补丁式代码
-	if (is_item_type(item_id, EQUIP) == 0) return 1;
 	return 100;
 }
 
@@ -319,13 +289,11 @@ bool operator<(const Item_Info &item1, const Item_Info &item2) {
 	}
 }
 
-const uint16_t Bag_Info::Capacity::equip_cap = 19;
-
 Bag_Info::Bag_Info(void):money_lock_map(16), item_lock_map(16) { reset(); }
 
 int Bag_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int64(role_id);
-	buffer.write_uint16(capacity.pack_cap);
+	buffer.write_uint16(capacity.bag_cap);
 	buffer.write_uint16(capacity.storage_cap);
 	money_info.serialize(buffer);
 
@@ -334,14 +302,13 @@ int Bag_Info::serialize(Block_Buffer &buffer) const {
 	for (Item_Map::const_iterator it = item_map.begin(); it != item_map.end(); ++it) {
 		it->second->serialize(buffer);
 	}
-	buffer.write_int64(last_wipe_time.sec());
 	buffer.write_int8((int8_t)is_change_);
 	return 0;
 }
 
 int Bag_Info::deserialize(Block_Buffer &buffer) {
 	buffer.read_int64(role_id);
-	buffer.read_uint16(capacity.pack_cap);
+	buffer.read_uint16(capacity.bag_cap);
 	buffer.read_uint16(capacity.storage_cap);
 	money_info.deserialize(buffer);
 
@@ -352,10 +319,6 @@ int Bag_Info::deserialize(Block_Buffer &buffer) {
 		item->deserialize(buffer);
 		item_map[item->item_basic.index] = item;
 	}
-
-	long sec;
-	buffer.read_int64(sec);
-	last_wipe_time.set(sec, 0);
 
 	buffer.read_int8((int8_t &)is_change_);
 
@@ -375,7 +338,7 @@ int Bag_Info::save(void) {
 
 void Bag_Info::reset(void) {
 	role_id = 0;
-	capacity.pack_cap = PACK_INIT_CAPACITY;
+	capacity.bag_cap = BAG_INIT_CAPACITY;
 	capacity.storage_cap = STORAGE_INIT_CAPACITY;
 	money_info.reset();
 
@@ -385,7 +348,6 @@ void Bag_Info::reset(void) {
 	item_map.clear();
 	money_lock_map.clear();
 	item_lock_map.clear();
-	last_wipe_time = Time_Value::zero;
 	is_change_ = false;
 }
 
@@ -408,7 +370,6 @@ Bag_Info &Bag_Info::operator=(Bag_Info &detail) {
 		item_map[item->item_basic.index] = item;
 	}
 
-	last_wipe_time = detail.last_wipe_time;
 	is_change_ = detail.is_change_;
 
 	return *this;

@@ -9,19 +9,19 @@
 #include "Configurator.h"
 #include "Log.h"
 
-void pack_merge_item_array(std::vector<Item_Info*> &item_array, Packer_Type pack_type,
+void bag_merge_item_array(std::vector<Item_Info*> &item_array, Bag_Type bag_type,
 		MERGE_WAY merge_way, UInt_Set &changed_set) {
 	const uint32_t array_size = item_array.size();
 	// 模拟人的的操作，不停将道具从index_now合并至index_pre
 	uint32_t index_pre = 0;
 	uint32_t index_now = 1;
-	uint32_t index_flag = 1 + pack_type;		// 标记排序后的道具所在的index
+	uint32_t index_flag = 1 + bag_type;		// 标记排序后的道具所在的index
 	for (index_pre = 0; index_now < array_size; ++index_now) {
 		bool merged = false;
 		if (merge_way == MERGE_WAY_SIMILAR) {
-			merged = pack_merge_similar_item(*item_array[index_pre], *item_array[index_now]);
+			merged = bag_merge_similar_item(*item_array[index_pre], *item_array[index_now]);
 		} else {
-			merged = pack_merge_equal_item(*item_array[index_pre], *item_array[index_now]);
+			merged = bag_merge_equal_item(*item_array[index_pre], *item_array[index_now]);
 		}
 
 		if (merged) {
@@ -52,7 +52,7 @@ void pack_merge_item_array(std::vector<Item_Info*> &item_array, Packer_Type pack
 	}
 }
 
-bool pack_merge_equal_item(Item_Info &item_des, Item_Info &item_src) {
+bool bag_merge_equal_item(Item_Info &item_des, Item_Info &item_src) {
 	int pre_remain_space = item_des.get_item_remain_amount();
 	if (is_equal_item(item_des, item_src) && pre_remain_space  > 0) {
 		int32_t item_src_amount = item_src.item_basic.amount;
@@ -65,7 +65,7 @@ bool pack_merge_equal_item(Item_Info &item_des, Item_Info &item_src) {
 	return false;
 }
 
-bool pack_merge_similar_item(Item_Info &item_des, Item_Info &item_src) {
+bool bag_merge_similar_item(Item_Info &item_des, Item_Info &item_src) {
 	int pre_remain_space = item_des.get_item_remain_amount();
 	if (is_similar_item(item_des, item_src) && pre_remain_space > 0) {
 		int32_t item_src_amount = item_src.item_basic.amount;
@@ -86,7 +86,7 @@ bool pack_merge_similar_item(Item_Info &item_des, Item_Info &item_src) {
 	return false;
 }
 
-bool pack_is_req_item(const Item_Info &item, uint32_t id, Bind_Verify bind_verify) {
+bool bag_is_req_item(const Item_Info &item, uint32_t id, Bind_Verify bind_verify) {
 	switch (bind_verify) {
 	case BIND_NONE:
 		if (item.item_basic.id == id) {
@@ -129,15 +129,15 @@ void merge_same_item(const std::vector<Item_Info>& item_vec_in, std::vector<Item
 	}
 }
 
-void get_capacity_super_item_nums(int start, int end, int pack_type, int &item_nums) {
+void get_capacity_super_item_nums(int start, int end, int bag_type, int &item_nums) {
 	item_nums = 0;
 	if (start >= end) {
 		return;
 	}
 	int gap = end - start;
 	int grid_per_line = 0;
-	if (pack_type == PACKER_T_PACKAGE_INDEX) {
-		grid_per_line = PACKAGE_GRID_PER_LINE;
+	if (bag_type == BAG_T_BAG_INDEX) {
+		grid_per_line = BAG_GRID_PER_LINE;
 	} else {
 		grid_per_line = STORAGE_GRID_PER_LINE;
 	}
@@ -148,6 +148,6 @@ void get_capacity_super_item_nums(int start, int end, int pack_type, int &item_n
 	item_nums = item_nums_temp;
 }
 
-int get_capacity_price(Packer_Type pack_type, int use_type, int start, int end, int &price) {
+int get_capacity_price(Bag_Type bag_type, int use_type, int start, int end, int &price) {
 	return 0;
 }

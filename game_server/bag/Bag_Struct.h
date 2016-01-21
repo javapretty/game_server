@@ -11,12 +11,6 @@
 #include "Bag_Def.h"
 #include "Public_Struct.h"
 
-enum Bind_Verify {
-	BIND_NONE = 0,
-	BIND_ONLY = 1,
-	UNBIND_ONLY = 2
-};
-
 struct Id_Amount {
 	Id_Amount(uint32_t id_= 0, int32_t amount_ = 0, Bind_Verify bind_verify_ = BIND_NONE) :
 			id(id_), amount(amount_), bind_verify(bind_verify_) {
@@ -37,9 +31,6 @@ struct Id_Amount {
 	}
 };
 
-enum {
-	Move_All = 999
-};
 struct Index_Amount {
 	Index_Amount(uint32_t index_ = 0, int32_t amount_ = 0, Bind_Verify bind_verify_  = BIND_NONE) :
 			index(index_), amount(amount_), bind_verify(bind_verify_) {
@@ -79,16 +70,12 @@ struct Money_Add_Info {
 	int nums;
 };
 
-typedef std::vector<Money_Add_Info> Money_Add_List;
-
 struct Money_Sub_Info {
 	explicit Money_Sub_Info(Money_Sub_Type type_, int nums_) : type(type_), nums(nums_) {}
 
 	Money_Sub_Type type;
 	int nums;
 };
-
-typedef std::vector<Money_Sub_Info> Money_Sub_List;
 
 
 #endif /* PACKER_STRUCT_H_ */

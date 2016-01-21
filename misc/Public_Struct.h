@@ -170,12 +170,7 @@ struct Money_Info {
 	int32_t coupon;
 	int32_t gold;
 
-	// 玩家之间的交易 不含系统
-	int32_t today_gold_pay;
-	int32_t today_gold_get;
-	int32_t today_copper_pay;
-	int32_t today_copper_get;
-
+	Money_Info(void);
 	int serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
@@ -187,14 +182,11 @@ const int ITEM_INDEX_GAP = 100000000;
 struct Item_Info {
 	enum Item_Type {
 		NORMAL = 0,
-		EQUIP = 1,
 	};
 
 	enum Item_Index {
 		ITEM_START = 100000000,
 		ITEM_END = 400000000,
-		EQUIP_START = 100000000,
-		EQUIP_END = 200000000,
 	};
 
 	enum Bind_Type {
@@ -260,16 +252,15 @@ struct Bag_Info {
 	typedef boost::unordered_map<uint32_t, Item_Info*> Item_Seq_Map;
 
 	enum {
-		PACK_MAX_CAPACITY = 210,
+		BAG_MAX_CAPACITY = 210,
 		STORAGE_MAX_CAPACITY = 210,
-		PACK_INIT_CAPACITY = 56,
+		BAG_INIT_CAPACITY = 56,
 		STORAGE_INIT_CAPACITY = 40,
 	};
 
 	struct Capacity {
-		uint16_t pack_cap;
+		uint16_t bag_cap;
 		uint16_t storage_cap;
-		const static uint16_t equip_cap;
 	};
 
 	Bag_Info();
@@ -278,7 +269,6 @@ struct Bag_Info {
 	int load(void);
 	int save(void);
 	void reset(void);
-
 	inline void save_tick(void) { is_change_ = true; };
 
 	Bag_Info &operator=(Bag_Info &detail);
@@ -294,7 +284,6 @@ struct Bag_Info {
 	Item_Map item_map;
 	Int_Int_Map money_lock_map;		// 锁定后只能加不能减少
 	Int_Int_Map item_lock_map;
-	Time_Value last_wipe_time;
 	bool is_change_;
 };
 

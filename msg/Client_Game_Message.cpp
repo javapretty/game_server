@@ -100,18 +100,18 @@ MSG_120100::MSG_120100(void){
 }
 
 void MSG_120100::serialize(Block_Buffer & w) const {
-	w.write_uint32(pack_type);
+	w.write_uint32(bag_type);
 }
 
 int MSG_120100::deserialize(Block_Buffer & r) {
-	if (r.read_uint32(pack_type)){
+	if (r.read_uint32(bag_type)){
 		return -1;
 	}
 	return 0;
 }
 
 void MSG_120100::reset(){
-	pack_type = 0;
+	bag_type = 0;
 }
 
 MSG_120101::MSG_120101(void){
@@ -121,11 +121,11 @@ MSG_120101::MSG_120101(void){
 void MSG_120101::serialize(Block_Buffer & w) const {
 	w.write_uint8(pay_type);
 	w.write_uint16(add_capacity);
-	w.write_uint32(pack_type);
+	w.write_uint32(bag_type);
 }
 
 int MSG_120101::deserialize(Block_Buffer & r) {
-	if (r.read_uint8(pay_type) || r.read_uint16(add_capacity) || r.read_uint32(pack_type)){
+	if (r.read_uint8(pay_type) || r.read_uint16(add_capacity) || r.read_uint32(bag_type)){
 		return -1;
 	}
 	return 0;
@@ -134,7 +134,7 @@ int MSG_120101::deserialize(Block_Buffer & r) {
 void MSG_120101::reset(){
 	pay_type = 0;
 	add_capacity = 0;
-	pack_type = 0;
+	bag_type = 0;
 }
 
 MSG_120102::MSG_120102(void){
@@ -216,18 +216,18 @@ MSG_120105::MSG_120105(void){
 }
 
 void MSG_120105::serialize(Block_Buffer & w) const {
-	w.write_uint32(pack_type);
+	w.write_uint32(bag_type);
 }
 
 int MSG_120105::deserialize(Block_Buffer & r) {
-	if (r.read_uint32(pack_type)){
+	if (r.read_uint32(bag_type)){
 		return -1;
 	}
 	return 0;
 }
 
 void MSG_120105::reset(){
-	pack_type = 0;
+	bag_type = 0;
 }
 
 MSG_120106::MSG_120106(void){
@@ -235,22 +235,18 @@ MSG_120106::MSG_120106(void){
 }
 
 void MSG_120106::serialize(Block_Buffer & w) const {
-	w.write_int32(amount);
-	w.write_int32(e_value);
-	w.write_uint32(index);
+	w.write_uint32(bag_type);
 }
 
 int MSG_120106::deserialize(Block_Buffer & r) {
-	if (r.read_int32(amount) || r.read_int32(e_value) || r.read_uint32(index)){
+	if (r.read_uint32(bag_type)){
 		return -1;
 	}
 	return 0;
 }
 
 void MSG_120106::reset(){
-	amount = 0;
-	e_value = 0;
-	index = 0;
+	bag_type = 0;
 }
 
 MSG_120107::MSG_120107(void){
@@ -258,62 +254,6 @@ MSG_120107::MSG_120107(void){
 }
 
 void MSG_120107::serialize(Block_Buffer & w) const {
-	w.write_int32(item_index);
-	uint16_t __select_index_vector_vec_size = select_index_vector.size();
-	w.write_uint16(__select_index_vector_vec_size);
-	for(uint16_t i = 0; i < __select_index_vector_vec_size; ++i) {
-		w.write_int32(select_index_vector[i]);
-	}
-
-}
-
-int MSG_120107::deserialize(Block_Buffer & r) {
-	uint16_t __select_index_vector_vec_size;
-	if(r.read_uint16(__select_index_vector_vec_size) )
-		return -1;
-	select_index_vector.reserve(__select_index_vector_vec_size);
-	for(uint16_t i = 0; i < __select_index_vector_vec_size; ++i) {
-		int32_t v;
-		if(r.read_int32(v) )
-			return -1;
-		select_index_vector.push_back(v);
-	}
-
-	if (r.read_int32(item_index)){
-		return -1;
-	}
-	return 0;
-}
-
-void MSG_120107::reset(){
-	item_index = 0;
-	select_index_vector.clear();
-}
-
-MSG_120108::MSG_120108(void){
-	reset();
-}
-
-void MSG_120108::serialize(Block_Buffer & w) const {
-	w.write_uint32(pack_type);
-}
-
-int MSG_120108::deserialize(Block_Buffer & r) {
-	if (r.read_uint32(pack_type)){
-		return -1;
-	}
-	return 0;
-}
-
-void MSG_120108::reset(){
-	pack_type = 0;
-}
-
-MSG_120109::MSG_120109(void){
-	reset();
-}
-
-void MSG_120109::serialize(Block_Buffer & w) const {
 	uint16_t __index_vec_size = index.size();
 	w.write_uint16(__index_vec_size);
 	for(uint16_t i = 0; i < __index_vec_size; ++i) {
@@ -322,7 +262,7 @@ void MSG_120109::serialize(Block_Buffer & w) const {
 
 }
 
-int MSG_120109::deserialize(Block_Buffer & r) {
+int MSG_120107::deserialize(Block_Buffer & r) {
 	uint16_t __index_vec_size;
 	if(r.read_uint16(__index_vec_size) )
 		return -1;
@@ -337,7 +277,7 @@ int MSG_120109::deserialize(Block_Buffer & r) {
 	return 0;
 }
 
-void MSG_120109::reset(){
+void MSG_120107::reset(){
 	index.clear();
 }
 
@@ -347,7 +287,7 @@ MSG_520100::MSG_520100(void){
 
 void MSG_520100::serialize(Block_Buffer & w) const {
 	w.write_int16(capacity);
-	w.write_uint32(pack_type);
+	w.write_uint32(bag_type);
 	uint16_t __item_info_vec_size = item_info.size();
 	w.write_uint16(__item_info_vec_size);
 	for(uint16_t i = 0; i < __item_info_vec_size; ++i) {
@@ -368,7 +308,7 @@ int MSG_520100::deserialize(Block_Buffer & r) {
 		item_info.push_back(v);
 	}
 
-	if (r.read_int16(capacity) || r.read_uint32(pack_type)){
+	if (r.read_int16(capacity) || r.read_uint32(bag_type)){
 		return -1;
 	}
 	return 0;
@@ -376,8 +316,22 @@ int MSG_520100::deserialize(Block_Buffer & r) {
 
 void MSG_520100::reset(){
 	capacity = 0;
-	pack_type = 0;
+	bag_type = 0;
 	item_info.clear();
+}
+
+MSG_520101::MSG_520101(void){
+	reset();
+}
+
+void MSG_520101::serialize(Block_Buffer & w) const {
+}
+
+int MSG_520101::deserialize(Block_Buffer & r) {
+	return 0;
+}
+
+void MSG_520101::reset(){
 }
 
 MSG_520102::MSG_520102(void){
@@ -427,18 +381,13 @@ MSG_520106::MSG_520106(void){
 }
 
 void MSG_520106::serialize(Block_Buffer & w) const {
-	w.write_uint32(id);
 }
 
 int MSG_520106::deserialize(Block_Buffer & r) {
-	if (r.read_uint32(id)){
-		return -1;
-	}
 	return 0;
 }
 
 void MSG_520106::reset(){
-	id = 0;
 }
 
 MSG_520107::MSG_520107(void){
@@ -453,46 +402,4 @@ int MSG_520107::deserialize(Block_Buffer & r) {
 }
 
 void MSG_520107::reset(){
-}
-
-MSG_520101::MSG_520101(void){
-	reset();
-}
-
-void MSG_520101::serialize(Block_Buffer & w) const {
-}
-
-int MSG_520101::deserialize(Block_Buffer & r) {
-	return 0;
-}
-
-void MSG_520101::reset(){
-}
-
-MSG_520108::MSG_520108(void){
-	reset();
-}
-
-void MSG_520108::serialize(Block_Buffer & w) const {
-}
-
-int MSG_520108::deserialize(Block_Buffer & r) {
-	return 0;
-}
-
-void MSG_520108::reset(){
-}
-
-MSG_520109::MSG_520109(void){
-	reset();
-}
-
-void MSG_520109::serialize(Block_Buffer & w) const {
-}
-
-int MSG_520109::deserialize(Block_Buffer & r) {
-	return 0;
-}
-
-void MSG_520109::reset(){
 }
