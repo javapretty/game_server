@@ -18,7 +18,7 @@ Game_Manager::Game_Manager(void):
 	db_cache_(0),
 	logining_map_(get_hash_table_size(512)),
   saving_map_(get_hash_table_size(512)),
-  player_gate_cid_map_(get_hash_table_size(12000)),
+  player_cid_map_(get_hash_table_size(12000)),
   player_role_id_map_(get_hash_table_size(12000)),
   is_register_timer_(false),
   msg_count_onoff_(true) {
@@ -183,15 +183,11 @@ int Game_Manager::process_list(void) {
 }
 
 void Game_Manager::process_drop_gate_cid(int gate_cid) {
-	Game_Player_Gate_Cid_Map::iterator iter = player_gate_cid_map_.find(gate_cid);
-	if (iter != player_gate_cid_map_.end()) {
-		for (Player_Set::iterator it = iter->second.begin(); it != iter->second.end(); ++it) {
-			(*it)->link_close();
+	for (Game_Player_Cid_Map::iterator iter = player_cid_map_.begin(); iter != player_cid_map_.end(); ) {
+		if (iter->first.gate_cid == gate_cid) {
+			iter->second->link_close();
+			player_cid_map_.erase(iter++);
 		}
-
-		player_gate_cid_map_.erase(iter);
-	} else {
-		MSG_USER("process_drop_cid, gate_cid=%d, role_id=%ld", gate_cid);
 	}
 }
 
@@ -199,26 +195,24 @@ int Game_Manager::server_status(void) {
 	return status_;
 }
 
-int Game_Manager::bind_gate_cid_game_player(int gate_cid, Game_Player &player) {
-	Game_Player_Gate_Cid_Map::iterator iter = player_gate_cid_map_.find(gate_cid);
-	if (iter != player_gate_cid_map_.end()) {
-		iter->second.insert(&player);
-	} else {
-		Player_Set player_set;
-		player_set.insert(&player);
-		player_gate_cid_map_.insert(std::make_pair(gate_cid, player_set));
+int Game_Manager::bind_cid_game_player(Cid_Info &cid_info, Game_Player &player) {
+	if (! player_cid_map_.insert(std::make_pair(cid_info, &player)).second) {
+		MSG_USER("insert failure");
 	}
 	return 0;
 }
 
-int Game_Manager::unbind_gate_cid_game_player(int gate_cid, Game_Player &player) {
-	Game_Player_Gate_Cid_Map::iterator iter = player_gate_cid_map_.find(gate_cid);
-	if (iter != player_gate_cid_map_.end()) {
-		iter->second.erase(&player);
-	} else {
-		MSG_USER("unbind_gatecid_game_player wrong, gate_cid=%d, role_id=%ld", gate_cid, player.game_player_info().role_id);
-	}
+int Game_Manager::unbind_cid_game_player(Cid_Info &cid_info) {
+	player_cid_map_.erase(cid_info);
 	return 0;
+}
+
+Game_Player* Game_Manager::find_cid_game_player(Cid_Info &cid_info) {
+	Game_Player_Cid_Map::iterator it = player_cid_map_.find(cid_info);
+	if (it != player_cid_map_.end())
+		return it->second;
+	else
+		return 0;
 }
 
 int Game_Manager::bind_role_id_game_player(role_id_t role_id, Game_Player &player) {
@@ -262,7 +256,7 @@ Game_Player *Game_Manager::find_role_name_game_player(std::string &role_name) {
 }
 
 int Game_Manager::unbind_game_player(Game_Player &player) {
-	unbind_gate_cid_game_player(player.cid_info().gate_cid, player);
+	player_cid_map_.erase(player.cid_info());
 	player_role_id_map_.erase(player.game_player_info().role_id);
 	player_role_name_map_.erase(player.game_player_info().role_name);
 	return 0;

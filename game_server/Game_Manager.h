@@ -30,11 +30,10 @@ public:
 	typedef boost::unordered_map<std::string, Cid_Info> Logining_Map;
 	typedef boost::unordered_map<role_id_t, Saving_Info> Saving_Map;
 
-	//通过某个gate连接到game的玩家都放到同一个set内
-	typedef boost::unordered_set<Game_Player* > Player_Set;
-	typedef boost::unordered_map<int, Player_Set> Game_Player_Gate_Cid_Map;
-	typedef boost::unordered_map<role_id_t, Game_Player *> Game_Player_Role_Id_Map;
-	typedef boost::unordered_map<std::string, Game_Player *> Game_Player_Role_Name_Map;
+	//通过某个gate连接到game的玩家放到同map内,该map用player_cid和gate_cid作为key
+	typedef boost::unordered_map<Cid_Info, Game_Player* > Game_Player_Cid_Map;
+	typedef boost::unordered_map<role_id_t, Game_Player* > Game_Player_Role_Id_Map;
+	typedef boost::unordered_map<std::string, Game_Player* > Game_Player_Role_Name_Map;
 	typedef boost::unordered_map<int, int> Msg_Count_Map;
 
 public:
@@ -74,17 +73,20 @@ public:
 	int process_list();
 	void process_drop_gate_cid(int gate_cid);
 
-	int bind_gate_cid_game_player(int gate_cid, Game_Player &player);
-	int unbind_gate_cid_game_player(int gate_cid, Game_Player &player);
+	//通过player_cid和gate_cid双重定位到玩家
+	int bind_cid_game_player(Cid_Info &cid_info, Game_Player &player);
+	int unbind_cid_game_player(Cid_Info &cid_info);
+	Game_Player* find_cid_game_player(Cid_Info &cid_info);
 
-	//game_manager只能通过role_id唯一确定玩家，不能通过player_cid
+	//通过role_id定位玩家
 	int bind_role_id_game_player(role_id_t role_id, Game_Player &player);
 	int unbind_role_id_game_player(role_id_t role_id);
-	Game_Player *find_role_id_game_player(role_id_t role_id);
+	Game_Player* find_role_id_game_player(role_id_t role_id);
 
+	//通过role_name定位玩家
 	int bind_role_name_game_player(std::string &role_name, Game_Player &player);
 	int unbind_role_name_game_player(std::string &role_name);
-	Game_Player *find_role_name_game_player(std::string &role_name);
+	Game_Player* find_role_name_game_player(std::string &role_name);
 
 	int unbind_game_player(Game_Player &player);
 
@@ -142,7 +144,7 @@ private:
 	Logining_Map logining_map_; /// 正在上线加载流程中的帐号
 	Saving_Map saving_map_; /// 正在下线保存流程中的帐号
 
-	Game_Player_Gate_Cid_Map player_gate_cid_map_; 		/// gatecid 	- Game_Player
+	Game_Player_Cid_Map player_cid_map_; 							/// cid_info 	- Game_Player
 	Game_Player_Role_Id_Map player_role_id_map_; 			/// role_id 	- Game_Player
 	Game_Player_Role_Name_Map player_role_name_map_;	/// role_name - Game_Player
 

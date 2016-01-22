@@ -7,9 +7,9 @@
 #ifndef GAME_PLAYER_H_
 #define GAME_PLAYER_H_
 
-#include <mail/Mail.h>
 #include "Public_Struct.h"
 #include "Bag.h"
+#include "Mail.h"
 
 class Game_Player {
 public:

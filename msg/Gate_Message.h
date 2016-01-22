@@ -20,22 +20,6 @@
 
 /*
 
-	gate同步玩家掉线到game
-*/
-struct MSG_113000 {
-
-	int64_t role_id;
-
-	MSG_113000(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
-	void reset(void);
-};
-/*
-
 	gate-->login校验玩家accout session数据
 */
 struct MSG_112000 {

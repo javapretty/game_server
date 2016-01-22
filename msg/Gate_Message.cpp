@@ -1,25 +1,6 @@
 #include "Gate_Message.h"
 
 
-MSG_113000::MSG_113000(void){
-	reset();
-}
-
-void MSG_113000::serialize(Block_Buffer & w) const {
-	w.write_int64(role_id);
-}
-
-int MSG_113000::deserialize(Block_Buffer & r) {
-	if (r.read_int64(role_id)){
-		return -1;
-	}
-	return 0;
-}
-
-void MSG_113000::reset(){
-	role_id = 0;
-}
-
 MSG_112000::MSG_112000(void){
 	reset();
 }

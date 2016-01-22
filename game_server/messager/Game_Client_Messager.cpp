@@ -36,7 +36,16 @@ int Game_Client_Messager::process_block(Block_Buffer &buf) {
 		return process_init_block(gate_cid, player_cid, msg_id, buf);
 	}
 
-	Game_Player *player = 0;
+	Cid_Info cid_info(gate_cid, 0, player_cid);
+	Game_Player *player = GAME_MANAGER->find_cid_game_player(cid_info);
+	if (!player) {
+		MSG_DEBUG("cannot find player object. gate_cid = %d, player_cid = %d, msg_id = %d ", gate_cid, player_cid, msg_id);
+		Block_Buffer msg_buf;
+		msg_buf.make_message(ACTIVE_DISCONNECT, ERROR_CLIENT_PARAM, player_cid);
+		msg_buf.finish_message();
+		return GAME_MANAGER->send_to_gate(gate_cid, msg_buf);
+	}
+
 	int ret = process_client_block(msg_id, buf, player);
 	if (ret) {
 		Block_Buffer msg_buf;
@@ -73,17 +82,13 @@ int Game_Client_Messager::process_init_block(int gate_cid, int player_cid, int m
 int Game_Client_Messager::process_client_block(int msg_id, Block_Buffer &buf, Game_Player *player) {
 	Perf_Mon perf_mon(msg_id);
 	int ret = 0;
-	switch (msg_id) {
-	//	  玩家掉线，与gate断开连接
-	case SYNC_GATE_GAME_PLAYER_SIGNOUT: {
-		MSG_113000 msg;
-		if ((ret = msg.deserialize(buf)) == 0)
-			process_113000(msg);
-		break;
-	}
-	default:
-		process_bag_block(msg_id, buf, player);
-		break;
+	if (msg_id == SYNC_GATE_GAME_PLAYER_SIGNOUT) {
+		//	  玩家掉线，与gate断开连接
+		player->link_close();
+	} else if (msg_id >= CLIENT_BAG_MESSAGE_START && msg_id <= CLIENT_BAG_MESSAGE_END) {
+		ret = process_bag_block(msg_id, buf, player);
+	} else if (msg_id >= CLIENT_MAIL_MESSAGE_START && msg_id <= CLIENT_MAIL_MESSAGE_END) {
+		ret = process_bag_block(msg_id, buf, player);
 	}
 	return ret;
 }
@@ -196,15 +201,5 @@ int Game_Client_Messager::process_120002(int gate_cid, int player_cid, MSG_12000
 	db_msg.serialize(msg_buf);
 	msg_buf.finish_message();
 	GAME_MANAGER->send_to_db(msg_buf);
-	return 0;
-}
-
-int Game_Client_Messager::process_113000(MSG_113000 &msg) {
-	Game_Player* player = GAME_MANAGER->find_role_id_game_player(msg.role_id);
-	if (!player) {
-		MSG_USER("process_113000, can't find role,role_id=%ld,",msg.role_id);
-		return -1;
-	}
-	player->link_close();
 	return 0;
 }

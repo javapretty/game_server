@@ -44,7 +44,7 @@ int Gate_Client_Messager::process_block(Block_Buffer &buf) {
 	Gate_Player *player = 0;
 	if ((player = GATE_MANAGER->find_cid_gate_player(player_cid)) == 0) {
 		MSG_DEBUG("cannot find cid = %d player object. msg_id = %d ", player_cid, msg_id);
-			return GATE_MANAGER->close_client(player_cid);
+		return GATE_MANAGER->close_client(player_cid);
 	}
 
 	 /// 校验包, 用于防截包/自组包/重复发包

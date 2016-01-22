@@ -26,8 +26,6 @@ public:
 	int process_120001(int gate_cid, int player_cid, MSG_120001 &msg);
 	/// 创建角色
 	int process_120002(int gate_cid, int player_cid, MSG_120002 &msg);
-	///gate玩家掉线通知game
-	int process_113000(MSG_113000 &msg);
 
 private:
 	Game_Client_Messager(void);

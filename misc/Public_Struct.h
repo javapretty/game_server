@@ -100,7 +100,19 @@ struct Cid_Info {
 		game_cid = -1;
 		player_cid = -1;
 	}
+
+	bool operator==(const Cid_Info &cid_info) const {
+		return gate_cid == cid_info.gate_cid && game_cid == cid_info.game_cid && player_cid == cid_info.player_cid;
+	}
 };
+
+inline std::size_t hash_value(const Cid_Info &cid_info) {
+    std::size_t seed = 0;
+    boost::hash_combine(seed, cid_info.gate_cid);
+    boost::hash_combine(seed, cid_info.game_cid);
+    boost::hash_combine(seed, cid_info.player_cid);
+    return seed;
+}
 
 struct Ip_Info {
 	std::string ip;
