@@ -24,7 +24,7 @@
 #include "Gate_Server.h"
 #include "Gate_Connector.h"
 #include "Gate_Manager.h"
-#include "V8_Test.h"
+#include "V8_Manager.h"
 
 Debug_Starter::Debug_Starter(void)
 : server_reactor_(0),
@@ -223,7 +223,7 @@ int Debug_Starter::start(int argc, char *argv[]) {
 	}
 	GATE_MASTER_CONNECTOR->thr_create();
 
-	//v8_test();
+	V8_MANAGER->thr_create();
 
 	return server_reactor_->loop();
 }
