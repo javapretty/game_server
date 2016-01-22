@@ -1,8 +1,8 @@
 /*
- * Mail_Config.cpp
+* Mail_Config.cpp
  *
- *  Created on: Jul 10, 2012
- *      Author: ChenLong
+ *  Created on: 2016年1月19日
+ *      Author: zhangyalei
  */
 
 #include "Configurator.h"

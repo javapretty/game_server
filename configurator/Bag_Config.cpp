@@ -1,8 +1,8 @@
 /*
- * Package_Config.cpp
+* Bag_Config.cpp
  *
- *  Created on: Jul 9, 2012
- *      Author: ChenLong
+ *  Created on: 2016年1月19日
+ *      Author: zhangyalei
  */
 
 #include "Configurator.h"

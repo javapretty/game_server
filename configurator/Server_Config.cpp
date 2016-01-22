@@ -7,7 +7,6 @@
 
 #include "Configurator.h"
 #include "Mutex_Guard.h"
-#include "Log.h"
 #include <string>
 
 void Configurator::load_server_config(void) {
