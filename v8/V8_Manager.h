@@ -41,7 +41,6 @@ private:
 private:
 	static V8_Manager *instance_;
 	Isolate* isolate_;
-	Platform* platform_;
 };
 
 #define V8_MANAGER V8_Manager::instance()

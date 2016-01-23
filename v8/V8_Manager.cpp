@@ -12,7 +12,7 @@
 #include "V8_Base.h"
 #include "V8_Manager.h"
 
-V8_Manager::V8_Manager(void):isolate_(0), platform_(0) { }
+V8_Manager::V8_Manager(void):isolate_(0) { }
 
 V8_Manager::~V8_Manager(void) { }
 

@@ -1,16 +1,16 @@
-服务器是多进程架构，分为LoginServer，GateServer，GameServer，MasterServer，ChatServer，DBServer，LogServer。
+服务器是异步非阻塞多进程架构，分为LoginServer，GateServer，GameServer，MasterServer，DBServer，LogServer。
 现将各个服务器大部分功能列出，供开发参考。
 
 Robot:（测试机器人）
 1、实现注册登录流程
-2、可收发包，显示从服务器接收到的信息
+2、与服务器正常通信，实现客户端逻辑
 
 LoginServer:
 客户端发送账号密码到LoginServer，LoginServer去AccountDb验证，验证失败断开连接，验证成功，则生成session，
 根据玩家账号hash和gate在线人数选择gate，发送给客户端
 
 GateServer:
-接受客户端发过来的连接，向LoginServer进行session验证，同步在线玩家数量到LoginServer，转发消息到Game，Master，Chat
+接受客户端发过来的连接，向LoginServer进行session验证，同步在线玩家数量到LoginServer，转发消息到Game，Master
 
 GameServer:
 1、创建角色，角色登录，从DbServer加载数据返回给client
@@ -19,7 +19,7 @@ GameServer:
 4、移动AOI模块
 5、定时器管理模块
 6、怪物AI模块
-7、Lua脚本加载模块
+7、V8引擎集成
 
 MasterServer：
 1、管理GameServer，玩家在GameServer间跳转
@@ -34,6 +34,8 @@ LogServer:
 1、实现写日志文件相关接口
 2、实现写Mysql操作流水相关接口
 
-ChatServer:
-1、实现聊天功能
-   
+LogClient:
+实现写日志相关接口，可供所有服务器调用
+
+V8:
+用来处理js脚本
