@@ -21,11 +21,19 @@ public:
 	}
 
 	virtual ~ObjectWrap() {
-		if (persistent().IsEmpty())
+		if (handle_.IsEmpty())
 			return;
-		assert(persistent().IsNearDeath());
-		persistent().ClearWeak();
-		persistent().Reset();
+		assert(handle_.IsNearDeath());
+		handle_.ClearWeak();
+		handle_.Reset();
+	}
+
+	inline void Wrap(v8::Local<v8::Object> handle) {
+		assert(handle_.IsEmpty());
+		assert(handle->InternalFieldCount() > 0);
+		handle->SetAlignedPointerInInternalField(0, this);
+		handle_.Reset(v8::Isolate::GetCurrent(), handle);
+		MakeWeak();
 	}
 
 	template <class T>
@@ -44,25 +52,12 @@ public:
 	}
 
 	inline v8::Local<v8::Object> handle(v8::Isolate* isolate) {
-		return v8::Local<v8::Object>::New(isolate, persistent());
+		return v8::Local<v8::Object>::New(isolate, handle_);
 	}
 
-	inline v8::Persistent<v8::Object>& persistent() {
-		return handle_;
-	}
-
-	inline void Wrap(v8::Local<v8::Object> handle) {
-		assert(persistent().IsEmpty());
-		assert(handle->InternalFieldCount() > 0);
-		handle->SetAlignedPointerInInternalField(0, this);
-		persistent().Reset(v8::Isolate::GetCurrent(), handle);
-		MakeWeak();
-	}
-
-public:
 	inline void MakeWeak(void) {
-		persistent().SetWeak(this, WeakCallback);
-		persistent().MarkIndependent();
+		handle_.SetWeak(this, WeakCallback);
+		handle_.MarkIndependent();
 	}
 
 	/* Ref() marks the object as being attached to an event loop.
@@ -70,8 +65,8 @@ public:
 	* all references are lost.
 	*/
 	virtual void Ref() {
-		assert(!persistent().IsEmpty());
-		persistent().ClearWeak();
+		assert(!handle_.IsEmpty());
+		handle_.ClearWeak();
 		refs_++;
 	}
 
@@ -85,18 +80,15 @@ public:
 	* DO NOT CALL THIS FROM DESTRUCTOR
 	*/
 	virtual void Unref() {
-		assert(!persistent().IsEmpty());
-		assert(!persistent().IsWeak());
+		assert(!handle_.IsEmpty());
+		assert(!handle_.IsWeak());
 		assert(refs_ > 0);
 		if (--refs_ == 0)
 			MakeWeak();
 	}
 
-	int refs_;
-
 private:
-	static void WeakCallback(
-		const v8::WeakCallbackData<v8::Object, ObjectWrap>& data) {
+	static void WeakCallback(const v8::WeakCallbackData<v8::Object, ObjectWrap>& data) {
 		v8::Isolate* isolate = data.GetIsolate();
 		v8::HandleScope scope(isolate);
 		ObjectWrap* wrap = data.GetParameter();
@@ -109,6 +101,7 @@ private:
 	}
 
 	v8::Persistent<v8::Object> handle_;
+	int refs_;
 };
 
 #endif /* OBJECT_WRAP_H_ */
