@@ -7,8 +7,8 @@
 #ifndef V8PP_TEST_H_
 #define V8PP_TEST_H_
 
-#include <V8_Context.h>
-#include <V8_Convert.h>
+#include "V8_Context.h"
+#include "V8_Convert.h"
 #include <iosfwd>
 #include <array>
 #include <string>
@@ -119,14 +119,12 @@ T run_script(v8_wrap::context& context, std::string const& source)
 }
 
 void test_utility();
-void test_context();
 void test_convert();
 void test_call_func();
 void test_function();
 void test_factory();
 void test_module();
 void test_class();
-void test_property();
 void test_object();
 
 

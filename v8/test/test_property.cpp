@@ -4,8 +4,8 @@
  *      Author: zhangyalei
  */
 
-#include <V8_Context.h>
-#include <V8_Property.h>
+#include "V8_Context.h"
+#include "V8_Property.h"
 #include "test.h"
 
 namespace {
@@ -31,7 +31,7 @@ struct X
 	void set3(v8::Local<v8::String> name, v8::Local<v8::Value> value, v8::PropertyCallbackInfo<void> const& info);
 };
 
-using namespace v8_wrap::detail;
+using namespace v8_wrap::v8_detail;
 
 //property metafunctions
 static_assert(is_getter<decltype(&get1)>::value, "getter function");
@@ -72,7 +72,3 @@ static_assert(std::is_same<select_setter_tag<decltype(&set3)>, direct_setter_tag
 static_assert(std::is_same<select_setter_tag<decltype(&X::set3)>, direct_setter_tag>::value, "direct setter member function tag");
 
 } // unnamed namespace
-
-void test_property()
-{
-}

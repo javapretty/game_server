@@ -7,14 +7,14 @@
 #ifndef V8_CLASS_H_
 #define V8_CLASS_H_
 
-#include <V8_Factory.h>
-#include <V8_Function.h>
-#include <V8_Persistent.h>
-#include <V8_Property.h>
 #include <algorithm>
 #include <type_traits>
 #include <unordered_map>
 #include <vector>
+#include "V8_Factory.h"
+#include "V8_Function.h"
+#include <V8_Persistent.h>
+#include "V8_Property.h"
 
 namespace v8_wrap {
 
@@ -23,7 +23,7 @@ namespace v8_wrap {
 template<typename T>
 class class_;
 
-namespace detail {
+namespace v8_detail {
 
 class class_info
 {
@@ -415,14 +415,14 @@ private:
 	v8::UniquePersistent<v8::FunctionTemplate> js_func_;
 };
 
-} // namespace detail
+} // namespace v8_detail
 
 /// Interface for registering C++ classes in V8
 template<typename T>
 class class_
 {
-	using class_singleton = detail::class_singleton<T>;
-	detail::class_singleton<T>& class_singleton_;
+	using class_singleton = v8_detail::class_singleton<T>;
+	v8_detail::class_singleton<T>& class_singleton_;
 public:
 	explicit class_(v8::Isolate* isolate)
 		: class_singleton_(class_singleton::create(isolate))
@@ -459,7 +459,7 @@ public:
 
 	/// Set static class function
 	template<typename Function>
-	typename std::enable_if<detail::is_function_pointer<Function>::value, class_&>::type
+	typename std::enable_if<v8_detail::is_function_pointer<Function>::value, class_&>::type
 	set(char const *name, Function func)
 	{
 		class_singleton_.js_function_template()->Set(isolate(), name,
@@ -481,7 +481,7 @@ public:
 			setter = nullptr;
 		}
 
-		v8::Handle<v8::Value> data = detail::set_external_data(isolate(), attribute);
+		v8::Handle<v8::Value> data = v8_detail::set_external_data(isolate(), attribute);
 		v8::PropertyAttribute const prop_attrs = v8::PropertyAttribute(v8::DontDelete | (setter? 0 : v8::ReadOnly));
 
 		class_singleton_.class_function_template()->PrototypeTemplate()->SetAccessor(
@@ -504,7 +504,7 @@ public:
 			setter = nullptr;
 		}
 
-		v8::Handle<v8::Value> data = detail::set_external_data(isolate(), prop);
+		v8::Handle<v8::Value> data = v8_detail::set_external_data(isolate(), prop);
 		v8::PropertyAttribute const prop_attrs = v8::PropertyAttribute(v8::DontDelete | (setter? 0 : v8::ReadOnly));
 
 		class_singleton_.class_function_template()->PrototypeTemplate()->SetAccessor(v8_wrap::to_v8(isolate(), name),
@@ -601,7 +601,7 @@ private:
 		v8::Isolate* isolate = info.GetIsolate();
 
 		T const& self = v8_wrap::from_v8<T const&>(isolate, info.This());
-		Attribute attr = detail::get_external_data<Attribute>(info.Data());
+		Attribute attr = v8_detail::get_external_data<Attribute>(info.Data());
 		info.GetReturnValue().Set(to_v8(isolate, self.*attr));
 	}
 
@@ -611,8 +611,8 @@ private:
 		v8::Isolate* isolate = info.GetIsolate();
 
 		T& self = v8_wrap::from_v8<T&>(isolate, info.This());
-		Attribute ptr = detail::get_external_data<Attribute>(info.Data());
-		using attr_type = typename detail::function_traits<Attribute>::return_type;
+		Attribute ptr = v8_detail::get_external_data<Attribute>(info.Data());
+		using attr_type = typename v8_detail::function_traits<Attribute>::return_type;
 		self.*ptr = v8_wrap::from_v8<attr_type>(isolate, value);
 	}
 };

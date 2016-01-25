@@ -7,15 +7,15 @@
 #ifndef V8_FUNCTION_H_
 #define V8_FUNCTION_H_
 
-#include <V8_Call_Func.h>
-#include <V8_Exception.h>
-#include <V8_Utility.h>
 #include <tuple>
 #include <type_traits>
+#include "V8_Call_Func.h"
+#include "V8_Exception.h"
+#include "V8_Utility.h"
 
 namespace v8_wrap {
 
-namespace detail {
+namespace v8_detail {
 
 template<typename T>
 using is_function_pointer = std::is_function<typename std::remove_pointer<T>::type>;
@@ -124,7 +124,7 @@ forward_ret(v8::FunctionCallbackInfo<v8::Value> const& args)
 template<typename F>
 void forward_function(v8::FunctionCallbackInfo<v8::Value> const& args)
 {
-	static_assert(detail::is_function_pointer<F>::value
+	static_assert(v8_detail::is_function_pointer<F>::value
 		|| std::is_member_function_pointer<F>::value,
 		"required pointer to a free or member function");
 
@@ -141,14 +141,14 @@ void forward_function(v8::FunctionCallbackInfo<v8::Value> const& args)
 	}
 }
 
-} // namespace detail
+} // namespace v8_detail
 
 /// Wrap C++ function into new V8 function template
 template<typename F>
 v8::Handle<v8::FunctionTemplate> wrap_function_template(v8::Isolate* isolate, F func)
 {
-	return v8::FunctionTemplate::New(isolate, &detail::forward_function<F>,
-		detail::set_external_data(isolate, func));
+	return v8::FunctionTemplate::New(isolate, &v8_detail::forward_function<F>,
+		v8_detail::set_external_data(isolate, func));
 }
 
 /// Wrap C++ function into new V8 function
@@ -157,8 +157,8 @@ v8::Handle<v8::FunctionTemplate> wrap_function_template(v8::Isolate* isolate, F 
 template<typename F>
 v8::Handle<v8::Function> wrap_function(v8::Isolate* isolate, char const* name, F func)
 {
-	v8::Handle<v8::Function> fn = v8::Function::New(isolate, &detail::forward_function<F>,
-		detail::set_external_data(isolate, func));
+	v8::Handle<v8::Function> fn = v8::Function::New(isolate, &v8_detail::forward_function<F>,
+		v8_detail::set_external_data(isolate, func));
 	if (name && *name)
 	{
 		fn->SetName(to_v8(isolate, name));

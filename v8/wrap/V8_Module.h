@@ -7,10 +7,10 @@
 #ifndef V8_MODULE_H_
 #define V8_MODULE_H_
 
-#include <V8_Function.h>
-#include <V8_Property.h>
 #include <type_traits>
 #include "include/v8.h"
+#include "V8_Function.h"
+#include "V8_Property.h"
 
 namespace v8_wrap {
 
@@ -55,7 +55,7 @@ public:
 
 	/// Set a C++ function in the module with specified name
 	template<typename Function>
-	typename std::enable_if<detail::is_function_pointer<Function>::value, module&>::type
+	typename std::enable_if<v8_detail::is_function_pointer<Function>::value, module&>::type
 	set(char const* name, Function func)
 	{
 		return set(name, wrap_function_template(isolate_, func));
@@ -64,7 +64,7 @@ public:
 	/// Set a C++ variable in the module with specified name
 	template<typename Variable>
 	typename std::enable_if<
-		!detail::is_function_pointer<Variable>::value &&
+		!v8_detail::is_function_pointer<Variable>::value &&
 		!std::is_pointer<Variable>::value &&
 		!std::is_convertible<Variable, v8::Handle<v8::Data>>::value,
 		module&>::type
@@ -79,7 +79,7 @@ public:
 			setter = nullptr;
 		}
 
-		v8::Handle<v8::Value> data = detail::set_external_data(isolate_, &var);
+		v8::Handle<v8::Value> data = v8_detail::set_external_data(isolate_, &var);
 		v8::PropertyAttribute const prop_attrs = v8::PropertyAttribute(v8::DontDelete | (setter ? 0 : v8::ReadOnly));
 
 		obj_->SetAccessor(v8_wrap::to_v8(isolate_, name), getter, setter, data, v8::DEFAULT, prop_attrs);
@@ -89,8 +89,8 @@ public:
 	/// Set v8pp::property in the module with specified name
 	template<typename GetFunction, typename SetFunction>
 	typename std::enable_if<
-		detail::is_function_pointer<GetFunction>::value &&
-		detail::is_function_pointer<SetFunction>::value,
+		v8_detail::is_function_pointer<GetFunction>::value &&
+		v8_detail::is_function_pointer<SetFunction>::value,
 		module&>::type
 	set(char const *name, property_<GetFunction, SetFunction> prop)
 	{
@@ -103,7 +103,7 @@ public:
 			setter = nullptr;
 		}
 
-		v8::Handle<v8::Value> data = detail::set_external_data(isolate_, prop);
+		v8::Handle<v8::Value> data = v8_detail::set_external_data(isolate_, prop);
 		v8::PropertyAttribute const prop_attrs = v8::PropertyAttribute(v8::DontDelete | (setter? 0 : v8::ReadOnly));
 
 		obj_->SetAccessor(v8_wrap::to_v8(isolate_, name), getter, setter, data, v8::DEFAULT, prop_attrs);
@@ -136,7 +136,7 @@ private:
 	{
 		v8::Isolate* isolate = info.GetIsolate();
 
-		Variable* var = detail::get_external_data<Variable*>(info.Data());
+		Variable* var = v8_detail::get_external_data<Variable*>(info.Data());
 		info.GetReturnValue().Set(to_v8(isolate, *var));
 	}
 
@@ -145,7 +145,7 @@ private:
 	{
 		v8::Isolate* isolate = info.GetIsolate();
 
-		Variable* var = detail::get_external_data<Variable*>(info.Data());
+		Variable* var = v8_detail::get_external_data<Variable*>(info.Data());
 		*var = v8_wrap::from_v8<Variable>(isolate, value);
 	}
 

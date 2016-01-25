@@ -4,7 +4,7 @@
  *      Author: zhangyalei
  */
 
-#include <V8_Utility.h>
+#include "V8_Utility.h"
 #include <functional>
 #include "include/v8.h"
 #include "test.h"
@@ -14,14 +14,14 @@ namespace {
 template<typename Ret, typename F>
 void test_ret(F&&)
 {
-	using namespace v8_wrap::detail;
+	using namespace v8_wrap::v8_detail;
 	static_assert(std::is_same<Ret, typename function_traits<F>::return_type>::value, "wrong return_type");
 }
 
 template<typename ArgsTuple, typename F>
 void test_args(F&&)
 {
-	using namespace v8_wrap::detail;
+	using namespace v8_wrap::v8_detail;
 	static_assert(std::is_same<ArgsTuple, typename function_traits<F>::arguments>::value, "wrong arguments");
 }
 
@@ -67,9 +67,9 @@ void test_function_traits()
 
 void test_tuple_tail()
 {
-	static_assert(std::is_same<v8_wrap::detail::tuple_tail<std::tuple<int>>::type, std::tuple<>>::value, "");
-	static_assert(std::is_same<v8_wrap::detail::tuple_tail<std::tuple<int, char>>::type, std::tuple<char>>::value, "");
-	static_assert(std::is_same<v8_wrap::detail::tuple_tail<std::tuple<int, char, bool>>::type, std::tuple<char, bool>>::value, "");
+	static_assert(std::is_same<v8_wrap::v8_detail::tuple_tail<std::tuple<int>>::type, std::tuple<>>::value, "");
+	static_assert(std::is_same<v8_wrap::v8_detail::tuple_tail<std::tuple<int, char>>::type, std::tuple<char>>::value, "");
+	static_assert(std::is_same<v8_wrap::v8_detail::tuple_tail<std::tuple<int, char, bool>>::type, std::tuple<char, bool>>::value, "");
 }
 
 int f() { return 1; }
@@ -83,13 +83,13 @@ struct X
 
 void test_apply_tuple()
 {
-	v8_wrap::detail::apply_tuple(f, std::make_tuple());
-	v8_wrap::detail::apply_tuple(g, std::make_tuple(1));
-	v8_wrap::detail::apply_tuple(h, std::make_tuple(1, true));
+	v8_wrap::v8_detail::apply_tuple(f, std::make_tuple());
+	v8_wrap::v8_detail::apply_tuple(g, std::make_tuple(1));
+	v8_wrap::v8_detail::apply_tuple(h, std::make_tuple(1, true));
 	
-	check_eq("apply(f)", v8_wrap::detail::apply(f), 1);
-	check_eq("apply(g)", v8_wrap::detail::apply(g, 2), 2);
-	check_eq("apply(h)", v8_wrap::detail::apply(h, 3, true), 3);
+	check_eq("apply(f)", v8_wrap::v8_detail::apply(f), 1);
+	check_eq("apply(g)", v8_wrap::v8_detail::apply(g, 2), 2);
+	check_eq("apply(h)", v8_wrap::v8_detail::apply(h, 3, true), 3);
 }
 
 } // unnamed namespace

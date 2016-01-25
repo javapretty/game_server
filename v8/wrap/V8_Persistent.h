@@ -7,7 +7,7 @@
 #ifndef V8_PERSISTENT_H_
 #define V8_PERSISTENT_H_
 
-#include <V8_Convert.h>
+#include "V8_Convert.h"
 #include "include/v8.h"
 
 namespace v8_wrap {

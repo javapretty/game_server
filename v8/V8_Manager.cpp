@@ -44,7 +44,7 @@ int V8_Manager::start_v8() {
   isolate_ = Isolate::New(create_params);
 
   process_script();
-  test_v8pp();
+  test_v8_wrap();
 
   // Dispose the isolate_ and tear down V8.
   isolate_->Dispose();
@@ -91,16 +91,14 @@ int V8_Manager::process_script(void) {
 	return 0;
 }
 
-void V8_Manager::test_v8pp()
+void V8_Manager::test_v8_wrap()
 {
 	test_utility();
-	test_context();
 	test_convert();
 	test_call_func();
 	test_function();
 	test_factory();
 	test_module();
 	test_class();
-	test_property();
 	test_object();
 }

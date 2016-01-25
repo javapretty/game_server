@@ -34,7 +34,7 @@ v8::Handle<v8::Value> call_v8(v8::Isolate* isolate, v8::Handle<v8::Function> fun
 	return scope.Escape(result);
 }
 
-namespace detail {
+namespace v8_detail {
 
 template<typename F, size_t Offset = 0>
 struct call_from_v8_traits
@@ -194,6 +194,6 @@ call_from_v8(T& obj, F&& func, v8::FunctionCallbackInfo<v8::Value> const& args)
 		call_traits(), make_index_sequence<call_traits::arg_count>());
 }
 
-}} // v8pp::detail
+}} // v8pp::v8_detail
 
 #endif // V8_CALL_FUNC_H_

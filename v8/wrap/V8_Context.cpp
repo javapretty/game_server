@@ -4,12 +4,12 @@
  *      Author: zhangyalei
  */
 
-#include <V8_Context.h>
-#include <V8_Convert.h>
-#include <V8_Exception.h>
-#include <V8_Function.h>
-#include <V8_Module.h>
 #include <fstream>
+#include "V8_Context.h"
+#include "V8_Convert.h"
+#include "V8_Exception.h"
+#include "V8_Function.h"
+#include "V8_Module.h"
 
 namespace v8_wrap {
 
@@ -27,7 +27,7 @@ void context::run_file(v8::FunctionCallbackInfo<v8::Value> const& args)
 			throw std::runtime_error("run_file: require filename string argument");
 		}
 
-		context* ctx = detail::get_external_data<context*>(args.Data());
+		context* ctx = v8_detail::get_external_data<context*>(args.Data());
 		result = to_v8(isolate, ctx->run_file(filename));
 	}
 	catch (std::exception const& ex)
@@ -69,7 +69,7 @@ context::context(v8::Isolate* isolate)
 
 	v8::HandleScope scope(isolate_);
 
-	v8::Handle<v8::Value> data = detail::set_external_data(isolate_, this);
+	v8::Handle<v8::Value> data = v8_detail::set_external_data(isolate_, this);
 	v8::Handle<v8::ObjectTemplate> global = v8::ObjectTemplate::New(isolate_);
 
 	global->Set(isolate_, "run", v8::FunctionTemplate::New(isolate_, context::run_file, data));

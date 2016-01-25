@@ -7,16 +7,16 @@
 #ifndef V8_PROPERTY_H_
 #define V8_PROPERTY_H_
 
-#include <V8_Convert.h>
-#include <V8_Function.h>
 #include <cassert>
+#include "V8_Convert.h"
+#include "V8_Function.h"
 
 namespace v8_wrap {
 
 template<typename Get, typename Set>
 struct property_;
 
-namespace detail {
+namespace v8_detail {
 
 struct getter_tag {};
 struct direct_getter_tag {};
@@ -132,7 +132,7 @@ struct r_property_impl<Get, Set, true>
 
 		class_type& obj = v8_wrap::from_v8<class_type&>(isolate, info.This());
 
-		Property prop = detail::get_external_data<Property>(info.Data());
+		Property prop = v8_detail::get_external_data<Property>(info.Data());
 		assert(prop.get_);
 
 		if (prop.get_)
@@ -183,7 +183,7 @@ struct r_property_impl<Get, Set, false>
 	{
 		v8::Isolate* isolate = info.GetIsolate();
 
-		Property prop = detail::get_external_data<Property>(info.Data());
+		Property prop = v8_detail::get_external_data<Property>(info.Data());
 		assert(prop.get_);
 
 		if (prop.get_)
@@ -243,7 +243,7 @@ struct rw_property_impl<Get, Set, true>
 
 		class_type& obj = v8_wrap::from_v8<class_type&>(isolate, info.This());
 
-		Property prop = detail::get_external_data<Property>(info.Data());
+		Property prop = v8_detail::get_external_data<Property>(info.Data());
 		assert(prop.set_);
 
 		if (prop.set_)
@@ -294,7 +294,7 @@ struct rw_property_impl<Get, Set, false>
 	{
 		v8::Isolate* isolate = info.GetIsolate();
 
-		Property prop = detail::get_external_data<Property>(info.Data());
+		Property prop = v8_detail::get_external_data<Property>(info.Data());
 		assert(prop.set_);
 
 		if (prop.set_)
@@ -309,22 +309,22 @@ struct rw_property_impl<Get, Set, false>
 	}
 };
 
-} // namespace detail
+} // namespace v8_detail
 
 /// Property with get and set functions
 template<typename Get, typename Set>
-struct property_ : detail::rw_property_impl<Get, Set, std::is_member_function_pointer<Set>::value>
+struct property_ : v8_detail::rw_property_impl<Get, Set, std::is_member_function_pointer<Set>::value>
 {
-	static_assert(detail::is_getter<Get>::value
-		|| detail::is_direct_getter<Get>::value
-		|| detail::is_isolate_getter<Get>::value,
+	static_assert(v8_detail::is_getter<Get>::value
+		|| v8_detail::is_direct_getter<Get>::value
+		|| v8_detail::is_isolate_getter<Get>::value,
 		"property get function must be either `T ()` or "
 		"`void (v8::Local<v8::String> name, v8::PropertyCallbackInfo<v8::Value> const& info)` or "
 		"`T (v8::Isolate*)`");
 
-	static_assert(detail::is_setter<Set>::value
-		|| detail::is_direct_setter<Set>::value
-		|| detail::is_isolate_setter<Set>::value,
+	static_assert(v8_detail::is_setter<Set>::value
+		|| v8_detail::is_direct_setter<Set>::value
+		|| v8_detail::is_isolate_setter<Set>::value,
 		"property set function must be either `void (T)` or \
 		`void (v8::Local<v8::String> name, v8::Local<v8::Value> value, v8::PropertyCallbackInfo<void> const& info)` or \
 		`void (v8::Isolate*, T)`");
@@ -337,11 +337,11 @@ struct property_ : detail::rw_property_impl<Get, Set, std::is_member_function_po
 
 /// Read-only property class specialization for get only method
 template<typename Get>
-struct property_<Get, Get> : detail::r_property_impl<Get, Get, std::is_member_function_pointer<Get>::value>
+struct property_<Get, Get> : v8_detail::r_property_impl<Get, Get, std::is_member_function_pointer<Get>::value>
 {
-	static_assert(detail::is_getter<Get>::value
-		|| detail::is_direct_getter<Get>::value
-		|| detail::is_isolate_getter<Get>::value,
+	static_assert(v8_detail::is_getter<Get>::value
+		|| v8_detail::is_direct_getter<Get>::value
+		|| v8_detail::is_isolate_getter<Get>::value,
 		"property get function must be either `T ()` or "
 		"void (v8::Local<v8::String> name, v8::PropertyCallbackInfo<v8::Value> const& info)` or "
 		"`T (v8::Isolate*)`");
