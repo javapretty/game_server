@@ -4,13 +4,16 @@
  *      Author: zhangyalei
  */
 
-#include <context.h>
-#include <convert.h>
+#ifndef V8PP_TEST_H_
+#define V8PP_TEST_H_
+
 #include <iosfwd>
 #include <array>
 #include <string>
 #include <sstream>
 #include <stdexcept>
+#include "context.h"
+#include "convert.h"
 
 template<typename Char, typename Traits,
 	typename T, typename Alloc, typename ...Other,
@@ -76,11 +79,13 @@ inline void check(std::string msg, bool condition)
 template<typename T, typename U>
 void check_eq(std::string msg, T actual, U expected)
 {
+	std::stringstream ss;
+	ss << msg << " expected: '" << expected << "' actual: '" << actual << "'";
 	if (actual != expected)
 	{
-		std::stringstream ss;
-		ss << msg << " expected: '" << expected << "' actual: '" << actual << "'";
 		check(ss.str(), false);
+	} else {
+		printf("%s\n", ss.str().c_str());
 	}
 }
 
@@ -112,3 +117,18 @@ T run_script(v8pp::context& context, std::string const& source)
 	}
 	return v8pp::from_v8<T>(isolate, result);
 }
+
+void test_utility();
+void test_context();
+void test_convert();
+void test_call_v8();
+void test_call_from_v8();
+void test_function();
+void test_factory();
+void test_module();
+void test_class();
+void test_property();
+void test_object();
+
+
+#endif // V8PP_TEST_H_

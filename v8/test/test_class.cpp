@@ -44,11 +44,6 @@ void test_class()
 	v8::Isolate* isolate = context.isolate();
 	v8::HandleScope scope(isolate);
 
-	check_ex<std::runtime_error>("find unwrapped", [isolate]()
-	{
-		v8pp::class_<struct Z>::find_object(isolate, nullptr);
-	});
-
 	v8pp::class_<X> X_class(isolate);
 	X_class
 		.ctor()

@@ -11,6 +11,7 @@
 #include "My_Class_Template.h"
 #include "V8_Base.h"
 #include "V8_Manager.h"
+#include "test.h"
 
 V8_Manager::V8_Manager(void):isolate_(0) { }
 
@@ -43,6 +44,7 @@ int V8_Manager::start_v8() {
   isolate_ = Isolate::New(create_params);
 
   process_script();
+  test_v8pp();
 
   // Dispose the isolate_ and tear down V8.
   isolate_->Dispose();
@@ -87,4 +89,19 @@ int V8_Manager::process_script(void) {
 	isolate_->LowMemoryNotification();
 	UnregisterAll();
 	return 0;
+}
+
+void V8_Manager::test_v8pp()
+{
+	test_utility();
+	test_context();
+	test_convert();
+	test_call_v8();
+	test_call_from_v8();
+	test_function();
+	test_factory();
+	test_module();
+	test_class();
+	test_property();
+	test_object();
 }

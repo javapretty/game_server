@@ -11,10 +11,6 @@
 #include "module.h"
 #include "throw_ex.h"
 
-
-#define STRINGIZE(s) STRINGIZE0(s)
-#define STRINGIZE0(s) #s
-
 namespace v8pp {
 
 void context::run_file(v8::FunctionCallbackInfo<v8::Value> const& args)

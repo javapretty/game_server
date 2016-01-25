@@ -32,6 +32,8 @@ public:
 	int start_v8(void);
 	int process_script(void);
 
+	void test_v8pp(void);
+
 private:
 	V8_Manager(void);
 	virtual ~V8_Manager(void);

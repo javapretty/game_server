@@ -449,8 +449,7 @@ public:
 
 	/// Set C++ class member function
 	template<typename Method>
-	typename std::enable_if<
-		std::is_member_function_pointer<Method>::value, class_&>::type
+	typename std::enable_if<std::is_member_function_pointer<Method>::value, class_&>::type
 	set(char const *name, Method mem_func)
 	{
 		class_singleton_.class_function_template()->PrototypeTemplate()->Set(
@@ -460,8 +459,7 @@ public:
 
 	/// Set static class function
 	template<typename Function>
-	typename std::enable_if<
-		detail::is_function_pointer<Function>::value, class_&>::type
+	typename std::enable_if<detail::is_function_pointer<Function>::value, class_&>::type
 	set(char const *name, Function func)
 	{
 		class_singleton_.js_function_template()->Set(isolate(), name,
@@ -471,8 +469,7 @@ public:
 
 	/// Set class member data
 	template<typename Attribute>
-	typename std::enable_if<
-		std::is_member_object_pointer<Attribute>::value, class_&>::type
+	typename std::enable_if<std::is_member_object_pointer<Attribute>::value, class_&>::type
 	set(char const *name, Attribute attribute, bool readonly = false)
 	{
 		v8::HandleScope scope(isolate());
@@ -549,7 +546,7 @@ public:
 	/// Remove external reference from JavaScript
 	static void unreference_external(v8::Isolate* isolate, T* ext)
 	{
-		return class_singleton::instance(isolate).remove_object(isolate, ext);
+		class_singleton::instance(isolate).remove_object(isolate, ext);
 	}
 
 	/// As reference_external but delete memory for C++ object

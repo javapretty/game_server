@@ -39,17 +39,6 @@ class class_;
 // Generic convertor
 template<typename T, typename Enable = void>
 struct convert;
-/*
-{
-	using from_type = T;
-	using to_type = v8::Handle<v8::Value>;
-
-	static bool is_valid(v8::Isolate* isolate, v8::Handle<v8::Value> value);
-
-	static from_type from_v8(v8::Isolate* isolate, v8::Handle<v8::Value> value);
-	static to_type to_v8(v8::Isolate* isolate, T const& value);
-};
-*/
 
 // converter specializations for string types
 template<typename Char, typename Traits, typename Alloc>
@@ -610,19 +599,6 @@ v8::Handle<v8::String> to_v8(v8::Isolate* isolate, char const (&str)[N], size_t 
 {
 	return convert<char const*>::to_v8(isolate, str, len);
 }
-
-#ifdef WIN32
-inline v8::Handle<v8::String> to_v8(v8::Isolate* isolate, wchar_t const* str, size_t len)
-{
-	return convert<wchar_t const*>::to_v8(isolate, str, len);
-}
-
-template<size_t N>
-v8::Handle<v8::String> to_v8(v8::Isolate* isolate, wchar_t const (&str)[N], size_t len = N - 1)
-{
-	return convert<wchar_t const*>::to_v8(isolate, str, len);
-}
-#endif
 
 template<typename T>
 typename convert<T>::to_type to_v8(v8::Isolate* isolate, T const& value)
