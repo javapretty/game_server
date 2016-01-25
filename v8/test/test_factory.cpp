@@ -4,9 +4,9 @@
  *      Author: zhangyalei
  */
 
-#include <call_v8.h>
-#include <context.h>
-#include <factory.h>
+#include <V8_Call_Func.h>
+#include <V8_Context.h>
+#include <V8_Factory.h>
 #include "test.h"
 
 namespace {
@@ -38,8 +38,8 @@ private:
 template<typename T, typename ...Args>
 void test_(v8::Isolate* isolate, Args&&... args)
 {
-	T* obj = v8pp::factory<T>::create(isolate, std::forward<Args>(args)...);
-	v8pp::factory<T>::destroy(isolate, obj);
+	T* obj = v8_wrap::factory<T>::create(isolate, std::forward<Args>(args)...);
+	v8_wrap::factory<T>::destroy(isolate, obj);
 }
 
 void test_factories(v8::FunctionCallbackInfo<v8::Value> const& args)
@@ -58,7 +58,7 @@ void test_factories(v8::FunctionCallbackInfo<v8::Value> const& args)
 
 } // unnamed namespace
 
-namespace v8pp {
+namespace v8_wrap {
 
 template<>
 struct factory<Y>
@@ -80,13 +80,13 @@ struct factory<Y>
 
 void test_factory()
 {
-	v8pp::context context;
+	v8_wrap::context context;
 
 	v8::Isolate* isolate = context.isolate();
 	v8::HandleScope scope(isolate);
 	v8::Handle<v8::Function> fun = v8::Function::New(isolate, test_factories);
 
-	v8pp::call_v8(isolate, fun, fun);
+	v8_wrap::call_v8(isolate, fun, fun);
 	check_eq("all ctors called", ctor_types, 0x0F);
 	check_eq("ctor count", ctor_count, 5);
 	check_eq("dtor count", dtor_count, 5);

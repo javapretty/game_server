@@ -4,12 +4,12 @@
  *      Author: zhangyalei
  */
 
-#include <context.h>
+#include <V8_Context.h>
 #include "test.h"
 
 void test_context()
 {
-	v8pp::context context;
+	v8_wrap::context context;
 
 	v8::HandleScope scope(context.isolate());
 	int const r = context.run_script("42")->Int32Value();

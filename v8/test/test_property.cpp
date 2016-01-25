@@ -4,8 +4,8 @@
  *      Author: zhangyalei
  */
 
-#include <context.h>
-#include <property.h>
+#include <V8_Context.h>
+#include <V8_Property.h>
 #include "test.h"
 
 namespace {
@@ -31,7 +31,7 @@ struct X
 	void set3(v8::Local<v8::String> name, v8::Local<v8::Value> value, v8::PropertyCallbackInfo<void> const& info);
 };
 
-using namespace v8pp::detail;
+using namespace v8_wrap::detail;
 
 //property metafunctions
 static_assert(is_getter<decltype(&get1)>::value, "getter function");

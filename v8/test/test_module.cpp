@@ -4,9 +4,9 @@
  *      Author: zhangyalei
  */
 
-#include <context.h>
-#include <module.h>
-#include <property.h>
+#include <V8_Context.h>
+#include <V8_Module.h>
+#include <V8_Property.h>
 #include "test.h"
 
 static std::string var;
@@ -19,12 +19,12 @@ static void set_x(int v) { x = v - 1; }
 
 void test_module()
 {
-	v8pp::context context;
+	v8_wrap::context context;
 
 	v8::HandleScope scope(context.isolate());
 
-	v8pp::module module(context.isolate());
-	v8pp::module consts(context.isolate());
+	v8_wrap::module module(context.isolate());
+	v8_wrap::module consts(context.isolate());
 
 	consts
 		.set_const("bool", true)
@@ -39,8 +39,8 @@ void test_module()
 		.set("var", var)
 		.set("fun", &fun)
 		.set("empty", v8::Null(context.isolate()))
-		.set("rprop", v8pp::property(get_x))
-		.set("wprop", v8pp::property(get_x, set_x))
+		.set("rprop", v8_wrap::property(get_x))
+		.set("wprop", v8_wrap::property(get_x, set_x))
 		;
 	context.set("module", module);
 

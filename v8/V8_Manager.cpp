@@ -96,8 +96,7 @@ void V8_Manager::test_v8pp()
 	test_utility();
 	test_context();
 	test_convert();
-	test_call_v8();
-	test_call_from_v8();
+	test_call_func();
 	test_function();
 	test_factory();
 	test_module();

@@ -7,13 +7,13 @@
 #ifndef V8PP_TEST_H_
 #define V8PP_TEST_H_
 
+#include <V8_Context.h>
+#include <V8_Convert.h>
 #include <iosfwd>
 #include <array>
 #include <string>
 #include <sstream>
 #include <stdexcept>
-#include "context.h"
-#include "convert.h"
 
 template<typename Char, typename Traits,
 	typename T, typename Alloc, typename ...Other,
@@ -103,7 +103,7 @@ void check_ex(std::string msg, F&& f)
 }
 
 template<typename T>
-T run_script(v8pp::context& context, std::string const& source)
+T run_script(v8_wrap::context& context, std::string const& source)
 {
 	v8::Isolate* isolate = context.isolate();
 
@@ -112,17 +112,16 @@ T run_script(v8pp::context& context, std::string const& source)
 	v8::Handle<v8::Value> result = context.run_script(source);
 	if (try_catch.HasCaught())
 	{
-		std::string const msg = v8pp::from_v8<std::string>(isolate, try_catch.Exception()->ToString());
+		std::string const msg = v8_wrap::from_v8<std::string>(isolate, try_catch.Exception()->ToString());
 		throw std::runtime_error(msg);
 	}
-	return v8pp::from_v8<T>(isolate, result);
+	return v8_wrap::from_v8<T>(isolate, result);
 }
 
 void test_utility();
 void test_context();
 void test_convert();
-void test_call_v8();
-void test_call_from_v8();
+void test_call_func();
 void test_function();
 void test_factory();
 void test_module();
