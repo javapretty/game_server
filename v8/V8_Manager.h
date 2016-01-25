@@ -32,6 +32,7 @@ public:
 	int start_v8(void);
 	int process_script(void);
 
+	int test_wrap(void);
 	void test_v8_wrap(void);
 
 private:

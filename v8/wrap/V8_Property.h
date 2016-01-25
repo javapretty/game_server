@@ -370,6 +370,6 @@ property_<Get, Get> property(Get get)
 	return prop;
 }
 
-} // namespace v8pp
+} // namespace v8_wrap
 
 #endif // V8_PROPERTY_H_

@@ -638,6 +638,6 @@ v8::Local<T> to_local(v8::Isolate* isolate, v8::PersistentBase<T> const& handle)
 	}
 }
 
-} // namespace v8pp
+} // namespace v8_wrap
 
 #endif // V8_CONVERT_H_

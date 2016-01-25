@@ -93,7 +93,7 @@ void jsCreateMyClass(const v8::FunctionCallbackInfo<v8::Value>& args)
 
 	Isolate* isolate = args.GetIsolate();
 
-	Local<ObjectTemplate> myClassTemplate = 
+	Local<ObjectTemplate> myClassTemplate =
 		Local<ObjectTemplate>::New(isolate, gMyClassTemplate);
 
 	Local<Object> myClassObj = myClassTemplate->NewInstance(
@@ -217,3 +217,6 @@ void UnregisterAll()
 {
 	gMyClassTemplate.Reset();
 }
+
+
+

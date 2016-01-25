@@ -194,6 +194,6 @@ call_from_v8(T& obj, F&& func, v8::FunctionCallbackInfo<v8::Value> const& args)
 		call_traits(), make_index_sequence<call_traits::arg_count>());
 }
 
-}} // v8pp::v8_detail
+}} //namespace v8_wrap::v8_detail
 
 #endif // V8_CALL_FUNC_H_

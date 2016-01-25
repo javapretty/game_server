@@ -60,9 +60,6 @@ void test_convert()
 	test_conv(isolate, true);
 
 	test_string_conv(isolate, "qaz");
-#ifdef WIN32
-	test_string_conv(isolate, L"qaz");
-#endif
 
 	using int_vector = std::vector<int>;
 

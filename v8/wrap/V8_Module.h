@@ -153,6 +153,6 @@ private:
 	v8::Handle<v8::ObjectTemplate> obj_;
 };
 
-} // namespace v8pp
+} // namespace v8_wrap
 
 #endif // V8_MODULE_H_

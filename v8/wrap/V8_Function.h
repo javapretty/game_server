@@ -166,6 +166,6 @@ v8::Handle<v8::Function> wrap_function(v8::Isolate* isolate, char const* name, F
 	return fn;
 }
 
-} // namespace v8pp
+} // namespace v8_wrap
 
 #endif // V8_FUNCTION_H_
