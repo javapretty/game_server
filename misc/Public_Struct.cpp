@@ -11,6 +11,7 @@
 
 const Time_Value Recycle_Tick::recycle_time_ = Time_Value(2, 0);
 const Time_Value Recycle_Tick::tick_interval_ = Time_Value(2, 0);
+const Time_Value Recycle_Tick::valid_interval_ = Time_Value(60, 0);
 
 Account_Info::Account_Info(void) { reset(); }
 

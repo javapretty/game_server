@@ -15,7 +15,8 @@
 Login_Manager::Login_Manager(void):
   is_register_timer_(false),
   msg_count_onoff_(true),
-  accout_session_map_(get_hash_table_size(12000)) {
+  player_cid_map_(get_hash_table_size(12000)) ,
+  player_account_map_(get_hash_table_size(12000)) {
 	register_timer();
 }
 
@@ -75,25 +76,69 @@ void Login_Manager::get_gate_ip(std::string &account, std::string &ip, int &port
 	port = gate_ip_vec_[index].port;
 }
 
-int Login_Manager::bind_account_session(std::string& account, std::string& session) {
-	if (! accout_session_map_.insert(std::make_pair(account, session)).second) {
+Login_Player *Login_Manager::pop_login_player(void) {
+	return login_player_pool_.pop();
+}
+
+int Login_Manager::push_login_player(Login_Player *player) {
+	return login_player_pool_.push(player);
+}
+
+int Login_Manager::bind_account_login_player(std::string& account, Login_Player *player) {
+	if (! player_account_map_.insert(std::make_pair(account, player)).second) {
 		MSG_USER("insert failure");
 	}
 	return 0;
 }
 
-int Login_Manager::find_account_session(std::string& account, std::string& session){
-	Account_Session_Map::iterator iter = accout_session_map_.find(account);
-	if (iter != accout_session_map_.end() && iter->second == session){
-		return 0;
-	} else {
-		return -1;
-	}
+int Login_Manager::unbind_account_login_player(std::string& account) {
+	player_account_map_.erase(account);
+	return 0;
 }
 
-int Login_Manager::unbind_account_session(std::string& account){
-	accout_session_map_.erase(account);
+Login_Player *Login_Manager::find_account_login_player(std::string& account) {
+	Login_Player_Account_Map::iterator it = player_account_map_.find(account);
+	if (it != player_account_map_.end())
+		return it->second;
+	else
+		return 0;
+}
+
+int Login_Manager::bind_cid_login_player(int cid, Login_Player *player) {
+	if (! player_cid_map_.insert(std::make_pair(cid, player)).second) {
+		MSG_USER_TRACE("insert failure");
+	}
 	return 0;
+}
+
+int Login_Manager::unbind_cid_login_player(int cid) {
+	if (cid < 2) {
+		MSG_USER_TRACE("cid = %d", cid);
+		return -1;
+	}
+	if (player_cid_map_.erase(cid) == 0) {
+		MSG_USER_TRACE("erase cid = %d return 0", cid);
+		return -1;
+	}
+	return 0;
+}
+
+Login_Player *Login_Manager::find_cid_login_player(int cid) {
+	Login_Player_Map::iterator it = player_cid_map_.find(cid);
+	if (it != player_cid_map_.end())
+		return it->second;
+	else
+		return 0;
+}
+
+int Login_Manager::get_gate_peer_addr(int cid, std::string &ip) {
+	Svc *svc = LOGIN_CLIENT_SERVER->find_svc(cid);
+	if (! svc) {
+		MSG_USER_TRACE("cid = %d, svc == 0", cid);
+		return -1;
+	}
+	int port;
+	return svc->get_peer_addr(ip, port);
 }
 
 int Login_Manager::register_timer(void) {
@@ -166,6 +211,12 @@ int Login_Manager::process_list(void) {
 			}
 			LOGIN_GATE_SERVER->push_block(cid, buf);
 		}
+		/// 掉线玩家列表
+		if (! drop_cid_list_.empty()) {
+			all_empty = false;
+			cid = drop_cid_list_.pop_front();
+			process_drop_cid(cid);
+		}
 		/// 游戏服内部循环消息队列
 		if (! self_loop_block_list_.empty()) {
 			all_empty = false;
@@ -179,6 +230,14 @@ int Login_Manager::process_list(void) {
 			Time_Value::sleep(SLEEP_TIME);
 	}
 	return 0;
+}
+
+void Login_Manager::process_drop_cid(int cid) {
+	MSG_DEBUG("---Login_Manager::Login_Manager::process_drop_cid---");
+	Login_Player *player = LOGIN_MANAGER->find_cid_login_player(cid);
+	if (player) {
+		player->link_close();
+	}
 }
 
 int Login_Manager::server_status(void) {
@@ -195,6 +254,7 @@ int Login_Manager::tick(void) {
 	tick_time_ = now;
 
 	close_list_tick(now);
+	player_tick(now);
 	manager_tick(now);
 
 	server_info_tick(now);
@@ -227,6 +287,20 @@ int Login_Manager::server_info_tick(Time_Value &now) {
 	login_client_server_info_.reset();
 	LOGIN_GATE_SERVER->get_server_info(login_gate_server_info_);
 	LOGIN_CLIENT_SERVER->get_server_info(login_client_server_info_);
+
+	return 0;
+}
+
+int Login_Manager::player_tick(Time_Value &now) {
+	if (now - tick_info_.player_last_tick < tick_info_.player_interval_tick)
+		return 0;
+	tick_info_.player_last_tick = now;
+	Login_Player_Account_Map t_accouont_map(player_account_map_); /// 因为Login_Player::time_up()里有改变player_account_map_的操作, 直接在其上使用迭代器导致迭代器失效core
+	MSG_DEBUG("t_accouont_map.size=%d", t_accouont_map.size());
+	for (Login_Player_Account_Map::iterator it = t_accouont_map.begin(); it != t_accouont_map.end(); ++it) {
+		if (it->second)
+			it->second->tick(now);
+	}
 
 	return 0;
 }

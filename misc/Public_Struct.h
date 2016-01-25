@@ -169,6 +169,7 @@ struct Recycle_Tick {
 
 	static const Time_Value recycle_time_;
 	static const Time_Value tick_interval_;
+	static const Time_Value valid_interval_;
 
 	int status_;
 	Time_Value last_change_status_ts_;

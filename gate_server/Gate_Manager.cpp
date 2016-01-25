@@ -284,6 +284,29 @@ int Gate_Manager::unbind_gate_player(Gate_Player &player) {
 	return 0;
 }
 
+int Gate_Manager::bind_account_gate_player(std::string& account, Gate_Player &player){
+	if (! player_account_map_.insert(std::make_pair(account, &player)).second) {
+			MSG_USER_TRACE("insert failure");
+	}
+	return 0;
+}
+
+int Gate_Manager::unbind_account_gate_player(std::string& account){
+	if (player_account_map_.erase(account) == 0) {
+				MSG_USER_TRACE("erase cid = %d return 0", account.c_str());
+				return -1;
+	}
+	return 0;
+}
+
+Gate_Player *Gate_Manager::find_account_gate_player(std::string& account){
+	Gate_Player_Account_Map::iterator it = player_account_map_.find(account);
+	if (it != player_account_map_.end())
+		return it->second;
+	else
+		return 0;
+}
+
 int Gate_Manager::tick(void) {
 	Time_Value now(Time_Value::gettimeofday());
 	tick_time_ = now;

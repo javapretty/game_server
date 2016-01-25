@@ -48,11 +48,23 @@ Login_Gate_Server *Login_Gate_Server::instance(void) {
 
 void Login_Gate_Server::process_list(void) {
 	Block_Buffer *buf = 0;
+	int cid = 0;
 	while (1) {
+		bool all_empty = true;
+
+		if (!drop_cid_list_.empty()) {
+			all_empty = false;
+			cid = drop_cid_list_.pop_front();
+			LOGIN_MANAGER->push_drop_cid(cid);
+		}
+
 		if (!block_list_.empty()) {
+			all_empty = false;
 			buf = block_list_.pop_front();
 			LOGIN_MANAGER->push_login_gate_data(buf);
-		} else {
+		}
+
+		if (all_empty) {
 			//没有数据时候延迟
 			Time_Value::sleep(SLEEP_TIME);
 		}

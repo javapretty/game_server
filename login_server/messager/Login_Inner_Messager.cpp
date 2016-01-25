@@ -76,19 +76,28 @@ int Login_Inner_Messager::process_self_loop_block(Block_Buffer &buf) {
 }
 
 int Login_Inner_Messager::process_112000(int gate_cid, int32_t player_cid, MSG_112000& msg) {
+
 	MSG_112001 gate_msg;
 	gate_msg.account = msg.account;
 
 	Block_Buffer gate_buf;
+
+	Login_Player *player = 0;
+	std::string ip;
+	LOGIN_MANAGER->get_gate_peer_addr(gate_cid, ip);
+
 	//session check ok
-	if (LOGIN_MANAGER->find_account_session(msg.account, msg.session) == 0){
-		LOGIN_MANAGER->unbind_account_session(msg.account);
+	if ((player = LOGIN_MANAGER->find_account_login_player(msg.account)) != 0 && player->get_session() == msg.session && player->get_gateIp() == ip){
+		MSG_DEBUG("find the session begin send message to gate");
 		gate_buf.make_message(SYNC_LOGIN_GATE_PLAYER_ACCOUNT, 0, player_cid);
+		LOGIN_MANAGER->unbind_account_login_player(player->get_account());
+		LOGIN_MANAGER->unbind_cid_login_player(player->get_cid());
+		LOGIN_MANAGER->push_login_player(player);
 	}
 	//session check error
 	else
 	{
-		LOG_DEBUG("can not find the session begin send message to gate");
+		MSG_DEBUG("not find the session begin send message to gate");
 		gate_buf.make_message(SYNC_LOGIN_GATE_PLAYER_ACCOUNT, ERROR_CLIENT_SESSION, player_cid);
 	}
 	gate_msg.serialize(gate_buf);

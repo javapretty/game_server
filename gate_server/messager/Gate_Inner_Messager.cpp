@@ -53,6 +53,10 @@ int Gate_Inner_Messager::process_login_block(Block_Buffer &buf) {
 			//玩家成功登录
 			process_success_login(player_cid, msg.account);
 		}
+		else
+		{
+			GATE_MANAGER->close_client(player_cid);
+		}
 	}
 	return 0;
 }

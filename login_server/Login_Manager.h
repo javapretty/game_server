@@ -17,6 +17,8 @@
 #include "Block_List.h"
 #include "Object_Pool.h"
 #include "Check_Account.h"
+#include "Login_Player.h"
+
 
 class Login_Manager: public Thread {
 public:
@@ -25,7 +27,11 @@ public:
 	typedef std::list<Close_Info> Close_List;
 	typedef boost::unordered_map<int, int> Msg_Count_Map;
 	typedef std::vector<Ip_Info> Ip_Vec;
-	typedef boost::unordered_map<std::string, std::string> Account_Session_Map;
+
+	typedef Object_Pool<Login_Player, Spin_Lock> Login_Player_Pool;
+	typedef List<int, Thread_Mutex> Int_List;
+	typedef boost::unordered_map<int, Login_Player *> Login_Player_Map;
+	typedef boost::unordered_map<std::string, Login_Player *> Login_Player_Account_Map;
 
 public:
 	enum {
@@ -41,9 +47,20 @@ public:
 	int init_gate_ip(void);
 	void get_gate_ip(std::string &account, std::string &ip, int &port);
 
-	int bind_account_session(std::string& account, std::string& session);
-	int find_account_session(std::string& account, std::string& session);
-	int unbind_account_session(std::string& account);
+	void process_drop_cid(int cid);
+	void push_drop_cid(int cid);
+	Login_Player *pop_login_player(void);
+	int push_login_player(Login_Player *player);
+
+	int bind_account_login_player(std::string& account, Login_Player *player);
+	int unbind_account_login_player(std::string& account);
+	Login_Player * find_account_login_player(std::string& account) ;
+
+	int bind_cid_login_player(int cid, Login_Player *player);
+	int unbind_cid_login_player(int cid);
+	Login_Player *find_cid_login_player(int cid);
+
+	int get_gate_peer_addr(int cid, std::string &ip);
 
 	/// 定时器处理
 	int register_timer(void);
@@ -70,6 +87,7 @@ public:
 
 	int tick(void);
 	int close_list_tick(Time_Value &now);
+	int player_tick(Time_Value &now);
 	int server_info_tick(Time_Value &now);
 	int manager_tick(Time_Value &now);
 	void object_pool_tick(Time_Value &now);
@@ -111,6 +129,9 @@ private:
 
 	Tick_Info tick_info_;
 
+	Login_Player_Pool login_player_pool_;
+	Int_List drop_cid_list_;
+
 	int status_;
 	bool is_register_timer_;
 	Time_Value tick_time_;
@@ -120,9 +141,12 @@ private:
 	Msg_Count_Map inner_msg_count_map_;
 
 	Ip_Vec gate_ip_vec_;
-	Account_Session_Map accout_session_map_;
 
 	Check_Account check_account_;
+
+
+	Login_Player_Map player_cid_map_; /// cid - Login_Player map
+	Login_Player_Account_Map player_account_map_; /// role_id - Login_Player map
 };
 
 #define LOGIN_MANAGER Login_Manager::instance()
@@ -187,5 +211,8 @@ inline Check_Account &Login_Manager::check_account(void) {
 	return check_account_;
 }
 
+inline void Login_Manager::push_drop_cid(int cid) {
+	drop_cid_list_.push_back(cid);
+}
 
 #endif /* LOGIN_MANAGER_H_ */

@@ -31,6 +31,9 @@ public:
 
 	typedef boost::unordered_map<std::string, int> Logining_Map;
 	typedef boost::unordered_map<int, Gate_Player *> Gate_Player_Cid_Map;
+
+	typedef boost::unordered_map<std::string, Gate_Player *> Gate_Player_Account_Map;
+
 	typedef boost::unordered_map<int, int> Msg_Count_Map;
 
 public:
@@ -81,6 +84,11 @@ public:
 	int bind_cid_gate_player(int cid, Gate_Player &player);
 	int unbind_cid_gate_player(int cid);
 	Gate_Player *find_cid_gate_player(int cid);
+
+	int bind_account_gate_player(std::string& account, Gate_Player &player);
+	int unbind_account_gate_player(std::string& account);
+	Gate_Player *find_account_gate_player(std::string& account);
+
 	int unbind_gate_player(Gate_Player &player);
 
 	int tick(void);
@@ -133,6 +141,8 @@ private:
 	Server_Info gate_client_server_info_;
 
 	Gate_Player_Cid_Map player_cid_map_; /// cid - Login_Player map
+
+	Gate_Player_Account_Map player_account_map_;
 
 	Tick_Info tick_info_;
 

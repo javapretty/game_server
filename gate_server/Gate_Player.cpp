@@ -78,6 +78,9 @@ int Gate_Player::link_close() {
 
 	Block_Buffer buf;
 	buf.make_message(SYNC_GATE_GAME_PLAYER_SIGNOUT, 0, cid_);
+	MSG_113000 msg;
+	msg.role_id = player_info_.role_id;
+	msg.serialize(buf);
 	buf.finish_message();
 	GATE_MANAGER->send_to_game(buf);
 	return 0;
@@ -136,6 +139,7 @@ int Gate_Player::recycle_tick(const Time_Value &now) {
 		if (recycle_tick_.status_ == Recycle_Tick::RECYCLE && now - recycle_tick_.last_change_status_ts_ > Recycle_Tick::recycle_time_) {
 			ret = 1;
 			GATE_MANAGER->unbind_gate_player(*this);
+			GATE_MANAGER->unbind_account_gate_player(this->player_info_.account);
 			reset();
 			GATE_MANAGER->push_gate_player(this);
 		}
