@@ -70,6 +70,7 @@ int Gate_Player::tick(Time_Value &now) {
 	return 0;
 }
 
+
 int Gate_Player::link_close() {
 	if (recycle_tick_.status_ == Recycle_Tick::RECYCLE)
 		return 0;
