@@ -28,6 +28,6 @@ inline v8::Handle<v8::Value> throw_ex(v8::Isolate* isolate, std::string const& s
 	return throw_ex(isolate, str.c_str(), exception_ctor);
 }
 
-} // namespace v8pp
+} // namespace v8_wrap
 
 #endif // V8_EXCEPTION_H_

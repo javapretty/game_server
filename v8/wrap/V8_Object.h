@@ -68,6 +68,6 @@ void set_const(v8::Isolate* isolate, v8::Handle<v8::Object> options,
 		v8::PropertyAttribute(v8::ReadOnly | v8::DontDelete));
 }
 
-} // namespace v8pp
+} // namespace v8_wrap
 
 #endif // V8_OBJECT_H_

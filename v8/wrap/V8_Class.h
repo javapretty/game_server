@@ -617,6 +617,6 @@ private:
 	}
 };
 
-} // namespace v8pp
+} // namespace v8_wrap
 
 #endif // V8_CLASS_H_

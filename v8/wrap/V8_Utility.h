@@ -147,6 +147,6 @@ typename function_traits<F>::return_type apply(F&& f, Args&&... args)
 	return std::forward<F>(f)(std::forward<Args>(args)...);
 }
 
-}} // namespace v8pp::v8_detail
+}} // namespace v8_wrap::v8_detail
 
 #endif // V8_UTILITY_H_

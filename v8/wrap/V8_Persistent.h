@@ -161,7 +161,7 @@ private:
 	v8::UniquePersistent<v8::Value> handle_;
 };
 
-} // namespace v8pp
+} // namespace v8_wrap
 
 #endif // V8_PERSISTENT_H_
 

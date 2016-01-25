@@ -63,6 +63,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug.1166576254" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug">
 								<option id="gnu.cpp.link.option.libs.620121734" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="jsoncpp"/>
+									<listOptionValue builtIn="false" value="dl"/>
 									<listOptionValue builtIn="false" value="v8_libbase"/>
 									<listOptionValue builtIn="false" value="v8_external_snapshot"/>
 									<listOptionValue builtIn="false" value="v8"/>

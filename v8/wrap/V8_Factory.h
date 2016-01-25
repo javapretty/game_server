@@ -33,6 +33,6 @@ struct factory
 	}
 };
 
-} //namespace v8pp
+} //namespace v8_wrap
 
 #endif // V8_FACTORY_H_
