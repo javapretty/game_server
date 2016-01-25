@@ -1,0 +1,133 @@
+/*
+ * Login_Player.cpp
+ *
+ *  Created on: 2016年1月21日
+ *      Author: root
+ */
+
+
+#include "Public_Struct.h"
+#include "Login_Timer.h"
+#include "Login_Manager.h"
+#include "Login_Player.h"
+#include "Log.h"
+#include "DB_Manager.h"
+
+Login_Player::Login_Player(void)
+: cid_(0),
+  is_register_timer_(0),
+  send_client_(false)
+{ }
+
+Login_Player::~Login_Player(void) { }
+
+int Login_Player::respond_finer_result(int msg_id, Block_Buffer *buf) {
+	if (send_client_)
+		return respond_error_result(msg_id, 0, buf);
+
+	return 0;
+}
+
+int Login_Player::respond_error_result(int msg_id, int err, Block_Buffer *buf) {
+	if (buf == 0) {
+		Block_Buffer msg_buf;
+		msg_buf.make_message(msg_id, err);
+		msg_buf.finish_message();
+		return LOGIN_MANAGER->send_to_client(cid_, msg_buf);
+	} else {
+		if ((size_t)buf->get_read_idx() < (sizeof(uint16_t) + 2 * sizeof(uint32_t))) {
+			MSG_USER("Block_Buffer space error !");
+			return 0;
+		}
+		/// insert head msg_id, status
+		size_t rd_idx = buf->get_read_idx();
+		size_t wr_idx = buf->get_write_idx();
+
+		size_t head_len = sizeof(uint16_t) + 2 * sizeof(uint32_t); /// len(uint16_t, msg_id(uint32_t), status(uint16_t)
+
+		buf->set_read_idx(buf->get_read_idx() - head_len);
+		uint16_t len = buf->readable_bytes() - sizeof(uint16_t);
+		buf->set_write_idx(buf->get_read_idx());
+
+		buf->write_uint16(len);
+		buf->write_uint32(msg_id);
+		buf->write_uint32(err); /// status
+
+		buf->set_write_idx(wr_idx);
+
+		LOGIN_MANAGER->send_to_client(cid_, *buf);
+
+		buf->set_read_idx(rd_idx); /// 复位传入的buf参数
+
+		return 0;
+	}
+}
+
+int Login_Player::send_to_client(Block_Buffer &buf) {
+	if (send_client_)
+		return LOGIN_MANAGER->send_to_client(cid_, buf);
+
+	return 0;
+}
+
+int Login_Player::sign_in(int cid, std::string account) {
+	cid_ = cid;
+	this->register_timer();
+	return 0;
+}
+
+int Login_Player::sign_out(void) {
+	this->unregister_timer();
+	this->reset();
+
+	return 0;
+}
+
+void Login_Player::reset(void) {
+	cid_ = -1;
+	is_register_timer_ = false;
+	recycle_tick_.reset();
+	send_client_ = false;
+}
+
+int Login_Player::tick(Time_Value &now) {
+
+	if (recycle_tick(now) == 1)
+		return 0;
+
+	if (! is_register_timer_)
+		return 0;
+	return 0;
+}
+
+int Login_Player::register_timer(void) {
+	is_register_timer_ = true;
+	return 0;
+}
+
+int Login_Player::unregister_timer(void) {
+	is_register_timer_ = false;
+	return 0;
+}
+
+void Login_Player::set_send_client(bool send_client) {
+	send_client_ = send_client;
+}
+
+int Login_Player::recycle_tick(const Time_Value &now) {
+	int ret = 0;
+	if (now - recycle_tick_.last_tick_ts_ > Recycle_Tick::tick_interval_) {
+		recycle_tick_.last_tick_ts_ = now;
+		if ((recycle_tick_.status_ == Recycle_Tick::RECYCLE && now - recycle_tick_.last_change_status_ts_ > Recycle_Tick::recycle_time_) || (now - recycle_tick_.last_change_status_ts_ > Recycle_Tick::valid_interval_)) {
+			ret = 1;
+			MSG_DEBUG("account = %s", account_.c_str());
+			LOGIN_MANAGER->unbind_account_login_player(account_);
+			LOGIN_MANAGER->unbind_cid_login_player(cid_);
+			reset();
+			LOGIN_MANAGER->push_login_player(this);
+		}
+	}
+	return ret;
+}
+
+
