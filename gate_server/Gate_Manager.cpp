@@ -293,7 +293,7 @@ int Gate_Manager::bind_account_gate_player(std::string& account, Gate_Player &pl
 
 int Gate_Manager::unbind_account_gate_player(std::string& account){
 	if (player_account_map_.erase(account) == 0) {
-				MSG_USER_TRACE("erase cid = %d return 0", account.c_str());
+				MSG_USER_TRACE("erase account = %s return 0", account.c_str());
 				return -1;
 	}
 	return 0;

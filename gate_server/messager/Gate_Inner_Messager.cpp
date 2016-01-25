@@ -157,6 +157,7 @@ int Gate_Inner_Messager::process_success_login(int player_cid, std::string &acco
 	player->set_cid(player_cid);
 	player->set_account(account);
 	GATE_MANAGER->bind_cid_gate_player(player_cid, *player);
+	GATE_MANAGER->bind_account_gate_player(account, *player);
 
 	return 0;
 }
