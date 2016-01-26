@@ -1,12 +1,12 @@
 /*
- * My_Class.cpp
+ * object_wrap.cpp
  *
- *  Created on: 2016年1月19日
+ *  Created on: 2016年1月26日
  *      Author: zhangyalei
  */
 
-#include "My_Class.h"
 #include <iostream>
+#include "object_wrap.h"
 
 using namespace std;
 

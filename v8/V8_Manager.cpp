@@ -5,15 +5,19 @@
  *      Author: zhangyalei
  */
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "My_Class_Template.h"
-#include "V8_Base.h"
+#include <iostream>
+#include "include/libplatform/libplatform.h"
+#include "include/v8.h"
 #include "V8_Manager.h"
+#include "V8_Class.h"
+#include "V8_Property.h"
 #include "test.h"
 
-V8_Manager::V8_Manager(void):isolate_(0) { }
+using namespace v8;
+
+V8_Manager::V8_Manager(void):context_(nullptr) { }
 
 V8_Manager::~V8_Manager(void) { }
 
@@ -37,17 +41,13 @@ int V8_Manager::start_v8() {
   V8::InitializePlatform(platform);
   V8::Initialize();
 
-  // Create a new Isolate and make it the current one.
-  ArrayBufferAllocator allocator;
-  Isolate::CreateParams create_params;
-  create_params.array_buffer_allocator = &allocator;
-  isolate_ = Isolate::New(create_params);
+  context_ = new context;
 
-  process_script();
-  test_v8_wrap();
+  v8_wrap_class();
+  //test_v8_wrap();
 
   // Dispose the isolate_ and tear down V8.
-  isolate_->Dispose();
+  delete context_;
   V8::Dispose();
   V8::ShutdownPlatform();
   delete platform;
@@ -55,39 +55,40 @@ int V8_Manager::start_v8() {
   return 0;
 }
 
-int V8_Manager::process_script(void) {
-	Isolate::Scope isolate__scope(isolate_);
+struct X
+{
+	int var = 1;
 
-	// Create a stack-allocated handle scope.
-	HandleScope handle_scope(isolate_);
+	int get() const { return var; }
+	void set(int v) { var = v; }
 
-	// Create a new context.
-	// Local<Context> context = Context::New(isolate_);
-	Local<Context> context = CreateShellContext(isolate_);
+	void fun1() { std::cout << var << std::endl; }
+	void fun2() { std::cout << var+1 << std::endl; }
+};
 
-	// Enter the context for compiling and running the hello world script.
-	Context::Scope context_scope(context);
+int V8_Manager::v8_wrap_class(void) {
+	//context context;
+	v8::Isolate* isolate = context_->isolate();
+	v8::HandleScope scope(isolate);
 
-	// Create a string containing the JavaScript source code.
-	//Local<String> source =	String::NewFromUtf8(isolate_, jsCode, NewStringType::kNormal).ToLocalChecked();
-	Local<String> source;
-	if (!ReadFile(isolate_, "test.js").ToLocal(&source)) {
-		fprintf(stderr, "Error reading test.js.\n");
-		return 1;
-	}
+	class_<X> X_class(isolate);
+	X_class
+		.ctor()
+		.set("var", &X::var)
+		.set("get", property(&X::get))
+		.set("set", property(&X::get, &X::set))
+		.set("fun1", &X::fun1)
+		.set("fun2", &X::fun2)
+	;
 
-	// Compile the source code.
-	Local<Script> script = Script::Compile(context, source).ToLocalChecked();
-
-	// Run the script to get the result.
-	Local<Value> result = script->Run(context).ToLocalChecked();
-
-	// Convert the result to an UTF8 string and print it.
+	context_->set("X", X_class);
+	Local<Value> result = context_->run_file("wrap.js");
 	String::Utf8Value utf8(result);
-	printf("%s\n", *utf8);
+	std::cout << *utf8 << std::endl;
+	std::cout << run_script<int>(*context_, "x = new X(); x.var") << std::endl;
+	std::cout << run_script<int>(*context_, "x = new X(); x.get") << std::endl;
+	std::cout << run_script<int>(*context_, "x = new X(); ++x.set") << std::endl;
 
-	isolate_->LowMemoryNotification();
-	UnregisterAll();
 	return 0;
 }
 
@@ -101,4 +102,5 @@ void V8_Manager::test_v8_wrap()
 	test_module();
 	test_class();
 	test_object();
+	test_myclass();
 }

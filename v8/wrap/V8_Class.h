@@ -13,7 +13,7 @@
 #include <vector>
 #include "V8_Factory.h"
 #include "V8_Function.h"
-#include <V8_Persistent.h>
+#include "V8_Persistent.h"
 #include "V8_Property.h"
 
 namespace v8_wrap {

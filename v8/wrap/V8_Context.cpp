@@ -198,7 +198,7 @@ context& context::set(char const* name, module& m)
 	return set(name, m.new_instance());
 }
 
-v8::Handle<v8::Value> context::run_file(std::string const& filename)
+v8::Local<v8::Value> context::run_file(std::string const& filename)
 {
 	std::ifstream stream(filename.c_str());
 	if (!stream)
@@ -210,19 +210,17 @@ v8::Handle<v8::Value> context::run_file(std::string const& filename)
 	return run_script(std::string(begin, end), filename);
 }
 
-v8::Handle<v8::Value> context::run_script(std::string const& source, std::string const& filename)
+v8::Local<v8::Value> context::run_script(std::string const& source, std::string const& filename)
 {
-	v8::EscapableHandleScope scope(isolate_);
-
-	v8::Local<v8::Script> script = v8::Script::Compile(
-		to_v8(isolate_, source), to_v8(isolate_, filename));
+	v8::Local<v8::Context> impl = to_local(isolate_, impl_);
+	v8::Local<v8::Script> script = v8::Script::Compile(impl, to_v8(isolate_, source)).ToLocalChecked();
 
 	v8::Local<v8::Value> result;
 	if (!script.IsEmpty())
 	{
-		result = script->Run();
+		result = script->Run(impl).ToLocalChecked();
 	}
-	return scope.Escape(result);
+	return result;
 }
 
 } // namespace v8_wrap

@@ -109,7 +109,7 @@ T run_script(v8_wrap::context& context, std::string const& source)
 
 	v8::HandleScope scope(isolate);
 	v8::TryCatch try_catch;
-	v8::Handle<v8::Value> result = context.run_script(source);
+	v8::Local<v8::Value> result = context.run_script(source);
 	if (try_catch.HasCaught())
 	{
 		std::string const msg = v8_wrap::from_v8<std::string>(isolate, try_catch.Exception()->ToString());
@@ -126,6 +126,7 @@ void test_factory();
 void test_module();
 void test_class();
 void test_object();
+void test_myclass();
 
 
 #endif // V8PP_TEST_H_

@@ -9,20 +9,9 @@
 #define V8_MANAGER_H_
 
 #include "Thread.h"
-#include "include/libplatform/libplatform.h"
-#include "include/v8.h"
+#include "V8_Context.h"
 
-using namespace v8;
-
-class ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
- public:
-  virtual void* Allocate(size_t length) {
-    void* data = AllocateUninitialized(length);
-    return data == NULL ? data : memset(data, 0, length);
-  }
-  virtual void* AllocateUninitialized(size_t length) { return malloc(length); }
-  virtual void Free(void* data, size_t) { free(data); }
-};
+using namespace v8_wrap;
 
 class V8_Manager: public Thread {
 public:
@@ -30,9 +19,8 @@ public:
 
 	void run_handler(void);
 	int start_v8(void);
-	int process_script(void);
 
-	int test_wrap(void);
+	int v8_wrap_class(void);
 	void test_v8_wrap(void);
 
 private:
@@ -43,7 +31,7 @@ private:
 
 private:
 	static V8_Manager *instance_;
-	Isolate* isolate_;
+	context *context_;
 };
 
 #define V8_MANAGER V8_Manager::instance()

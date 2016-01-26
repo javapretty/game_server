@@ -1,12 +1,12 @@
 /*
- * My_Class_Tempate.cpp
+ * myclass_tempate.cpp
  *
  *  Created on: 2016年1月19日
  *      Author: zhangyalei
  */
 
-#include "Object_Wrap.h"
-#include "My_Class_Template.h"
+#include "myclass_template.h"
+#include "object_wrap.h"
 #include "V8_Base.h"
 
 using namespace v8;
