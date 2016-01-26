@@ -132,7 +132,7 @@ Login_Player *Login_Manager::find_cid_login_player(int cid) {
 }
 
 int Login_Manager::get_gate_peer_addr(int cid, std::string &ip) {
-	Svc *svc = LOGIN_CLIENT_SERVER->find_svc(cid);
+	Svc *svc = LOGIN_GATE_SERVER->find_svc(cid);
 	if (! svc) {
 		MSG_USER_TRACE("cid = %d, svc == 0", cid);
 		return -1;
