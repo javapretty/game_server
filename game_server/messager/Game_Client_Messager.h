@@ -17,7 +17,6 @@ public:
 
 	int process_block(Block_Buffer &buf);
 	int process_init_block(int gate_cid, int player_cid, int msg_id, Block_Buffer &buf);
-	int process_client_block(int msg_id, Block_Buffer &buf, Game_Player *player);
 
 	int process_bag_block(int msg_id, Block_Buffer &buf, Game_Player *player);
 	int process_mail_block(int msg_id, Block_Buffer &buf, Game_Player *player);

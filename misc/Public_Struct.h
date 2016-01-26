@@ -227,6 +227,7 @@ struct Game_Player_Info {
 	int last_sign_in_time;			/// 最后登录时间
 	int last_sign_out_time;			/// 最后登出时间
 	std::string ip;					/// IP
+	bool is_change;
 
 	Game_Player_Info(void);
 	int serialize(Block_Buffer &buffer) const;
@@ -234,6 +235,7 @@ struct Game_Player_Info {
 	int load(void);
 	int save(void);
 	void reset(void);
+	inline void save_change(void) { is_change = true; };
 };
 
 struct Item_Info {
@@ -325,7 +327,7 @@ struct Bag_Info {
 	int load(void);
 	int save(void);
 	void reset(void);
-	inline void save_change(void) { is_change_ = true; };
+	inline void save_change(void) { is_change = true; };
 
 	Bag_Info &operator=(Bag_Info &detail);
 
@@ -340,7 +342,7 @@ struct Bag_Info {
 	Item_Map item_map;
 	Int_Int_Map money_lock_map;		// 锁定后只能加不能减少
 	Int_Int_Map item_lock_map;
-	bool is_change_;
+	bool is_change;
 };
 
 struct Mail_Info {
@@ -350,14 +352,14 @@ struct Mail_Info {
 	int load(void);
 	int save(void);
 	void reset(void);
-	void save_change(void) { is_change_ = true; };
+	void save_change(void) { is_change = true; };
 
 	typedef std::map<int, Mail_Detail> Mail_Map;	//邮件map要按照邮件id排序，不能改成unordered_map
 
 	role_id_t role_id;		//角色ID
 	int total_count; 			//邮件的总数量，即目前为止收到的所有邮件数
 	Mail_Map mail_map;
-	bool is_change_;
+	bool is_change;
 };
 
 struct Player_Data {
@@ -377,13 +379,10 @@ struct Player_Data {
 	Bag_Info bag_info;
 	Mail_Info mail_info;
 
-	void set_all_detail_change_state(bool is_change) {
-		bag_info.is_change_ = is_change;
-		mail_info.is_change_ = is_change;
-	}
-
-	void set_role_id(role_id_t p_role_id) {
-		role_id = p_role_id;
+	void set_all_change(bool is_change) {
+		game_player_info.is_change = is_change;
+		bag_info.is_change = is_change;
+		mail_info.is_change = is_change;
 	}
 
 	void set_all_role_id(role_id_t p_role_id) {
@@ -400,6 +399,7 @@ struct Player_Data {
 	int load(void);
 	int save(void);
 	void reset(void);
+	bool can_save(void);
 };
 
 struct Player_DB_Cache {

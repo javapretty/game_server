@@ -169,6 +169,9 @@ int Game_Player::save_player_data(Player_Data &player_data, bool is_logout) {
 int Game_Player::save_player_data(bool is_logout) {
 	MSG_150003 msg;
 	save_player_data(msg.player_data, is_logout);
+	if (!is_logout && !msg.player_data.can_save()) {
+		return -1;
+	}
 	if (is_logout) {
 		msg.player_data.status = Player_Data::ROLE_SAVE_OFFLINE;
 	}
@@ -180,8 +183,7 @@ int Game_Player::save_player_data(bool is_logout) {
 
 	// 登出的时候要确保玩家信息正常保存后才可登录
 	if (is_logout) {
-		GAME_MANAGER->saving_map().insert(
-						std::make_pair(this->game_player_info().role_id, Saving_Info(this->game_player_info().role_id, Time_Value::gettimeofday())));
+		GAME_MANAGER->saving_map().insert(std::make_pair(this->game_player_info().role_id, Saving_Info(this->game_player_info().role_id, Time_Value::gettimeofday())));
 	}
 
 	return 0;

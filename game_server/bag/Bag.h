@@ -190,7 +190,7 @@ inline bool Bag::is_item_exist(uint32_t index) {
 }
 
 inline void Bag::set_change(void) {
-	bag_info_.is_change_ = true;
+	bag_info_.is_change = true;
 }
 
 inline void Bag::lock_money_by_sub_type(Money_Sub_Type type) {

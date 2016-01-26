@@ -3,9 +3,10 @@
  *      Author: zhangyalei
  */
 
+#include "Common_Func.h"
 #include "Game_Client_Messager.h"
 #include "Game_Manager.h"
-#include "Common_Func.h"
+#include "V8_Manager.h"
 
 Game_Client_Messager::Game_Client_Messager(void) { }
 
@@ -44,9 +45,15 @@ int Game_Client_Messager::process_block(Block_Buffer &buf) {
 		msg_buf.make_message(ACTIVE_DISCONNECT, ERROR_CLIENT_PARAM, player_cid);
 		msg_buf.finish_message();
 		return GAME_MANAGER->send_to_gate(gate_cid, msg_buf);
+	} else {
+		if (msg_id == SYNC_GATE_GAME_PLAYER_SIGNOUT) {
+			//	  玩家掉线，与gate断开连接
+			player->link_close();
+		}
 	}
 
-	int ret = process_client_block(msg_id, buf, player);
+	Perf_Mon perf_mon(msg_id);
+	int ret = V8_MANAGER->process_script(msg_id, buf, player);
 	if (ret) {
 		Block_Buffer msg_buf;
 		msg_buf.make_message(ACTIVE_DISCONNECT, ERROR_CLIENT_PARAM, player_cid);
@@ -75,20 +82,6 @@ int Game_Client_Messager::process_init_block(int gate_cid, int player_cid, int m
 	}
 	default:
 		break;
-	}
-	return ret;
-}
-
-int Game_Client_Messager::process_client_block(int msg_id, Block_Buffer &buf, Game_Player *player) {
-	Perf_Mon perf_mon(msg_id);
-	int ret = 0;
-	if (msg_id == SYNC_GATE_GAME_PLAYER_SIGNOUT) {
-		//	  玩家掉线，与gate断开连接
-		player->link_close();
-	} else if (msg_id >= CLIENT_BAG_MESSAGE_START && msg_id <= CLIENT_BAG_MESSAGE_END) {
-		ret = process_bag_block(msg_id, buf, player);
-	} else if (msg_id >= CLIENT_MAIL_MESSAGE_START && msg_id <= CLIENT_MAIL_MESSAGE_END) {
-		ret = process_bag_block(msg_id, buf, player);
 	}
 	return ret;
 }

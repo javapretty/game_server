@@ -139,9 +139,9 @@ int DB_Worker::process_create_player(int cid, Game_Player_Info &player_info) {
 		msg.player_data.status = Player_Data::SUCCESS_CREATED;
 		//此处保存所有数据是为了创建所有玩家表
 		msg.player_data.set_all_role_id(player_info.role_id);
-		msg.player_data.set_all_detail_change_state(true);
+		msg.player_data.set_all_change(true);
 		msg.player_data.save();
-		msg.player_data.set_all_detail_change_state(false);
+		msg.player_data.set_all_change(false);
 	}
 	msg.player_data.game_player_info = player_info;
 	Block_Buffer buf;
@@ -154,7 +154,7 @@ int DB_Worker::process_create_player(int cid, Game_Player_Info &player_info) {
 
 int DB_Worker::process_save_player(int cid, Player_Data &player_data) {
 	if (player_data.status == Player_Data::ROLE_SAVE_OFFLINE) {
-		player_data.set_all_detail_change_state(true);
+		player_data.set_all_change(true);
 		player_data.save();
 
 		Block_Buffer buf;

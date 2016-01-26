@@ -35,7 +35,7 @@ int Bag::load_data(Player_Data &data) {
 
 int Bag::save_data(Player_Data &data) {
 	data.bag_info = bag_info_;
-	bag_info_.is_change_ = false;
+	bag_info_.is_change = false;
 	return 0;
 }
 
@@ -144,7 +144,7 @@ int Bag::bag_add_capacity(const MSG_120101 &msg) {
 		result = ERROR_CLIENT_PARAM;
 		break;
 	}
-	bag_info_.is_change_ = true;
+	bag_info_.is_change = true;
 	this->bag_active_update_capacity(bag_type);
 
 	return player_->respond_error_result(RES_ADD_CAPACITY, result);
