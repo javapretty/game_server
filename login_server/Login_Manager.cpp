@@ -233,7 +233,6 @@ int Login_Manager::process_list(void) {
 }
 
 void Login_Manager::process_drop_cid(int cid) {
-	MSG_DEBUG("---Login_Manager::Login_Manager::process_drop_cid---");
 	Login_Player *player = LOGIN_MANAGER->find_cid_login_player(cid);
 	if (player) {
 		player->link_close();
