@@ -44,8 +44,8 @@ public:
 	int unregister_timer(void);
 
 	int load_player_data(Player_Data &player_data);
-	int save_player_data(Player_Data &player_data, bool is_logout);
-	int save_player_data(bool is_logout = false);
+	int save_player_data(Player_Data &player_data);
+	int save_player(bool is_logout = false);
 
 	int link_close(void);
 

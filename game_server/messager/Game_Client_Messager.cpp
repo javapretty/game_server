@@ -48,7 +48,7 @@ int Game_Client_Messager::process_block(Block_Buffer &buf) {
 	} else {
 		if (msg_id == SYNC_GATE_GAME_PLAYER_SIGNOUT) {
 			//	  玩家掉线，与gate断开连接
-			player->link_close();
+			return player->link_close();
 		}
 	}
 

@@ -77,6 +77,11 @@ int Gate_Player::link_close() {
 
 	set_recycle();
 
+	Block_Buffer buf;
+	buf.make_message(SYNC_GATE_GAME_PLAYER_SIGNOUT, 0, cid_);
+	buf.finish_message();
+	GATE_MANAGER->send_to_game(buf);
+
 	return 0;
 }
 

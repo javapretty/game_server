@@ -76,7 +76,7 @@ int Game_Player::sign_out(void) {
 
 	this->player_info_.last_sign_out_time = now.sec();
 
-	save_player_data(true);
+	save_player(true);
 	unregister_timer();
 	sync_signout_to_master();
 	reset();
@@ -126,7 +126,7 @@ int Game_Player::tick(Time_Value &now) {
 		return 0;
 
 	if (now - last_save_timestamp_ > game_player_save_interval_) {
-		save_player_data();
+		save_player();
 		last_save_timestamp_ = now;
 	}
 
@@ -152,12 +152,7 @@ int Game_Player::load_player_data(Player_Data &player_data) {
 	return 0;
 }
 
-int Game_Player::save_player_data(Player_Data &player_data, bool is_logout) {
-	if (player_info_.role_id <= 1001000000000000) {
-		MSG_USER("save_player_info: base_detail_.role_id == %ld.", player_info_.role_id);
-		return -1;
-	}
-
+int Game_Player::save_player_data(Player_Data &player_data) {
 	player_data.role_id = player_info_.role_id;
 	player_data.game_player_info = player_info_;
 	bag_.save_data(player_data);
@@ -166,9 +161,9 @@ int Game_Player::save_player_data(Player_Data &player_data, bool is_logout) {
 	return 0;
 }
 
-int Game_Player::save_player_data(bool is_logout) {
+int Game_Player::save_player(bool is_logout) {
 	MSG_150003 msg;
-	save_player_data(msg.player_data, is_logout);
+	save_player_data(msg.player_data);
 	if (!is_logout && !msg.player_data.can_save()) {
 		return -1;
 	}
