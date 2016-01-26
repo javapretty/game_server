@@ -296,11 +296,24 @@ int Login_Manager::player_tick(Time_Value &now) {
 	tick_info_.player_last_tick = now;
 	Login_Player_Account_Map t_accouont_map(player_account_map_); /// 因为Login_Player::time_up()里有改变player_account_map_的操作, 直接在其上使用迭代器导致迭代器失效core
 	for (Login_Player_Account_Map::iterator it = t_accouont_map.begin(); it != t_accouont_map.end(); ++it) {
-		if (it->second)
+		if (it->second){
 			it->second->tick(now);
+			process_time_out(now, it->second);
+		}
 	}
 
 	return 0;
+}
+
+void Login_Manager::process_time_out(Time_Value &now, Login_Player *player){
+
+	 if(now - player->get_tickTime() > Recycle_Tick::valid_interval_){
+				LOGIN_MANAGER->unbind_account_login_player(player->get_account());
+				LOGIN_MANAGER->unbind_cid_login_player(player->get_cid());
+				player->reset();
+				LOGIN_MANAGER->push_login_player(player);
+				LOGIN_MANAGER->close_client(player->get_cid());
+	 }
 }
 
 int Login_Manager::manager_tick(Time_Value &now) {

@@ -70,19 +70,6 @@ int Login_Player::send_to_client(Block_Buffer &buf) {
 	return 0;
 }
 
-int Login_Player::sign_in(int cid, std::string account) {
-	cid_ = cid;
-	this->register_timer();
-	return 0;
-}
-
-int Login_Player::sign_out(void) {
-	this->unregister_timer();
-	this->reset();
-
-	return 0;
-}
-
 void Login_Player::reset(void) {
 	cid_ = -1;
 	is_register_timer_ = false;
@@ -118,10 +105,9 @@ int Login_Player::recycle_tick(const Time_Value &now) {
 	int ret = 0;
 	if (now - recycle_tick_.last_tick_ts_ > Recycle_Tick::tick_interval_) {
 		recycle_tick_.last_tick_ts_ = now;
-		if ((recycle_tick_.status_ == Recycle_Tick::RECYCLE && now - recycle_tick_.last_change_status_ts_ > Recycle_Tick::recycle_time_) || (now - recycle_tick_.last_change_status_ts_ > Recycle_Tick::valid_interval_)) {
+		if (recycle_tick_.status_ == Recycle_Tick::RECYCLE && now - recycle_tick_.last_change_status_ts_ > Recycle_Tick::recycle_time_) {
 			ret = 1;
-			MSG_DEBUG("account = %s", account_.c_str());
-			LOGIN_MANAGER->unbind_account_login_player(account_);
+			LOGIN_MANAGER->unbind_account_login_player(player_info.account_);
 			LOGIN_MANAGER->unbind_cid_login_player(cid_);
 			reset();
 			LOGIN_MANAGER->push_login_player(this);
@@ -129,5 +115,4 @@ int Login_Player::recycle_tick(const Time_Value &now) {
 	}
 	return ret;
 }
-
 

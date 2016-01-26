@@ -467,4 +467,24 @@ struct Tick_Info {
 	{ }
 };
 
+struct Login_Player_Info {
+	Time_Value tick_time_;
+	std::string account_;
+	std::string password_;
+	std::string gete_ip_;
+	std::string session_;
+
+	Login_Player_Info(void){
+	  reset();
+	}
+
+	void reset(void) {
+		tick_time_ = Time_Value::gettimeofday();
+		account_.clear();
+		password_.clear();
+		gete_ip_.clear();
+		session_.clear();
+	}
+};
+
 #endif /* PUBLIC_STURCT_H_ */

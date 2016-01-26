@@ -47,6 +47,7 @@ public:
 	int init_gate_ip(void);
 	void get_gate_ip(std::string &account, std::string &ip, int &port);
 
+	void process_time_out(Time_Value &now, Login_Player *player);
 	void process_drop_cid(int cid);
 	void push_drop_cid(int cid);
 	Login_Player *pop_login_player(void);

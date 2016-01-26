@@ -28,6 +28,7 @@ public:
 	std::string& get_account(void);
 	void set_gateIp(std::string& ip);
 	std::string& get_gateIp(void);
+	Time_Value& get_tickTime(void);
 
 	int respond_result(int msg_id, int result, Block_Buffer *buf = 0) { return respond_error_result(msg_id, result, buf); };
 	int respond_finer_result(int msg_id, Block_Buffer *buf = 0);
@@ -35,8 +36,6 @@ public:
 	/// 注: 	该接口中的buf包含头[长度、消息号、状态码], 需使用Block_Buffer::make_message/finish_message接口创建
 	int send_to_client(Block_Buffer &buf);
 
-	int sign_in(int cid, std::string account);
-	int sign_out(void);
 	void reset(void);
 
 	int tick(Time_Value &now);
@@ -52,12 +51,9 @@ public:
 private:
 	int cid_;
 	bool is_register_timer_;
-	Recycle_Tick recycle_tick_;
-	std::string account_;
-	std::string password_;
-	std::string gete_ip_;
-	std::string session_;
 	bool send_client_;
+	Recycle_Tick recycle_tick_;
+	Login_Player_Info player_info;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -70,11 +66,39 @@ inline int Login_Player::get_cid(void) {
 }
 
 inline void Login_Player::set_session(std::string& session) {
-	session_ = session;
+	player_info.session_ = session;
 }
 
 inline std::string&  Login_Player::get_session(void) {
-	return session_;
+	return player_info.session_;
+}
+
+inline void Login_Player::set_account(std::string& account){
+	player_info.account_ = account;
+}
+
+inline std::string& Login_Player::get_account(void){
+	return player_info.account_;
+}
+
+inline void Login_Player::set_password(std::string& password){
+	player_info.password_ = password;
+}
+
+inline std::string& Login_Player::get_password(void){
+	return player_info.password_;
+}
+
+inline void Login_Player::set_gateIp(std::string& ip){
+	player_info.gete_ip_= ip;
+}
+
+inline std::string& Login_Player::get_gateIp(void){
+	return player_info.gete_ip_;
+}
+
+inline Time_Value& Login_Player::get_tickTime(void){
+	return player_info.tick_time_;
 }
 
 inline int Login_Player::link_close() {
@@ -90,30 +114,6 @@ inline void Login_Player::set_recycle(void) {
 
 inline int Login_Player::recycle_status(void) {
 	return recycle_tick_.status_;
-}
-
-inline void Login_Player::set_account(std::string& account){
-	account_ = account;
-}
-
-inline std::string& Login_Player::get_account(void){
-	return account_;
-}
-
-inline void Login_Player::set_password(std::string& password){
-	password_ = password;
-}
-
-inline std::string& Login_Player::get_password(void){
-	return password_;
-}
-
-inline void Login_Player::set_gateIp(std::string& ip){
-	gete_ip_= ip;
-}
-
-inline std::string& Login_Player::get_gateIp(void){
-	return gete_ip_;
 }
 
 #endif /* LOGIN_SERVER_LOGIN_PLAYER_H_ */
