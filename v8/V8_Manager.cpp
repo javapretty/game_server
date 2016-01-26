@@ -76,7 +76,7 @@ int V8_Manager::v8_wrap_class(void) {
 		.ctor()
 		.set("var", &X::var)
 		.set("get", property(&X::get))
-		.set("set", property(&X::get, &X::set))
+		.set("set", &X::set)
 		.set("fun1", &X::fun1)
 		.set("fun2", &X::fun2)
 	;
@@ -85,9 +85,6 @@ int V8_Manager::v8_wrap_class(void) {
 	Local<Value> result = context_->run_file("wrap.js");
 	String::Utf8Value utf8(result);
 	std::cout << *utf8 << std::endl;
-	std::cout << run_script<int>(*context_, "x = new X(); x.var") << std::endl;
-	std::cout << run_script<int>(*context_, "x = new X(); x.get") << std::endl;
-	std::cout << run_script<int>(*context_, "x = new X(); ++x.set") << std::endl;
 
 	return 0;
 }
