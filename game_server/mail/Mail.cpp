@@ -25,7 +25,7 @@ int Mail::load_data(Player_Data &data) {
 
 int Mail::save_data(Player_Data &data) {
 	data.mail_info = mail_info_;
-	mail_info_.is_change_ = false;
+	mail_info_.is_change = false;
 	return 0;
 }
 

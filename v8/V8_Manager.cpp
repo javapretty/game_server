@@ -5,15 +5,17 @@
  *      Author: zhangyalei
  */
 
-#include <stdlib.h>
-#include <string.h>
 #include <iostream>
+#include <sstream>
 #include "include/libplatform/libplatform.h"
 #include "include/v8.h"
 #include "V8_Manager.h"
 #include "V8_Class.h"
 #include "V8_Property.h"
-#include "test.h"
+#include "Common_Func.h"
+#include "Game_Server.h"
+#include "Game_Client_Messager.h"
+#include "Game_Player.h"
 
 using namespace v8;
 
@@ -40,11 +42,9 @@ int V8_Manager::start_v8() {
   Platform* platform = platform::CreateDefaultPlatform();
   V8::InitializePlatform(platform);
   V8::Initialize();
-
   context_ = new context;
 
-  v8_wrap_class();
-  //test_v8_wrap();
+  process_list();
 
   // Dispose the isolate_ and tear down V8.
   delete context_;
@@ -55,49 +55,39 @@ int V8_Manager::start_v8() {
   return 0;
 }
 
-struct X
-{
-	int var = 1;
+int V8_Manager::process_list(void) {
+	int32_t cid = 0;
+	Block_Buffer *buf = 0;
 
-	int get() const { return var; }
-	void set(int v) { var = v; }
+	while (1) {
+		bool all_empty = true;
 
-	void fun1() { std::cout << var << std::endl; }
-	void fun2() { std::cout << var+1 << std::endl; }
-};
+		/// gate-->game
+		if ((buf = game_gate_data_list_.pop_front()) != 0) {
+			all_empty = false;
+			if (buf->is_legal()) {
+				buf->peek_int32(cid);
+				GAME_CLIENT_MESSAGER->process_block(*buf);
+			} else {
+				MSG_USER("buf.read_index = %ld, buf.write_index = %ld",
+						buf->get_read_idx(), buf->get_write_idx());
+				buf->reset();
+			}
+			GAME_GATE_SERVER->push_block(cid, buf);
+		}
 
-int V8_Manager::v8_wrap_class(void) {
-	//context context;
-	v8::Isolate* isolate = context_->isolate();
-	v8::HandleScope scope(isolate);
-
-	class_<X> X_class(isolate);
-	X_class
-		.ctor()
-		.set("var", &X::var)
-		.set("get", property(&X::get))
-		.set("set", &X::set)
-		.set("fun1", &X::fun1)
-		.set("fun2", &X::fun2)
-	;
-
-	context_->set("X", X_class);
-	Local<Value> result = context_->run_file("wrap.js");
-	String::Utf8Value utf8(result);
-	std::cout << *utf8 << std::endl;
-
+		if (all_empty)
+			Time_Value::sleep(SLEEP_TIME);
+	}
 	return 0;
 }
 
-void V8_Manager::test_v8_wrap()
-{
-	test_utility();
-	test_convert();
-	test_call_func();
-	test_function();
-	test_factory();
-	test_module();
-	test_class();
-	test_object();
-	test_myclass();
+int V8_Manager::process_script(int msg_id, Block_Buffer &buf, Game_Player *player) {
+	v8::HandleScope scope(context_->isolate());
+	std::ostringstream ostr;
+	ostr << "js/" << msg_id << ".js";
+	Local<Value> result = context_->run_file(ostr.str());
+	String::Utf8Value utf8(result);
+	std::cout << *utf8 << std::endl;
+	return 0;
 }
