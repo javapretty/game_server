@@ -15,23 +15,19 @@
 
 Login_Player::Login_Player(void)
 : cid_(0),
-  is_register_timer_(0),
-  send_client_(false)
+  is_register_timer_(0)
 { }
 
 Login_Player::~Login_Player(void) { }
 
-int Login_Player::respond_finer_result(int msg_id, Block_Buffer *buf) {
-	if (send_client_)
-		return respond_error_result(msg_id, 0, buf);
-
-	return 0;
+int Login_Player::respond_success_result(int msg_id, Block_Buffer *buf) {
+	return this->respond_error_result(msg_id, 0, buf);
 }
 
 int Login_Player::respond_error_result(int msg_id, int err, Block_Buffer *buf) {
 	if (buf == 0) {
 		Block_Buffer msg_buf;
-		msg_buf.make_message(msg_id, err);
+		msg_buf.make_inner_message(msg_id, err);
 		msg_buf.finish_message();
 		return LOGIN_MANAGER->send_to_client(cid_, msg_buf);
 	} else {
@@ -63,18 +59,10 @@ int Login_Player::respond_error_result(int msg_id, int err, Block_Buffer *buf) {
 	}
 }
 
-int Login_Player::send_to_client(Block_Buffer &buf) {
-	if (send_client_)
-		return LOGIN_MANAGER->send_to_client(cid_, buf);
-
-	return 0;
-}
-
 void Login_Player::reset(void) {
 	cid_ = -1;
 	is_register_timer_ = false;
 	recycle_tick_.reset();
-	send_client_ = false;
 }
 
 int Login_Player::tick(Time_Value &now) {
@@ -97,22 +85,16 @@ int Login_Player::unregister_timer(void) {
 	return 0;
 }
 
-void Login_Player::set_send_client(bool send_client) {
-	send_client_ = send_client;
-}
-
 int Login_Player::recycle_tick(const Time_Value &now) {
 	int ret = 0;
 	if (now - recycle_tick_.last_tick_ts_ > Recycle_Tick::tick_interval_) {
 		recycle_tick_.last_tick_ts_ = now;
 		if (recycle_tick_.status_ == Recycle_Tick::RECYCLE && now - recycle_tick_.last_change_status_ts_ > Recycle_Tick::recycle_time_) {
 			ret = 1;
-			LOGIN_MANAGER->unbind_account_login_player(player_info.account_);
-			LOGIN_MANAGER->unbind_cid_login_player(cid_);
+			LOGIN_MANAGER->unbind_login_player(*this);
 			reset();
 			LOGIN_MANAGER->push_login_player(this);
 		}
 	}
 	return ret;
 }
-

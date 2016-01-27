@@ -7,7 +7,7 @@
 #ifndef GATE_CLIENT_MESSAGER_H_
 #define GATE_CLIENT_MESSAGER_H_
 
-#include <Msg_Define.h>
+#include "Msg_Define.h"
 
 class Block_Buffer;
 class Gate_Player;

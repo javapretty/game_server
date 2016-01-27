@@ -29,12 +29,9 @@ void MSG_300100::serialize(Block_Buffer & w) const {
 }
 
 int MSG_300100::deserialize(Block_Buffer & r) {
-	uint16_t __item_info_vec_vec_size;
-	if(r.read_uint16(__item_info_vec_vec_size)  )
-		return -1;
-	item_info_vec.reserve(__item_info_vec_vec_size);
+	uint16_t __item_info_vec_vec_size = r.read_uint16();
+	Item_Basic_Info v;
 	for(uint16_t i = 0; i < __item_info_vec_vec_size; ++i) {
-		Item_Basic_Info v;
 		if(v.deserialize(r))
 			return -1;
 		item_info_vec.push_back(v);
@@ -56,9 +53,7 @@ void MSG_300101::serialize(Block_Buffer & w) const {
 }
 
 int MSG_300101::deserialize(Block_Buffer & r) {
-	if (r.read_int8(type)){
-		return -1;
-	}
+	type = r.read_int8();
 	return 0;
 }
 
@@ -76,9 +71,8 @@ void MSG_300102::serialize(Block_Buffer & w) const {
 }
 
 int MSG_300102::deserialize(Block_Buffer & r) {
-	if (r.read_int16(capacity) || r.read_int32(type)){
-		return -1;
-	}
+	capacity = r.read_int16();
+	type = r.read_int32();
 	return 0;
 }
 
@@ -96,9 +90,7 @@ void MSG_300103::serialize(Block_Buffer & w) const {
 }
 
 int MSG_300103::deserialize(Block_Buffer & r) {
-	if (money_info.deserialize(r)){
-		return -1;
-	}
+	money_info.deserialize(r);
 	return 0;
 }
 
@@ -111,26 +103,20 @@ MSG_300104::MSG_300104(void){
 }
 
 void MSG_300104::serialize(Block_Buffer & w) const {
-	uint16_t __item_index_vec_vec_size = item_index_vec.size();
-	w.write_uint16(__item_index_vec_vec_size);
-	for(uint16_t i = 0; i < __item_index_vec_vec_size; ++i) {
-		w.write_int32(item_index_vec[i]);
+	uint16_t item_index_vec_size = item_index_vec.size();
+	w.write_uint16(item_index_vec_size);
+	for(uint16_t i = 0; i < item_index_vec_size; ++i) {
+		w.write_uint32(item_index_vec[i]);
 	}
 
 }
 
 int MSG_300104::deserialize(Block_Buffer & r) {
-	uint16_t __item_index_vec_vec_size;
-	if(r.read_uint16(__item_index_vec_vec_size) )
-		return -1;
-	item_index_vec.reserve(__item_index_vec_vec_size);
-	for(uint16_t i = 0; i < __item_index_vec_vec_size; ++i) {
-		int32_t v;
-		if(r.read_int32(v) )
-			return -1;
+	uint16_t item_index_vec_size = r.read_uint16();
+	for(uint16_t i = 0; i < item_index_vec_size; ++i) {
+		uint32_t v = r.read_uint32();
 		item_index_vec.push_back(v);
 	}
-
 	return 0;
 }
 
@@ -152,12 +138,9 @@ void MSG_300200::serialize(Block_Buffer & w) const {
 }
 
 int MSG_300200::deserialize(Block_Buffer & r) {
-	uint16_t __mail_detail_vec_vec_size;
-	if(r.read_uint16(__mail_detail_vec_vec_size)  )
-		return -1;
-	mail_detail_vec.reserve(__mail_detail_vec_vec_size);
+	uint16_t __mail_detail_vec_vec_size = r.read_uint16();
+	Mail_Detail v;
 	for(uint16_t i = 0; i < __mail_detail_vec_vec_size; ++i) {
-		Mail_Detail v;
 		if(v.deserialize(r))
 			return -1;
 		mail_detail_vec.push_back(v);

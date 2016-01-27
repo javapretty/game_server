@@ -112,14 +112,7 @@ int Login_Manager::bind_cid_login_player(int cid, Login_Player *player) {
 }
 
 int Login_Manager::unbind_cid_login_player(int cid) {
-	if (cid < 2) {
-		MSG_USER_TRACE("cid = %d", cid);
-		return -1;
-	}
-	if (player_cid_map_.erase(cid) == 0) {
-		MSG_USER_TRACE("erase cid = %d return 0", cid);
-		return -1;
-	}
+	player_cid_map_.erase(cid);
 	return 0;
 }
 
@@ -129,6 +122,12 @@ Login_Player *Login_Manager::find_cid_login_player(int cid) {
 		return it->second;
 	else
 		return 0;
+}
+
+int Login_Manager::unbind_login_player(Login_Player &player) {
+	player_account_map_.erase(player.login_player_info().account);
+	player_cid_map_.erase(player.get_cid());
+	return 0;
 }
 
 int Login_Manager::get_gate_peer_addr(int cid, std::string &ip) {
@@ -189,7 +188,7 @@ int Login_Manager::process_list(void) {
 		if ((buf = login_client_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
-				buf->peek_int32(cid);
+				cid = buf->peek_int32();
 				LOGIN_CLIENT_MESSAGER->process_block(*buf);
 			} else {
 				MSG_USER("buf.read_index = %ld, buf.write_index = %ld",
@@ -202,7 +201,7 @@ int Login_Manager::process_list(void) {
 		if ((buf = login_gate_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
-				buf->peek_int32(cid);
+				cid = buf->peek_int32();
 				LOGIN_INNER_MESSAGER->process_gate_block(*buf);
 			} else {
 				MSG_USER("buf.read_index = %ld, buf.write_index = %ld",
@@ -297,23 +296,15 @@ int Login_Manager::player_tick(Time_Value &now) {
 	Login_Player_Account_Map t_accouont_map(player_account_map_); /// 因为Login_Player::time_up()里有改变player_account_map_的操作, 直接在其上使用迭代器导致迭代器失效core
 	for (Login_Player_Account_Map::iterator it = t_accouont_map.begin(); it != t_accouont_map.end(); ++it) {
 		if (it->second){
+			if (now - it->second->login_player_info().session_tick > Recycle_Tick::session_interval_) {
+				LOGIN_CLIENT_SERVER->receive().push_drop(it->second->get_cid());	//断开客户端与login的连接
+				it->second->link_close();
+			}
 			it->second->tick(now);
-			process_time_out(now, it->second);
 		}
 	}
 
 	return 0;
-}
-
-void Login_Manager::process_time_out(Time_Value &now, Login_Player *player){
-
-	 if(now - player->get_tickTime() > Recycle_Tick::valid_interval_){
-				LOGIN_MANAGER->unbind_account_login_player(player->get_account());
-				LOGIN_MANAGER->unbind_cid_login_player(player->get_cid());
-				player->reset();
-				LOGIN_MANAGER->push_login_player(player);
-				LOGIN_MANAGER->close_client(player->get_cid());
-	 }
 }
 
 int Login_Manager::manager_tick(Time_Value &now) {

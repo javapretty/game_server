@@ -55,15 +55,10 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 		return -1;
 	}
 
-	int32_t cid = 0;
-	uint16_t len = 0;
-	uint32_t msg_id = 0;
-	int32_t  status = 0;
-
-	buf->read_int32(cid);
-	buf->read_uint16(len);
-	buf->read_uint32(msg_id);
-	buf->read_int32(status);
+	int32_t cid = buf->read_int32();
+	uint16_t len = buf->read_uint16();
+	uint32_t msg_id = buf->read_uint32();
+	int32_t  status = buf->read_int32();
 
 	switch (msg_id) {
 	case SYNC_GAME_DB_LOAD_DB_CACHE: {
@@ -124,7 +119,7 @@ int DB_Worker::process_load_player(int cid, Account_Info &account_info) {
 		msg.player_data.load();
 	}
 	Block_Buffer buf;
-	buf.make_message(SYNC_DB_GAME_LOAD_PLAYER_INFO);
+	buf.make_inner_message(SYNC_DB_GAME_LOAD_PLAYER_INFO);
 	msg.serialize(buf);
 	buf.finish_message();
 	DB_MANAGER->send_data_block(cid, buf);
@@ -145,7 +140,7 @@ int DB_Worker::process_create_player(int cid, Game_Player_Info &player_info) {
 	}
 	msg.player_data.game_player_info = player_info;
 	Block_Buffer buf;
-	buf.make_message(SYNC_DB_GAME_CREATE_PLAYER);
+	buf.make_inner_message(SYNC_DB_GAME_CREATE_PLAYER);
 	msg.serialize(buf);
 	buf.finish_message();
 	DB_MANAGER->send_data_block(cid, buf);
@@ -158,7 +153,7 @@ int DB_Worker::process_save_player(int cid, Player_Data &player_data) {
 		player_data.save();
 
 		Block_Buffer buf;
-		buf.make_message(SYNC_DB_GAME_SAVE_PLAYER_INFO);
+		buf.make_inner_message(SYNC_DB_GAME_SAVE_PLAYER_INFO);
 		MSG_550003 msg;
 		msg.role_id = player_data.game_player_info.role_id;
 		msg.serialize(buf);

@@ -21,15 +21,10 @@ Game_Inner_Messager *Game_Inner_Messager::instance(void) {
 }
 
 int Game_Inner_Messager::process_db_block(Block_Buffer &buf) {
-	int32_t cid = 0;
-	uint16_t len = 0;
-	uint32_t msg_id = 0;
-	int32_t status = 0;
-
-	buf.read_int32(cid);
-	buf.read_uint16(len);
-	buf.read_uint32(msg_id);
-	buf.read_int32(status);
+	int32_t cid = buf.read_int32();
+	uint16_t len = buf.read_uint16();
+	uint32_t msg_id = buf.read_uint32();
+	int32_t status = buf.read_int32();
 
 	Perf_Mon perf_mon(msg_id);
 	switch (msg_id) {
@@ -54,15 +49,10 @@ int Game_Inner_Messager::process_db_block(Block_Buffer &buf) {
 }
 
 int Game_Inner_Messager::process_master_block(Block_Buffer &buf) {
-	int32_t cid = 0;
-	uint16_t len = 0;
-	uint32_t msg_id = 0;
-	int32_t status = 0;
-
-	buf.read_int32(cid);
-	buf.read_uint16(len);
-	buf.read_uint32(msg_id);
-	buf.read_int32(status);
+	int32_t cid = buf.read_int32();
+	uint16_t len = buf.read_uint16();
+	uint32_t msg_id = buf.read_uint32();
+	int32_t status = buf.read_int32();
 
 	Perf_Mon perf_mon(msg_id);
 	switch (msg_id) {
@@ -74,13 +64,9 @@ int Game_Inner_Messager::process_master_block(Block_Buffer &buf) {
 }
 
 int Game_Inner_Messager::process_self_loop_block(Block_Buffer &buf) {
-	uint16_t len = 0;
-	uint32_t msg_id = 0;
-	int32_t status = 0;
-
-	buf.read_uint16(len);
-	buf.read_uint32(msg_id);
-	buf.read_int32(status);
+	uint16_t len = buf.read_uint16();
+	uint32_t msg_id = buf.read_uint32();
+	int32_t status = buf.read_int32();
 
 	Perf_Mon perf_mon(msg_id);
 	switch (msg_id) {
@@ -131,7 +117,7 @@ int Game_Inner_Messager::process_loaded_player_data(Block_Buffer &buf) {
 	case Player_Data::ROLE_NOT_EXIST:	{
 		/// [登录]没有此玩家数据, 提示创建新角色
 		Block_Buffer res_buf;
-		res_buf.make_message(RES_FETCH_ROLE_INFO, ERROR_ROLE_NOT_EXIST, player_cid);
+		res_buf.make_player_message(RES_FETCH_ROLE_INFO, ERROR_ROLE_NOT_EXIST, player_cid);
 		MSG_520001 res_msg;
 		res_msg.serialize(res_buf);
 		res_buf.finish_message();
@@ -141,7 +127,7 @@ int Game_Inner_Messager::process_loaded_player_data(Block_Buffer &buf) {
 	case Player_Data::ROLE_HAS_EXIST: {
 		/// [创建角色]创建的角色名已存在
 		Block_Buffer res_buf;
-		res_buf.make_message(RES_CREATE_ROLE, ERROR_EXIST_ROLE_NAME, player_cid);
+		res_buf.make_player_message(RES_CREATE_ROLE, ERROR_EXIST_ROLE_NAME, player_cid);
 		MSG_520002 res_msg;
 		res_msg.role_id = 0;
 		res_msg.serialize(res_buf);
@@ -152,7 +138,7 @@ int Game_Inner_Messager::process_loaded_player_data(Block_Buffer &buf) {
 	case Player_Data::SUCCESS_CREATED: {
 		/// [创建角色]创建角色成功
 		Block_Buffer res_buf;
-		res_buf.make_message(RES_CREATE_ROLE, 0, player_cid);
+		res_buf.make_player_message(RES_CREATE_ROLE, 0, player_cid);
 		MSG_520002 res_msg;
 		res_msg.role_id = msg.player_data.role_id;
 		res_msg.serialize(res_buf);

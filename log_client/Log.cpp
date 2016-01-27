@@ -240,7 +240,7 @@ void Log::logging_file(std::ostringstream &msg_stream) {
 	msg.log_str = msg_stream.str();
 
 	Block_Buffer msg_buf;
-	msg_buf.make_message(INNER_LOG_FILE_RECORD);
+	msg_buf.make_inner_message(INNER_LOG_FILE_RECORD);
 	msg.serialize(msg_buf);
 	msg_buf.finish_message();
 

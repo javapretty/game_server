@@ -17,24 +17,11 @@ public:
 
 	void set_cid(int cid);
 	int get_cid(void);
-	void set_send_client(bool send_client);
+	void set_player_info(const Login_Player_Info &player_info);
+	Login_Player_Info const &login_player_info(void) const;
 
-
-	void set_session(std::string& session);
-	std::string& get_session(void);
-	void set_password(std::string& password);
-	std::string& get_password(void);
-	void set_account(std::string& account);
-	std::string& get_account(void);
-	void set_gateIp(std::string& ip);
-	std::string& get_gateIp(void);
-	Time_Value& get_tickTime(void);
-
-	int respond_result(int msg_id, int result, Block_Buffer *buf = 0) { return respond_error_result(msg_id, result, buf); };
-	int respond_finer_result(int msg_id, Block_Buffer *buf = 0);
+	int respond_success_result(int msg_id, Block_Buffer *buf = 0);
 	int respond_error_result(int msg_id, int err, Block_Buffer *buf = 0);
-	/// 注: 	该接口中的buf包含头[长度、消息号、状态码], 需使用Block_Buffer::make_message/finish_message接口创建
-	int send_to_client(Block_Buffer &buf);
 
 	void reset(void);
 
@@ -51,9 +38,8 @@ public:
 private:
 	int cid_;
 	bool is_register_timer_;
-	bool send_client_;
 	Recycle_Tick recycle_tick_;
-	Login_Player_Info player_info;
+	Login_Player_Info player_info_;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -65,40 +51,12 @@ inline int Login_Player::get_cid(void) {
 	return cid_;
 }
 
-inline void Login_Player::set_session(std::string& session) {
-	player_info.session_ = session;
+inline void Login_Player::set_player_info(const Login_Player_Info &player_info) {
+	player_info_ = player_info;
 }
 
-inline std::string&  Login_Player::get_session(void) {
-	return player_info.session_;
-}
-
-inline void Login_Player::set_account(std::string& account){
-	player_info.account_ = account;
-}
-
-inline std::string& Login_Player::get_account(void){
-	return player_info.account_;
-}
-
-inline void Login_Player::set_password(std::string& password){
-	player_info.password_ = password;
-}
-
-inline std::string& Login_Player::get_password(void){
-	return player_info.password_;
-}
-
-inline void Login_Player::set_gateIp(std::string& ip){
-	player_info.gete_ip_= ip;
-}
-
-inline std::string& Login_Player::get_gateIp(void){
-	return player_info.gete_ip_;
-}
-
-inline Time_Value& Login_Player::get_tickTime(void){
-	return player_info.tick_time_;
+inline Login_Player_Info const &Login_Player::login_player_info(void) const {
+	return player_info_;
 }
 
 inline int Login_Player::link_close() {

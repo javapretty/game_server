@@ -169,7 +169,7 @@ struct Recycle_Tick {
 
 	static const Time_Value recycle_time_;
 	static const Time_Value tick_interval_;
-	static const Time_Value valid_interval_;
+	static const Time_Value session_interval_;
 
 	int status_;
 	Time_Value last_change_status_ts_;
@@ -190,6 +190,19 @@ struct Recycle_Tick {
 		status_ = v;
 		last_change_status_ts_ = Time_Value::gettimeofday();
 	}
+};
+
+struct Login_Player_Info {
+	Time_Value session_tick;
+	std::string account;
+	std::string gate_ip;
+	int gate_port;
+	std::string session;
+
+	Login_Player_Info(void);
+	int serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
 };
 
 struct Gate_Player_Info {
@@ -465,26 +478,6 @@ struct Tick_Info {
 	  object_pool_interval_tick(300, 0),
 	  object_pool_last_tick(Time_Value::zero)
 	{ }
-};
-
-struct Login_Player_Info {
-	Time_Value tick_time_;
-	std::string account_;
-	std::string password_;
-	std::string gete_ip_;
-	std::string session_;
-
-	Login_Player_Info(void){
-	  reset();
-	}
-
-	void reset(void) {
-		tick_time_ = Time_Value::gettimeofday();
-		account_.clear();
-		password_.clear();
-		gete_ip_.clear();
-		session_.clear();
-	}
 };
 
 #endif /* PUBLIC_STURCT_H_ */

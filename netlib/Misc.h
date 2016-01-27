@@ -23,12 +23,11 @@ struct Block_Group_Info {
 	}
 
 	void deserialize(Block_Buffer &buf) {
-		uint32_t x = 0;
-		buf.read_uint32(x);
+		uint32_t x = buf.read_uint32();
 		free_list_size_ = x;
-		buf.read_uint32(x);
+		x = buf.read_uint32();
 		used_list_size_ = x;
-		buf.read_uint32(x);
+		x = buf.read_uint32();
 		sum_bytes_ = x;
 	}
 
@@ -57,17 +56,14 @@ struct Server_Info {
 	}
 
 	void deserialize(Block_Buffer &buf) {
-		uint32_t x = 0;
-		buf.read_uint32(x);
+		uint32_t x = buf.read_uint32();
 		svc_pool_free_list_size_ = x;
-		buf.read_uint32(x);
+		x = buf.read_uint32();
 		svc_pool_used_list_size_ = x;
-		buf.read_uint32(x);
+		x = buf.read_uint32();
 		svc_list_size_ = x;
 
-		uint16_t s = 0;
-		buf.read_uint16(s);
-
+		uint16_t s = buf.read_uint16();
 		Block_Group_Info info;
 		for (uint16_t i = 0; i < s; ++i) {
 			info.reset();

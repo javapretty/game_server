@@ -50,19 +50,24 @@ inner message head;
 #include <algorithm>
 
 #define BLOCK_LITTLE_ENDIAN
-//#define BLOCK_BIG_ENDIAN
 
 class Block_Buffer {
 public:
-	Block_Buffer(unsigned short max_use_times = 1, size_t init_size = 2048, size_t init_offset = 4 * sizeof(uint32_t));
+	Block_Buffer()
+	: max_use_times_(1),
+	  use_times_(0),
+	  init_size_(2048),
+	  init_offset_(16),
+	  read_index_(16),
+	  write_index_(16),
+	  buffer_(2064)
+	{ }
 
 	inline void reset(void);
-
 	inline void swap(Block_Buffer &block);
 
 	/// 当前缓冲内可读字节数
 	inline size_t readable_bytes(void) const;
-
 	/// 当前缓冲内可写字节数
 	inline size_t writable_bytes(void) const;
 
@@ -89,24 +94,29 @@ public:
 	inline void dump_inner(void);
 	inline void debug(void);
 
-	inline int peek_int8(int8_t &v);
-	inline int peek_int16(int16_t &v);
-	inline int peek_int32(int32_t &v);
-	inline int peek_int64(int64_t &v);
-	inline int peek_uint8(uint8_t &v);
-	inline int peek_uint16(uint16_t &v);
-	inline int peek_uint32(uint32_t &v);
+	inline int8_t peek_int8();
+	inline int16_t peek_int16();
+	inline int32_t peek_int32();
+	inline int64_t peek_int64();
+	inline uint8_t peek_uint8();
+	inline uint16_t peek_uint16();
+	inline uint32_t peek_uint32();
+	inline uint64_t peek_uint64();
+	inline double peek_double();
+	inline bool peek_bool();
+	inline std::string peek_string();
 
-	inline int read_int8(int8_t &v);
-	inline int read_int16(int16_t &v);
-	inline int read_int32(int32_t &v);
-	inline int read_int64(int64_t &v);
-	inline int read_uint8(uint8_t &v);
-	inline int read_uint16(uint16_t &v);
-	inline int read_uint32(uint32_t &v);
-	inline int read_uint64(uint64_t &v);
-
-	inline int read_int16_big_endian(int16_t &v);
+	inline int8_t read_int8();
+	inline int16_t read_int16();
+	inline int32_t read_int32();
+	inline int64_t read_int64();
+	inline uint8_t read_uint8();
+	inline uint16_t read_uint16();
+	inline uint32_t read_uint32();
+	inline uint64_t read_uint64();
+	inline double read_double();
+	inline bool read_bool();
+	inline std::string read_string();
 
 	inline int write_int8(int8_t v);
 	inline int write_int16(int16_t v);
@@ -116,43 +126,14 @@ public:
 	inline int write_uint16(uint16_t v);
 	inline int write_uint32(uint32_t v);
 	inline int write_uint64(uint64_t);
-
-	inline int peek_double(double &v);
-	inline int read_double(double &v);
 	inline int write_double(double v);
-
-	inline int peek_bool(bool &v);
-	inline int read_bool(bool &v);
 	inline int write_bool(bool v);
-
-	inline int peek_string(std::string &str);
-	inline int read_string(std::string &str);
 	inline int write_string(const std::string &str);
 
-	inline Block_Buffer &operator>>(int8_t &v);
-	inline Block_Buffer &operator>>(int16_t &v);
-	inline Block_Buffer &operator>>(int32_t &v);
-	inline Block_Buffer &operator>>(uint8_t &v);
-	inline Block_Buffer &operator>>(uint16_t &v);
-	inline Block_Buffer &operator>>(uint32_t &v);
-
-	inline Block_Buffer &operator<<(int8_t v);
-	inline Block_Buffer &operator<<(int16_t v);
-	inline Block_Buffer &operator<<(int32_t v);
-	inline Block_Buffer &operator<<(uint8_t v);
-	inline Block_Buffer &operator<<(uint16_t v);
-	inline Block_Buffer &operator<<(uint32_t v);
-
-	inline Block_Buffer &operator>>(double &v);
-	inline Block_Buffer &operator<<(double v);
-
-	inline Block_Buffer &operator>>(std::string &v);
-	inline Block_Buffer &operator<<(std::string &v);
-
-	//服务器内部，服务器到db,log等使用此方法
-	inline void make_message(int msg_id, int status = 0);
+	//服务器内部，服务器到db,log使用
+	inline void make_inner_message(int msg_id, int status = 0);
 	//gate与game,master,chat,login转发客户端消息时候使用
-	inline void make_message(int msg_id, int status, int player_cid);
+	inline void make_player_message(int msg_id, int status, int player_cid);
 	inline void finish_message(void);
 
 	inline int move_data(size_t dest, size_t begin, size_t end);
@@ -184,73 +165,6 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-
-#define peek8(x)	\
-	memcpy(&x, &(buffer_[read_index_]), sizeof(uint8_t));
-
-#define peek16(x)	\
-	uint16_t t;		\
-	memcpy(&t, &(buffer_[read_index_]), sizeof(t));	\
-	x = be16toh(t);
-
-#define peek32(x)	\
-	uint32_t t;		\
-	memcpy(&t, &(buffer_[read_index_]), sizeof(t));	\
-	x = be32toh(t);
-
-#define peek64(x)	\
-	uint64_t t;		\
-	memcpy(&t, &(buffer_[read_index_]), sizeof(t));	\
-	x = be64toh(t);
-
-#define read8(x)	\
-	memcpy(&x, &(buffer_[read_index_]), sizeof(uint8_t));	\
-	read_index_ += sizeof(uint8_t);
-
-#define read16(x)	\
-	uint16_t t;		\
-	memcpy(&t, &(buffer_[read_index_]), sizeof(t));	\
-	x = be16toh(t);	\
-	read_index_ += sizeof(uint16_t);
-
-#define read32(x)	\
-	uint32_t t;		\
-	memcpy(&t, &(buffer_[read_index_]), sizeof(t));	\
-	x = be32toh(t);	\
-	read_index_ += sizeof(uint32_t);
-
-#define read64(x)	\
-	uint64_t t;		\
-	memcpy(&t, &(buffer_[read_index_]), sizeof(t));	\
-	x = be64toh(t);	\
-	read_index_ += sizeof(uint64_t);
-
-#define write8(x)	\
-	copy(&x, sizeof(uint8_t));
-
-#define write16(x)	\
-	uint16_t t;		\
-	t = htobe16(x);	\
-	copy(&t, sizeof(uint16_t));
-
-#define write32(x)	\
-	uint32_t t;		\
-	t = htobe32(x);	\
-	copy(&t, sizeof(uint32_t));
-
-#define write64(x)	\
-	uint64_t t;		\
-	t = htobe64(x);	\
-	copy(&t, sizeof(uint64_t));
-
-#define swap_double(d)						\
-	({ double __v, __x = (d);				\
-		__asm__ ("bswap %q0" : "=r" (__v) : "0" (__x));	\
-		__v; })
-
-#define htobe_double(d)	swap_double(d)
-#define betoh_double(d) swap_double(d)
-
 void Block_Buffer::reset(void) {
 	++use_times_;
 	recycle_space();
@@ -380,8 +294,7 @@ void Block_Buffer::copy(Block_Buffer *block) {
 
 void Block_Buffer::dump_inner(void) {
 	int ridx = get_read_idx();
-	uint16_t len = 0;
-	read_uint16(len);
+	uint16_t len = read_uint16();
 	printf("len = %d\n", len);
 	dump();
 	set_read_idx(ridx);
@@ -398,17 +311,19 @@ void Block_Buffer::debug(void) {
 	LOG_DEBUG("  read_index = %ul, write_index = %ul, buffer_.size = %ul.", read_index_, write_index_, buffer_.size());;
 }
 
-int Block_Buffer::peek_int8(int8_t &v) {
+int8_t Block_Buffer::peek_int8() {
+	int8_t v = 0;
 	if (verify_read(sizeof(v))) {
 		memcpy(&v, &(buffer_[read_index_]), sizeof(v));
 	} else {
 		LOG_USER_TRACE("out of range");
 		return -1;
 	}
-	return 0;
+	return v;
 }
 
-int Block_Buffer::peek_int16(int16_t &v) {
+int16_t Block_Buffer::peek_int16() {
+	int16_t v = 0;
 	if (verify_read(sizeof(v))) {
 #ifdef BLOCK_BIG_ENDIAN
 		uint16_t t, u;
@@ -423,10 +338,11 @@ int Block_Buffer::peek_int16(int16_t &v) {
 		LOG_USER_TRACE("out of range");
 		return -1;
 	}
-	return 0;
+	return v;
 }
 
-int Block_Buffer::peek_int32(int32_t &v) {
+int32_t Block_Buffer::peek_int32() {
+	int32_t v = 0;
 	if (verify_read(sizeof(v))) {
 #ifdef BLOCK_BIG_ENDIAN
 		uint32_t t, u;
@@ -441,10 +357,11 @@ int Block_Buffer::peek_int32(int32_t &v) {
 		LOG_USER_TRACE("out of range");
 		return -1;
 	}
-	return 0;
+	return v;
 }
 
-int Block_Buffer::peek_int64(int64_t &v) {
+int64_t Block_Buffer::peek_int64() {
+	int64_t v = 0;
 	if (verify_read(sizeof(v))) {
 #ifdef BLOCK_BIG_ENDIAN
 		uint64_t t, u;
@@ -459,20 +376,22 @@ int Block_Buffer::peek_int64(int64_t &v) {
 		LOG_USER_TRACE("out of range");
 		return -1;
 	}
-	return 0;
+	return v;
 }
 
-int Block_Buffer::peek_uint8(uint8_t &v) {
+uint8_t Block_Buffer::peek_uint8() {
+	uint8_t v = 0;
 	if (verify_read(sizeof(v))) {
 		memcpy(&v, &(buffer_[read_index_]), sizeof(v));
 	} else {
 		LOG_USER_TRACE("out of range");
 		return -1;
 	}
-	return 0;
+	return v;
 }
 
-int Block_Buffer::peek_uint16(uint16_t &v) {
+uint16_t Block_Buffer::peek_uint16() {
+	uint16_t v = 0;
 	if (verify_read(sizeof(v))) {
 #ifdef BLOCK_BIG_ENDIAN
 		uint16_t t;
@@ -486,10 +405,11 @@ int Block_Buffer::peek_uint16(uint16_t &v) {
 		LOG_USER_TRACE("out of range");
 		return -1;
 	}
-	return 0;
+	return v;
 }
 
-int Block_Buffer::peek_uint32(uint32_t &v) {
+uint32_t Block_Buffer::peek_uint32() {
+	uint32_t v = 0;
 	if (verify_read(sizeof(v))) {
 #ifdef BLOCK_BIG_ENDIAN
 		uint32_t t;
@@ -503,10 +423,63 @@ int Block_Buffer::peek_uint32(uint32_t &v) {
 		LOG_USER_TRACE("out of range");
 		return -1;
 	}
-	return 0;
+	return v;
 }
 
-int Block_Buffer::read_int8(int8_t &v) {
+uint64_t Block_Buffer::peek_uint64() {
+	uint64_t v = 0;
+	if (verify_read(sizeof(v))) {
+#ifdef BLOCK_BIG_ENDIAN
+		uint64_t t, u;
+		memcpy(&t, &(buffer_[read_index_]), sizeof(t));
+		u = be64toh(t);
+		memcpy(&v, &u, sizeof(v));
+#endif
+#ifdef BLOCK_LITTLE_ENDIAN
+		memcpy(&v, &(buffer_[read_index_]), sizeof(v));
+#endif
+	} else {
+		LOG_USER_TRACE("out of range");
+		return -1;
+	}
+	return v;
+}
+
+double Block_Buffer::peek_double() {
+	double v = 0;
+#ifdef BLOCK_BIG_ENDIAN
+	uint64_t t, u;
+	memcpy(&t, &(buffer_[read_index_]), sizeof(t));
+	u = be64toh(t);
+	memcpy(&v, &u, sizeof(v));
+#endif
+#ifdef BLOCK_LITTLE_ENDIAN
+	memcpy(&v, &(buffer_[read_index_]), sizeof(v));
+#endif
+	return v;
+}
+
+bool Block_Buffer::peek_bool() {
+	bool v = false;
+	if (verify_read(sizeof(v))) {
+		memcpy(&v, &(buffer_[read_index_]), sizeof(v));
+	} else {
+		LOG_USER_TRACE("out of range");
+		return -1;
+	}
+	return v;
+}
+
+std::string Block_Buffer::peek_string() {
+	std::string str = "";
+	uint16_t len = read_uint16();
+	if (len < 0) return str;
+	str.append(buffer_[read_index_], len);
+	return str;
+}
+
+int8_t Block_Buffer::read_int8() {
+	int8_t v = 0;
 	if (verify_read(sizeof(v))) {
 		memcpy(&v, &(buffer_[read_index_]), sizeof(v));
 		read_index_ += sizeof(v);
@@ -514,10 +487,11 @@ int Block_Buffer::read_int8(int8_t &v) {
 		LOG_USER_TRACE("out of range");
 		return -1;
 	}
-	return 0;
+	return v;
 }
 
-int Block_Buffer::read_int16(int16_t &v) {
+int16_t Block_Buffer::read_int16() {
+	int16_t v = 0;
 	if (verify_read(sizeof(v))) {
 #ifdef BLOCK_BIG_ENDIAN
 		uint16_t t, u;
@@ -534,24 +508,11 @@ int Block_Buffer::read_int16(int16_t &v) {
 		LOG_USER_TRACE("out of range");
 		return -1;
 	}
-	return 0;
+	return v;
 }
 
-int Block_Buffer::read_int16_big_endian(int16_t &v) {
-	if (verify_read(sizeof(v))) {
-		uint16_t t, u;
-		memcpy(&t, &(buffer_[read_index_]), sizeof(t));
-		u = be16toh(t);
-		memcpy(&v, &u, sizeof(v));
-		read_index_ += sizeof(v);
-	} else {
-		LOG_USER_TRACE("out of range");
-		return -1;
-	}
-	return 0;
-}
-
-int Block_Buffer::read_int32(int32_t &v) {
+int32_t Block_Buffer::read_int32() {
+	int32_t v = 0;
 	if (verify_read(sizeof(v))) {
 #ifdef BLOCK_BIG_ENDIAN
 		uint32_t t, u;
@@ -568,10 +529,11 @@ int Block_Buffer::read_int32(int32_t &v) {
 		LOG_USER_TRACE("out of range");
 		return -1;
 	}
-	return 0;
+	return v;
 }
 
-int Block_Buffer::read_int64(int64_t &v) {
+int64_t Block_Buffer::read_int64() {
+	int64_t v = 0;
 	if (verify_read(sizeof(v))) {
 #ifdef BLOCK_BIG_ENDIAN
 		uint64_t t, u;
@@ -588,10 +550,11 @@ int Block_Buffer::read_int64(int64_t &v) {
 		LOG_USER_TRACE("out of range");
 		return -1;
 	}
-	return 0;
+	return v;
 }
 
-int Block_Buffer::read_uint8(uint8_t &v) {
+uint8_t Block_Buffer::read_uint8() {
+	uint8_t v = 0;
 	if (verify_read(sizeof(v))) {
 		memcpy(&v, &(buffer_[read_index_]), sizeof(v));
 		read_index_ += sizeof(v);
@@ -599,10 +562,11 @@ int Block_Buffer::read_uint8(uint8_t &v) {
 		LOG_USER_TRACE("out of range");
 		return -1;
 	}
-	return 0;
+	return v;
 }
 
-int Block_Buffer::read_uint16(uint16_t &v) {
+uint16_t Block_Buffer::read_uint16() {
+	uint16_t v = 0;
 	if (verify_read(sizeof(v))) {
 #ifdef BLOCK_BIG_ENDIAN
 		uint16_t t;
@@ -618,10 +582,11 @@ int Block_Buffer::read_uint16(uint16_t &v) {
 		LOG_USER_TRACE("out of range");
 		return -1;
 	}
-	return 0;
+	return v;
 }
 
-int Block_Buffer::read_uint32(uint32_t &v) {
+uint32_t Block_Buffer::read_uint32() {
+	uint32_t v = 0;
 	if (verify_read(sizeof(v))) {
 #ifdef BLOCK_BIG_ENDIAN
 		uint32_t t;
@@ -637,10 +602,11 @@ int Block_Buffer::read_uint32(uint32_t &v) {
 		LOG_USER_TRACE("out of range");
 		return -1;
 	}
-	return 0;
+	return v;
 }
 
-int Block_Buffer::read_uint64(uint64_t &v) {
+uint64_t Block_Buffer::read_uint64() {
+	uint64_t v = 0;
 	if (verify_read(sizeof(v))) {
 #ifdef BLOCK_BIG_ENDIAN
 		uint64_t t;
@@ -656,7 +622,51 @@ int Block_Buffer::read_uint64(uint64_t &v) {
 		LOG_USER_TRACE("out of range");
 		return -1;
 	}
-	return 0;
+	return v;
+}
+
+double Block_Buffer::read_double() {
+	double v = 0;
+	if (verify_read(sizeof(v))) {
+#ifdef BLOCK_BIG_ENDIAN
+		uint64_t t, u;
+		memcpy(&t, &(buffer_[read_index_]), sizeof(t));
+		u = be64toh(t);
+		memcpy(&v, &u, sizeof(v));
+		read_index_ += sizeof(t);
+#endif
+#ifdef BLOCK_LITTLE_ENDIAN
+		memcpy(&v, &(buffer_[read_index_]), sizeof(v));
+		read_index_ += sizeof(v);
+#endif
+	} else {
+		LOG_USER_TRACE("out of range");
+		return -1;
+	}
+	return v;
+}
+
+bool Block_Buffer::read_bool() {
+	bool v = false;
+	if (verify_read(sizeof(v))) {
+		memcpy(&v, &(buffer_[read_index_]), sizeof(v));
+		read_index_ += sizeof(v);
+	} else {
+		LOG_USER_TRACE("out of range");
+		return -1;
+	}
+	return v;
+}
+
+std::string Block_Buffer::read_string() {
+	std::string str = "";
+	uint16_t len = read_uint16();
+	if (len < 0) return str;
+	if (!verify_read(len)) return str;
+	str.resize(len);
+	memcpy((char *)str.c_str(), this->get_read_ptr(), len);
+	read_index_ += len;
+	return str;
 }
 
 int Block_Buffer::write_int8(int8_t v) {
@@ -745,39 +755,6 @@ int Block_Buffer::write_uint64(uint64_t v) {
 	return 0;
 }
 
-int Block_Buffer::peek_double(double &v) {
-#ifdef BLOCK_BIG_ENDIAN
-	uint64_t t, u;
-	memcpy(&t, &(buffer_[read_index_]), sizeof(t));
-	u = be64toh(t);
-	memcpy(&v, &u, sizeof(v));
-#endif
-#ifdef BLOCK_LITTLE_ENDIAN
-	memcpy(&v, &(buffer_[read_index_]), sizeof(v));
-#endif
-	return 0;
-}
-
-int Block_Buffer::read_double(double &v) {
-	if (verify_read(sizeof(v))) {
-#ifdef BLOCK_BIG_ENDIAN
-		uint64_t t, u;
-		memcpy(&t, &(buffer_[read_index_]), sizeof(t));
-		u = be64toh(t);
-		memcpy(&v, &u, sizeof(v));
-		read_index_ += sizeof(t);
-#endif
-#ifdef BLOCK_LITTLE_ENDIAN
-		memcpy(&v, &(buffer_[read_index_]), sizeof(v));
-		read_index_ += sizeof(v);
-#endif
-	} else {
-		LOG_USER_TRACE("out of range");
-		return -1;
-	}
-	return 0;
-}
-
 int Block_Buffer::write_double(double v) {
 #ifdef BLOCK_BIG_ENDIAN
 	uint64_t t, u;
@@ -791,50 +768,8 @@ int Block_Buffer::write_double(double v) {
 	return 0;
 }
 
-int Block_Buffer::peek_bool(bool &v) {
-	if (verify_read(sizeof(v))) {
-		memcpy(&v, &(buffer_[read_index_]), sizeof(v));
-	} else {
-		LOG_USER_TRACE("out of range");
-		return -1;
-	}
-	return 0;
-}
-
-int Block_Buffer::read_bool(bool &v) {
-	if (verify_read(sizeof(v))) {
-		memcpy(&v, &(buffer_[read_index_]), sizeof(v));
-		read_index_ += sizeof(v);
-	} else {
-		LOG_USER_TRACE("out of range");
-		return -1;
-	}
-	return 0;
-}
-
 int Block_Buffer::write_bool(bool v) {
 	copy(&v, sizeof(v));
-	return 0;
-}
-
-int Block_Buffer::peek_string(std::string &str) {
-	uint16_t len;
-	read_uint16(len);
-	if (len < 0) return -1;
-	str.append(buffer_[read_index_], len);
-	return 0;
-}
-
-int Block_Buffer::read_string(std::string &str) {
-	uint16_t len = 0;
-	if (read_uint16(len) != 0)
-		return -1;
-	if (!verify_read(len))
-		return -1;
-	str.resize(len);
-	memcpy((char *)str.c_str(), this->get_read_ptr(), len);
-	//str.append(buffer_[read_index_], len);
-	read_index_ += len;
 	return 0;
 }
 
@@ -845,93 +780,13 @@ int Block_Buffer::write_string(const std::string &str) {
 	return 0;
 }
 
-Block_Buffer &Block_Buffer::operator>>(int8_t &v) {
-	read_int8(v);
-	return *this;
-}
-
-Block_Buffer &Block_Buffer::operator>>(int16_t &v) {
-	read_int16(v);
-	return *this;
-}
-
-Block_Buffer &Block_Buffer::operator>>(int32_t &v) {
-	read_int32(v);
-	return *this;
-}
-
-Block_Buffer &Block_Buffer::operator>>(uint8_t &v) {
-	read_uint8(v);
-	return *this;
-}
-
-Block_Buffer &Block_Buffer::operator>>(uint16_t &v) {
-	read_uint16(v);
-	return *this;
-}
-
-Block_Buffer &Block_Buffer::operator>>(uint32_t &v) {
-	read_uint32(v);
-	return *this;
-}
-
-Block_Buffer &Block_Buffer::operator<<(int8_t v) {
-	write_int8(v);
-	return *this;
-}
-
-Block_Buffer &Block_Buffer::operator<<(int16_t v) {
-	write_int16(v);
-	return *this;
-}
-
-Block_Buffer &Block_Buffer::operator<<(int32_t v) {
-	write_int32(v);
-	return *this;
-}
-
-Block_Buffer &Block_Buffer::operator<<(uint8_t v) {
-	write_uint8(v);
-	return *this;
-}
-
-Block_Buffer &Block_Buffer::operator<<(uint16_t v) {
-	write_uint16(v);
-	return *this;
-}
-
-Block_Buffer &Block_Buffer::operator<<(uint32_t v) {
-	write_uint32(v);
-	return *this;
-}
-
-Block_Buffer &Block_Buffer::operator>>(double &v) {
-	read_double(v);
-	return *this;
-}
-
-Block_Buffer &Block_Buffer::operator<<(double v) {
-	write_double(v);
-	return *this;
-}
-
-Block_Buffer &Block_Buffer::operator>>(std::string &v) {
-	read_string(v);
-	return *this;
-}
-
-Block_Buffer &Block_Buffer::operator<<(std::string &v) {
-	write_string(v);
-	return *this;
-}
-
-void Block_Buffer::make_message(int msg_id, int status) {
+void Block_Buffer::make_inner_message(int msg_id, int status) {
 	write_uint16(0); /// length
 	write_uint32(msg_id);
 	write_int32(status);
 }
 
-void Block_Buffer::make_message(int msg_id, int status, int player_cid) {
+void Block_Buffer::make_player_message(int msg_id, int status, int player_cid) {
 	write_uint16(0); /// length
 	write_uint32(msg_id);
 	write_int32(status);

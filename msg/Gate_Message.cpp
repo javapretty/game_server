@@ -11,9 +11,8 @@ void MSG_112000::serialize(Block_Buffer & w) const {
 }
 
 int MSG_112000::deserialize(Block_Buffer & r) {
-	if (r.read_string(account) || r.read_string(session)){
-		return -1;
-	}
+	account = r.read_string();
+	session = r.read_string();
 	return 0;
 }
 
@@ -31,9 +30,7 @@ void MSG_112001::serialize(Block_Buffer & w) const {
 }
 
 int MSG_112001::deserialize(Block_Buffer & r) {
-	if (r.read_string(account)){
-		return -1;
-	}
+	account = r.read_string();
 	return 0;
 }
 

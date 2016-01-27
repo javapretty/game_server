@@ -29,7 +29,7 @@ int Gate_Player::respond_finer_result(int msg_id, Block_Buffer *buf) {
 int Gate_Player::respond_error_result(int msg_id, int err, Block_Buffer *buf) {
 	if (buf == 0) {
 		Block_Buffer msg_buf;
-		msg_buf.make_message(msg_id, err);
+		msg_buf.make_inner_message(msg_id, err);
 		msg_buf.finish_message();
 		return GATE_MANAGER->send_to_client(cid_, msg_buf);
 	} else {
@@ -70,7 +70,6 @@ int Gate_Player::tick(Time_Value &now) {
 	return 0;
 }
 
-
 int Gate_Player::link_close() {
 	if (recycle_tick_.status_ == Recycle_Tick::RECYCLE)
 		return 0;
@@ -78,7 +77,7 @@ int Gate_Player::link_close() {
 	set_recycle();
 
 	Block_Buffer buf;
-	buf.make_message(SYNC_GATE_GAME_PLAYER_SIGNOUT, 0, cid_);
+	buf.make_player_message(SYNC_GATE_GAME_PLAYER_SIGNOUT, 0, cid_);
 	buf.finish_message();
 	GATE_MANAGER->send_to_game(buf);
 

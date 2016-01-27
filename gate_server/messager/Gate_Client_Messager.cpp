@@ -23,19 +23,13 @@ Gate_Client_Messager *Gate_Client_Messager::instance(void) {
 }
 
 int Gate_Client_Messager::process_block(Block_Buffer &buf) {
-	int32_t player_cid = 0;		//玩家连接到gate的cid
-	uint16_t len = 0;
-	uint32_t serial_cipher = 0;
-	uint32_t msg_time_cipher = 0;
-	uint32_t msg_id = 0;
-	int32_t  status = 0;
+	int32_t player_cid = buf.read_int32();
+	uint16_t len = buf.read_uint16();
+	uint32_t serial_cipher = buf.read_uint32();
+	uint32_t msg_time_cipher = buf.read_uint32();
+	uint32_t msg_id = buf.read_uint32();
+	int32_t  status = buf.read_int32();
 
-	buf.read_int32(player_cid);
-	buf.read_uint16(len);
-	buf.read_uint32(serial_cipher);
-	buf.read_uint32(msg_time_cipher);
-	buf.read_uint32(msg_id);
-	buf.read_int32(status);
 	LOG_DEBUG("player_cid:%d, len:%d, serial_cipher:%llu, msg_time_cipher:%llu, msg_id:%ld, status:%d", player_cid, len, serial_cipher, msg_time_cipher, msg_id, status);
 	if (msg_id >= CLIENT_GATE_MESSAGE_START && msg_id <= CLIENT_GATE_MESSAGE_END) {
 		return process_gate_block(player_cid, msg_id, buf);
@@ -56,7 +50,7 @@ int Gate_Client_Messager::process_block(Block_Buffer &buf) {
 	if (msg_id >= CLIENT_GAME_MESSAGE_START && msg_id <= CLIENT_GAME_MESSAGE_END) {
 		Block_Buffer player_buf;
 		player_buf.reset();
-		player_buf.make_message(msg_id, status, player_cid);
+		player_buf.make_player_message(msg_id, status, player_cid);
 		player_buf.copy(&buf);
 		player_buf.finish_message();
 		process_game_block(msg_id, player_buf);
@@ -103,7 +97,7 @@ int Gate_Client_Messager::refresh_heartbeat(int cid, MSG_111000 &msg) {
 	res_msg.client_time = msg.client_time;
 	res_msg.server_time = GATE_MANAGER->tick_time().sec();
 	Block_Buffer res_buf;
-	res_buf.make_message(RES_HEARTBEAT);
+	res_buf.make_inner_message(RES_HEARTBEAT);
 	res_msg.serialize(res_buf);
 	res_buf.finish_message();
 	GATE_MANAGER->send_to_client(cid, res_buf);
@@ -121,7 +115,7 @@ int Gate_Client_Messager::connect_gate(int cid, MSG_111001 &msg) {
 		login_msg.account = msg.account;
 		login_msg.session = msg.session;
 		Block_Buffer login_buf;
-		login_buf.make_message(SYNC_GATE_LOGIN_PLAYER_ACCOUNT, 0, cid);
+		login_buf.make_player_message(SYNC_GATE_LOGIN_PLAYER_ACCOUNT, 0, cid);
 		login_msg.serialize(login_buf);
 		login_buf.finish_message();
 		GATE_MANAGER->send_to_login(login_buf);
@@ -131,7 +125,7 @@ int Gate_Client_Messager::connect_gate(int cid, MSG_111001 &msg) {
 	{
 		MSG_DEBUG("Repeat login check fail");
 		Block_Buffer res_buf;
-		res_buf.make_message(RES_CLIENT_LOGIN, ERROR_LOGIN_VERIFY_FAIL);
+		res_buf.make_inner_message(RES_CLIENT_LOGIN, ERROR_LOGIN_VERIFY_FAIL);
 		res_buf.finish_message();
 		GATE_MANAGER->send_to_client(cid, res_buf);
 		GATE_MANAGER->close_client(cid);

@@ -21,17 +21,11 @@ Game_Client_Messager *Game_Client_Messager::instance(void) {
 }
 
 int Game_Client_Messager::process_block(Block_Buffer &buf) {
-	int32_t gate_cid = 0;
-	uint16_t len = 0;
-	uint32_t msg_id = 0;
-	int32_t  status = 0;
-	int32_t player_cid = 0;
-
-	buf.read_int32(gate_cid);
-	buf.read_uint16(len);
-	buf.read_uint32(msg_id);
-	buf.read_int32(status);
-	buf.read_int32(player_cid);
+	int32_t gate_cid = buf.read_int32();
+	uint16_t len = buf.read_uint16();
+	uint32_t msg_id = buf.read_uint32();
+	int32_t status = buf.read_int32();
+	int32_t player_cid = buf.read_int32();
 
 	if (msg_id == REQ_FETCH_ROLE_INFO || msg_id == REQ_CREATE_ROLE)	 {
 		return process_init_block(gate_cid, player_cid, msg_id, buf);
@@ -42,7 +36,7 @@ int Game_Client_Messager::process_block(Block_Buffer &buf) {
 	if (!player) {
 		MSG_DEBUG("cannot find player object. gate_cid = %d, player_cid = %d, msg_id = %d ", gate_cid, player_cid, msg_id);
 		Block_Buffer msg_buf;
-		msg_buf.make_message(ACTIVE_DISCONNECT, ERROR_CLIENT_PARAM, player_cid);
+		msg_buf.make_player_message(ACTIVE_DISCONNECT, ERROR_CLIENT_PARAM, player_cid);
 		msg_buf.finish_message();
 		return GAME_MANAGER->send_to_gate(gate_cid, msg_buf);
 	} else {
@@ -56,7 +50,7 @@ int Game_Client_Messager::process_block(Block_Buffer &buf) {
 	int ret = V8_MANAGER->process_script(msg_id, buf, player);
 	if (ret) {
 		Block_Buffer msg_buf;
-		msg_buf.make_message(ACTIVE_DISCONNECT, ERROR_CLIENT_PARAM, player_cid);
+		msg_buf.make_player_message(ACTIVE_DISCONNECT, ERROR_CLIENT_PARAM, player_cid);
 		msg_buf.finish_message();
 		GAME_MANAGER->send_to_gate(gate_cid, msg_buf);
 	}
@@ -97,7 +91,7 @@ int Game_Client_Messager::process_120001(int gate_cid, int player_cid, MSG_12000
 	if (validate && abs(atoi(msg.timestamp.c_str()) - GAME_MANAGER->tick_time().sec()) > 120) {
 		MSG_USER("login validate timeout account:%s  time:%s", msg.account.c_str(), msg.timestamp.c_str());
 		Block_Buffer msg_buf;
-		msg_buf.make_message(ACTIVE_DISCONNECT, ERROR_LOGIN_VERIFY_FAIL, player_cid);
+		msg_buf.make_player_message(ACTIVE_DISCONNECT, ERROR_LOGIN_VERIFY_FAIL, player_cid);
 		msg_buf.finish_message();
 		return GAME_MANAGER->send_to_gate(gate_cid, msg_buf);
     }
@@ -106,7 +100,7 @@ int Game_Client_Messager::process_120001(int gate_cid, int player_cid, MSG_12000
 	if (GAME_MANAGER->logining_map().count(msg.account) || GAME_MANAGER->saving_map().count(msg.role_id)) {
 		MSG_DEBUG("account has in logining status, account = %s.", msg.account.c_str());
 		Block_Buffer msg_buf;
-		msg_buf.make_message(ACTIVE_DISCONNECT, ERROR_DISCONNECT_RELOGIN, player_cid);
+		msg_buf.make_player_message(ACTIVE_DISCONNECT, ERROR_DISCONNECT_RELOGIN, player_cid);
 		msg_buf.finish_message();
 		return GAME_MANAGER->send_to_gate(gate_cid, msg_buf);
 	}
@@ -122,7 +116,7 @@ int Game_Client_Messager::process_120001(int gate_cid, int player_cid, MSG_12000
 				return -1;
 			}
 			Block_Buffer msg_buf;
-			msg_buf.make_message(SYNC_GAME_DB_LOAD_PLAYER_INFO);
+			msg_buf.make_inner_message(SYNC_GAME_DB_LOAD_PLAYER_INFO);
 			MSG_150001 db_msg;
 			db_msg.account_info.account = msg.account;
 			db_msg.account_info.agent_num = msg.agent_num;
@@ -134,7 +128,7 @@ int Game_Client_Messager::process_120001(int gate_cid, int player_cid, MSG_12000
 			//登录加载玩家信息，玩家不存在，返回客户端创建玩家
 			MSG_DEBUG("push_load_account_info, role not exist, create role, account=%s",msg.account.c_str());
 			Block_Buffer res_buf;
-			res_buf.make_message(RES_FETCH_ROLE_INFO, ERROR_ROLE_NOT_EXIST, player_cid);
+			res_buf.make_player_message(RES_FETCH_ROLE_INFO, ERROR_ROLE_NOT_EXIST, player_cid);
 			MSG_520001 res_msg;
 			res_msg.serialize(res_buf);
 			res_buf.finish_message();
@@ -145,7 +139,7 @@ int Game_Client_Messager::process_120001(int gate_cid, int player_cid, MSG_12000
 		/// 回收中处理
 		if (player->recycle_status() == Recycle_Tick::RECYCLE) {
 			Block_Buffer msg_buf;
-			msg_buf.make_message(ACTIVE_DISCONNECT, ERROR_LOGIN_PLAYER_RECOVERING, player_cid);
+			msg_buf.make_player_message(ACTIVE_DISCONNECT, ERROR_LOGIN_PLAYER_RECOVERING, player_cid);
 			msg_buf.finish_message();
 			return GAME_MANAGER->send_to_gate(gate_cid, msg_buf);
 		}
@@ -171,7 +165,7 @@ int Game_Client_Messager::process_120002(int gate_cid, int player_cid, MSG_12000
 	if (GAME_MANAGER->logining_map().count(msg.account)) {
 		MSG_DEBUG("account has in logining status, account = %s.", msg.account.c_str());
 		Block_Buffer msg_buf;
-		msg_buf.make_message(ACTIVE_DISCONNECT, ERROR_DISCONNECT_RELOGIN, player_cid);
+		msg_buf.make_player_message(ACTIVE_DISCONNECT, ERROR_DISCONNECT_RELOGIN, player_cid);
 		msg_buf.finish_message();
 		return GAME_MANAGER->send_to_gate(gate_cid, msg_buf);
 	}
@@ -182,7 +176,7 @@ int Game_Client_Messager::process_120002(int gate_cid, int player_cid, MSG_12000
 
 	MSG_DEBUG("process_120002, push_create_player_data,account=%s, role_name=%s",msg.account.c_str(), msg.role_name.c_str());
 	Block_Buffer msg_buf;
-	msg_buf.make_message(SYNC_GAME_DB_CREATE_PLAYER);
+	msg_buf.make_inner_message(SYNC_GAME_DB_CREATE_PLAYER);
 	MSG_150002 db_msg;
 	db_msg.player_info.agent_num = msg.agent_num;
 	db_msg.player_info.server_num = msg.server_num;

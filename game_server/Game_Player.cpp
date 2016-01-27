@@ -27,7 +27,7 @@ int Game_Player::respond_success_result(int msg_id, Block_Buffer *buf) {
 int Game_Player::respond_error_result(int msg_id, int err, Block_Buffer *buf) {
 	if (buf == 0) {
 		Block_Buffer msg_buf;
-		msg_buf.make_message(msg_id, err, cid_info_.player_cid);
+		msg_buf.make_player_message(msg_id, err, cid_info_.player_cid);
 		msg_buf.finish_message();
 		return GAME_MANAGER->send_to_gate(cid_info_.gate_cid, msg_buf);
 	} else {
@@ -97,7 +97,7 @@ void Game_Player::reset(void) {
 
 int Game_Player::sync_signin_to_master(void) {
 	Block_Buffer buf;
-	buf.make_message(SYNC_GAME_MASTER_PLYAER_SIGNIN, 0, cid_info_.player_cid);
+	buf.make_player_message(SYNC_GAME_MASTER_PLYAER_SIGNIN, 0, cid_info_.player_cid);
 	MSG_160001 msg;
 	msg.player_info.role_id = player_info_.role_id;
 	msg.player_info.account = player_info_.account;
@@ -110,7 +110,7 @@ int Game_Player::sync_signin_to_master(void) {
 
 int Game_Player::sync_signout_to_master(void) {
 	Block_Buffer buf;
-	buf.make_message(SYNC_GAME_MASTER_PLAYER_SIGNOUT, 0, cid_info_.player_cid);
+	buf.make_player_message(SYNC_GAME_MASTER_PLAYER_SIGNOUT, 0, cid_info_.player_cid);
 	MSG_160002 msg;
 	msg.role_id = player_info_.role_id;
 	msg.serialize(buf);
@@ -171,7 +171,7 @@ int Game_Player::save_player(bool is_logout) {
 		msg.player_data.status = Player_Data::ROLE_SAVE_OFFLINE;
 	}
 	Block_Buffer buf;
-	buf.make_message(SYNC_GAME_DB_SAVE_PLAYER_INFO);
+	buf.make_inner_message(SYNC_GAME_DB_SAVE_PLAYER_INFO);
 	msg.serialize(buf);
 	buf.finish_message();
 	GAME_MANAGER->send_to_db(buf);
@@ -201,7 +201,7 @@ int Game_Player::respond_role_login(void) {
 
 	Block_Buffer buf;
 	buf.reset();
-	buf.make_message(RES_FETCH_ROLE_INFO, 0, cid_info_.player_cid);
+	buf.make_player_message(RES_FETCH_ROLE_INFO, 0, cid_info_.player_cid);
 	msg.serialize(buf);
 	buf.finish_message();
 	GAME_MANAGER->send_to_gate(cid_info_.gate_cid, buf);

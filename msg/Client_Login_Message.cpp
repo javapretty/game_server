@@ -11,9 +11,8 @@ void MSG_110000::serialize(Block_Buffer & w) const {
 }
 
 int MSG_110000::deserialize(Block_Buffer & r) {
-	if (r.read_string(account) || r.read_string(password)){
-		return -1;
-	}
+	account = r.read_string();
+	password = r.read_string();
 	return 0;
 }
 
@@ -33,9 +32,9 @@ void MSG_510000::serialize(Block_Buffer & w) const {
 }
 
 int MSG_510000::deserialize(Block_Buffer & r) {
-	if (r.read_int32(port) || r.read_string(ip) || r.read_string(session)){
-		return -1;
-	}
+	port = r.read_int32();
+	ip = r.read_string();
+	session = r.read_string();
 	return 0;
 }
 
@@ -55,9 +54,8 @@ void MSG_110001::serialize(Block_Buffer & w) const {
 }
 
 int MSG_110001::deserialize(Block_Buffer & r) {
-	if (r.read_string(account) || r.read_string(password)){
-		return -1;
-	}
+	account = r.read_string();
+	password = r.read_string();
 	return 0;
 }
 
@@ -77,9 +75,9 @@ void MSG_510001::serialize(Block_Buffer & w) const {
 }
 
 int MSG_510001::deserialize(Block_Buffer & r) {
-	if (r.read_int32(port) || r.read_string(ip) || r.read_string(session)){
-		return -1;
-	}
+	port = r.read_int32();
+	ip = r.read_string();
+	session = r.read_string();
 	return 0;
 }
 

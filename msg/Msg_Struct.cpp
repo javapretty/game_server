@@ -15,9 +15,12 @@ void Role_Info::serialize(Block_Buffer & w) const {
 }
 
 int Role_Info::deserialize(Block_Buffer & r) {
-	if (r.read_int64(role_id) || r.read_uint8(career) || r.read_uint8(gender) || r.read_uint16(level) || r.read_string(account) || r.read_string(role_name)){
-		return -1;
-	}
+	role_id = r.read_int64();
+	career = r.read_uint8();
+	gender = r.read_uint8();
+	level = r.read_uint16();
+	account = r.read_string();
+	role_name = r.read_string();
 	return 0;
 }
 
@@ -42,9 +45,10 @@ void Item_Basic_Info::serialize(Block_Buffer & w) const {
 }
 
 int Item_Basic_Info::deserialize(Block_Buffer & r) {
-	if (r.read_int32(amount) || r.read_uint8(bind) || r.read_uint32(index) || r.read_uint32(id)){
-		return -1;
-	}
+	amount = r.read_int32();
+	bind = r.read_uint8();
+	index = r.read_uint32();
+	id = r.read_uint32();
 	return 0;
 }
 
@@ -67,9 +71,10 @@ void Money_Info::serialize(Block_Buffer & w) const {
 }
 
 int Money_Info::deserialize(Block_Buffer & r) {
-	if (r.read_int32(bind_copper) || r.read_int32(copper) || r.read_int32(coupon) || r.read_int32(gold)){
-		return -1;
-	}
+	bind_copper = r.read_int32();
+	copper = r.read_int32();
+	coupon = r.read_int32();
+	gold = r.read_int32();
 	return 0;
 }
 
@@ -103,20 +108,23 @@ void Mail_Detail::serialize(Block_Buffer & w) const {
 }
 
 int Mail_Detail::deserialize(Block_Buffer & r) {
-	uint16_t __item_vector_vec_size;
-	if(r.read_uint16(__item_vector_vec_size)  )
-		return -1;
-	item_vector.reserve(__item_vector_vec_size);
+	pickup = r.read_int8();
+	mail_id = r.read_int32();
+	send_time = r.read_int32();
+	sender_type = r.read_int32();
+	sender_id = r.read_int64();
+	sender_name = r.read_string();
+	mail_title = r.read_string();
+	mail_content = r.read_string();
+	money_info.deserialize(r);
+	uint16_t __item_vector_vec_size = r.read_uint16();
+	Item_Basic_Info v;
 	for(uint16_t i = 0; i < __item_vector_vec_size; ++i) {
-		Item_Basic_Info v;
 		if(v.deserialize(r))
 			return -1;
 		item_vector.push_back(v);
 	}
 
-	if (r.read_int8(pickup) || r.read_int32(mail_id) || r.read_int32(send_time) || r.read_int32(sender_type) || r.read_int64(sender_id) || r.read_string(sender_name) || r.read_string(mail_title) || r.read_string(mail_content) || money_info.deserialize(r)){
-		return -1;
-	}
 	return 0;
 }
 

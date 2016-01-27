@@ -19,19 +19,12 @@ Login_Client_Messager *Login_Client_Messager::instance(void) {
 }
 
 int Login_Client_Messager::process_block(Block_Buffer &buf) {
-	int32_t cid = 0;
-	uint16_t len = 0;
-	uint32_t serial_cipher;
-	uint32_t msg_time_cipher;
-	uint32_t msg_id = 0;
-	int32_t  status = 0;
-
-	buf.read_int32(cid);
-	buf.read_uint16(len);
-	buf.read_uint32(serial_cipher);
-	buf.read_uint32(msg_time_cipher);
-	buf.read_uint32(msg_id);
-	buf.read_int32(status);
+	int32_t cid = buf.read_int32();
+	uint16_t len = buf.read_uint16();
+	uint32_t serial_cipher = buf.read_uint32();
+	uint32_t msg_time_cipher = buf.read_uint32();
+	uint32_t msg_id = buf.read_uint32();
+	int32_t status = buf.read_int32();
 
 	Perf_Mon perf_mon(msg_id);
 	switch (msg_id) {
@@ -77,16 +70,18 @@ int Login_Client_Messager::process_110000(int cid, int msg_id, Block_Buffer &buf
 
 		player->reset();
 		player->set_cid(cid);
-		player->set_account(msg.account);
-		player->set_gateIp(res_msg.ip);
-		player->set_password(msg.password);
-		player->set_session(res_msg.session);
-
+		Login_Player_Info player_info;
+		player_info.session_tick = Time_Value::gettimeofday();
+		player_info.account = msg.account;
+		player_info.gate_ip = res_msg.ip;
+		player_info.gate_port = res_msg.port;
+		player_info.session = res_msg.session;
+		player->set_player_info(player_info);
 		LOGIN_MANAGER->bind_cid_login_player(cid, player);
 		LOGIN_MANAGER->bind_account_login_player(msg.account, player);
 
 		Block_Buffer res_buf;
-		res_buf.make_message(RES_CLIENT_REGISTER);
+		res_buf.make_inner_message(RES_CLIENT_REGISTER);
 		res_msg.serialize(res_buf);
 		res_buf.finish_message();
 		LOGIN_MANAGER->send_to_client(cid, res_buf);
@@ -95,7 +90,7 @@ int Login_Client_Messager::process_110000(int cid, int msg_id, Block_Buffer &buf
 	{//fail
 		LOG_DEBUG("cant not found the user status:%d", status);
 		Block_Buffer res_buf;
-		res_buf.make_message(RES_CLIENT_REGISTER, ERROR_REGISTER_VERIFY_FAIL);
+		res_buf.make_inner_message(RES_CLIENT_REGISTER, ERROR_REGISTER_VERIFY_FAIL);
 		res_buf.finish_message();
 		LOGIN_MANAGER->send_to_client(cid, res_buf);
 		LOGIN_MANAGER->close_client(cid);
@@ -130,16 +125,18 @@ int Login_Client_Messager::process_110001(int cid, int msg_id, Block_Buffer &buf
 
 		player->reset();
 		player->set_cid(cid);
-		player->set_account(msg.account);
-		player->set_gateIp(res_msg.ip);
-		player->set_password(msg.password);
-		player->set_session(res_msg.session);
-
+		Login_Player_Info player_info;
+		player_info.session_tick = Time_Value::gettimeofday();
+		player_info.account = msg.account;
+		player_info.gate_ip = res_msg.ip;
+		player_info.gate_port = res_msg.port;
+		player_info.session = res_msg.session;
+		player->set_player_info(player_info);
 		LOGIN_MANAGER->bind_cid_login_player(cid, player);
 		LOGIN_MANAGER->bind_account_login_player(msg.account, player);
 
 		Block_Buffer res_buf;
-		res_buf.make_message(RES_CLIENT_LOGIN);
+		res_buf.make_inner_message(RES_CLIENT_LOGIN);
 		res_msg.serialize(res_buf);
 		res_buf.finish_message();
 		LOGIN_MANAGER->send_to_client(cid, res_buf);
@@ -148,7 +145,7 @@ int Login_Client_Messager::process_110001(int cid, int msg_id, Block_Buffer &buf
 	{
 		MSG_DEBUG("login server check fail");
 		Block_Buffer res_buf;
-		res_buf.make_message(RES_CLIENT_LOGIN, ERROR_LOGIN_VERIFY_FAIL);
+		res_buf.make_inner_message(RES_CLIENT_LOGIN, ERROR_LOGIN_VERIFY_FAIL);
 		res_buf.finish_message();
 		LOGIN_MANAGER->send_to_client(cid, res_buf);
 		LOGIN_MANAGER->close_client(cid);

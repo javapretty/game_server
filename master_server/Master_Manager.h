@@ -167,8 +167,7 @@ inline void Master_Manager::inner_msg_count(Block_Buffer &buf) {
 		uint16_t read_idx_orig = buf.get_read_idx();
 
 		buf.set_read_idx(read_idx_orig + sizeof(uint16_t));
-		uint32_t msg_id = 0;
-		buf.read_uint32(msg_id);
+		uint32_t msg_id = buf.read_uint32();
 		++(inner_msg_count_map_[static_cast<int>(msg_id)]);
 
 		buf.set_read_idx(read_idx_orig);

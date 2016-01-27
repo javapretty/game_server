@@ -15,9 +15,12 @@ void MSG_180000::serialize(Block_Buffer & w) const {
 }
 
 int MSG_180000::deserialize(Block_Buffer & r) {
-	if (r.read_int32(pid) || r.read_int64(tid) || r.read_uint8(log_type) || r.read_uint8(log_sub_type) || r.read_uint32(time) || r.read_string(log_str)){
-		return -1;
-	}
+	pid = r.read_int32();
+	tid = r.read_int64();
+	log_type = r.read_uint8();
+	log_sub_type = r.read_uint8();
+	time = r.read_uint32();
+	log_str = r.read_string();
 	return 0;
 }
 
@@ -43,9 +46,11 @@ void MSG_180001::serialize(Block_Buffer & w) const {
 }
 
 int MSG_180001::deserialize(Block_Buffer & r) {
-	if (r.read_int64(role_id) || r.read_uint8(log_type) || r.read_uint8(log_sub_type) || r.read_string(file_name) || r.read_string(buf)){
-		return -1;
-	}
+	role_id = r.read_int64();
+	log_type = r.read_uint8();
+	log_sub_type = r.read_uint8();
+	file_name = r.read_string();
+	buf = r.read_string();
 	return 0;
 }
 
@@ -67,9 +72,8 @@ void MSG_185000::serialize(Block_Buffer & w) const {
 }
 
 int MSG_185000::deserialize(Block_Buffer & r) {
-	if (r.read_int32(id) || r.read_string(name)){
-		return -1;
-	}
+	id = r.read_int32();
+	name = r.read_string();
 	return 0;
 }
 
@@ -94,9 +98,14 @@ void MSG_185001::serialize(Block_Buffer & w) const {
 }
 
 int MSG_185001::deserialize(Block_Buffer & r) {
-	if (r.read_int64(role_id) || r.read_uint16(level) || r.read_uint32(login_time) || r.read_uint32(logout_time) || r.read_uint32(online_time) || r.read_string(role_name) || r.read_string(account) || r.read_string(client_ip)){
-		return -1;
-	}
+	role_id = r.read_int64();
+	level = r.read_uint16();
+	login_time = r.read_uint32();
+	logout_time = r.read_uint32();
+	online_time = r.read_uint32();
+	role_name = r.read_string();
+	account = r.read_string();
+	client_ip = r.read_string();
 	return 0;
 }
 

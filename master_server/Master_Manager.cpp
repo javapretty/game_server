@@ -102,7 +102,7 @@ int Master_Manager::process_list(void) {
 		if ((buf = master_gate_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
-				buf->peek_int32(cid);
+				cid = buf->peek_int32();
 				MASTER_CLIENT_MESSAGER->process_block(*buf);
 			} else {
 				MSG_USER("buf.read_index = %ld, buf.write_index = %ld",
@@ -115,7 +115,7 @@ int Master_Manager::process_list(void) {
 		if ((buf = master_game_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
-				buf->peek_int32(cid);
+				cid = buf->peek_int32();
 				MASTER_INNER_MESSAGER->process_game_block(*buf);
 			} else {
 				MSG_USER("buf.read_index = %ld, buf.write_index = %ld",

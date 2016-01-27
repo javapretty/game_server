@@ -45,10 +45,9 @@ struct Index_Amount {
 		return 0;
 	}
 	int deserialize(Block_Buffer &buf) {
-		buf.read_uint32(index);
-		buf.read_int32(amount);
-		uint8_t bind_verify_ = 0;
-		buf.read_uint8(bind_verify_);
+		index = buf.read_uint32();
+		amount = buf.read_int32();
+		uint8_t bind_verify_ = buf.read_uint8();
 		bind_verify = static_cast<Bind_Verify>(bind_verify_);
 		return 0;
 	}

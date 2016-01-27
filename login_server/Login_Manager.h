@@ -47,7 +47,6 @@ public:
 	int init_gate_ip(void);
 	void get_gate_ip(std::string &account, std::string &ip, int &port);
 
-	void process_time_out(Time_Value &now, Login_Player *player);
 	void process_drop_cid(int cid);
 	void push_drop_cid(int cid);
 	Login_Player *pop_login_player(void);
@@ -55,11 +54,13 @@ public:
 
 	int bind_account_login_player(std::string& account, Login_Player *player);
 	int unbind_account_login_player(std::string& account);
-	Login_Player * find_account_login_player(std::string& account) ;
+	Login_Player *find_account_login_player(std::string& account) ;
 
 	int bind_cid_login_player(int cid, Login_Player *player);
 	int unbind_cid_login_player(int cid);
 	Login_Player *find_cid_login_player(int cid);
+
+	int unbind_login_player(Login_Player &player);
 
 	int get_gate_peer_addr(int cid, std::string &ip);
 
@@ -194,8 +195,7 @@ inline void Login_Manager::inner_msg_count(Block_Buffer &buf) {
 		uint16_t read_idx_orig = buf.get_read_idx();
 
 		buf.set_read_idx(read_idx_orig + sizeof(uint16_t));
-		uint32_t msg_id = 0;
-		buf.read_uint32(msg_id);
+		uint32_t msg_id = buf.read_uint32();
 		++(inner_msg_count_map_[static_cast<int>(msg_id)]);
 
 		buf.set_read_idx(read_idx_orig);

@@ -42,7 +42,7 @@ Login_Timer_Handler::~Login_Timer_Handler(void) { }
 
 void Login_Timer_Handler::init_tick_msg_buf(void) {
 	tick_msg_buf_.reset();
-	tick_msg_buf_.make_message(SYNC_INNER_TIMER_TICK);
+	tick_msg_buf_.make_inner_message(SYNC_INNER_TIMER_TICK);
 	tick_msg_buf_.finish_message();
 }
 

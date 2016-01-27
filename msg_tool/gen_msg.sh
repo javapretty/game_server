@@ -7,12 +7,10 @@ export _STRUCT_NAME_="struct"
 #_STRUCT_NUMBERS_==>("int8_t" "int16_t" "int32_t" "int64_t" "uint8_t" "uint16_t" "uint32_t" "uint64_t" "double" "bool" "std::string" "other type" "std::vector")
 export _STRUCT_NUMBERS_=("" "" "" "" "" "" "" "" "" "" "" "" "")
 export _STRUCT_NUMBER_FLAG_=(0 0 0 0 0 0 0 0 0 0 0 0 0)
-#_VECTOR_NUMBERS_==>("int8_t" "int16_t" "int32_t" "int64_t" "uint8_t" "uint16_t" "uint32_t" "uint64_t" "double" "bool" "std::string" "other type"(ÌØÊâ´æ´¢)
+#_VECTOR_NUMBERS_==>("int8_t" "int16_t" "int32_t" "int64_t" "uint8_t" "uint16_t" "uint32_t" "uint64_t" "double" "bool" "std::string" "other type"(ç‰¹æ®Šå­˜å‚¨)
 export _VECTOR_NUMBERS_=("" "" "" "" "" "" "" "" "" "" "" "")
 export _VECTOR_NUMBER_FLAG_=(0 0 0 0 0 0 0 0 0 0 0 0)
 export _STRUCT_NUMBER_TYPE="struct"
-#export _DESE_FUNC_CONTENT="\tif ("
-export _DESE_FUNC_CONTENT=""
 export _STRUCT_MAX_INDX=0
 export _CUR_INDEX_=0
 export _STRUCT_NOTE_=0
@@ -29,9 +27,9 @@ function do_vectorserialize()
 	eval seriType=\$$#
 	while [ $# -gt 1 ]
     do		
-		echo -e "\tuint16_t __${1}_vec_size = ${1}.size();" >> $_DST_FILE_C_
-		echo -e "\tw.write_uint16(__${1}_vec_size);" >> $_DST_FILE_C_
-		echo -e "\tfor(uint16_t i = 0; i < __${1}_vec_size; ++i) {" >> $_DST_FILE_C_
+		echo -e "\tuint16_t ${1}_size = ${1}.size();" >> $_DST_FILE_C_
+		echo -e "\tw.write_uint16(${1}_size);" >> $_DST_FILE_C_
+		echo -e "\tfor(uint16_t i = 0; i < ${1}_size; ++i) {" >> $_DST_FILE_C_
 		echo -e "\t\tw.${seriType}(${1}[i]);" >> $_DST_FILE_C_
 		echo -e "\t}\n" >> $_DST_FILE_C_
         shift
@@ -45,16 +43,11 @@ function do_vectordeserialize()
 	shift
 	while [ $# -gt 1 ]
     do		
-		echo -e "\tuint16_t __${1}_vec_size;" >> $_DST_FILE_C_
-		echo -e "\tif(r.read_uint16(__${1}_vec_size) )" >> $_DST_FILE_C_
-		echo -e "\t\treturn -1;" >> $_DST_FILE_C_
-		echo -e "\t${1}.reserve(__${1}_vec_size);" >> $_DST_FILE_C_
-		echo -e "\tfor(uint16_t i = 0; i < __${1}_vec_size; ++i) {" >> $_DST_FILE_C_
-		echo -e "\t\t${seriType} v;" >> $_DST_FILE_C_
-		echo -e "\t\tif(r.${readType}(v) )" >> $_DST_FILE_C_
-		echo -e "\t\t\treturn -1;" >> $_DST_FILE_C_
+		echo -e "\tuint16_t ${1}_size = r.read_uint16();" >> $_DST_FILE_C_
+		echo -e "\tfor(uint16_t i = 0; i < ${1}_size; ++i) {" >> $_DST_FILE_C_
+		echo -e "\t\t${seriType} v = r.${readType}();" >> $_DST_FILE_C_
 		echo -e "\t\t${1}.push_back(v);" >> $_DST_FILE_C_
-		echo -e "\t}\n" >> $_DST_FILE_C_
+		echo -e "\t}" >> $_DST_FILE_C_
         shift
     done
 }
@@ -81,30 +74,13 @@ function do_serialize()
 function do_deserialize()
 {
 	eval seriType=\$$#
-	_CUR_INDEX_=$1
-	shift
-	if [ ${_STRUCT_MAX_INDX} = ${_CUR_INDEX_} ];then
-		_ARRAY_LEN_=`expr $# - 1`
-		indx=0
-		while [ $# -gt 1 ]
-		do
-			indx=`expr $indx + 1`
-			if [ ${indx} = ${_ARRAY_LEN_} ];then
-				_DESE_FUNC_CONTENT=${_DESE_FUNC_CONTENT}"r.${seriType}(${1})){"
-			else
-				_DESE_FUNC_CONTENT=${_DESE_FUNC_CONTENT}"r.${seriType}(${1}) || "
-			fi
-			shift
-		done
-		
-	else
-		while [ $# -gt 1 ]
-		do
-			_DESE_FUNC_CONTENT=${_DESE_FUNC_CONTENT}"r.${seriType}(${1}) || "
-			shift
-		done
-	fi
+    while [ $# -gt 1 ]
+    do
+		echo -e "\t${1} = r.${seriType}();" >> $_DST_FILE_C_
+        shift
+    done
 }
+
 
 function do_reset()
 {	
@@ -303,81 +279,78 @@ function do_gendeserialize()
 	echo -e "\nint $_STRUCT_NAME_::deserialize(Block_Buffer & r) {" >> $_DST_FILE_C_
 	if [ ${_STRUCT_NUMBER_FLAG_[0]} != 0 ];then
 		_ARRAY_=(${_STRUCT_NUMBERS_[0]})
-		do_deserialize 0 "${_ARRAY_[@]}" read_int8
+		#do_deserialize 0 "${_ARRAY_[@]}" read_int8
+		do_deserialize "${_ARRAY_[@]}" read_int8
 	fi
 	
 	if [ ${_STRUCT_NUMBER_FLAG_[1]} != 0 ];then
 		_ARRAY_=(${_STRUCT_NUMBERS_[1]})
-		do_deserialize 1 "${_ARRAY_[@]}" read_int16
+		#do_deserialize 1 "${_ARRAY_[@]}" read_int16
+		do_deserialize "${_ARRAY_[@]}" read_int16
 	fi
 	
 	if [ ${_STRUCT_NUMBER_FLAG_[2]} != 0 ];then
 		_ARRAY_=(${_STRUCT_NUMBERS_[2]})
-		do_deserialize 2 "${_ARRAY_[@]}" read_int32
+		#do_deserialize 2 "${_ARRAY_[@]}" read_int32
+		do_deserialize "${_ARRAY_[@]}" read_int32
 	fi
 	
 	if [ ${_STRUCT_NUMBER_FLAG_[3]} != 0 ];then	
 		_ARRAY_=(${_STRUCT_NUMBERS_[3]})
-		do_deserialize 3 "${_ARRAY_[@]}" read_int64
+		#do_deserialize 3 "${_ARRAY_[@]}" read_int64
+		do_deserialize "${_ARRAY_[@]}" read_int64
 	fi
 	
 	if [ ${_STRUCT_NUMBER_FLAG_[4]} != 0 ];then
 		_ARRAY_=(${_STRUCT_NUMBERS_[4]})
-		do_deserialize 4 "${_ARRAY_[@]}" read_uint8
+		#do_deserialize 4 "${_ARRAY_[@]}" read_uint8
+		do_deserialize "${_ARRAY_[@]}" read_uint8
 	fi
 	
 	if [ ${_STRUCT_NUMBER_FLAG_[5]} != 0 ];then
 		_ARRAY_=(${_STRUCT_NUMBERS_[5]})
-		do_deserialize 5 "${_ARRAY_[@]}" read_uint16
+		#do_deserialize 5 "${_ARRAY_[@]}" read_uint16
+		do_deserialize "${_ARRAY_[@]}" read_uint16
 	fi
 	
 	if [ ${_STRUCT_NUMBER_FLAG_[6]} != 0 ];then
 		_ARRAY_=(${_STRUCT_NUMBERS_[6]})
-		do_deserialize 6 "${_ARRAY_[@]}" read_uint32
+		#do_deserialize 6 "${_ARRAY_[@]}" read_uint32
+		do_deserialize "${_ARRAY_[@]}" read_uint32
 	fi
 	
 	if [ ${_STRUCT_NUMBER_FLAG_[7]} != 0 ];then
 		_ARRAY_=(${_STRUCT_NUMBERS_[7]})
-		do_deserialize 7 "${_ARRAY_[@]}" read_uint64
+		#do_deserialize 7 "${_ARRAY_[@]}" read_uint64
+		do_deserialize "${_ARRAY_[@]}" read_uint64
 	fi
 	
 	if [ ${_STRUCT_NUMBER_FLAG_[8]} != 0 ];then
 		_ARRAY_=(${_STRUCT_NUMBERS_[8]})
-		do_deserialize 8 "${_ARRAY_[@]}" read_double
+		#do_deserialize 8 "${_ARRAY_[@]}" read_double
+		do_deserialize "${_ARRAY_[@]}" read_double
 	fi
 	
 	if [ ${_STRUCT_NUMBER_FLAG_[9]} != 0 ];then
 		_ARRAY_=(${_STRUCT_NUMBERS_[9]})
-		do_deserialize 9 "${_ARRAY_[@]}" read_bool
+		#do_deserialize 9 "${_ARRAY_[@]}" read_bool
+		do_deserialize "${_ARRAY_[@]}" read_bool
 	fi
 	
 	if [ ${_STRUCT_NUMBER_FLAG_[10]} != 0 ];then
 		_ARRAY_=(${_STRUCT_NUMBERS_[10]})
-		do_deserialize 10 "${_ARRAY_[@]}" read_string
+		#do_deserialize 10 "${_ARRAY_[@]}" read_string
+		do_deserialize "${_ARRAY_[@]}" read_string
 	fi
 	
-	#special do Custom type
 	if [ ${_STRUCT_NUMBER_FLAG_[11]} != 0 ];then
-		if [ ${_STRUCT_MAX_INDX} = 11 ];then
-			_ARRAY_=(${_STRUCT_NUMBERS_[11]})
-			_ARRAY_LEN_=${#_ARRAY_[@]} 
-			indx=0
-			for data in ${_ARRAY_[@]}  
-			do  
-				 indx=`expr $indx + 1`
-				 if [ ${indx} = ${_ARRAY_LEN_} ];then
-					_DESE_FUNC_CONTENT=${_DESE_FUNC_CONTENT}"${data}.deserialize(r)){"
-				 else
-					_DESE_FUNC_CONTENT=${_DESE_FUNC_CONTENT}"${data}.deserialize(r) || "
-				 fi
-			done
-		else
-			_ARRAY_=(${_STRUCT_NUMBERS_[11]})
-			for data in ${_ARRAY_[@]}
-			do  
-				_DESE_FUNC_CONTENT=${_DESE_FUNC_CONTENT}"${data}.deserialize(r) || "
-			done
-		fi
+		#echo -e "\tw.write_string(${_STRUCT_NUMBERS_[10]});" >> $_DST_FILE_C_
+		_ARRAY_=(${_STRUCT_NUMBERS_[11]})
+		
+		for data in ${_ARRAY_[@]}  
+		do  
+			echo -e "\t${data}.deserialize(r);" >> $_DST_FILE_C_
+		done
 	fi
 	
 	#special do std::vetor<type>
@@ -445,12 +418,9 @@ function do_gendeserialize()
 			while [ ${i} -lt ${#_ARRAY_[@]} ]
 			do
 				let j=i+1
-				echo -e "\tuint16_t __${_ARRAY_[$i]}_vec_size;" >> $_DST_FILE_C_
-				echo -e "\tif(r.read_uint16(__${_ARRAY_[$i]}_vec_size)  )" >> $_DST_FILE_C_
-				echo -e "\t\treturn -1;" >> $_DST_FILE_C_
-				echo -e "\t${_ARRAY_[$i]}.reserve(__${_ARRAY_[$i]}_vec_size);" >> $_DST_FILE_C_
+				echo -e "\tuint16_t __${_ARRAY_[$i]}_vec_size = r.read_uint16();" >> $_DST_FILE_C_
+				echo -e "\t${_ARRAY_[$j]} v;" >> $_DST_FILE_C_
 				echo -e "\tfor(uint16_t i = 0; i < __${_ARRAY_[$i]}_vec_size; ++i) {" >> $_DST_FILE_C_
-				echo -e "\t\t${_ARRAY_[$j]} v;" >> $_DST_FILE_C_
 				echo -e "\t\tif(v.deserialize(r))" >> $_DST_FILE_C_
 				echo -e "\t\t\treturn -1;" >> $_DST_FILE_C_
 				echo -e "\t\t${_ARRAY_[$i]}.push_back(v);" >> $_DST_FILE_C_
@@ -458,11 +428,6 @@ function do_gendeserialize()
 				let i=i+2
 			done
 		fi
-	fi
-	
-	if [ "${_DESE_FUNC_CONTENT}" != "" ];then
-		echo -e "\tif ("$_DESE_FUNC_CONTENT >> $_DST_FILE_C_
-		echo -e "\t\treturn -1;\n\t}" >> $_DST_FILE_C_
 	fi
 	
 	echo -e "\treturn 0;" >> $_DST_FILE_C_
@@ -650,7 +615,6 @@ function do_resetreadvar()
 	_VECTOR_NUMBERS_=("" "" "" "" "" "" "" "" "" "" "" "")
 	_VECTOR_NUMBER_FLAG_=(0 0 0 0 0 0 0 0 0 0 0 0)
 	_STRUCT_NUMBER_TYPE="struct"
-	_DESE_FUNC_CONTENT=""
 	_STRUCT_MAX_INDX=0
 	_CUR_INDEX_=0
 	_STRUCT_NOTE_=0
@@ -681,22 +645,6 @@ function do_readfile()
 				std::vector\<*)
 					_STRUCT_NUMBER_FLAG_[12]=1
 					case `echo $_LINE_ |awk '{print $1}'` in
-						*int8_t*)
-							_VECTOR_NUMBERS_[0]=${_VECTOR_NUMBERS_[0]}`echo $_LINE_ |awk '{print $2}'|awk -F ";" '{print $1" "}'`
-							_VECTOR_NUMBER_FLAG_[0]=1
-						;;
-						*int16_t*)
-							_VECTOR_NUMBERS_[1]=${_VECTOR_NUMBERS_[1]}`echo $_LINE_ |awk '{print $2}'|awk -F ";" '{print $1" "}'`
-							_VECTOR_NUMBER_FLAG_[1]=1
-						;;
-						*int32_t*)
-							_VECTOR_NUMBERS_[2]=${_VECTOR_NUMBERS_[2]}`echo $_LINE_ |awk '{print $2}'|awk -F ";" '{print $1" "}'`
-							_VECTOR_NUMBER_FLAG_[2]=1
-						;;
-						*int64_t*)
-							_VECTOR_NUMBERS_[3]=${_VECTOR_NUMBERS_[3]}`echo $_LINE_ |awk '{print $2}'|awk -F ";" '{print $1" "}'`
-							_VECTOR_NUMBER_FLAG_[3]=1
-						;;
 						*uint8_t*)
 							_VECTOR_NUMBERS_[4]=${_VECTOR_NUMBERS_[4]}`echo $_LINE_ |awk '{print $2}'|awk -F ";" '{print $1" "}'`
 							_VECTOR_NUMBER_FLAG_[4]=1
@@ -712,6 +660,22 @@ function do_readfile()
 						*uint64_t*)
 							_VECTOR_NUMBERS_[7]=${_VECTOR_NUMBERS_[7]}`echo $_LINE_ |awk '{print $2}'|awk -F ";" '{print $1" "}'`
 							_VECTOR_NUMBER_FLAG_[7]=1
+						;;
+						*int8_t*)
+							_VECTOR_NUMBERS_[0]=${_VECTOR_NUMBERS_[0]}`echo $_LINE_ |awk '{print $2}'|awk -F ";" '{print $1" "}'`
+							_VECTOR_NUMBER_FLAG_[0]=1
+						;;
+						*int16_t*)
+							_VECTOR_NUMBERS_[1]=${_VECTOR_NUMBERS_[1]}`echo $_LINE_ |awk '{print $2}'|awk -F ";" '{print $1" "}'`
+							_VECTOR_NUMBER_FLAG_[1]=1
+						;;
+						*int32_t*)
+							_VECTOR_NUMBERS_[2]=${_VECTOR_NUMBERS_[2]}`echo $_LINE_ |awk '{print $2}'|awk -F ";" '{print $1" "}'`
+							_VECTOR_NUMBER_FLAG_[2]=1
+						;;
+						*int64_t*)
+							_VECTOR_NUMBERS_[3]=${_VECTOR_NUMBERS_[3]}`echo $_LINE_ |awk '{print $2}'|awk -F ";" '{print $1" "}'`
+							_VECTOR_NUMBER_FLAG_[3]=1
 						;;
 						*double*)
 							_VECTOR_NUMBERS_[8]=${_VECTOR_NUMBERS_[8]}`echo $_LINE_ |awk '{print $2}'|awk -F ";" '{print $1" "}'`

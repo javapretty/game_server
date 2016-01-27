@@ -180,16 +180,11 @@ inline int Game_Manager::push_game_gate_data(Block_Buffer *buf) {
 }
 
 inline int Game_Manager::push_game_db_data(Block_Buffer *buf) {
-	int32_t cid = 0;
-	uint16_t len = 0;
-	uint32_t msg_id = 0;
-	int32_t status = 0;
-
 	int read_idx = buf->get_read_idx();
-	buf->read_int32(cid);
-	buf->read_uint16(len);
-	buf->read_uint32(msg_id);
-	buf->read_int32(status);
+	int32_t cid = buf->read_int32();
+	uint16_t len = buf->read_uint16();
+	uint32_t msg_id = buf->read_uint32();
+	int32_t status = buf->read_int32();
 	buf->set_read_idx(read_idx);
 
 	switch (msg_id) {
@@ -240,8 +235,7 @@ inline void Game_Manager::inner_msg_count(Block_Buffer &buf) {
 		uint16_t read_idx_orig = buf.get_read_idx();
 
 		buf.set_read_idx(read_idx_orig + sizeof(uint16_t));
-		uint32_t msg_id = 0;
-		buf.read_uint32(msg_id);
+		uint32_t msg_id = buf.read_uint32();
 		++(inner_msg_count_map_[static_cast<int>(msg_id)]);
 
 		buf.set_read_idx(read_idx_orig);

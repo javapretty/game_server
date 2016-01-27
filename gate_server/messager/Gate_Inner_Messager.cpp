@@ -23,17 +23,11 @@ Gate_Inner_Messager *Gate_Inner_Messager::instance(void) {
 }
 
 int Gate_Inner_Messager::process_login_block(Block_Buffer &buf) {
-	int32_t gate_cid = 0;
-	uint16_t len = 0;
-	uint32_t msg_id = 0;
-	int32_t status = 0;
-	int32_t player_cid = 0;
-
-	buf.read_int32(gate_cid);
-	buf.read_uint16(len);
-	buf.read_uint32(msg_id);
-	buf.read_int32(status);
-	buf.read_int32(player_cid);
+	int32_t gate_cid = buf.read_int32();
+	uint16_t len = buf.read_uint16();
+	uint32_t msg_id = buf.read_uint32();
+	int32_t status = buf.read_int32();
+	int32_t player_cid = buf.read_int32();
 
 	Perf_Mon perf_mon(msg_id);
 	GATE_MANAGER->inner_msg_count(msg_id);
@@ -42,7 +36,7 @@ int Gate_Inner_Messager::process_login_block(Block_Buffer &buf) {
 		MSG_112001 msg;
 		msg.deserialize(buf);
 		Block_Buffer player_buf;
-		player_buf.make_message(RES_CONNECT_GATE, status);
+		player_buf.make_inner_message(RES_CONNECT_GATE, status);
 		MSG_511001 player_msg;
 		player_msg.account = msg.account;
 		player_msg.serialize(player_buf);
@@ -62,23 +56,17 @@ int Gate_Inner_Messager::process_login_block(Block_Buffer &buf) {
 }
 
 int Gate_Inner_Messager::process_game_block(Block_Buffer &buf) {
-	int32_t gate_cid = 0;
-	uint16_t len = 0;
-	uint32_t msg_id = 0;
-	int32_t  status = 0;
-	int32_t player_cid = 0;
-
-	buf.read_int32(gate_cid);
-	buf.read_uint16(len);
-	buf.read_uint32(msg_id);
-	buf.read_int32(status);
-	buf.read_int32(player_cid);
+	int32_t gate_cid = buf.read_int32();
+	uint16_t len = buf.read_uint16();
+	uint32_t msg_id = buf.read_uint32();
+	int32_t status = buf.read_int32();
+	int32_t player_cid = buf.read_int32();
 
 	Perf_Mon perf_mon(msg_id);
 	GATE_MANAGER->inner_msg_count(msg_id);
 
 	Block_Buffer player_buf;
-	player_buf.make_message(msg_id, status);
+	player_buf.make_inner_message(msg_id, status);
 	player_buf.copy(&buf);
 	player_buf.finish_message();
 	GATE_MANAGER->send_to_client(player_cid, player_buf);
@@ -100,23 +88,17 @@ int Gate_Inner_Messager::process_game_block(Block_Buffer &buf) {
 }
 
 int Gate_Inner_Messager::process_master_block(Block_Buffer &buf) {
-	int32_t gate_cid = 0;
-	uint16_t len = 0;
-	uint32_t msg_id = 0;
-	int32_t  status = 0;
-	int32_t player_cid = 0;
-
-	buf.read_int32(gate_cid);
-	buf.read_uint16(len);
-	buf.read_uint32(msg_id);
-	buf.read_int32(status);
-	buf.read_int32(player_cid);
+	int32_t gate_cid = buf.read_int32();
+	uint16_t len = buf.read_uint16();
+	uint32_t msg_id = buf.read_uint32();
+	int32_t status = buf.read_int32();
+	int32_t player_cid = buf.read_int32();
 
 	Perf_Mon perf_mon(msg_id);
 	GATE_MANAGER->inner_msg_count(msg_id);
 
 	Block_Buffer player_buf;
-	player_buf.make_message(msg_id, status);
+	player_buf.make_inner_message(msg_id, status);
 	player_buf.copy(&buf);
 	player_buf.finish_message();
 	GATE_MANAGER->send_to_client(player_cid, player_buf);
@@ -125,13 +107,9 @@ int Gate_Inner_Messager::process_master_block(Block_Buffer &buf) {
 }
 
 int Gate_Inner_Messager::process_self_loop_block(Block_Buffer &buf) {
-	uint16_t len = 0;
-	uint32_t msg_id = 0;
-	int32_t status = 0;
-
-	buf.read_uint16(len);
-	buf.read_uint32(msg_id);
-	buf.read_int32(status);
+	uint16_t len = buf.read_uint16();
+	uint32_t msg_id = buf.read_uint32();
+	int32_t status = buf.read_int32();
 
 	Perf_Mon perf_mon(msg_id);
 	switch (msg_id) {

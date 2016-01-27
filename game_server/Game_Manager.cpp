@@ -62,7 +62,7 @@ void Game_Manager::run_handler(void) {
 
 int Game_Manager::load_db_cache(void) {
 	Block_Buffer buf;
-	buf.make_message(SYNC_GAME_DB_LOAD_DB_CACHE);
+	buf.make_inner_message(SYNC_GAME_DB_LOAD_DB_CACHE);
 	buf.finish_message();
 	send_to_db(buf);
 	return 0;
@@ -113,7 +113,7 @@ int Game_Manager::process_list(void) {
 		if ((buf = loaded_player_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
-				buf->peek_int32(cid);
+				cid = buf->peek_int32();
 				GAME_INNER_MESSAGER->process_db_block(*buf);
 			} else {
 				MSG_USER("buf.read_index = %ld, buf.write_index = %ld",
@@ -132,7 +132,7 @@ int Game_Manager::process_list(void) {
 		if ((buf = game_gate_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
-				buf->peek_int32(cid);
+				cid = buf->peek_int32();
 				GAME_CLIENT_MESSAGER->process_block(*buf);
 			} else {
 				MSG_USER("buf.read_index = %ld, buf.write_index = %ld",
@@ -145,7 +145,7 @@ int Game_Manager::process_list(void) {
 		if ((buf = game_db_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
-				buf->peek_int32(cid);
+				cid = buf->peek_int32();
 				GAME_INNER_MESSAGER->process_db_block(*buf);
 			} else {
 				MSG_USER("buf.read_index = %ld, buf.write_index = %ld",
@@ -158,7 +158,7 @@ int Game_Manager::process_list(void) {
 		if ((buf = game_master_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
-				buf->peek_int32(cid);
+				cid = buf->peek_int32();
 				GAME_INNER_MESSAGER->process_master_block(*buf);
 			} else {
 				MSG_USER("buf.read_index = %ld, buf.write_index = %ld",

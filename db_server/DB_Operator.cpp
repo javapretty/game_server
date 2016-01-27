@@ -174,7 +174,7 @@ int DB_Operator::load_db_cache(int cid) {
 	}
 
 	Block_Buffer buf;
-	buf.make_message(SYNC_DB_GAME_LOAD_DB_CACHE);
+	buf.make_inner_message(SYNC_DB_GAME_LOAD_DB_CACHE);
 	msg.serialize(buf);
 	buf.finish_message();
 	DB_MANAGER->send_data_block(cid, buf);

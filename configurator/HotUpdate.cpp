@@ -61,7 +61,7 @@ int Hot_Update::notice_update(const std::string module) {
 	MSG_400001 inner_msg;
 	inner_msg.module = module;
 	Block_Buffer inner_buf;
-	inner_buf.make_message(SYNC_INNER_CONFIG_HOTUPDATE);
+	inner_buf.make_inner_message(SYNC_INNER_CONFIG_HOTUPDATE);
 	inner_msg.serialize(inner_buf);
 	inner_buf.finish_message();
 	GAME_MANAGER->push_self_loop_message(inner_buf);

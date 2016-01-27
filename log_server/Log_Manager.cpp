@@ -70,7 +70,7 @@ int Log_Manager::process_list(void) {
 			all_empty = false;
 			buf = block_list_.front();
 			block_list_.pop_front();
-			buf->peek_int32(cid);
+			cid = buf->peek_int32();
 			process_block(*buf);
 			LOG_SERVER->push_block(cid, buf);
 		}
@@ -88,12 +88,10 @@ int Log_Manager::process_list(void) {
 }
 
 int Log_Manager::process_block(Block_Buffer &buf) {
-	uint32_t cid = 0;
-	uint16_t len = 0;
-	uint32_t msg_id = 0;
-	int32_t  status = 0;
-
-	buf >> cid >> len >> msg_id >> status;
+	uint32_t cid = buf.read_uint32();
+	uint16_t len = buf.read_uint16();
+	uint32_t msg_id = buf.read_uint32();
+	int32_t status = buf.read_int32();
 
 	switch (msg_id) {
 	case SYNC_LOG_FILE_RECORD: {

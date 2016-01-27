@@ -8,10 +8,9 @@
 #include "DB_Operator.h"
 #include "Game_Manager.h"
 
-
 const Time_Value Recycle_Tick::recycle_time_ = Time_Value(2, 0);
 const Time_Value Recycle_Tick::tick_interval_ = Time_Value(2, 0);
-const Time_Value Recycle_Tick::valid_interval_ = Time_Value(60, 0);
+const Time_Value Recycle_Tick::session_interval_ = Time_Value(30, 0);
 
 Account_Info::Account_Info(void) { reset(); }
 
@@ -23,9 +22,9 @@ int Account_Info::serialize(Block_Buffer &buffer) const {
 }
 
 int Account_Info::deserialize(Block_Buffer &buffer) {
-	buffer.read_string(account);
-	buffer.read_int32(agent_num);
-	buffer.read_int32(server_num);
+	account = buffer.read_string();
+	agent_num = buffer.read_int32();
+	server_num = buffer.read_int32();
 	return 0;
 }
 
@@ -33,6 +32,34 @@ void Account_Info::reset(void) {
 	account.clear();
 	agent_num = 0;
 	server_num = 0;
+}
+
+Login_Player_Info::Login_Player_Info(void){ reset(); }
+
+int Login_Player_Info::serialize(Block_Buffer &buffer) const {
+	session_tick.serialize(buffer);
+	buffer.write_string(account);
+	buffer.write_string(gate_ip);
+	buffer.write_int32(gate_port);
+	buffer.write_string(session);
+	return 0;
+}
+
+int Login_Player_Info::deserialize(Block_Buffer &buffer) {
+	session_tick.deserialize(buffer);
+	account = buffer.read_string();
+	gate_ip = buffer.read_string();
+	gate_port = buffer.read_int32();
+	session = buffer.read_string();
+	return 0;
+}
+
+void Login_Player_Info::reset(void) {
+	session_tick = Time_Value::gettimeofday();
+	account.clear();
+	gate_ip.clear();
+	gate_port = 0;
+	session.clear();
 }
 
 Gate_Player_Info::Gate_Player_Info(void) { reset(); }
@@ -44,8 +71,8 @@ int Gate_Player_Info::serialize(Block_Buffer &buffer) const {
 }
 
 int Gate_Player_Info::deserialize(Block_Buffer &buffer) {
-	buffer.read_int64(role_id);
-	buffer.read_string(account);
+	role_id = buffer.read_int64();
+	account = buffer.read_string();
 	return 0;
 }
 
@@ -65,10 +92,10 @@ int Master_Player_Info::serialize(Block_Buffer &buffer) const {
 }
 
 int Master_Player_Info::deserialize(Block_Buffer &buffer) {
-	buffer.read_int64(role_id);
-	buffer.read_string(account);
-	buffer.read_string(role_name);
-	buffer.read_int32(level);
+	role_id = buffer.read_int64();
+	account = buffer.read_string();
+	role_name = buffer.read_string();
+	level = buffer.read_int32();
 	return 0;
 }
 
@@ -87,33 +114,31 @@ int Game_Player_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(server_num);
 	buffer.write_string(account);
 	buffer.write_string(role_name);
-	buffer.write_uint8(gender);
+	buffer.write_uint32(gender);
 	buffer.write_int32(level);
-	buffer.write_uint8(career);
+	buffer.write_uint32(career);
 	buffer.write_int32(create_time);
 	buffer.write_int32(last_sign_in_time);
 	buffer.write_int32(last_sign_out_time);
 	buffer.write_string(ip);
-
-	buffer.write_int8((int8_t)is_change);
+	buffer.write_bool(is_change);
 	return 0;
 }
 
 int Game_Player_Info::deserialize(Block_Buffer &buffer) {
-	buffer.read_int64(role_id);
-	buffer.read_int32(agent_num);
-	buffer.read_int32(server_num);
-	buffer.read_string(account);
-	buffer.read_string(role_name);
-	buffer.read_uint8((uint8_t &)gender);
-	buffer.read_int32(level);
-	buffer.read_uint8((uint8_t &)career);
-	buffer.read_int32(create_time);
-	buffer.read_int32(last_sign_in_time);
-	buffer.read_int32(last_sign_out_time);
-	buffer.read_string(ip);
-
-	buffer.read_int8((int8_t &)is_change);
+	role_id = buffer.read_int64();
+	agent_num = buffer.read_int32();
+	server_num = buffer.read_int32();
+	account = buffer.read_string();
+	role_name = buffer.read_string();
+	gender = buffer.read_int32();
+	level = buffer.read_int32();
+	career = buffer.read_int32();
+	create_time = buffer.read_int32();
+	last_sign_in_time = buffer.read_int32();
+	last_sign_out_time = buffer.read_int32();
+	ip = buffer.read_string();
+	is_change = buffer.read_bool();
 	return 0;
 }
 
@@ -138,7 +163,6 @@ void Game_Player_Info::reset(void) {
 	last_sign_in_time = 0;
 	last_sign_out_time = 0;
 	ip.clear();
-
 	is_change = false;
 }
 
@@ -193,8 +217,7 @@ int Item_Info::serialize(Block_Buffer &buffer) const {
 int Item_Info::deserialize(Block_Buffer &buffer){
 	reset();
 	item_basic.deserialize(buffer);
-	int type_value = 0;
-	buffer.read_int32(type_value);
+	int type_value = buffer.read_int32();
 	type = static_cast<Item_Type>(type_value);
 	switch (type) {
 	default:
@@ -271,26 +294,23 @@ int Bag_Info::serialize(Block_Buffer &buffer) const {
 	for (Item_Map::const_iterator it = item_map.begin(); it != item_map.end(); ++it) {
 		it->second.serialize(buffer);
 	}
-	buffer.write_int8((int8_t)is_change);
+	buffer.write_bool(is_change);
 	return 0;
 }
 
 int Bag_Info::deserialize(Block_Buffer &buffer) {
-	buffer.read_int64(role_id);
-	buffer.read_uint16(capacity.bag_cap);
-	buffer.read_uint16(capacity.storage_cap);
+	role_id = buffer.read_int64();
+	capacity.bag_cap = buffer.read_uint16();
+	capacity.storage_cap = buffer.read_uint16();
 	money_info.deserialize(buffer);
 
-	uint16_t item_count = 0;
-	buffer.read_uint16(item_count);
+	uint16_t item_count = buffer.read_uint16();
 	for (int i = 0; i < item_count; ++i) {
 		Item_Info item;
 		item.deserialize(buffer);
 		item_map[item.item_basic.index] = item;
 	}
-
-	buffer.read_int8((int8_t &)is_change);
-
+	is_change = buffer.read_bool();
 	return 0;
 }
 
@@ -352,29 +372,28 @@ int Mail_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int64(role_id);
 	buffer.write_int32(total_count);
 
-	buffer.write_int16(mail_map.size());
+	buffer.write_uint16(mail_map.size());
 	for(Mail_Map::const_iterator it = mail_map.begin();
 			it != mail_map.end(); ++it) {
 		it->second.serialize(buffer);
 	}
 
-	buffer.write_int8((int8_t)is_change);
+	buffer.write_bool(is_change);
 	return 0;
 }
 
 int Mail_Info::deserialize(Block_Buffer &buffer) {
-	buffer.read_int64(role_id);
-	buffer.read_int32(total_count);
+	role_id = buffer.read_int64();
+	total_count = buffer.read_int32();
 
-	int16_t n = 0;
-	buffer.read_int16(n);
+	uint16_t n = buffer.read_uint16();
 	Mail_Detail mail_detail;
 	for (int16_t i = 0; i < n; ++i) {
 		mail_detail.deserialize(buffer);
 		mail_map.insert(std::make_pair(mail_detail.mail_id, mail_detail));
 	}
 
-	buffer.read_int8((int8_t &)is_change);
+	is_change = buffer.read_bool();
 	return 0;
 }
 
@@ -409,8 +428,8 @@ int Player_Data::serialize(Block_Buffer &buffer) const {
 }
 
 int Player_Data::deserialize(Block_Buffer &buffer) {
-	buffer.read_int64(role_id);
-	buffer.read_int8(status);
+	role_id = buffer.read_int64();
+	status = buffer.read_int8();
 
 	game_player_info.deserialize(buffer);
 	bag_info.deserialize(buffer);
@@ -459,14 +478,14 @@ int Player_DB_Cache::serialize(Block_Buffer &buffer) const {
 }
 
 int Player_DB_Cache::deserialize(Block_Buffer &buffer) {
-	buffer.read_int64(role_id);
-	buffer.read_string(account);
-	buffer.read_string(role_name);
-	buffer.read_int32(agent_num);
-	buffer.read_int32(server_num);
-	buffer.read_int32(gender);
-	buffer.read_int32(career);
-	buffer.read_int32(level);
+	role_id = buffer.read_int64();
+	account = buffer.read_string();
+	role_name = buffer.read_string();
+	agent_num = buffer.read_int32();
+	server_num = buffer.read_int32();
+	gender = buffer.read_int32();
+	career = buffer.read_int32();
+	level = buffer.read_int32();
 	return 0;
 }
 

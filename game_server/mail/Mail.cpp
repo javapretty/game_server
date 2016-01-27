@@ -216,7 +216,7 @@ int Mail::send_mail(role_id_t receiver_id, Mail_Detail &mail_detail) {
 		receiver->respond_success_result(ACTIVE_RECEIVE_MAIL, &buf);
 	} else {
 		Block_Buffer buf;
-		buf.make_message(SYNC_GAME_DB_SAVE_MAIL_INFO);
+		buf.make_inner_message(SYNC_GAME_DB_SAVE_MAIL_INFO);
 		MSG_150004 msg;
 		msg.role_id = receiver_id;
 		msg.mail_detail = mail_detail;

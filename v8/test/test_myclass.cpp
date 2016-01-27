@@ -15,7 +15,6 @@
 #include "test.h"
 
 using namespace v8;
-extern ObjectWrap* gMyClass;
 
 class ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
  public:

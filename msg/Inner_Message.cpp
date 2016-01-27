@@ -10,9 +10,7 @@ void MSG_400001::serialize(Block_Buffer & w) const {
 }
 
 int MSG_400001::deserialize(Block_Buffer & r) {
-	if (r.read_string(module)){
-		return -1;
-	}
+	module = r.read_string();
 	return 0;
 }
 

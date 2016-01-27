@@ -12,7 +12,6 @@
 #include "V8_Class.h"
 #include "V8_Property.h"
 #include "Common_Func.h"
-#include "Game_Server.h"
 #include "Game_Client_Messager.h"
 #include "Game_Player.h"
 
@@ -61,10 +60,10 @@ int V8_Manager::process_list(void) {
 		bool all_empty = true;
 
 		/// gate-->game
-		if ((buf = game_gate_data_list_.pop_front()) != 0) {
+		if ((buf = data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
-				buf->peek_int32(cid);
+				cid = buf->peek_int32();
 				GAME_CLIENT_MESSAGER->process_block(*buf);
 			} else {
 				MSG_USER("buf.read_index = %ld, buf.write_index = %ld",

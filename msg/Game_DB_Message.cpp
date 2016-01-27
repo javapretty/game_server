@@ -29,12 +29,9 @@ void MSG_550000::serialize(Block_Buffer & w) const {
 }
 
 int MSG_550000::deserialize(Block_Buffer & r) {
-	uint16_t __db_cache_vec_vec_size;
-	if(r.read_uint16(__db_cache_vec_vec_size)  )
-		return -1;
-	db_cache_vec.reserve(__db_cache_vec_vec_size);
+	uint16_t __db_cache_vec_vec_size = r.read_uint16();
+	Player_DB_Cache v;
 	for(uint16_t i = 0; i < __db_cache_vec_vec_size; ++i) {
-		Player_DB_Cache v;
 		if(v.deserialize(r))
 			return -1;
 		db_cache_vec.push_back(v);
@@ -56,9 +53,7 @@ void MSG_150001::serialize(Block_Buffer & w) const {
 }
 
 int MSG_150001::deserialize(Block_Buffer & r) {
-	if (account_info.deserialize(r)){
-		return -1;
-	}
+	account_info.deserialize(r);
 	return 0;
 }
 
@@ -75,9 +70,7 @@ void MSG_550001::serialize(Block_Buffer & w) const {
 }
 
 int MSG_550001::deserialize(Block_Buffer & r) {
-	if (player_data.deserialize(r)){
-		return -1;
-	}
+	player_data.deserialize(r);
 	return 0;
 }
 
@@ -94,9 +87,7 @@ void MSG_150002::serialize(Block_Buffer & w) const {
 }
 
 int MSG_150002::deserialize(Block_Buffer & r) {
-	if (player_info.deserialize(r)){
-		return -1;
-	}
+	player_info.deserialize(r);
 	return 0;
 }
 
@@ -113,9 +104,7 @@ void MSG_550002::serialize(Block_Buffer & w) const {
 }
 
 int MSG_550002::deserialize(Block_Buffer & r) {
-	if (player_data.deserialize(r)){
-		return -1;
-	}
+	player_data.deserialize(r);
 	return 0;
 }
 
@@ -132,9 +121,7 @@ void MSG_150003::serialize(Block_Buffer & w) const {
 }
 
 int MSG_150003::deserialize(Block_Buffer & r) {
-	if (player_data.deserialize(r)){
-		return -1;
-	}
+	player_data.deserialize(r);
 	return 0;
 }
 
@@ -151,9 +138,7 @@ void MSG_550003::serialize(Block_Buffer & w) const {
 }
 
 int MSG_550003::deserialize(Block_Buffer & r) {
-	if (r.read_int64(role_id)){
-		return -1;
-	}
+	role_id = r.read_int64();
 	return 0;
 }
 
@@ -171,9 +156,8 @@ void MSG_150004::serialize(Block_Buffer & w) const {
 }
 
 int MSG_150004::deserialize(Block_Buffer & r) {
-	if (r.read_int64(role_id) || mail_detail.deserialize(r)){
-		return -1;
-	}
+	role_id = r.read_int64();
+	mail_detail.deserialize(r);
 	return 0;
 }
 

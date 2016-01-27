@@ -10,9 +10,7 @@ void MSG_111000::serialize(Block_Buffer & w) const {
 }
 
 int MSG_111000::deserialize(Block_Buffer & r) {
-	if (r.read_int32(client_time)){
-		return -1;
-	}
+	client_time = r.read_int32();
 	return 0;
 }
 
@@ -30,9 +28,8 @@ void MSG_511000::serialize(Block_Buffer & w) const {
 }
 
 int MSG_511000::deserialize(Block_Buffer & r) {
-	if (r.read_int32(client_time) || r.read_int32(server_time)){
-		return -1;
-	}
+	client_time = r.read_int32();
+	server_time = r.read_int32();
 	return 0;
 }
 
@@ -51,9 +48,8 @@ void MSG_111001::serialize(Block_Buffer & w) const {
 }
 
 int MSG_111001::deserialize(Block_Buffer & r) {
-	if (r.read_string(account) || r.read_string(session)){
-		return -1;
-	}
+	account = r.read_string();
+	session = r.read_string();
 	return 0;
 }
 
@@ -71,9 +67,7 @@ void MSG_511001::serialize(Block_Buffer & w) const {
 }
 
 int MSG_511001::deserialize(Block_Buffer & r) {
-	if (r.read_string(account)){
-		return -1;
-	}
+	account = r.read_string();
 	return 0;
 }
 

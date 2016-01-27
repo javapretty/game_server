@@ -10,9 +10,7 @@ void MSG_160001::serialize(Block_Buffer & w) const {
 }
 
 int MSG_160001::deserialize(Block_Buffer & r) {
-	if (player_info.deserialize(r)){
-		return -1;
-	}
+	player_info.deserialize(r);
 	return 0;
 }
 
@@ -29,9 +27,7 @@ void MSG_160002::serialize(Block_Buffer & w) const {
 }
 
 int MSG_160002::deserialize(Block_Buffer & r) {
-	if (r.read_int64(role_id)){
-		return -1;
-	}
+	role_id = r.read_int64();
 	return 0;
 }
 
