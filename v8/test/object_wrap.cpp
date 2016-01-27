@@ -74,3 +74,5 @@ const char* myFunction2(int x)
 
 	return "This is result of function 2";
 }
+
+

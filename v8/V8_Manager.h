@@ -8,14 +8,17 @@
 #ifndef V8_MANAGER_H_
 #define V8_MANAGER_H_
 
-#include "Thread.h"
+#include "include/v8.h"
 #include "V8_Context.h"
+#include "Thread.h"
 #include "Public_Struct.h"
 #include "Block_Buffer.h"
 #include "List.h"
 #include "Block_List.h"
+#include	"Msg_Define.h"
 #include "Game_Player.h"
 
+using namespace v8;
 using namespace v8_wrap;
 
 class V8_Manager: public Thread {
@@ -30,6 +33,8 @@ public:
 
 	int process_list();
 	int process_script(int msg_id, Block_Buffer &buf, Game_Player *player);
+
+	int wrap_block(void);
 
 private:
 	V8_Manager(void);

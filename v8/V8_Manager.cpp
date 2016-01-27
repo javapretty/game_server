@@ -8,7 +8,6 @@
 #include <iostream>
 #include <sstream>
 #include "include/libplatform/libplatform.h"
-#include "include/v8.h"
 #include "V8_Manager.h"
 #include "V8_Class.h"
 #include "V8_Property.h"
@@ -17,7 +16,6 @@
 #include "Game_Client_Messager.h"
 #include "Game_Player.h"
 
-using namespace v8;
 
 V8_Manager::V8_Manager(void):context_(nullptr) { }
 

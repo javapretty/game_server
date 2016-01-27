@@ -217,6 +217,3 @@ void UnregisterAll()
 {
 	gMyClassTemplate.Reset();
 }
-
-
-
