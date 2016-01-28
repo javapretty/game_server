@@ -1,0 +1,36 @@
+Centos7查看版本
+cat /etc/os-release
+
+top -H -p 进程号  显示进程占用
+
+//统计工程目录下面代码行数
+find . -name "*.h" -o -name "*.cpp"|xargs cat|grep -v ^$|wc -l
+
+tail -f map21-2013-2-21-22.log 
+find log -type f -name "logic-2013-11*.log" | xargs grep "market"
+//计算md5
+md5sum xxwd_server
+//查看分布式编译线程
+distccmon-text 1
+//刷新某个目录下所有头文件和源文件时间为当前时间
+find . -name "*.h" -o -name "*.cpp" | xargs touch
+有时觉得编译慢了，可以运行命令：
+distccmon-text 1
+看下编译任务有没有分布到其他机器上。
+
+进入单用户模式
+在grub 启动后，移动键盘到Linux的启动项；按e键；然后再移动键盘到类似下面的一行，也就是kernel的那行：
+kernel /boot/vmlinuz-2.6.11-1.1369_FC4 ro root=LABEL=/1 rhgb quiet
+把光标移动这行后，再按一下e键，进入编辑这行；在行尾条一个空格 ，然后输入 linux single，也就是类似如下的：
+kernel /boot/vmlinuz-2.6.11-1.1369_FC4 ro root=LABEL=/1 rhgb quiet linux single
+
+ //打印函数调用堆栈
+uint16_t len;
+uint32_t msg_id;
+int read_idx = buf.get_read_idx();
+buf.read_uint16(len); /// length
+buf.peek_uint32(msg_id);
+if (msg_id == 710090) {
+MSG_USER_TRACE("");
+}
+buf.set_read_idx(read_idx);
