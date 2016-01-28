@@ -6,6 +6,28 @@
  */
 
 #include "V8_Base.h"
+#include "Time_Value.h"
+#include "Public_Define.h"
+
+int Push_V8_Block(Block_Buffer *buf) {
+	v8_data_list_.push_back(buf);
+	return 0;
+}
+
+Block_Buffer Pop_V8_Block() {
+	Block_Buffer buf_data;
+	Block_Buffer *buf = v8_data_list_.pop_front();
+	if (buf) {
+		Block_Buffer buf_data = *buf;
+		int32_t cid = buf->peek_int32();
+		GAME_GATE_SERVER->push_block(cid, buf);
+	}
+	return buf_data;
+}
+
+void Sleep() {
+	Time_Value::sleep(SLEEP_TIME);
+}
 
 // Extracts a C string from a V8 Utf8Value.
 const char* ToCString(const v8::String::Utf8Value& value) {

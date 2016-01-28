@@ -9,29 +9,20 @@
 #define V8_MANAGER_H_
 
 #include "include/v8.h"
+#include "include/libplatform/libplatform.h"
 #include "V8_Context.h"
 #include "Thread.h"
-#include "Public_Struct.h"
-#include "Block_Buffer.h"
-#include "Block_List.h"
-#include "Game_Server.h"
 
 using namespace v8;
 using namespace v8_wrap;
 
 class V8_Manager: public Thread {
 public:
-	typedef Block_List<Thread_Mutex> Data_List;
-
 	static V8_Manager *instance(void);
 	void run_handler(void);
+	int init(void);
+	int fini(void);
 	int start_v8(void);
-
-	int push_data_block(Block_Buffer *buf);
-	Block_Buffer& pop_data_block(void);
-
-	int process_list();
-	int process_script(int msg_id);
 
 	int wrap_block_buffer(void);
 
@@ -43,23 +34,10 @@ private:
 
 private:
 	static V8_Manager *instance_;
+	Platform* platform_;
 	context *context_;
-
-	Data_List data_list_;					///gate-->game
 };
 
 #define V8_MANAGER V8_Manager::instance()
-
-inline int V8_Manager::push_data_block(Block_Buffer *buf) {
-	data_list_.push_back(buf);
-	return 0;
-}
-
-inline Block_Buffer& V8_Manager::pop_data_block() {
-	Block_Buffer *buf = data_list_.pop_front();
-	int32_t cid = buf->peek_int32();
-	GAME_GATE_SERVER->push_block(cid, buf);
-	return *buf;
-}
 
 #endif /* V8_MANAGER_H_ */

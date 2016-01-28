@@ -15,6 +15,17 @@
 #include <string>
 #include "include/v8.h"
 #include "include/libplatform/libplatform.h"
+#include "Game_Server.h"
+#include "Block_List.h"
+#include "Block_Buffer.h"
+
+////使用全局变量保存数据
+typedef Block_List<Thread_Mutex> Data_List;
+static Data_List v8_data_list_;
+
+int Push_V8_Block(Block_Buffer *buf);
+Block_Buffer Pop_V8_Block();
+void Sleep();
 
 const char* ToCString(const v8::String::Utf8Value& value);
 void Print(const v8::FunctionCallbackInfo<v8::Value>& args);
