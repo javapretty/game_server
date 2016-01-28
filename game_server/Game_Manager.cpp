@@ -5,6 +5,7 @@
 
 #include "Common_Func.h"
 #include "Game_Manager.h"
+#include "Game_Timer.h"
 #include "HotUpdate.h"
 #include "Configurator.h"
 #include "Game_Server.h"

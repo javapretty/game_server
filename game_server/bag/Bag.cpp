@@ -10,7 +10,6 @@
 #include "Game_Manager.h"
 #include "Game_Player.h"
 #include "Configurator.h"
-#include "Log.h"
 
 Bag::Bag(void) : player_(0){ }
 

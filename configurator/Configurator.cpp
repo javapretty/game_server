@@ -7,14 +7,11 @@
  */
 
 #include "Configurator.h"
-#include "Block_Buffer.h"
-#include "Mutex_Guard.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/mman.h>
-//#include <zlib.h>
 #include <cstdio>
 #include <cstdlib>
 #include <string>

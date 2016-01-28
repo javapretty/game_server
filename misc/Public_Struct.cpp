@@ -6,7 +6,6 @@
 #include "Public_Struct.h"
 #include "Configurator.h"
 #include "DB_Operator.h"
-#include "Game_Manager.h"
 
 const Time_Value Recycle_Tick::recycle_time_ = Time_Value(2, 0);
 const Time_Value Recycle_Tick::tick_interval_ = Time_Value(2, 0);
@@ -252,7 +251,7 @@ void Item_Info::set_basic(const uint32_t index, const uint32_t id, const int32_t
 }
 
 int32_t Item_Info::get_item_stack_upper(const uint32_t item_id) {
-	//if (CONFIG_INSTANCE->item(item_id)["overlap"].asInt() == 1) return 1;
+	if (CONFIG_INSTANCE->item(item_id)["overlap"].asInt() == 1) return 1;
 	// 若以后服务端客户端用不同的配置文件，此判断可以去掉，只保留一个机制（配置overlap），不引入如果是XX，那么堆叠是XX的补丁式代码
 	return 100;
 }
@@ -266,8 +265,8 @@ bool Item_Info::operator == (const Item_Info &cmp) const {
 }
 
 bool operator<(const Item_Info &item1, const Item_Info &item2) {
-	int sort1 = 0; //CONFIG_INSTANCE->item(item1.item_basic.id)["sort"].asInt();
-	int sort2 = 1; //CONFIG_INSTANCE->item(item2.item_basic.id)["sort"].asInt();
+	int sort1 = CONFIG_INSTANCE->item(item1.item_basic.id)["sort"].asInt();
+	int sort2 = CONFIG_INSTANCE->item(item2.item_basic.id)["sort"].asInt();
 	if (sort1 < sort2) {
 		return true;
 	} else if (sort1 == sort2 && item1.item_basic.id > item2.item_basic.id) {

@@ -3,12 +3,11 @@
  *      Author: zhangyalei
  */
 
-#include "Msg_Define.h"
+#include "Master_Inner_Messager.h"
+#include "Master_Player.h"
 #include "Master_Manager.h"
 #include "Log.h"
 #include "Configurator.h"
-#include "Master_Player.h"
-#include "Master_Inner_Messager.h"
 
 Master_Inner_Messager::Master_Inner_Messager(void) { }
 

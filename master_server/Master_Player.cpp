@@ -3,13 +3,9 @@
  *      Author: zhangyalei
  */
 
-
-#include "Public_Struct.h"
-#include "Master_Timer.h"
 #include "Master_Manager.h"
 #include "Master_Player.h"
 #include "Log.h"
-#include "Common_Func.h"
 
 Master_Player::Master_Player(void):
   is_register_timer_(0)

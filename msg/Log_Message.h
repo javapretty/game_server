@@ -1,20 +1,17 @@
 /**
  * struct Log_Message description
  *
- * [This file was auto-generated. PLEASE DONT EDIT]
- *
- * @copyright urentech.com
+ * [This file was auto-generated. Please Do not edit]
  *
  */
-
-
 
 #ifndef LOG_MESSAGE_H_
 #define LOG_MESSAGE_H_
 
-#include <cstring>
 #include "Block_Buffer.h"
 #include "Msg_Struct.h"
+
+
 #include "Public_Struct.h"
 
 

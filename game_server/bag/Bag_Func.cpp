@@ -7,7 +7,6 @@
 
 #include "Bag_Func.h"
 #include "Configurator.h"
-#include "Log.h"
 
 void bag_merge_item_array(std::vector<Item_Info> &item_array, Bag_Type bag_type,
 		MERGE_WAY merge_way, UInt_Set &changed_set) {

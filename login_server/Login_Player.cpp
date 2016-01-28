@@ -5,13 +5,9 @@
  *      Author: root
  */
 
-
-#include "Public_Struct.h"
-#include "Login_Timer.h"
 #include "Login_Manager.h"
 #include "Login_Player.h"
 #include "Log.h"
-#include "DB_Manager.h"
 
 Login_Player::Login_Player(void)
 : cid_(0),

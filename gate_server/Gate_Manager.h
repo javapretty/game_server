@@ -8,17 +8,14 @@
 #define GATE_MANAGER_H_
 
 #include "Public_Struct.h"
-#include "Public_Define.h"
 #include "Block_Buffer.h"
 #include "Thread.h"
 #include "List.h"
 #include "Block_List.h"
 #include "Object_Pool.h"
 #include "Log.h"
-#include "Gate_Timer.h"
 
 class Gate_Player;
-
 class Gate_Manager: public Thread {
 public:
 	typedef Object_Pool<Block_Buffer, Thread_Mutex> Block_Pool;

@@ -6,6 +6,8 @@
 #include "HotUpdate.h"
 #include "Configurator.h"
 #include "Common_Func.h"
+#include "Master_Timer.h"
+#include "Master_Player.h"
 #include "Master_Manager.h"
 #include "Master_Server.h"
 #include "Master_Client_Messager.h"

@@ -14,7 +14,6 @@
 #include "json/json.h"
 #include "boost/unordered_map.hpp"
 
-
 class Configurator {
 public:
 	typedef RE_MUTEX Config_Lock;

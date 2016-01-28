@@ -3,13 +3,8 @@
  *      Author: zhangyalei
  */
 
-
-#include "Public_Struct.h"
-#include "Game_Timer.h"
 #include "Game_Manager.h"
 #include "Game_Player.h"
-#include "Log.h"
-#include "DB_Manager.h"
 #include "Common_Func.h"
 
 Game_Player::Game_Player(void):

@@ -6,9 +6,9 @@
  */
 
 #include "Log_Timer.h"
-#include "Msg_Define.h"
 #include "Log_Manager.h"
 #include "Log_Server.h"
+#include "Log.h"
 #include "Configurator.h"
 #include <sys/stat.h>
 

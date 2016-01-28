@@ -9,8 +9,6 @@
 
 #include "Msg_Define.h"
 #include "Public_Struct.h"
-#include "Public_Define.h"
-#include "Game_Timer.h"
 #include "Block_Buffer.h"
 #include "Thread.h"
 #include "List.h"
@@ -19,7 +17,6 @@
 #include "Log.h"
 
 class Game_Player;
-
 class Game_Manager: public Thread {
 public:
 	typedef Object_Pool<Block_Buffer, Thread_Mutex> Block_Pool;

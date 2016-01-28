@@ -47,7 +47,7 @@ int Game_Client_Messager::process_block(Block_Buffer &buf) {
 	}
 
 	Perf_Mon perf_mon(msg_id);
-	int ret = V8_MANAGER->process_script(msg_id, buf, player);
+	int ret = V8_MANAGER->process_script(msg_id);
 	if (ret) {
 		Block_Buffer msg_buf;
 		msg_buf.make_player_message(ACTIVE_DISCONNECT, ERROR_CLIENT_PARAM, player_cid);

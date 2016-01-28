@@ -7,7 +7,6 @@
 #define GATE_INNER_MESSAGER_H_
 
 #include "Msg_Define.h"
-#include "Public_Struct.h"
 
 class Block_Buffer;
 

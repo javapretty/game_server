@@ -54,10 +54,6 @@ private:
 ////////////////////////////////////////////////////////////////////////////////
 
 inline int DB_Worker::push_data_block(Block_Buffer *buf) {
-	if (! buf) {
-		MSG_USER("buf == 0");
-		return -1;
-	}
 	data_list_.push_back(buf);
 	return 0;
 }

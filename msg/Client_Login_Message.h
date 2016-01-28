@@ -1,20 +1,17 @@
 /**
  * struct Client_Login_Message description
  *
- * [This file was auto-generated. PLEASE DONT EDIT]
- *
- * @copyright urentech.com
+ * [This file was auto-generated. Please Do not edit]
  *
  */
-
-
 
 #ifndef CLIENT_LOGIN_MESSAGE_H_
 #define CLIENT_LOGIN_MESSAGE_H_
 
-#include <cstring>
 #include "Block_Buffer.h"
 #include "Msg_Struct.h"
+
+
 /*
 
 	注册请求

@@ -18,18 +18,16 @@ do
 	#注释
 	echo -e "/**" > ${_DST_FILE_H_} 
 	echo -e " * struct ${_FILE_NAME_%.*} description\n *" >> ${_DST_FILE_H_} 
-	echo -e " * [This file was auto-generated. PLEASE DONT EDIT]\n *" >> ${_DST_FILE_H_} 
-	echo -e " * @copyright urentech.com\n *" >> ${_DST_FILE_H_} 
+	echo -e " * [This file was auto-generated. Please Do not edit]\n *" >> ${_DST_FILE_H_} 
 	echo -e " */" >> ${_DST_FILE_H_}
 	
 	#宏定义
-	echo -e "\n\n\n${_MACRO_N_H_}" >> ${_DST_FILE_H_} 
+	echo -e "\n${_MACRO_N_H_}" >> ${_DST_FILE_H_} 
 	echo -e "${_MACRO_Y_H_}\n" >> ${_DST_FILE_H_}
-	echo -e "#include <cstring>" >> ${_DST_FILE_H_}
 	echo -e "#include \"Block_Buffer.h\"" >> ${_DST_FILE_H_}
 	
 	if [ "${_FILE_NAME_}" != "Msg_Struct.define" ];then
-		echo -e "#include \"Msg_Struct.h\"" >> ${_DST_FILE_H_}
+		echo -e "#include \"Msg_Struct.h\"\n\n" >> ${_DST_FILE_H_}
 	fi
 	
 	for var in ${_FILE_ARRAY_[@]};

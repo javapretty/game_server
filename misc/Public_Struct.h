@@ -7,10 +7,7 @@
 #ifndef PUBLIC_STURCT_H_
 #define PUBLIC_STURCT_H_
 
-#include "Log.h"
 #include "Time_Value.h"
-#include "Date_Time.h"
-#include "List.h"
 #include "Misc.h"
 #include "Public_Define.h"
 #include "Msg_Struct.h"

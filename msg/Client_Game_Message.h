@@ -1,20 +1,17 @@
 /**
  * struct Client_Game_Message description
  *
- * [This file was auto-generated. PLEASE DONT EDIT]
- *
- * @copyright urentech.com
+ * [This file was auto-generated. Please Do not edit]
  *
  */
-
-
 
 #ifndef CLIENT_GAME_MESSAGE_H_
 #define CLIENT_GAME_MESSAGE_H_
 
-#include <cstring>
 #include "Block_Buffer.h"
 #include "Msg_Struct.h"
+
+
 /*
 
 	获取角色信息

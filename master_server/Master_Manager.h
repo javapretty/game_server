@@ -7,10 +7,7 @@
 #ifndef MASTER_MANAGER_H_
 #define MASTER_MANAGER_H_
 
-#include "Msg_Define.h"
 #include "Public_Struct.h"
-#include "Public_Define.h"
-#include "Master_Timer.h"
 #include "Block_Buffer.h"
 #include "Thread.h"
 #include "List.h"

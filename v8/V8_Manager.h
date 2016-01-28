@@ -13,10 +13,7 @@
 #include "Thread.h"
 #include "Public_Struct.h"
 #include "Block_Buffer.h"
-#include "List.h"
 #include "Block_List.h"
-#include	"Msg_Define.h"
-#include "Game_Player.h"
 #include "Game_Server.h"
 
 using namespace v8;
@@ -34,7 +31,7 @@ public:
 	Block_Buffer& pop_data_block(void);
 
 	int process_list();
-	int process_script(int msg_id, Block_Buffer &buf, Game_Player *player);
+	int process_script(int msg_id);
 
 	int wrap_block_buffer(void);
 

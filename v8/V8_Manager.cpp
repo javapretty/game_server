@@ -9,12 +9,8 @@
 #include <sstream>
 #include "include/libplatform/libplatform.h"
 #include "V8_Manager.h"
-#include "V8_Class.h"
-#include "V8_Property.h"
 #include "Common_Func.h"
 #include "Game_Client_Messager.h"
-#include "Game_Player.h"
-
 
 V8_Manager::V8_Manager(void):context_(nullptr) { }
 
@@ -79,7 +75,7 @@ int V8_Manager::process_list(void) {
 	return 0;
 }
 
-int V8_Manager::process_script(int msg_id, Block_Buffer &buf, Game_Player *player) {
+int V8_Manager::process_script(int msg_id) {
 	v8::HandleScope scope(context_->isolate());
 	std::ostringstream ostr;
 	ostr << "js/" << msg_id << ".js";

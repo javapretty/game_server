@@ -10,8 +10,6 @@
 #include "Msg_Define.h"
 
 class Block_Buffer;
-class Master_Player;
-
 class Master_Client_Messager {
 public:
 	static Master_Client_Messager *instance(void);

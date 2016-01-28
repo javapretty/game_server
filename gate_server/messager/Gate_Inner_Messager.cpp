@@ -3,12 +3,9 @@
  *      Author: zhangyalei
  */
 
-
-#include "Msg_Define.h"
 #include "Gate_Inner_Messager.h"
 #include "Gate_Manager.h"
 #include "Gate_Player.h"
-#include "Log.h"
 
 Gate_Inner_Messager::Gate_Inner_Messager(void) { }
 

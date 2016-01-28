@@ -9,17 +9,15 @@
 
 #include "Common_Func.h"
 #include "Public_Struct.h"
-#include "Public_Define.h"
-#include "Login_Timer.h"
 #include "Block_Buffer.h"
 #include "Thread.h"
 #include "List.h"
+#include "Log.h"
 #include "Block_List.h"
 #include "Object_Pool.h"
 #include "Check_Account.h"
-#include "Login_Player.h"
 
-
+class Login_Player;
 class Login_Manager: public Thread {
 public:
 	typedef Object_Pool<Block_Buffer, Thread_Mutex> Block_Pool;

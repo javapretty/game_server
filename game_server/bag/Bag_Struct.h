@@ -9,6 +9,7 @@
 #define PACKER_STRUCT_H_
 
 #include "Public_Struct.h"
+#include "Log.h"
 
 struct Id_Amount {
 	Id_Amount(uint32_t id_= 0, int32_t amount_ = 0, Bind_Verify bind_verify_ = BIND_NONE) :

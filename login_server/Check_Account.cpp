@@ -8,6 +8,7 @@
 #include "Msg_Define.h"
 #include "Check_Account.h"
 #include "Configurator.h"
+#include "Log.h"
 
 Check_Account::Check_Account():
 mysql_db_conn_(NULL)

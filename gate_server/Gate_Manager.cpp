@@ -9,14 +9,11 @@
 #include "Gate_Server.h"
 #include "Gate_Connector.h"
 #include "Gate_Manager.h"
+#include "Gate_Timer.h"
 #include "Common_Func.h"
-#include "Public_Struct.h"
 #include "HotUpdate.h"
 #include "Configurator.h"
-#include "Log.h"
-#include "DB_Manager.h"
 #include "Gate_Player.h"
-
 
 Gate_Manager::Gate_Manager(void):
   player_cid_map_(get_hash_table_size(12000)),

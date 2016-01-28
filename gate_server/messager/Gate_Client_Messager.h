@@ -10,8 +10,6 @@
 #include "Msg_Define.h"
 
 class Block_Buffer;
-class Gate_Player;
-
 class Gate_Client_Messager {
 public:
 	static Gate_Client_Messager *instance(void);

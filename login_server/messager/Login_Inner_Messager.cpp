@@ -3,11 +3,9 @@
  *      Author: zhangyalei
  */
 
-
-#include "Msg_Define.h"
 #include "Login_Inner_Messager.h"
 #include "Login_Manager.h"
-#include "Log.h"
+#include "Login_Player.h"
 
 Login_Inner_Messager::Login_Inner_Messager(void) { }
 

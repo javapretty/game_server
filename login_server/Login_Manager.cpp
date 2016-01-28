@@ -4,13 +4,13 @@
  */
 
 
-#include "Common_Func.h"
 #include "Configurator.h"
-#include "Log.h"
 #include "Login_Server.h"
+#include "Login_Timer.h"
 #include "Login_Client_Messager.h"
 #include "Login_Inner_Messager.h"
 #include "Login_Manager.h"
+#include "Login_Player.h"
 
 Login_Manager::Login_Manager(void):
   is_register_timer_(false),

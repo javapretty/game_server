@@ -4,11 +4,9 @@
  */
 
 
+#include "Msg_Define.h"
 #include "Gate_Manager.h"
 #include "Gate_Player.h"
-#include "Gate_Timer.h"
-#include "Log.h"
-#include "DB_Manager.h"
 #include "Common_Func.h"
 
 Gate_Player::Gate_Player(void) : cid_(0) { }

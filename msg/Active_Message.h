@@ -1,20 +1,17 @@
 /**
  * struct Active_Message description
  *
- * [This file was auto-generated. PLEASE DONT EDIT]
- *
- * @copyright urentech.com
+ * [This file was auto-generated. Please Do not edit]
  *
  */
-
-
 
 #ifndef ACTIVE_MESSAGE_H_
 #define ACTIVE_MESSAGE_H_
 
-#include <cstring>
 #include "Block_Buffer.h"
 #include "Msg_Struct.h"
+
+
 struct MSG_300000 {
 
 	MSG_300000(void);

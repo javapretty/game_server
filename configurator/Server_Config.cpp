@@ -6,8 +6,6 @@
  */
 
 #include "Configurator.h"
-#include "Mutex_Guard.h"
-#include <string>
 
 void Configurator::load_server_config(void) {
 	GUARD_WRITE(Config_Lock, mon, server_config_.lock);

@@ -10,7 +10,6 @@
 #define DB_RECORD_H_
 
 #include "My_DB_Fields.h"
-#include "Time_Value.h"
 #include "Mysql_Conn.h"
 #include <string>
 

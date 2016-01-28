@@ -6,8 +6,6 @@
  */
 
 #include "Configurator.h"
-#include "Mutex_Guard.h"
-#include <string>
 
 void Configurator::load_bag_config(void) {
 	GUARD_WRITE(Config_Lock, mon, bag_config_.lock);

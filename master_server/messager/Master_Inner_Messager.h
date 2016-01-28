@@ -7,10 +7,8 @@
 #define MASTER_INNER_MESSAGER_H_
 
 #include "Msg_Define.h"
-#include "Public_Struct.h"
 
 class Block_Buffer;
-
 class Master_Inner_Messager {
 public:
 	static Master_Inner_Messager *instance(void);

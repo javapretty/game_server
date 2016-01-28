@@ -9,7 +9,6 @@
 #include "DB_Server.h"
 #include "DB_Manager.h"
 #include "DB_Operator.h"
-#include "Log.h"
 
 DB_Manager::DB_Manager(void) :
 	work_num_(0),

@@ -9,14 +9,10 @@
 #define DB_MANAGER_H_
 
 #include "DB_Worker.h"
-#include "Public_Struct.h"
-#include "Public_Define.h"
 #include "Log.h"
 #include "Object_Pool.h"
 #include "Block_Buffer.h"
-#include "List.h"
 #include "Thread_Mutex.h"
-#include "Mutex_Guard.h"
 #include <vector>
 
 class DB_Manager {

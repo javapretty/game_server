@@ -1,18 +1,13 @@
 /**
  * struct Msg_Struct description
  *
- * [This file was auto-generated. PLEASE DONT EDIT]
- *
- * @copyright urentech.com
+ * [This file was auto-generated. Please Do not edit]
  *
  */
-
-
 
 #ifndef MSG_STRUCT_H_
 #define MSG_STRUCT_H_
 
-#include <cstring>
 #include "Block_Buffer.h"
 /*
 
