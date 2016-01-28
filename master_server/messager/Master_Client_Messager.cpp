@@ -21,11 +21,11 @@ Master_Client_Messager *Master_Client_Messager::instance(void) {
 }
 
 int Master_Client_Messager::process_block(Block_Buffer &buf) {
-	int32_t gate_cid = buf.read_int32();
-	uint16_t len = buf.read_uint16();
+	/*int32_t gate_cid*/ buf.read_int32();
+	/*uint16_t len*/ buf.read_uint16();
 	uint32_t msg_id = buf.read_uint32();
-	int32_t  status = buf.read_int32();
-	int32_t player_cid = buf.read_int32();
+	/*int32_t status*/ buf.read_int32();
+	/*int32_t player_cid*/ buf.read_int32();
 
 	//客户端发到服务器的消息在这里处理
 	Perf_Mon perf_mon(msg_id);

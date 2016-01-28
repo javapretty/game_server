@@ -98,6 +98,7 @@ public:
 	void object_pool_tick(Time_Value &now);
 
 	void get_server_info(Block_Buffer &buf);
+	void get_server_ip_port(int player_cid, std::string &ip, int &port);
 
 	/// 返回上次tick的绝对时间, 最大误差有100毫秒
 	/// 主要为减少系统调用gettimeofday()调用次数

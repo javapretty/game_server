@@ -56,9 +56,9 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 	}
 
 	int32_t cid = buf->read_int32();
-	uint16_t len = buf->read_uint16();
+	/*uint16_t len*/ buf->read_uint16();
 	uint32_t msg_id = buf->read_uint32();
-	int32_t  status = buf->read_int32();
+	/*int32_t status*/ buf->read_int32();
 
 	switch (msg_id) {
 	case SYNC_GAME_DB_LOAD_DB_CACHE: {

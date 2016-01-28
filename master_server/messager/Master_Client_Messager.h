@@ -7,7 +7,7 @@
 #ifndef MASTER_CLIENT_MESSAGER_H_
 #define MASTER_CLIENT_MESSAGER_H_
 
-#include <Msg_Define.h>
+#include "Msg_Define.h"
 
 class Block_Buffer;
 class Master_Player;

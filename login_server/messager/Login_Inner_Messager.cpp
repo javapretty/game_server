@@ -23,9 +23,9 @@ Login_Inner_Messager *Login_Inner_Messager::instance(void) {
 
 int Login_Inner_Messager::process_gate_block(Block_Buffer &buf) {
 	int32_t gate_cid = buf.read_int32();
-	uint16_t len = buf.read_uint16();
+	/*uint16_t len*/ buf.read_uint16();
 	uint32_t msg_id = buf.read_uint32();
-	int32_t  status = buf.read_int32();
+	/*int32_t status*/ buf.read_int32();
 	int32_t player_cid = buf.read_int32();
 
 	Perf_Mon perf_mon(msg_id);
@@ -47,9 +47,9 @@ int Login_Inner_Messager::process_gate_block(Block_Buffer &buf) {
 }
 
 int Login_Inner_Messager::process_self_loop_block(Block_Buffer &buf) {
-	uint16_t len = buf.read_uint16();
+	/*uint16_t len*/ buf.read_uint16();
 	uint32_t msg_id = buf.read_uint32();
-	int32_t status = buf.read_int32();
+	/*int32_t status*/ buf.read_int32();
 
 	Perf_Mon perf_mon(msg_id);
 	switch (msg_id) {
@@ -68,20 +68,18 @@ int Login_Inner_Messager::process_112000(int gate_cid, int32_t player_cid, MSG_1
 	Block_Buffer gate_buf;
 
 	Login_Player *player = 0;
-	std::string ip;
-	LOGIN_MANAGER->get_gate_peer_addr(gate_cid, ip);
-
 	//session check ok
 	if ((player = LOGIN_MANAGER->find_account_login_player(msg.account)) != 0
-			&& player->login_player_info().session == msg.session && player->login_player_info().gate_ip == ip){
-		MSG_DEBUG("find the session begin send message to gate");
+			&& player->login_player_info().session == msg.session
+			&& player->login_player_info().gate_ip == msg.gate_ip
+			&& player->login_player_info().gate_port == msg.gate_port) {
 		gate_buf.make_player_message(SYNC_LOGIN_GATE_PLAYER_ACCOUNT, 0, player_cid);
 		LOGIN_MANAGER->close_client(player->get_cid());
 	}
 	//session check error
 	else
 	{
-		MSG_DEBUG("not find the session begin send message to gate");
+		MSG_DEBUG("login check session wrong, gate_cid:%d, player_cid:%d",gate_cid, player_cid);
 		gate_buf.make_player_message(SYNC_LOGIN_GATE_PLAYER_ACCOUNT, ERROR_CLIENT_SESSION, player_cid);
 	}
 	MSG_112001 gate_msg;

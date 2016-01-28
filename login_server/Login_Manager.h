@@ -62,8 +62,6 @@ public:
 
 	int unbind_login_player(Login_Player &player);
 
-	int get_gate_peer_addr(int cid, std::string &ip);
-
 	/// 定时器处理
 	int register_timer(void);
 	int unregister_timer(void);

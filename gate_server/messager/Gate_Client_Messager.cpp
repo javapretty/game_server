@@ -9,7 +9,6 @@
 #include "Gate_Player.h"
 #include "Common_Func.h"
 
-
 Gate_Client_Messager::Gate_Client_Messager(void) { }
 
 Gate_Client_Messager::~Gate_Client_Messager(void) { }
@@ -109,11 +108,11 @@ int Gate_Client_Messager::connect_gate(int cid, MSG_111001 &msg) {
 
 	Gate_Player *player = 0;
 	//校验是否重复登录
-	if((player = GATE_MANAGER->find_account_gate_player(msg.account) )== 0){
-		MSG_DEBUG("Repeat login check success");
+	if((player = GATE_MANAGER->find_account_gate_player(msg.account) )== 0) {
 		MSG_112000 login_msg;
 		login_msg.account = msg.account;
 		login_msg.session = msg.session;
+		GATE_MANAGER->get_server_ip_port(cid, login_msg.gate_ip, login_msg.gate_port);
 		Block_Buffer login_buf;
 		login_buf.make_player_message(SYNC_GATE_LOGIN_PLAYER_ACCOUNT, 0, cid);
 		login_msg.serialize(login_buf);
@@ -123,7 +122,7 @@ int Gate_Client_Messager::connect_gate(int cid, MSG_111001 &msg) {
 	//重复登录
 	else
 	{
-		MSG_DEBUG("Repeat login check fail");
+		MSG_DEBUG("connect_gate, repeat login, cid:%d, account:%s, session:%s", cid, msg.account.c_str(), msg.session.c_str());
 		Block_Buffer res_buf;
 		res_buf.make_inner_message(RES_CLIENT_LOGIN, ERROR_LOGIN_VERIFY_FAIL);
 		res_buf.finish_message();

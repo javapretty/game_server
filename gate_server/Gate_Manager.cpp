@@ -378,6 +378,15 @@ void Gate_Manager::get_server_info(Block_Buffer &buf) {
 	gate_client_server_info_.serialize(buf);
 }
 
+void Gate_Manager::get_server_ip_port(int player_cid, std::string &ip, int &port) {
+	Svc* svc = GATE_CLIENT_SERVER->find_svc(player_cid);
+	if (!svc) {
+		MSG_DEBUG("get_server_ip_port wrong, cid:%d", player_cid);
+		return;
+	}
+	svc->get_local_addr(ip, port);
+}
+
 void Gate_Manager::object_pool_size(void) {
 	MSG_DEBUG("Gate_Manager Object_Pool Size ==============================================================");
 	MSG_DEBUG("block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());

@@ -7,7 +7,7 @@
 #ifndef LOGIN_CLIENT_MESSAGER_H_
 #define LOGIN_CLIENT_MESSAGER_H_
 
-#include <Msg_Define.h>
+#include "Msg_Define.h"
 
 class Block_Buffer;
 class Login_Player;

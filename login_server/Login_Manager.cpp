@@ -130,16 +130,6 @@ int Login_Manager::unbind_login_player(Login_Player &player) {
 	return 0;
 }
 
-int Login_Manager::get_gate_peer_addr(int cid, std::string &ip) {
-	Svc *svc = LOGIN_GATE_SERVER->find_svc(cid);
-	if (! svc) {
-		MSG_USER_TRACE("cid = %d, svc == 0", cid);
-		return -1;
-	}
-	int port;
-	return svc->get_peer_addr(ip, port);
-}
-
 int Login_Manager::register_timer(void) {
 	is_register_timer_ = true;
 	return 0;

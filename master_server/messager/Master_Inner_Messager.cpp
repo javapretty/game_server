@@ -24,9 +24,9 @@ Master_Inner_Messager *Master_Inner_Messager::instance(void) {
 
 int Master_Inner_Messager::process_game_block(Block_Buffer &buf) {
 	int32_t game_cid = buf.read_int32();
-	uint16_t len = buf.read_uint16();
+	/*uint16_t len*/ buf.read_uint16();
 	uint32_t msg_id = buf.read_uint32();
-	int32_t  status = buf.read_int32();
+	/*int32_t status*/ buf.read_int32();
 	int32_t player_cid = buf.read_int32();
 
 	Perf_Mon perf_mon(msg_id);
@@ -47,9 +47,9 @@ int Master_Inner_Messager::process_game_block(Block_Buffer &buf) {
 }
 
 int Master_Inner_Messager::process_self_loop_block(Block_Buffer &buf) {
-	uint16_t len = buf.read_uint16();
+	/*uint16_t len*/ buf.read_uint16();
 	uint32_t msg_id = buf.read_uint32();
-	int32_t status = buf.read_int32();
+	/*int32_t status*/ buf.read_int32();
 
 	Perf_Mon perf_mon(msg_id);
 	switch (msg_id) {

@@ -181,10 +181,9 @@ inline int Game_Manager::push_game_gate_data(Block_Buffer *buf) {
 
 inline int Game_Manager::push_game_db_data(Block_Buffer *buf) {
 	int read_idx = buf->get_read_idx();
-	int32_t cid = buf->read_int32();
-	uint16_t len = buf->read_uint16();
+	/*int32_t cid*/ buf->read_int32();
+	/*uint16_t len*/ buf->read_uint16();
 	uint32_t msg_id = buf->read_uint32();
-	int32_t status = buf->read_int32();
 	buf->set_read_idx(read_idx);
 
 	switch (msg_id) {

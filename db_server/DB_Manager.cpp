@@ -64,8 +64,8 @@ int DB_Manager::start(void) {
 
 int DB_Manager::push_data_block(Block_Buffer *buf) {
 	int read_idx = buf->get_read_idx();
-	int32_t cid = buf->read_int32();
-	uint16_t len = buf->read_uint16();
+	/*int32_t cid*/ buf->read_int32();
+	/*uint16_t len*/ buf->read_uint16();
 	uint32_t msg_id = buf->read_uint32();
 	buf->set_read_idx(read_idx);
 
@@ -87,8 +87,8 @@ int DB_Manager::push_data_block(Block_Buffer *buf) {
 	}
 	}
 
-	MSG_DEBUG("push db message cid=%d, len=%d, load_player_num_=%d, create_player_num_=%d, save_player_num_=%d",
-			cid, len, load_player_num_, create_player_num_, save_player_num_);
+	MSG_DEBUG("push db message load_player_num_=%d, create_player_num_=%d, save_player_num_=%d",
+			load_player_num_, create_player_num_, save_player_num_);
 
 	return 0;
 }

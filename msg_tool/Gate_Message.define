@@ -4,6 +4,8 @@ gate-->login校验玩家accout session数据
 struct MSG_112000 {
 	std::string account;
 	std::string session;
+	std::string gate_ip;
+	int32_t gate_port;
 };
 
 /*

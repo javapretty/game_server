@@ -28,6 +28,10 @@ struct MSG_112000 {
 
 	std::string session;
 
+	std::string gate_ip;
+
+	int32_t gate_port;
+
 	MSG_112000(void);
 
 	void serialize(Block_Buffer & w) const;
