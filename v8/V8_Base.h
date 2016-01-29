@@ -23,8 +23,9 @@
 typedef Block_List<Thread_Mutex> Data_List;
 static Data_List v8_data_list_;
 
-int Push_V8_Block(Block_Buffer *buf);
-Block_Buffer Pop_V8_Block();
+void Push_V8_Block(Block_Buffer *buf);
+Block_Buffer* Pop_V8_Block();
+void Push_Game_Gate_Server_Block(int cid, Block_Buffer *buf);
 void Sleep();
 
 const char* ToCString(const v8::String::Utf8Value& value);

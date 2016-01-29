@@ -9,20 +9,21 @@
 #include "Time_Value.h"
 #include "Public_Define.h"
 
-int Push_V8_Block(Block_Buffer *buf) {
+void Push_V8_Block(Block_Buffer *buf) {
 	v8_data_list_.push_back(buf);
-	return 0;
 }
 
-Block_Buffer Pop_V8_Block() {
-	Block_Buffer buf_data;
+Block_Buffer* Pop_V8_Block() {
 	Block_Buffer *buf = v8_data_list_.pop_front();
 	if (buf) {
-		Block_Buffer buf_data = *buf;
-		int32_t cid = buf->peek_int32();
-		GAME_GATE_SERVER->push_block(cid, buf);
+		return buf;
+	} else {
+		return nullptr;
 	}
-	return buf_data;
+}
+
+void Push_Game_Gate_Server_Block(int cid, Block_Buffer *buf) {
+	GAME_GATE_SERVER->push_block(cid, buf);
 }
 
 void Sleep() {
