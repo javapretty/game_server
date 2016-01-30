@@ -35,6 +35,7 @@ int V8_Manager::init(void) {
 	V8::Initialize();
 
 	start_v8_context();
+	//start_v8_base();
 	return 0;
 }
 
@@ -60,10 +61,15 @@ int V8_Manager::start_v8_base() {
 	global->SetInternalFieldCount(1);
 	global->Set(String::NewFromUtf8(isolate_, "Print", NewStringType::kNormal).ToLocalChecked(),
 		FunctionTemplate::New(isolate_, Print));
+	global->SetAccessor(
+		String::NewFromUtf8(isolate_, "Get_Block", NewStringType::kInternalized)
+		.ToLocalChecked(),
+		Get_Block);
+
 	Local<Context> context = Context::New(isolate_, NULL, global);
 	global_context_.Reset(isolate_, context);
 
-	wrap_pointer(global);
+	//wrap_pointer(global);
 
 	Context::Scope context_scope(context);
 	Local<String> source;

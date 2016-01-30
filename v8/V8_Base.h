@@ -19,12 +19,15 @@
 #include "Block_List.h"
 #include "Block_Buffer.h"
 
+using namespace v8;
+
 ////使用全局变量保存数据
 typedef Block_List<Thread_Mutex> Data_List;
 static Data_List v8_data_list_;
 
 void Push_V8_Block(Block_Buffer *buf);
 Block_Buffer* Pop_V8_Block();
+void Get_Block(Local<String> property, const PropertyCallbackInfo<Value>& info);
 void Push_Game_Gate_Server_Block(int cid, Block_Buffer *buf);
 void Sleep();
 

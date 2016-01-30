@@ -37,7 +37,7 @@ public:
 	int start_v8_context(void);
 
 	int wrap_block(void);
-	int wrap_pointer(Local<ObjectTemplate> &global);
+	int wrap_pointer();
 
 private:
 	V8_Manager(void);

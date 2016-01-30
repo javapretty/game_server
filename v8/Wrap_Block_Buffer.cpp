@@ -11,19 +11,24 @@
 #include "V8_Module.h"
 #include "V8_Base.h"
 
-int V8_Manager::wrap_pointer(Local<ObjectTemplate> &global) {
-	v8::Local<v8::Context> context = v8::Local<v8::Context>::New(isolate_, global_context_);
-
+int V8_Manager::wrap_pointer() {
 	Block_Buffer *buf = Pop_V8_Block();
+	Local<ObjectTemplate> localTemplate = ObjectTemplate::New(isolate_);
+	localTemplate->SetInternalFieldCount(1);
+
 	// Wrap the raw C++ pointer in an External so it can be referenced from within JavaScript.
 	Local<External> buf_ptr = External::New(isolate_, buf);
 	// Store the request pointer in the JavaScript wrapper.
-	Local<Object> tmp_buf = global->NewInstance(context).ToLocalChecked();
-	tmp_buf->SetInternalField(0, buf_ptr);
+	Local<Object> buf_obj = localTemplate->NewInstance(isolate_->GetCurrentContext()).ToLocalChecked();
+	buf_obj->SetInternalField(0, buf_ptr);
+
+	  // 为当前对象设置其对外函数接口
+	//buf_obj->Set(isolate_->GetCurrentContext(), String::NewFromUtf8(isolate_, "read_int32", NewStringType::kNormal).ToLocalChecked(),
+	//                    FunctionTemplate::New(isolate_, Block_Buffer::read_int32)) ;
 
 	// Set the options object as a property on the global object.
-	context->Global()->Set(context, String::NewFromUtf8(isolate_, "Pop_V8_Block", NewStringType::kNormal).ToLocalChecked(),
-					tmp_buf).FromJust();
+	isolate_->GetCurrentContext()->Global()->Set(isolate_->GetCurrentContext(), String::NewFromUtf8(isolate_, "Pop_V8_Block", NewStringType::kNormal).ToLocalChecked(),
+			buf_obj).FromJust();
 
 	return 0;
 }
@@ -45,14 +50,14 @@ int V8_Manager::wrap_block(void) {
 		.set("peek_double", &Block_Buffer::peek_double)
 		.set("peek_bool", &Block_Buffer::peek_bool)
 		.set("peek_string", &Block_Buffer::peek_string)
-		.set("read_int8", property(&Block_Buffer::read_int8))
-		.set("read_int16", property(&Block_Buffer::read_int16))
-		.set("read_int32", property(&Block_Buffer::read_int32))
-		.set("read_int64", property(&Block_Buffer::read_int64))
-		.set("read_uint8", property(&Block_Buffer::read_uint8))
-		.set("read_uint16", property(&Block_Buffer::read_uint16))
-		.set("read_uint32", property(&Block_Buffer::read_uint32))
-		.set("read_uint64", property(&Block_Buffer::read_uint64))
+		.set("read_int8", &Block_Buffer::read_int8)
+		.set("read_int16", &Block_Buffer::read_int16)
+		.set("read_int32", &Block_Buffer::read_int32)
+		.set("read_int64", &Block_Buffer::read_int64)
+		.set("read_uint8", &Block_Buffer::read_uint8)
+		.set("read_uint16", &Block_Buffer::read_uint16)
+		.set("read_uint32", &Block_Buffer::read_uint32)
+		.set("read_uint64", &Block_Buffer::read_uint64)
 		.set("read_double", &Block_Buffer::read_double)
 		.set("read_bool", &Block_Buffer::read_bool)
 		.set("read_string", &Block_Buffer::read_string)
@@ -75,7 +80,7 @@ int V8_Manager::wrap_block(void) {
 	module server(context_->isolate());
 	server.set("Block_Buffer", block_buffer);
 	server.set("Print", &Print);
-	server.set("Pop_V8_Block", &Pop_V8_Block);
+	server.set("Get_Block", property(&Get_Block));
 	server.set("Push_Game_Gate_Server_Block", &Push_Game_Gate_Server_Block);
 	server.set("Sleep", &Sleep);
 	context_->isolate()->GetCurrentContext()->Global()->Set(
