@@ -11,11 +11,9 @@
 #include <string.h>
 #include "include/v8.h"
 #include "include/libplatform/libplatform.h"
-#include "V8_Context.h"
 #include "Thread.h"
 
 using namespace v8;
-using namespace v8_wrap;
 
 class ArrayBufferAllocator : public ArrayBuffer::Allocator {
  public:
@@ -33,11 +31,7 @@ public:
 	void run_handler(void);
 	int init(void);
 	int fini(void);
-	int start_v8_base(void);
-	int start_v8_context(void);
-
-	int wrap_block(void);
-	int wrap_pointer();
+	int start_v8(void);
 
 private:
 	V8_Manager(void);
@@ -49,9 +43,6 @@ private:
 	static V8_Manager *instance_;
 	Platform* platform_;
 	Isolate* isolate_;
-	Global<Context> global_context_;
-
-	context *context_;
 };
 
 #define V8_MANAGER V8_Manager::instance()

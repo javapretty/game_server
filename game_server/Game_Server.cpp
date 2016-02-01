@@ -7,7 +7,7 @@
 
 #include "Game_Server.h"
 #include "Game_Manager.h"
-#include "V8_Base.h"
+#include "V8_Wrap.h"
 
 Game_Gate_Server::Game_Gate_Server(void) { }
 

@@ -205,10 +205,6 @@ v8::Local<v8::Context> CreateShellContext(v8::Isolate* isolate)
 		v8::String::NewFromUtf8(isolate, "jsMyFunction2", v8::NewStringType::kNormal)
 		.ToLocalChecked(),
 		v8::FunctionTemplate::New(isolate, jsMyFunction2));
-	global->Set(
-		v8::String::NewFromUtf8(isolate, "print", v8::NewStringType::kNormal)
-		.ToLocalChecked(),
-		v8::FunctionTemplate::New(isolate, Print));
 
 	return v8::Context::New(isolate, NULL, global);
 }

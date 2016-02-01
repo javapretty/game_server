@@ -12,7 +12,6 @@
 #include "include/libplatform/libplatform.h"
 #include "include/v8.h"
 #include "myclass_template.h"
-#include "test.h"
 
 using namespace v8;
 
