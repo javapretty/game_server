@@ -19,66 +19,6 @@ Game_Client_Messager *Game_Client_Messager::instance(void) {
 	return instance_;
 }
 
-int Game_Client_Messager::process_block(Block_Buffer &buf) {
-	int32_t gate_cid = buf.read_int32();
-	/*int16_t len*/ buf.read_int16();
-	int32_t msg_id = buf.read_int32();
-	/*int32_t status*/ buf.read_int32();
-	int32_t player_cid = buf.read_int32();
-
-	if (msg_id == REQ_FETCH_ROLE_INFO || msg_id == REQ_CREATE_ROLE)	 {
-		return process_init_block(gate_cid, player_cid, msg_id, buf);
-	}
-
-	Cid_Info cid_info(gate_cid, 0, player_cid);
-	Game_Player *player = GAME_MANAGER->find_cid_game_player(cid_info);
-	if (!player) {
-		MSG_DEBUG("cannot find player object. gate_cid = %d, player_cid = %d, msg_id = %d ", gate_cid, player_cid, msg_id);
-		Block_Buffer msg_buf;
-		msg_buf.make_player_message(ACTIVE_DISCONNECT, ERROR_CLIENT_PARAM, player_cid);
-		msg_buf.finish_message();
-		return GAME_MANAGER->send_to_gate(gate_cid, msg_buf);
-	} else {
-		if (msg_id == SYNC_GATE_GAME_PLAYER_SIGNOUT) {
-			//	  玩家掉线，与gate断开连接
-			return player->link_close();
-		}
-	}
-
-	Perf_Mon perf_mon(msg_id);
-	int ret = 0;
-	if (ret) {
-		Block_Buffer msg_buf;
-		msg_buf.make_player_message(ACTIVE_DISCONNECT, ERROR_CLIENT_PARAM, player_cid);
-		msg_buf.finish_message();
-		GAME_MANAGER->send_to_gate(gate_cid, msg_buf);
-	}
-
-	return 0;
-}
-
-int Game_Client_Messager::process_init_block(int gate_cid, int player_cid, int msg_id, Block_Buffer &buf) {
-	Perf_Mon perf_mon(msg_id);
-	int ret = 0;
-	switch (msg_id) {
-	case REQ_FETCH_ROLE_INFO: {
-		MSG_120001 msg;
-		if ((ret = msg.deserialize(buf)) == 0)
-			process_120001(gate_cid, player_cid, msg);
-		break;
-	}
-	case REQ_CREATE_ROLE: {
-		MSG_120002 msg;
-		if ((ret = msg.deserialize(buf)) == 0)
-			process_120002(gate_cid, player_cid, msg);
-		break;
-	}
-	default:
-		break;
-	}
-	return ret;
-}
-
 int Game_Client_Messager::process_120001(int gate_cid, int player_cid, MSG_120001 &msg) {
 	if (GAME_MANAGER->server_status() != Game_Manager::STATUS_NORMAL) {
 		MSG_USER("server closing");
@@ -187,5 +127,14 @@ int Game_Client_Messager::process_120002(int gate_cid, int player_cid, MSG_12000
 	db_msg.serialize(msg_buf);
 	msg_buf.finish_message();
 	GAME_MANAGER->send_to_db(msg_buf);
+	return 0;
+}
+
+int Game_Client_Messager::process_113000(int gate_cid, int player_cid) {
+	Cid_Info cid_info(gate_cid, 0, player_cid);
+	Game_Player *player = GAME_MANAGER->find_cid_game_player(cid_info);
+	if (player) {
+		player->link_close();
+	}
 	return 0;
 }

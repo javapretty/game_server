@@ -15,9 +15,6 @@ class Game_Client_Messager {
 public:
 	static Game_Client_Messager *instance(void);
 
-	int process_block(Block_Buffer &buf);
-	int process_init_block(int gate_cid, int player_cid, int msg_id, Block_Buffer &buf);
-
 	int process_bag_block(int msg_id, Block_Buffer &buf, Game_Player *player);
 	int process_mail_block(int msg_id, Block_Buffer &buf, Game_Player *player);
 
@@ -25,6 +22,8 @@ public:
 	int process_120001(int gate_cid, int player_cid, MSG_120001 &msg);
 	/// 创建角色
 	int process_120002(int gate_cid, int player_cid, MSG_120002 &msg);
+	/// 玩家与gate断开连接通知game
+	int process_113000(int gate_cid, int player_cid);
 
 private:
 	Game_Client_Messager(void);

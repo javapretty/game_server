@@ -65,6 +65,7 @@ public:
 	int push_game_db_data(Block_Buffer *buf);
 	int push_game_master_data(Block_Buffer *buf);
 	int push_self_loop_message(Block_Buffer &msg_buf);
+	Block_Buffer* pop_game_gate_data();
 
 	/// 消息处理
 	int process_list();
@@ -211,6 +212,15 @@ inline int Game_Manager::push_self_loop_message(Block_Buffer &msg_buf) {
 	buf->copy(&msg_buf);
 	self_loop_block_list_.push_back(buf);
 	return 0;
+}
+
+inline Block_Buffer* Game_Manager::pop_game_gate_data() {
+	Block_Buffer *buf = game_gate_data_list_.pop_front();
+	if (buf) {
+		return buf;
+	} else {
+		return nullptr;
+	}
 }
 
 inline const Time_Value &Game_Manager::tick_time(void) {

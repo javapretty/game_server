@@ -7,7 +7,6 @@
 
 #include "Game_Server.h"
 #include "Game_Manager.h"
-#include "V8_Wrap.h"
 
 Game_Gate_Server::Game_Gate_Server(void) { }
 
@@ -34,7 +33,7 @@ void Game_Gate_Server::process_list(void) {
 		if (!block_list_.empty()) {
 			all_empty = false;
 			buf = block_list_.pop_front();
-			Push_V8_Block(buf);
+			GAME_MANAGER->push_game_gate_data(buf);
 		}
 		if (all_empty) {
 			//没有数据时候延迟

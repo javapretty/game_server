@@ -10,19 +10,8 @@
 #include "Time_Value.h"
 #include "Public_Define.h"
 #include "Game_Server.h"
-
-void Push_V8_Block(Block_Buffer *buf) {
-	v8_data_list_.push_back(buf);
-}
-
-Block_Buffer* Pop_V8_Block() {
-	Block_Buffer *buf = v8_data_list_.pop_front();
-	if (buf) {
-		return buf;
-	} else {
-		return nullptr;
-	}
-}
+#include "Game_Manager.h"
+#include "Game_Client_Messager.h"
 
 void read_int16(const FunctionCallbackInfo<Value>& args)
 {
@@ -55,7 +44,7 @@ void Pop_Block(Local<String> property, const PropertyCallbackInfo<Value>& info) 
 	localTemplate->SetInternalFieldCount(1);
 
 	// Wrap the raw C++ pointer in an External so it can be referenced from within JavaScript.
-	Block_Buffer *buf = Pop_V8_Block();
+	Block_Buffer *buf = GAME_MANAGER->pop_game_gate_data();
 	if (buf) {
 		Local<External> buf_ptr = External::New(info.GetIsolate(), buf);
 		// Store the request pointer in the JavaScript wrapper.
@@ -72,6 +61,9 @@ void Pop_Block(Local<String> property, const PropertyCallbackInfo<Value>& info) 
 		buf_obj->Set(info.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(info.GetIsolate(), "Push_Block", NewStringType::kNormal).ToLocalChecked(),
 		                    FunctionTemplate::New(info.GetIsolate(), Push_Block)->GetFunction()) ;
 
+		buf_obj->Set(info.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(info.GetIsolate(), "Process_Login_Block", NewStringType::kNormal).ToLocalChecked(),
+		                    FunctionTemplate::New(info.GetIsolate(), Process_Login_Block)->GetFunction()) ;
+
 		info.GetReturnValue().Set(buf_obj);
 	} else {
 		//设置对象为空
@@ -80,8 +72,7 @@ void Pop_Block(Local<String> property, const PropertyCallbackInfo<Value>& info) 
 }
 
 void Push_Block(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 1)
-	{
+	if (args.Length() != 1) {
 		args.GetIsolate()->ThrowException(
 			v8::String::NewFromUtf8(args.GetIsolate(), "Bad parameters",
 			v8::NewStringType::kNormal).ToLocalChecked());
@@ -96,17 +87,54 @@ void Push_Block(const FunctionCallbackInfo<Value>& args) {
 		GAME_GATE_SERVER->push_block(args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0), buf);
 	}
 }
-void Push_Game_Gate_Server_Block(int cid, Block_Buffer *buf) {
-	GAME_GATE_SERVER->push_block(cid, buf);
+
+void Process_Login_Block(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 3) {
+		args.GetIsolate()->ThrowException(
+			v8::String::NewFromUtf8(args.GetIsolate(), "Bad parameters",
+			v8::NewStringType::kNormal).ToLocalChecked());
+	}
+
+	Local<Object> obj = args.Holder();
+	Handle<External> field = Handle<External>::Cast(obj->GetInternalField(0)) ;
+	void* raw_obj_ptr = field->Value() ;
+	Block_Buffer * buf= static_cast<Block_Buffer*>(raw_obj_ptr);
+	if (!buf) {
+		return;
+	}
+
+	int gate_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int player_cid = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int msg_id = args[2]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+
+	Perf_Mon perf_mon(msg_id);
+	int ret = 0;
+	switch (msg_id) {
+	case REQ_FETCH_ROLE_INFO: {
+		MSG_120001 msg;
+		if ((ret = msg.deserialize(*buf)) == 0)
+			GAME_CLIENT_MESSAGER->process_120001(gate_cid, player_cid, msg);
+		break;
+	}
+	case REQ_CREATE_ROLE: {
+		MSG_120002 msg;
+		if ((ret = msg.deserialize(*buf)) == 0)
+			GAME_CLIENT_MESSAGER->process_120002(gate_cid, player_cid, msg);
+		break;
+	}
+	case SYNC_GATE_GAME_PLAYER_SIGNOUT: {
+		ret = GAME_CLIENT_MESSAGER->process_113000(gate_cid, player_cid);
+		break;
+	}
+	default:
+		break;
+	}
 }
 
 void Sleep(const FunctionCallbackInfo<Value>& args) {
 	Time_Value::sleep(SLEEP_TIME);
 }
 
-// The callback that is invoked by v8 whenever the JavaScript 'print'
-// function is called.  Prints its arguments on stdout separated by
-// spaces and ending with a newline.
 void Print(const FunctionCallbackInfo<Value>& args) {
   bool first = true;
   for (int i = 0; i < args.Length(); i++) {
@@ -123,5 +151,3 @@ void Print(const FunctionCallbackInfo<Value>& args) {
   printf("\n");
   fflush(stdout);
 }
-
-
