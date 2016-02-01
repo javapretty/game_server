@@ -1,15 +1,10 @@
 /*
- * myclass_tempate.cpp
  *
  *  Created on: 2016年1月19日
  *      Author: zhangyalei
  */
 
-#include "myclass_template.h"
-#include "object_wrap.h"
-#include "V8_Base.h"
-
-using namespace v8;
+#include "MyClass_Wrap.h"
 
 Global<ObjectTemplate> gMyClassTemplate;
 ObjectWrap* gMyClass = NULL;
@@ -52,28 +47,28 @@ void jsMyClassSetName(
 {
 	Local<Object> self = info.Holder();
 	ObjectWrap* pMyClass = ObjectWrap::Unwrap<ObjectWrap>(self);
-	v8::String::Utf8Value str(value);
+	String::Utf8Value str(value);
 	static_cast<MyClass*>(pMyClass)->setName(ToCString(str));
 }
 
-void jsMyClassMethod1(const v8::FunctionCallbackInfo<v8::Value>& args)
+void jsMyClassMethod1(const FunctionCallbackInfo<Value>& args)
 {
 	Local<Object> self = args.Holder();
 	ObjectWrap* pMyClass = ObjectWrap::Unwrap<ObjectWrap>(self);
 	pMyClass->Method1();
 }
 
-void jsMyClassMethod2(const v8::FunctionCallbackInfo<v8::Value>& args)
+void jsMyClassMethod2(const FunctionCallbackInfo<Value>& args)
 {
 	if (args.Length() != 1)
 	{
 		args.GetIsolate()->ThrowException(
-			v8::String::NewFromUtf8(args.GetIsolate(), "Bad parameters",
-			v8::NewStringType::kNormal).ToLocalChecked());
+			String::NewFromUtf8(args.GetIsolate(), "Bad parameters",
+			NewStringType::kNormal).ToLocalChecked());
 		return;
 	}
 
-	v8::String::Utf8Value str(args[0]);
+	String::Utf8Value str(args[0]);
 	const char* cstr = ToCString(str);
 
 	Local<Object> self = args.Holder();
@@ -81,13 +76,13 @@ void jsMyClassMethod2(const v8::FunctionCallbackInfo<v8::Value>& args)
 	pMyClass->Method2(cstr);
 }
 
-void jsCreateMyClass(const v8::FunctionCallbackInfo<v8::Value>& args)
+void jsCreateMyClass(const FunctionCallbackInfo<Value>& args)
 {
 	if (args.Length() != 1)
 	{
 		args.GetIsolate()->ThrowException(
-			v8::String::NewFromUtf8(args.GetIsolate(), "Bad parameters",
-			v8::NewStringType::kNormal).ToLocalChecked());
+			String::NewFromUtf8(args.GetIsolate(), "Bad parameters",
+			NewStringType::kNormal).ToLocalChecked());
 		return;
 	}
 
@@ -108,34 +103,34 @@ void jsCreateMyClass(const v8::FunctionCallbackInfo<v8::Value>& args)
 	args.GetReturnValue().Set(myClassObj);
 }
 
-void jsMyFunction(const v8::FunctionCallbackInfo<v8::Value>& args)
+void jsMyFunction(const FunctionCallbackInfo<Value>& args)
 {
 	myFunction();
 }
 
-void jsMyFunction1(const v8::FunctionCallbackInfo<v8::Value>& args)
+void jsMyFunction1(const FunctionCallbackInfo<Value>& args)
 {
 	if (args.Length() != 1)
 	{
 		args.GetIsolate()->ThrowException(
-			v8::String::NewFromUtf8(args.GetIsolate(), "Bad parameters",
-			v8::NewStringType::kNormal).ToLocalChecked());
+			String::NewFromUtf8(args.GetIsolate(), "Bad parameters",
+			NewStringType::kNormal).ToLocalChecked());
 		return;
 	}
 
-	v8::String::Utf8Value str(args[0]);
+	String::Utf8Value str(args[0]);
 	const char* cstr = ToCString(str);
 
 	myFunction1(cstr);
 }
 
-void jsMyFunction2(const v8::FunctionCallbackInfo<v8::Value>& args)
+void jsMyFunction2(const FunctionCallbackInfo<Value>& args)
 {
 	if (args.Length() != 1)
 	{
 		args.GetIsolate()->ThrowException(
-			v8::String::NewFromUtf8(args.GetIsolate(), "Bad parameters",
-			v8::NewStringType::kNormal).ToLocalChecked());
+			String::NewFromUtf8(args.GetIsolate(), "Bad parameters",
+			NewStringType::kNormal).ToLocalChecked());
 		return;
 	}
 
@@ -150,13 +145,8 @@ void jsMyFunction2(const v8::FunctionCallbackInfo<v8::Value>& args)
 	args.GetReturnValue().Set(str);
 }
 
-void RegisterMyClass(Isolate* isolate)
+void RegisterMyClass(Isolate* isolate, Local<ObjectTemplate> global)
 {
-	if (!gMyClassTemplate.IsEmpty())
-	{
-		return;
-	}
-
 	Local<ObjectTemplate> localTemplate = ObjectTemplate::New(isolate);
 	localTemplate->SetInternalFieldCount(1);
 
@@ -171,45 +161,35 @@ void RegisterMyClass(Isolate* isolate)
 		jsMyClassGetName,
 		jsMyClassSetName);
 	localTemplate->Set(
-		v8::String::NewFromUtf8(isolate, "Method1", v8::NewStringType::kNormal)
+		String::NewFromUtf8(isolate, "Method1", NewStringType::kNormal)
 		.ToLocalChecked(),
-		v8::FunctionTemplate::New(isolate, jsMyClassMethod1));
+		FunctionTemplate::New(isolate, jsMyClassMethod1));
 	localTemplate->Set(
-		v8::String::NewFromUtf8(isolate, "Method2", v8::NewStringType::kNormal)
+		String::NewFromUtf8(isolate, "Method2", NewStringType::kNormal)
 		.ToLocalChecked(),
-		v8::FunctionTemplate::New(isolate, jsMyClassMethod2));
+		FunctionTemplate::New(isolate, jsMyClassMethod2));
 
 	gMyClassTemplate.Reset(isolate, localTemplate);
+
+	global->Set(
+		String::NewFromUtf8(isolate, "MyClass", NewStringType::kNormal)
+		.ToLocalChecked(),
+		FunctionTemplate::New(isolate, jsCreateMyClass));
+	global->Set(
+		String::NewFromUtf8(isolate, "jsMyFunction", NewStringType::kNormal)
+		.ToLocalChecked(),
+		FunctionTemplate::New(isolate, jsMyFunction));
+	global->Set(
+		String::NewFromUtf8(isolate, "jsMyFunction1", NewStringType::kNormal)
+		.ToLocalChecked(),
+		FunctionTemplate::New(isolate, jsMyFunction1));
+	global->Set(
+		String::NewFromUtf8(isolate, "jsMyFunction2", NewStringType::kNormal)
+		.ToLocalChecked(),
+		FunctionTemplate::New(isolate, jsMyFunction2));
 }
 
-v8::Local<v8::Context> CreateShellContext(v8::Isolate* isolate)
-{
-	// Register classes
-	RegisterMyClass(isolate);
-
-	// Register functions
-	v8::Local<v8::ObjectTemplate> global = v8::ObjectTemplate::New(isolate);
-	global->Set(
-		v8::String::NewFromUtf8(isolate, "MyClass", v8::NewStringType::kNormal)
-		.ToLocalChecked(),
-		v8::FunctionTemplate::New(isolate, jsCreateMyClass));
-	global->Set(
-		v8::String::NewFromUtf8(isolate, "jsMyFunction", v8::NewStringType::kNormal)
-		.ToLocalChecked(),
-		v8::FunctionTemplate::New(isolate, jsMyFunction));
-	global->Set(
-		v8::String::NewFromUtf8(isolate, "jsMyFunction1", v8::NewStringType::kNormal)
-		.ToLocalChecked(),
-		v8::FunctionTemplate::New(isolate, jsMyFunction1));
-	global->Set(
-		v8::String::NewFromUtf8(isolate, "jsMyFunction2", v8::NewStringType::kNormal)
-		.ToLocalChecked(),
-		v8::FunctionTemplate::New(isolate, jsMyFunction2));
-
-	return v8::Context::New(isolate, NULL, global);
-}
-
-void UnregisterAll()
+void UnregisterMyClass()
 {
 	gMyClassTemplate.Reset();
 }

@@ -78,5 +78,6 @@ int V8_Manager::start_v8() {
   Local<Value> result = script->Run(context).ToLocalChecked();
 	String::Utf8Value utf8(result);
 	std::cout << *utf8 << std::endl;
+
   return 0;
 }

@@ -1,5 +1,4 @@
 /*
- * object_wrap.h
  *
  *  Created on: 2016年1月19日
  *      Author: zhangyalei

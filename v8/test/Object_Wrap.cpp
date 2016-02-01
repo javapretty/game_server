@@ -1,12 +1,11 @@
 /*
- * object_wrap.cpp
  *
  *  Created on: 2016年1月26日
  *      Author: zhangyalei
  */
 
 #include <iostream>
-#include "object_wrap.h"
+#include "Object_Wrap.h"
 
 using namespace std;
 
