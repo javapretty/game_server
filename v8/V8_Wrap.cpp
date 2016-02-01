@@ -24,6 +24,19 @@ Block_Buffer* Pop_V8_Block() {
 	}
 }
 
+void read_int16(const FunctionCallbackInfo<Value>& args)
+{
+	Local<Object> obj = args.Holder();
+	Handle<External> field = Handle<External>::Cast(obj->GetInternalField(0)) ;
+	void* raw_obj_ptr = field->Value() ;
+	Block_Buffer * buf= static_cast<Block_Buffer*>(raw_obj_ptr);
+	int value = 0;
+	if (buf) {
+		value = buf->read_int16();
+	}
+	args.GetReturnValue().Set(value);
+}
+
 void read_int32(const FunctionCallbackInfo<Value>& args)
 {
 	Local<Object> obj = args.Holder();
@@ -33,32 +46,6 @@ void read_int32(const FunctionCallbackInfo<Value>& args)
 	int value = 0;
 	if (buf) {
 		value = buf->read_int32();
-	}
-	args.GetReturnValue().Set(value);
-}
-
-void read_uint16(const FunctionCallbackInfo<Value>& args)
-{
-	Local<Object> obj = args.Holder();
-	Handle<External> field = Handle<External>::Cast(obj->GetInternalField(0)) ;
-	void* raw_obj_ptr = field->Value() ;
-	Block_Buffer * buf= static_cast<Block_Buffer*>(raw_obj_ptr);
-	int value = 0;
-	if (buf) {
-		value = buf->read_uint16();
-	}
-	args.GetReturnValue().Set(value);
-}
-
-void read_uint32(const FunctionCallbackInfo<Value>& args)
-{
-	Local<Object> obj = args.Holder();
-	Handle<External> field = Handle<External>::Cast(obj->GetInternalField(0)) ;
-	void* raw_obj_ptr = field->Value() ;
-	Block_Buffer * buf= static_cast<Block_Buffer*>(raw_obj_ptr);
-	int value = 0;
-	if (buf) {
-		value = buf->read_uint32();
 	}
 	args.GetReturnValue().Set(value);
 }
@@ -76,14 +63,11 @@ void Pop_Block(Local<String> property, const PropertyCallbackInfo<Value>& info) 
 		buf_obj->SetInternalField(0, buf_ptr);
 
 		// 为当前对象设置其对外函数接口
+		buf_obj->Set(info.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(info.GetIsolate(), "read_int16", NewStringType::kNormal).ToLocalChecked(),
+		                    FunctionTemplate::New(info.GetIsolate(), read_int16)->GetFunction()) ;
+
 		buf_obj->Set(info.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(info.GetIsolate(), "read_int32", NewStringType::kNormal).ToLocalChecked(),
 		                    FunctionTemplate::New(info.GetIsolate(), read_int32)->GetFunction()) ;
-
-		buf_obj->Set(info.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(info.GetIsolate(), "read_uint16", NewStringType::kNormal).ToLocalChecked(),
-		                    FunctionTemplate::New(info.GetIsolate(), read_uint16)->GetFunction()) ;
-
-		buf_obj->Set(info.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(info.GetIsolate(), "read_uint32", NewStringType::kNormal).ToLocalChecked(),
-		                    FunctionTemplate::New(info.GetIsolate(), read_uint32)->GetFunction()) ;
 
 		buf_obj->Set(info.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(info.GetIsolate(), "Push_Block", NewStringType::kNormal).ToLocalChecked(),
 		                    FunctionTemplate::New(info.GetIsolate(), Push_Block)->GetFunction()) ;

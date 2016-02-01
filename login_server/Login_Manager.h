@@ -186,12 +186,12 @@ inline void Login_Manager::set_msg_count_onoff(int v) {
 }
 
 inline void Login_Manager::inner_msg_count(Block_Buffer &buf) {
-	/// len(uint16), msg_id(uint32), status(uint32)
-	if (msg_count_onoff_ && buf.readable_bytes() >= (sizeof(uint16_t) + sizeof(uint32_t) + sizeof(uint32_t))) {
+	/// len(int16), msg_id(int32), status(int32)
+	if (msg_count_onoff_ && buf.readable_bytes() >= (sizeof(int16_t) + sizeof(int32_t) + sizeof(int32_t))) {
 		uint16_t read_idx_orig = buf.get_read_idx();
 
-		buf.set_read_idx(read_idx_orig + sizeof(uint16_t));
-		uint32_t msg_id = buf.read_uint32();
+		buf.set_read_idx(read_idx_orig + sizeof(int16_t));
+		int32_t msg_id = buf.read_int32();
 		++(inner_msg_count_map_[static_cast<int>(msg_id)]);
 
 		buf.set_read_idx(read_idx_orig);

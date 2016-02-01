@@ -15,23 +15,23 @@
 
 client message head:
 	int32(cid);
-	uint16(len);
-	uint32(serial_cipher);
-	uint32(msg_time_cipher);
-	uint32(msg_id);
+	int16(len);
+	int32(serial_cipher);
+	int32(msg_time_cipher);
+	int32(msg_id);
 	int32(status);
 
 gate to game,master,login,chat message head:
 	int32(cid);
-	uint16(len);
-	uint32(msg_id);
+	int16(len);
+	int32(msg_id);
 	int32(status);
 	int32(player_cid);
 
 inner message head;
 	int32(cid);
-	uint16(len);
-	uint32(msg_id);
+	int16(len);
+	int32(msg_id);
 	int32(status);
  */
 
@@ -130,10 +130,13 @@ public:
 	inline int write_bool(bool v);
 	inline int write_string(const std::string &str);
 
-	//服务器内部，服务器到db,log使用
+	//服务器内部，发送到db,log使用的消息
 	inline void make_inner_message(int msg_id, int status = 0);
-	//gate与game,master,chat,login转发客户端消息时候使用
+	//gate与game,master,chat,login转发到客户端的消息
 	inline void make_player_message(int msg_id, int status, int player_cid);
+	//客户端发到服务器的消息
+	inline void make_client_message(int serial_cipher, int msg_time_cipher, int msg_id, int status);
+	//完成消息的生成
 	inline void finish_message(void);
 
 	inline int move_data(size_t dest, size_t begin, size_t end);
@@ -781,16 +784,24 @@ int Block_Buffer::write_string(const std::string &str) {
 }
 
 void Block_Buffer::make_inner_message(int msg_id, int status) {
-	write_uint16(0); /// length
-	write_uint32(msg_id);
+	write_int16(0); /// length
+	write_int32(msg_id);
 	write_int32(status);
 }
 
 void Block_Buffer::make_player_message(int msg_id, int status, int player_cid) {
-	write_uint16(0); /// length
-	write_uint32(msg_id);
+	write_int16(0); /// length
+	write_int32(msg_id);
 	write_int32(status);
 	write_int32(player_cid);
+}
+
+void Block_Buffer::make_client_message(int serial_cipher, int msg_time_cipher, int msg_id, int status) {
+	write_int16(0); /// length
+	write_int32(serial_cipher);
+	write_int32(msg_time_cipher);
+	write_int32(msg_id);
+	write_int32(status);
 }
 
 void Block_Buffer::finish_message(void) {

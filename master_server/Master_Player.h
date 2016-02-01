@@ -28,14 +28,9 @@ public:
 	void set_recycle(void);
 	int recycle_status(void);
 	int recycle_tick(const Time_Value &now);
-
-	int register_timer(void);
-	int unregister_timer(void);
-
 	int link_close(void);
 
 private:
-	bool is_register_timer_;
 	Cid_Info cid_info_;
 	Master_Player_Info player_info_;
 	Recycle_Tick recycle_tick_;

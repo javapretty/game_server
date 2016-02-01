@@ -26,29 +26,28 @@ int Game_Player::respond_error_result(int msg_id, int err, Block_Buffer *buf) {
 		msg_buf.finish_message();
 		return GAME_MANAGER->send_to_gate(cid_info_.gate_cid, msg_buf);
 	} else {
-		if ((size_t)buf->get_read_idx() < (sizeof(uint16_t) + sizeof(uint32_t) + 2 * sizeof(int32_t))) {
+		size_t head_len = sizeof(int16_t) + 3 * sizeof(int32_t); ///len(int16_t), msg_id(int32_t), status(int32_t), player_cid(int32_t)
+		if ((size_t)buf->get_read_idx() < head_len) {
 			MSG_USER("Block_Buffer space error !");
 			return 0;
 		}
-		/// insert head msg_id, status
+
+		/// insert buf head
 		size_t rd_idx = buf->get_read_idx();
 		size_t wr_idx = buf->get_write_idx();
 
-		size_t head_len = sizeof(uint16_t) + sizeof(uint32_t) + 2 * sizeof(int32_t); ///len(uint16_t), msg_id(uint32_t),  player_cid(int32_t), status(int32_t)
-
 		buf->set_read_idx(buf->get_read_idx() - head_len);
-		uint16_t len = buf->readable_bytes() - sizeof(uint16_t);
+		int16_t len = buf->readable_bytes() - sizeof(int16_t);
 		buf->set_write_idx(buf->get_read_idx());
 
-		buf->write_uint16(len);
-		buf->write_uint32(msg_id);
+		buf->write_int16(len);
+		buf->write_int32(msg_id);
 		buf->write_int32(err); /// status
 		buf->write_int32(cid_info_.player_cid);
 		buf->set_write_idx(wr_idx);
 		GAME_MANAGER->send_to_gate(cid_info_.gate_cid, *buf);
 
 		buf->set_read_idx(rd_idx); /// 复位传入的buf参数
-
 		return 0;
 	}
 }

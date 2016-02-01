@@ -222,24 +222,23 @@ int Gate_Manager::server_status(void) {
 
 int Gate_Manager::self_close_process(void) {
 	status_ = STATUS_CLOSING;
-	for (boost::unordered_map<int, Gate_Player *>::iterator iter = player_cid_map_.begin(); iter != player_cid_map_.end(); ++iter) {
-		iter->second->respond_error_result(ACTIVE_DISCONNECT, ERROR_DISCONNECT_SELF);
+
+	Block_Buffer buf;
+	buf.make_inner_message(ACTIVE_DISCONNECT, ERROR_DISCONNECT_SELF);
+	buf.finish_message();
+	for (Gate_Player_Cid_Map::iterator iter = player_cid_map_.begin(); iter != player_cid_map_.end(); ++iter) {
+		GATE_MANAGER->send_to_client(iter->first, buf);
+	}
+	//等待服务器通知客户端完毕
+	sleep(2);
+
+	//关闭客户端连接
+	for (Gate_Player_Cid_Map::iterator iter = player_cid_map_.begin(); iter != player_cid_map_.end(); ++iter) {
+		iter->second->link_close();
 	}
 
 	int i = 0;
 	while (++i < 30) {
-		sleep(1);
-		MSG_DEBUG("has user:%d", player_cid_map_.size());
-		if (player_cid_map_.size() == 0)
-			break;
-	}
-
-	for (boost::unordered_map<int, Gate_Player *>::iterator iter = player_cid_map_.begin(); iter != player_cid_map_.end(); ++iter) {
-		iter->second->reset();
-	}
-
-	i = 0;
-	while (++i < 120) {
 		sleep(1);
 		MSG_DEBUG("has user:%d", player_cid_map_.size());
 		if (player_cid_map_.size() == 0)

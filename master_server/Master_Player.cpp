@@ -7,14 +7,11 @@
 #include "Master_Player.h"
 #include "Log.h"
 
-Master_Player::Master_Player(void):
-  is_register_timer_(0)
-{ }
+Master_Player::Master_Player(void) { }
 
 Master_Player::~Master_Player(void) { }
 
 int Master_Player::sign_in(Master_Player_Info &player_info) {
-	register_timer();
 	player_info_ = player_info;
 
 	MSG_DEBUG("player sign in master_server. account=[%s], game_cid = %d, player_cid = %d, role_id=%ld, name=%s",
@@ -23,14 +20,12 @@ int Master_Player::sign_in(Master_Player_Info &player_info) {
 }
 
 int Master_Player::sign_out(void) {
-	unregister_timer();
 	reset();
 
 	return 0;
 }
 
 void Master_Player::reset(void) {
-	is_register_timer_ = false;
 	recycle_tick_.reset();
 	cid_info_.reset();
 	player_info_.reset();
@@ -40,19 +35,6 @@ int Master_Player::tick(Time_Value &now) {
 	if (recycle_tick(now) == 1)
 		return 0;
 
-	if (! is_register_timer_)
-		return 0;
-
-	return 0;
-}
-
-int Master_Player::register_timer(void) {
-	is_register_timer_ = true;
-	return 0;
-}
-
-int Master_Player::unregister_timer(void) {
-	is_register_timer_ = false;
 	return 0;
 }
 

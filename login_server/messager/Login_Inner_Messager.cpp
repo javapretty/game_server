@@ -21,8 +21,8 @@ Login_Inner_Messager *Login_Inner_Messager::instance(void) {
 
 int Login_Inner_Messager::process_gate_block(Block_Buffer &buf) {
 	int32_t gate_cid = buf.read_int32();
-	/*uint16_t len*/ buf.read_uint16();
-	uint32_t msg_id = buf.read_uint32();
+	/*int16_t len*/ buf.read_int16();
+	int32_t msg_id = buf.read_int32();
 	/*int32_t status*/ buf.read_int32();
 	int32_t player_cid = buf.read_int32();
 
@@ -45,8 +45,8 @@ int Login_Inner_Messager::process_gate_block(Block_Buffer &buf) {
 }
 
 int Login_Inner_Messager::process_self_loop_block(Block_Buffer &buf) {
-	/*uint16_t len*/ buf.read_uint16();
-	uint32_t msg_id = buf.read_uint32();
+	/*int16_t len*/ buf.read_int16();
+	int32_t msg_id = buf.read_int32();
 	/*int32_t status*/ buf.read_int32();
 
 	Perf_Mon perf_mon(msg_id);

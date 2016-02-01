@@ -23,10 +23,10 @@ Gate_Client_Messager *Gate_Client_Messager::instance(void) {
 
 int Gate_Client_Messager::process_block(Block_Buffer &buf) {
 	int32_t player_cid = buf.read_int32();
-	uint16_t len = buf.read_uint16();
-	uint32_t serial_cipher = buf.read_uint32();
-	uint32_t msg_time_cipher = buf.read_uint32();
-	uint32_t msg_id = buf.read_uint32();
+	int16_t len = buf.read_int16();
+	int32_t serial_cipher = buf.read_int32();
+	int32_t msg_time_cipher = buf.read_int32();
+	int32_t msg_id = buf.read_int32();
 	int32_t  status = buf.read_int32();
 
 	LOG_DEBUG("player_cid:%d, len:%d, serial_cipher:%llu, msg_time_cipher:%llu, msg_id:%ld, status:%d", player_cid, len, serial_cipher, msg_time_cipher, msg_id, status);

@@ -1,20 +1,22 @@
 while (1) {	
-	buf = server.Get_Block;
+	var buf = Pop_Block;
 	if (buf == null) {
-		server.Sleep();
+		Sleep();
 		continue;	
 	}
 	
-	server.Print("server is right");
+	Print("server is right");
 	var gate_cid = buf.read_int32();
-	var len = buf.read_uint16();
-	var msg_id = buf.read_uint32();
+	var len = buf.read_int16();
+	var msg_id = buf.read_int32();
 	var status = buf.read_int32();
 	var player_cid = buf.read_int32();
 	
-	server.Print(gate_cid);
-	server.Print(len);
-	server.Print(msg_id);
-	server.Print(status);
-	server.Print(player_cid);
-}	
+	Print(gate_cid);
+	Print(len);
+	Print(msg_id);
+	Print(status);
+	Print(player_cid);
+	
+	buf.Push_Block(gate_cid);
+}

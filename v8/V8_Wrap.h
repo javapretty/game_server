@@ -19,9 +19,8 @@ using namespace v8;
 typedef Block_List<Thread_Mutex> Data_List;
 static Data_List v8_data_list_;
 
+void read_int16(const FunctionCallbackInfo<Value>& args);
 void read_int32(const FunctionCallbackInfo<Value>& args);
-void read_uint16(const FunctionCallbackInfo<Value>& args);
-void read_uint32(const FunctionCallbackInfo<Value>& args);
 
 void Push_V8_Block(Block_Buffer *buf);
 Block_Buffer* Pop_V8_Block();

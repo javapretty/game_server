@@ -20,12 +20,6 @@ public:
 	void set_role_id(int64_t role_id);
 	void reset(void);
 
-	int respond_result(int msg_id, int result, Block_Buffer *buf = 0) { return respond_error_result(msg_id, result, buf); };
-	int respond_finer_result(int msg_id, Block_Buffer *buf = 0);
-	int respond_error_result(int msg_id, int err, Block_Buffer *buf = 0);
-	/// 注: 	该接口中的buf包含头[长度、消息号、状态码], 需使用Block_Buffer::make_player_message/finish_message接口创建
-	int send_to_client(Block_Buffer &buf);
-
 	int tick(Time_Value &now);
 	int link_close(void);
 	void set_recycle(void);

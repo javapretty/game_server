@@ -20,24 +20,15 @@ public:
 	void set_player_info(const Login_Player_Info &player_info);
 	Login_Player_Info const &login_player_info(void) const;
 
-	int respond_success_result(int msg_id, Block_Buffer *buf = 0);
-	int respond_error_result(int msg_id, int err, Block_Buffer *buf = 0);
-
 	void reset(void);
-
 	int tick(Time_Value &now);
 	void set_recycle(void);
 	int recycle_status(void);
 	int recycle_tick(const Time_Value &now);
-
-	int register_timer(void);
-	int unregister_timer(void);
-
 	int link_close(void);
 
 private:
 	int cid_;
-	bool is_register_timer_;
 	Recycle_Tick recycle_tick_;
 	Login_Player_Info player_info_;
 };
