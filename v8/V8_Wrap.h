@@ -17,6 +17,8 @@ using namespace v8;
 
 Local<Context> Create_V8_Context(Isolate* isolate);
 
+void Require(const FunctionCallbackInfo<Value>& args);
+Handle<Value> Run_Script(Isolate* isolate, const std::string& script_path);
 void Sleep(const FunctionCallbackInfo<Value>& args);
 void Print(const FunctionCallbackInfo<Value>& args);
 

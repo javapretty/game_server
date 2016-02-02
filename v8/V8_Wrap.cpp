@@ -16,6 +16,8 @@
 
 Local<Context> Create_V8_Context(Isolate* isolate) {
 	Local<ObjectTemplate> global = ObjectTemplate::New(isolate);
+	global->Set(String::NewFromUtf8(isolate, "Require", NewStringType::kNormal).ToLocalChecked(),
+		FunctionTemplate::New(isolate, Require));
 	global->Set(String::NewFromUtf8(isolate, "Print", NewStringType::kNormal).ToLocalChecked(),
 		FunctionTemplate::New(isolate, Print));
 	global->Set(String::NewFromUtf8(isolate, "Sleep", NewStringType::kNormal).ToLocalChecked(),
@@ -26,6 +28,31 @@ Local<Context> Create_V8_Context(Isolate* isolate) {
 			FunctionTemplate::New(isolate, Get_Player));
 
 	return Context::New(isolate, NULL, global);
+}
+
+void Require(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 1) {
+		args.GetIsolate()->ThrowException(
+			v8::String::NewFromUtf8(args.GetIsolate(), "Bad parameters",
+			v8::NewStringType::kNormal).ToLocalChecked());
+		return ;
+	}
+
+	String::Utf8Value script_path(args[0]);
+	Handle<Value> result = Run_Script(args.GetIsolate(), *script_path);
+	args.GetReturnValue().Set(result);
+}
+
+Handle<Value> Run_Script(Isolate* isolate, const std::string& script_path) {
+	EscapableHandleScope handle_scope(isolate);
+	Local<String> source;
+	if (!ReadFile(isolate, script_path).ToLocal(&source)) {
+		MSG_USER("Error reading main.js.\n");
+		return v8::Undefined(isolate);
+	}
+  Local<Script> script = Script::Compile(isolate->GetCurrentContext(), source).ToLocalChecked();
+  Local<Value> result = script->Run(isolate->GetCurrentContext()).ToLocalChecked();
+  return handle_scope.Escape(result);
 }
 
 void Sleep(const FunctionCallbackInfo<Value>& args) {

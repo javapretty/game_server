@@ -7,7 +7,6 @@
 
 #include "Log.h"
 #include "V8_Manager.h"
-#include "V8_Base.h"
 #include "V8_Wrap.h"
 
 V8_Manager::V8_Manager(void):platform_(nullptr), isolate_(nullptr) { }
@@ -38,8 +37,14 @@ int V8_Manager::init(void) {
 	Isolate::CreateParams create_params;
 	create_params.array_buffer_allocator = &allocator;
 	isolate_ = Isolate::New(create_params);
+	Isolate::Scope isolate_scope(isolate_);
+	//创建V8执行环境
+	HandleScope handle_scope(isolate_);
+	Local<Context> context = Create_V8_Context(isolate_);
+	context_.Reset(isolate_, context);
+	Context::Scope context_scope(context);
 
-	start_v8();
+	Run_Script(isolate_, "main.js");
 	return 0;
 }
 
@@ -50,22 +55,4 @@ int V8_Manager::fini(void) {
 	V8::ShutdownPlatform();
 	delete platform_;
 	return 0;
-}
-
-int V8_Manager::start_v8() {
-	//进入V8作用域
-	Isolate::Scope isolate_scope(isolate_);
-	HandleScope scope(isolate_);
-	//创建V8执行环境
-	Local<Context> context = Create_V8_Context(isolate_);
-	Context::Scope context_scope(context);
-	Local<String> source;
-	if (!ReadFile(isolate_, "main.js").ToLocal(&source)) {
-		MSG_USER("Error reading main.js.\n");
-	  return 1;
-	}
-  Local<Script> script = Script::Compile(context, source).ToLocalChecked();
-  script->Run(context).ToLocalChecked();
-
-  return 0;
 }

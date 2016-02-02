@@ -31,7 +31,6 @@ public:
 	void run_handler(void);
 	int init(void);
 	int fini(void);
-	int start_v8(void);
 
 private:
 	V8_Manager(void);
@@ -43,6 +42,7 @@ private:
 	static V8_Manager *instance_;
 	Platform* platform_;
 	Isolate* isolate_;
+	Global<Context> context_;
 };
 
 #define V8_MANAGER V8_Manager::instance()
