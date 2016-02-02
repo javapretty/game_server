@@ -5,7 +5,7 @@
  *      Author: zhangyalei
  */
 
-#include <iostream>
+#include "Log.h"
 #include "V8_Manager.h"
 #include "V8_Base.h"
 #include "V8_Wrap.h"
@@ -27,7 +27,7 @@ void V8_Manager::run_handler(void) {
 }
 
 int V8_Manager::init(void) {
-	// Initialize V8.
+	//初始化V8
 	V8::InitializeICU();
 	V8::InitializeExternalStartupData("");
 	platform_ = platform::CreateDefaultPlatform();
@@ -44,7 +44,7 @@ int V8_Manager::init(void) {
 }
 
 int V8_Manager::fini(void) {
-	// Dispose the isolate_ and tear down V8.
+	//释放V8资源
 	isolate_->LowMemoryNotification();
 	V8::Dispose();
 	V8::ShutdownPlatform();
@@ -53,31 +53,19 @@ int V8_Manager::fini(void) {
 }
 
 int V8_Manager::start_v8() {
+	//进入V8作用域
 	Isolate::Scope isolate_scope(isolate_);
 	HandleScope scope(isolate_);
-
-	Local<ObjectTemplate> global = ObjectTemplate::New(isolate_);
-	global->Set(String::NewFromUtf8(isolate_, "Print", NewStringType::kNormal).ToLocalChecked(),
-		FunctionTemplate::New(isolate_, Print));
-	global->Set(String::NewFromUtf8(isolate_, "Sleep", NewStringType::kNormal).ToLocalChecked(),
-		FunctionTemplate::New(isolate_, Sleep));
-	global->SetAccessor(
-		String::NewFromUtf8(isolate_, "Pop_Block", NewStringType::kInternalized)
-		.ToLocalChecked(),
-		Pop_Block);
-
-	Local<Context> context = Context::New(isolate_, NULL, global);
-
+	//创建V8执行环境
+	Local<Context> context = Create_V8_Context(isolate_);
 	Context::Scope context_scope(context);
 	Local<String> source;
 	if (!ReadFile(isolate_, "main.js").ToLocal(&source)) {
-	  fprintf(stderr, "Error reading main.js.\n");
+		MSG_USER("Error reading main.js.\n");
 	  return 1;
 	}
   Local<Script> script = Script::Compile(context, source).ToLocalChecked();
-  Local<Value> result = script->Run(context).ToLocalChecked();
-	String::Utf8Value utf8(result);
-	std::cout << *utf8 << std::endl;
+  script->Run(context).ToLocalChecked();
 
   return 0;
 }

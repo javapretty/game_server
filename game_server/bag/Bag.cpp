@@ -886,7 +886,7 @@ int Bag::bag_add_money(const Money_Add_Info &info, Money_Opt_Type type) {
 	}
 
 	if (0 != this->bag_set_money(bag_info_.money_info, type)) {
-		return ERROR_MONEY_OVER_LIMIT;
+		return ERROR_CLIENT_PARAM;
 	}
 
 	return 0;

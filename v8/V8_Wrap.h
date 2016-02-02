@@ -15,13 +15,19 @@
 
 using namespace v8;
 
-void read_int16(const FunctionCallbackInfo<Value>& args);
-void read_int32(const FunctionCallbackInfo<Value>& args);
-void Pop_Block(Local<String> property, const PropertyCallbackInfo<Value>& info);
-void Push_Block(const FunctionCallbackInfo<Value>& args);
-void Process_Login_Block(const FunctionCallbackInfo<Value>& args);
+Local<Context> Create_V8_Context(Isolate* isolate);
 
 void Sleep(const FunctionCallbackInfo<Value>& args);
 void Print(const FunctionCallbackInfo<Value>& args);
+
+void Read_Int16(const FunctionCallbackInfo<Value>& args);
+void Read_Int32(const FunctionCallbackInfo<Value>& args);
+void Pop_Block(const FunctionCallbackInfo<Value>& args);
+void Push_Block(const FunctionCallbackInfo<Value>& args);
+void Process_Login_Block(const FunctionCallbackInfo<Value>& args);
+
+void Get_Player(const FunctionCallbackInfo<Value>& args);
+void Respond_Success_Result(const FunctionCallbackInfo<Value>& args);
+void Respond_Error_Result(const FunctionCallbackInfo<Value>& args);
 
 #endif /* V8_WRAP_H_ */
