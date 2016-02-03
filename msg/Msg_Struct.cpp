@@ -66,14 +66,14 @@ Money_Info::Money_Info(void){
 void Money_Info::serialize(Block_Buffer & w) const {
 	w.write_int32(bind_copper);
 	w.write_int32(copper);
-	w.write_int32(coupon);
+	w.write_int32(bind_gold);
 	w.write_int32(gold);
 }
 
 int Money_Info::deserialize(Block_Buffer & r) {
 	bind_copper = r.read_int32();
 	copper = r.read_int32();
-	coupon = r.read_int32();
+	bind_gold = r.read_int32();
 	gold = r.read_int32();
 	return 0;
 }
@@ -81,7 +81,7 @@ int Money_Info::deserialize(Block_Buffer & r) {
 void Money_Info::reset(){
 	bind_copper = 0;
 	copper = 0;
-	coupon = 0;
+	bind_gold = 0;
 	gold = 0;
 }
 

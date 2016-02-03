@@ -205,8 +205,8 @@ inline void Bag::lock_money_by_sub_type(Money_Sub_Type type) {
 	case BIND_COPPER_ONLY:
 		this->lock_money(BIND_COPPER);
 		break;
-	case COUPON_ONLY:
-		this->lock_money(COUPON);
+	case BIND_GOLD_ONLY:
+		this->lock_money(BIND_GOLD);
 		break;
 	case GOLD_ONLY:
 		this->lock_money(GOLD);
@@ -229,8 +229,8 @@ inline void Bag::unlock_money_by_sub_type(Money_Sub_Type type) {
 	case BIND_COPPER_ONLY:
 		this->unlock_money(BIND_COPPER);
 		break;
-	case COUPON_ONLY:
-		this->unlock_money(COUPON);
+	case BIND_GOLD_ONLY:
+		this->unlock_money(BIND_GOLD);
 		break;
 	case GOLD_ONLY:
 		this->unlock_money(GOLD);

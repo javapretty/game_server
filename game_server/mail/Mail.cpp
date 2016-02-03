@@ -156,8 +156,8 @@ int Mail::pickup_mail(Mail_Detail &mail_detail) {
 		money_add_list.push_back(Money_Add_Info(BIND_COPPER, mail_detail.money_info.bind_copper));
 	if (mail_detail.money_info.gold > 0)
 		money_add_list.push_back(Money_Add_Info(GOLD, mail_detail.money_info.gold));
-	if (mail_detail.money_info.coupon > 0)
-		money_add_list.push_back(Money_Add_Info(COUPON, mail_detail.money_info.coupon));
+	if (mail_detail.money_info.bind_gold > 0)
+		money_add_list.push_back(Money_Add_Info(BIND_GOLD, mail_detail.money_info.bind_gold));
 
 	if (money_add_list.size() > 0) {
 	int result = player_->bag().bag_try_add_money(money_add_list);
@@ -187,7 +187,7 @@ int Mail::send_mail(role_id_t receiver_id, Mail_Detail &mail_detail) {
 	//参数验证
 	if (receiver_id <= 0 || mail_detail.sender_type <= 0 || mail_detail.sender_id <= 0 || mail_detail.sender_name.empty()
 			|| mail_detail.mail_title.empty() || mail_detail.money_info.gold < 0 || mail_detail.money_info.copper < 0
-			|| mail_detail.money_info.bind_copper < 0 || mail_detail.money_info.coupon < 0) {
+			|| mail_detail.money_info.bind_copper < 0 || mail_detail.money_info.bind_gold < 0) {
 		result = ERROR_CLIENT_PARAM;
 	}
 

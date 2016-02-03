@@ -49,8 +49,8 @@ inline int get_sub_type_by_money_type(Money_Type money_type, Money_Sub_Type &sub
 	case COPPER:
 		sub_type = COPPER_ONLY;
 		break;
-	case COUPON:
-		sub_type = COUPON_ONLY;
+	case BIND_GOLD:
+		sub_type = BIND_GOLD_ONLY;
 		break;
 	case GOLD:
 		sub_type = GOLD_ONLY;

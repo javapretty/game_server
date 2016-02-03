@@ -9,10 +9,6 @@
 #define MSG_STRUCT_H_
 
 #include "Block_Buffer.h"
-/*
-
-	角色信息
-*/
 struct Role_Info {
 
 	int64_t role_id;
@@ -65,13 +61,13 @@ struct Item_Basic_Info {
 };
 struct Money_Info {
 
-	int32_t bind_copper;/*绑定铜钱*/
+	int32_t bind_copper;
 
-	int32_t copper;/*铜钱*/
+	int32_t copper;
 
-	int32_t coupon;/*礼卷*/
+	int32_t bind_gold;
 
-	int32_t gold;/*元宝*/
+	int32_t gold;
 
 	Money_Info(void);
 

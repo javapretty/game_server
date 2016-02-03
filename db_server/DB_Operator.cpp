@@ -340,7 +340,7 @@ int DB_Operator::load_bag_info(Bag_Info &bag_info) {
 	BSONObj money = res.getObjectField(Bag_Fields::MONEY.c_str());
 	bag_info.money_info.bind_copper = money[Bag_Fields::Money::BIND_COPPER].numberInt();
 	bag_info.money_info.copper = money[Bag_Fields::Money::COPPER].numberInt();
-	bag_info.money_info.coupon = money[Bag_Fields::Money::COUPON].numberInt();
+	bag_info.money_info.bind_gold = money[Bag_Fields::Money::BIND_GOLD].numberInt();
 	bag_info.money_info.gold = money[Bag_Fields::Money::GOLD].numberInt();
 
 	BSONObjIterator iter(res.getObjectField(Bag_Fields::ITEM.c_str()));
@@ -368,7 +368,7 @@ int DB_Operator::save_bag_info(Bag_Info &bag_info) {
 		<< Bag_Fields::STORAGE_CAPACITY << bag_info.capacity.storage_cap
 		<< Bag_Fields::MONEY << BSON(Bag_Fields::Money::BIND_COPPER << bag_info.money_info.bind_copper
 		<< Bag_Fields::Money::COPPER << bag_info.money_info.copper
-		<< Bag_Fields::Money::COUPON << bag_info.money_info.coupon
+		<< Bag_Fields::Money::BIND_GOLD << bag_info.money_info.bind_gold
 		<< Bag_Fields::Money::GOLD << bag_info.money_info.gold)
 		<< Bag_Fields::ITEM << vc_item;
 
@@ -425,7 +425,7 @@ int DB_Operator::load_mail_info(Mail_Info &mail_info) {
 		mail_detail.money_info.copper = obj[Mail_Fields::Mail_Detail::COPPER].numberInt();
 		mail_detail.money_info.bind_copper = obj[Mail_Fields::Mail_Detail::BIND_COPPER].numberInt();
 		mail_detail.money_info.gold = obj[Mail_Fields::Mail_Detail::GOLD].numberInt();
-		mail_detail.money_info.coupon = obj[Mail_Fields::Mail_Detail::COUPON].numberInt();
+		mail_detail.money_info.bind_gold = obj[Mail_Fields::Mail_Detail::BIND_GOLD].numberInt();
 
 		//加载附件信息
 		BSONObjIterator item_iter(obj.getObjectField(Mail_Fields::Mail_Detail::ITEM.c_str()));
@@ -468,7 +468,7 @@ int DB_Operator::save_mail_info(Mail_Info &mail_info) {
 				<< Mail_Fields::Mail_Detail::COPPER << iter->second.money_info.copper
 				<< Mail_Fields::Mail_Detail::BIND_COPPER<< iter->second.money_info.bind_copper
 				<< Mail_Fields::Mail_Detail::GOLD << iter->second.money_info.gold
-				<< Mail_Fields::Mail_Detail::COUPON << iter->second.money_info.coupon));
+				<< Mail_Fields::Mail_Detail::BIND_GOLD << iter->second.money_info.bind_gold));
 	}
 
 	BSONObjBuilder set_builder;

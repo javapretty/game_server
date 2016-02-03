@@ -93,7 +93,7 @@ int Bag::bag_add_capacity(const MSG_120101 &msg) {
 					break;
 				}
 				case 1:
-					result = bag_sub_money(Money_Sub_Info(COUPON_ONLY, price));
+					result = bag_sub_money(Money_Sub_Info(BIND_GOLD_ONLY, price));
 					break;
 				case 2:
 					result = bag_sub_money(Money_Sub_Info(GOLD_ONLY, price));
@@ -123,7 +123,7 @@ int Bag::bag_add_capacity(const MSG_120101 &msg) {
 					break;
 				}
 				case 2:
-					result = bag_sub_money(Money_Sub_Info(COUPON_ONLY, price));
+					result = bag_sub_money(Money_Sub_Info(BIND_GOLD_ONLY, price));
 					break;
 				case 3:
 					result = bag_sub_money(Money_Sub_Info(GOLD_ONLY, price));
@@ -312,7 +312,7 @@ int Bag::bag_sort_item(const Bag_Type bag_type, MERGE_WAY merge_way) {
 
 int Bag::bag_set_money(const Money_Info &money_info, Money_Opt_Type type) {
 	if (money_info.bind_copper < 0 || money_info.copper < 0 ||
-			money_info.coupon < 0 || money_info.gold < 0) {
+			money_info.bind_gold < 0 || money_info.gold < 0) {
 		return -1;
 	}
 	bag_info_.money_info = money_info;
@@ -874,8 +874,8 @@ int Bag::bag_add_money(const Money_Add_Info &info, Money_Opt_Type type) {
 	case COPPER:
 		bag_info_.money_info.copper += info.nums;
 		break;
-	case COUPON:
-		bag_info_.money_info.coupon += info.nums;
+	case BIND_GOLD:
+		bag_info_.money_info.bind_gold += info.nums;
 		break;
 	case GOLD:
 		bag_info_.money_info.gold += info.nums;
@@ -934,11 +934,11 @@ int Bag::bag_sub_money(const Money_Sub_Info &info, Money_Opt_Type type) {
 		}
 		bag_info_.money_info.gold -= info.nums;
 		break;
-	case COUPON_ONLY:
-		if (is_money_lock(COUPON)) {
+	case BIND_GOLD_ONLY:
+		if (is_money_lock(BIND_GOLD)) {
 			return ERROR_BAG_LOCK;
 		}
-		bag_info_.money_info.coupon -= info.nums;
+		bag_info_.money_info.bind_gold -= info.nums;
 		break;
 	default:
 		MSG_USER("sub_type param error.");
@@ -949,12 +949,12 @@ int Bag::bag_sub_money(const Money_Sub_Info &info, Money_Opt_Type type) {
 		switch (info.type) {
 		case BIND_COPPER_FIRST:
 			return ERROR_ALL_COPPER_NOT_ENOUGH;
-		case COPPER_ONLY:
-			return ERROR_COPPER_NOT_ENOUGH;
 		case BIND_COPPER_ONLY:
 			return ERROR_BIND_COPPER_NOT_ENOUGH;
-		case COUPON_ONLY:
-			return ERROR_COUPON_NOT_ENOUGH;
+		case COPPER_ONLY:
+			return ERROR_COPPER_NOT_ENOUGH;
+		case BIND_GOLD_ONLY:
+			return ERROR_BIND_GOLD_NOT_ENOUGH;
 		case GOLD_ONLY:
 			return ERROR_GOLD_NOT_ENOUGH;
 		}
@@ -1158,11 +1158,11 @@ int Bag::bag_get_buy_power(const Money_Sub_Type sub_type, int unit_price) {
 	case COPPER_ONLY:
 		total_money = bag_info_.money_info.copper;
 		break;
+	case BIND_GOLD_ONLY:
+		total_money = bag_info_.money_info.bind_gold;
+		break;
 	case GOLD_ONLY:
 		total_money = bag_info_.money_info.gold;
-		break;
-	case COUPON_ONLY:
-		total_money = bag_info_.money_info.coupon;
 		break;
 	default:
 		total_money = 0;

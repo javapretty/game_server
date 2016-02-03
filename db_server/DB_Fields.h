@@ -47,7 +47,7 @@ struct Bag_Fields {
 	struct Money {
 		static const std::string BIND_COPPER;
 		static const std::string COPPER;
-		static const std::string COUPON;
+		static const std::string BIND_GOLD;
 		static const std::string GOLD;
 	};
 
@@ -80,7 +80,7 @@ struct Mail_Fields {
 		static const std::string COPPER;
 		static const std::string BIND_COPPER;
 		static const std::string GOLD;
-		static const std::string COUPON;
+		static const std::string BIND_GOLD;
 	};
 };
 

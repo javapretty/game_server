@@ -46,7 +46,7 @@ enum {
 enum Money_Type {
 	BIND_COPPER = 1,
 	COPPER = 2,
-	COUPON = 3,
+	BIND_GOLD = 3,
 	GOLD = 4,
 	MONEY_TYPE_END
 };
@@ -54,9 +54,9 @@ enum Money_Type {
 // 使用money的方式
 enum Money_Sub_Type {
 	BIND_COPPER_FIRST = 1,
-	COPPER_ONLY = 2,
-	BIND_COPPER_ONLY = 3,
-	COUPON_ONLY = 4,
+	BIND_COPPER_ONLY = 2,
+	COPPER_ONLY = 3,
+	BIND_GOLD_ONLY = 4,
 	GOLD_ONLY = 5,
 };
 
