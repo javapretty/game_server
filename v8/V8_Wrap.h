@@ -15,21 +15,21 @@
 
 using namespace v8;
 
-Local<Context> Create_V8_Context(Isolate* isolate);
+Local<Context> create_v8_context(Isolate* isolate);
 
-void Require(const FunctionCallbackInfo<Value>& args);
-Handle<Value> Run_Script(Isolate* isolate, const std::string& script_path);
-void Sleep(const FunctionCallbackInfo<Value>& args);
-void Print(const FunctionCallbackInfo<Value>& args);
+void require(const FunctionCallbackInfo<Value>& args);
+void run_script(Isolate* isolate, const std::string& script_path);
+void sleep(const FunctionCallbackInfo<Value>& args);
+void print(const FunctionCallbackInfo<Value>& args);
 
-void Read_Int16(const FunctionCallbackInfo<Value>& args);
-void Read_Int32(const FunctionCallbackInfo<Value>& args);
-void Pop_Block(const FunctionCallbackInfo<Value>& args);
-void Push_Block(const FunctionCallbackInfo<Value>& args);
-void Process_Login_Block(const FunctionCallbackInfo<Value>& args);
+void read_int16(const FunctionCallbackInfo<Value>& args);
+void read_int32(const FunctionCallbackInfo<Value>& args);
+void pop_block(const FunctionCallbackInfo<Value>& args);
+void push_block(const FunctionCallbackInfo<Value>& args);
+void process_login_block(const FunctionCallbackInfo<Value>& args);
 
-void Get_Player(const FunctionCallbackInfo<Value>& args);
-void Respond_Success_Result(const FunctionCallbackInfo<Value>& args);
-void Respond_Error_Result(const FunctionCallbackInfo<Value>& args);
+void get_player(const FunctionCallbackInfo<Value>& args);
+void respond_success_result(const FunctionCallbackInfo<Value>& args);
+void respond_error_result(const FunctionCallbackInfo<Value>& args);
 
 #endif /* V8_WRAP_H_ */

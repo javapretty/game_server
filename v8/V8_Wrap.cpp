@@ -14,23 +14,23 @@
 #include "Game_Client_Messager.h"
 
 
-Local<Context> Create_V8_Context(Isolate* isolate) {
+Local<Context> create_v8_context(Isolate* isolate) {
 	Local<ObjectTemplate> global = ObjectTemplate::New(isolate);
-	global->Set(String::NewFromUtf8(isolate, "Require", NewStringType::kNormal).ToLocalChecked(),
-		FunctionTemplate::New(isolate, Require));
-	global->Set(String::NewFromUtf8(isolate, "Print", NewStringType::kNormal).ToLocalChecked(),
-		FunctionTemplate::New(isolate, Print));
-	global->Set(String::NewFromUtf8(isolate, "Sleep", NewStringType::kNormal).ToLocalChecked(),
-		FunctionTemplate::New(isolate, Sleep));
-	global->Set(String::NewFromUtf8(isolate, "Pop_Block", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, Pop_Block));
-	global->Set(String::NewFromUtf8(isolate, "Get_Player", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, Get_Player));
+	global->Set(String::NewFromUtf8(isolate, "require", NewStringType::kNormal).ToLocalChecked(),
+		FunctionTemplate::New(isolate, require));
+	global->Set(String::NewFromUtf8(isolate, "print", NewStringType::kNormal).ToLocalChecked(),
+		FunctionTemplate::New(isolate, print));
+	global->Set(String::NewFromUtf8(isolate, "sleep", NewStringType::kNormal).ToLocalChecked(),
+		FunctionTemplate::New(isolate, sleep));
+	global->Set(String::NewFromUtf8(isolate, "pop_block", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, pop_block));
+	global->Set(String::NewFromUtf8(isolate, "get_player", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, get_player));
 
 	return Context::New(isolate, NULL, global);
 }
 
-void Require(const FunctionCallbackInfo<Value>& args) {
+void require(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 1) {
 		args.GetIsolate()->ThrowException(
 			v8::String::NewFromUtf8(args.GetIsolate(), "Bad parameters",
@@ -39,27 +39,25 @@ void Require(const FunctionCallbackInfo<Value>& args) {
 	}
 
 	String::Utf8Value script_path(args[0]);
-	Handle<Value> result = Run_Script(args.GetIsolate(), *script_path);
-	args.GetReturnValue().Set(result);
+	run_script(args.GetIsolate(), *script_path);
 }
 
-Handle<Value> Run_Script(Isolate* isolate, const std::string& script_path) {
-	EscapableHandleScope handle_scope(isolate);
+void run_script(Isolate* isolate, const std::string& script_path) {
+	HandleScope handle_scope(isolate);
 	Local<String> source;
 	if (!ReadFile(isolate, script_path).ToLocal(&source)) {
-		MSG_USER("Error reading main.js.\n");
-		return v8::Undefined(isolate);
+		MSG_USER("script:%s not exist\n", script_path.c_str());
+		return;
 	}
   Local<Script> script = Script::Compile(isolate->GetCurrentContext(), source).ToLocalChecked();
-  Local<Value> result = script->Run(isolate->GetCurrentContext()).ToLocalChecked();
-  return handle_scope.Escape(result);
+  script->Run(isolate->GetCurrentContext()).ToLocalChecked();
 }
 
-void Sleep(const FunctionCallbackInfo<Value>& args) {
+void sleep(const FunctionCallbackInfo<Value>& args) {
 	Time_Value::sleep(SLEEP_TIME);
 }
 
-void Print(const FunctionCallbackInfo<Value>& args) {
+void print(const FunctionCallbackInfo<Value>& args) {
   bool first = true;
   for (int i = 0; i < args.Length(); i++) {
     HandleScope handle_scope(args.GetIsolate());
@@ -76,7 +74,7 @@ void Print(const FunctionCallbackInfo<Value>& args) {
   fflush(stdout);
 }
 
-void Read_Int16(const FunctionCallbackInfo<Value>& args)
+void read_int16(const FunctionCallbackInfo<Value>& args)
 {
 	Local<Object> obj = args.Holder();
 	Handle<External> field = Handle<External>::Cast(obj->GetInternalField(0)) ;
@@ -89,7 +87,7 @@ void Read_Int16(const FunctionCallbackInfo<Value>& args)
 	args.GetReturnValue().Set(value);
 }
 
-void Read_Int32(const FunctionCallbackInfo<Value>& args)
+void read_int32(const FunctionCallbackInfo<Value>& args)
 {
 	Local<Object> obj = args.Holder();
 	Handle<External> field = Handle<External>::Cast(obj->GetInternalField(0)) ;
@@ -102,7 +100,7 @@ void Read_Int32(const FunctionCallbackInfo<Value>& args)
 	args.GetReturnValue().Set(value);
 }
 
-void Pop_Block(const FunctionCallbackInfo<Value>& args) {
+void pop_block(const FunctionCallbackInfo<Value>& args) {
 	Local<ObjectTemplate> localTemplate = ObjectTemplate::New(args.GetIsolate());
 	localTemplate->SetInternalFieldCount(1);
 
@@ -115,17 +113,17 @@ void Pop_Block(const FunctionCallbackInfo<Value>& args) {
 		external_obj->SetInternalField(0, external_ptr);
 
 		// 为当前对象设置其对外函数接口
-		external_obj->Set(args.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(args.GetIsolate(), "Read_Int16", NewStringType::kNormal).ToLocalChecked(),
-		                    FunctionTemplate::New(args.GetIsolate(), Read_Int16)->GetFunction()) ;
+		external_obj->Set(args.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(args.GetIsolate(), "read_int16", NewStringType::kNormal).ToLocalChecked(),
+		                    FunctionTemplate::New(args.GetIsolate(), read_int16)->GetFunction()) ;
 
-		external_obj->Set(args.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(args.GetIsolate(), "Read_Int32", NewStringType::kNormal).ToLocalChecked(),
-		                    FunctionTemplate::New(args.GetIsolate(), Read_Int32)->GetFunction()) ;
+		external_obj->Set(args.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(args.GetIsolate(), "read_int32", NewStringType::kNormal).ToLocalChecked(),
+		                    FunctionTemplate::New(args.GetIsolate(), read_int32)->GetFunction()) ;
 
-		external_obj->Set(args.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(args.GetIsolate(), "Push_Block", NewStringType::kNormal).ToLocalChecked(),
-		                    FunctionTemplate::New(args.GetIsolate(), Push_Block)->GetFunction()) ;
+		external_obj->Set(args.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(args.GetIsolate(), "push_block", NewStringType::kNormal).ToLocalChecked(),
+		                    FunctionTemplate::New(args.GetIsolate(), push_block)->GetFunction()) ;
 
-		external_obj->Set(args.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(args.GetIsolate(), "Process_Login_Block", NewStringType::kNormal).ToLocalChecked(),
-		                    FunctionTemplate::New(args.GetIsolate(), Process_Login_Block)->GetFunction()) ;
+		external_obj->Set(args.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(args.GetIsolate(), "process_login_block", NewStringType::kNormal).ToLocalChecked(),
+		                    FunctionTemplate::New(args.GetIsolate(), process_login_block)->GetFunction()) ;
 
 		args.GetReturnValue().Set(external_obj);
 	} else {
@@ -134,7 +132,7 @@ void Pop_Block(const FunctionCallbackInfo<Value>& args) {
 	}
 }
 
-void Push_Block(const FunctionCallbackInfo<Value>& args) {
+void push_block(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 1) {
 		args.GetIsolate()->ThrowException(
 			v8::String::NewFromUtf8(args.GetIsolate(), "Bad parameters",
@@ -151,7 +149,7 @@ void Push_Block(const FunctionCallbackInfo<Value>& args) {
 	}
 }
 
-void Process_Login_Block(const FunctionCallbackInfo<Value>& args) {
+void process_login_block(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 3) {
 		args.GetIsolate()->ThrowException(
 			v8::String::NewFromUtf8(args.GetIsolate(), "Bad parameters",
@@ -194,7 +192,7 @@ void Process_Login_Block(const FunctionCallbackInfo<Value>& args) {
 	}
 }
 
-void Get_Player(const FunctionCallbackInfo<Value>& args) {
+void get_player(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 2) {
 		args.GetIsolate()->ThrowException(
 			v8::String::NewFromUtf8(args.GetIsolate(), "Bad parameters",
@@ -216,11 +214,11 @@ void Get_Player(const FunctionCallbackInfo<Value>& args) {
 		external_obj->SetInternalField(0, external_ptr);
 
 		// 为当前对象设置其对外函数接口
-		external_obj->Set(args.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(args.GetIsolate(), "Respond_Success_Result", NewStringType::kNormal).ToLocalChecked(),
-		                    FunctionTemplate::New(args.GetIsolate(), Respond_Success_Result)->GetFunction()) ;
+		external_obj->Set(args.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(args.GetIsolate(), "respond_success_result", NewStringType::kNormal).ToLocalChecked(),
+		                    FunctionTemplate::New(args.GetIsolate(), respond_success_result)->GetFunction()) ;
 
-		external_obj->Set(args.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(args.GetIsolate(), "Respond_Error_Result", NewStringType::kNormal).ToLocalChecked(),
-		                    FunctionTemplate::New(args.GetIsolate(), Respond_Error_Result)->GetFunction()) ;
+		external_obj->Set(args.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(args.GetIsolate(), "respond_error_result", NewStringType::kNormal).ToLocalChecked(),
+		                    FunctionTemplate::New(args.GetIsolate(), respond_error_result)->GetFunction()) ;
 
 		args.GetReturnValue().Set(external_obj);
 	} else {
@@ -234,7 +232,7 @@ void Get_Player(const FunctionCallbackInfo<Value>& args) {
 	}
 }
 
-void Respond_Success_Result(const FunctionCallbackInfo<Value>& args) {
+void respond_success_result(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 2) {
 		args.GetIsolate()->ThrowException(
 			v8::String::NewFromUtf8(args.GetIsolate(), "Bad parameters",
@@ -254,7 +252,7 @@ void Respond_Success_Result(const FunctionCallbackInfo<Value>& args) {
 	player->respond_error_result(msg_id, error_code);
 }
 
-void Respond_Error_Result(const FunctionCallbackInfo<Value>& args) {
+void respond_error_result(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 2) {
 		args.GetIsolate()->ThrowException(
 			v8::String::NewFromUtf8(args.GetIsolate(), "Bad parameters",

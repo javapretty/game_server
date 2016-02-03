@@ -5,7 +5,6 @@
  *      Author: zhangyalei
  */
 
-#include "Log.h"
 #include "V8_Manager.h"
 #include "V8_Wrap.h"
 
@@ -40,11 +39,11 @@ int V8_Manager::init(void) {
 	Isolate::Scope isolate_scope(isolate_);
 	//创建V8执行环境
 	HandleScope handle_scope(isolate_);
-	Local<Context> context = Create_V8_Context(isolate_);
+	Local<Context> context = create_v8_context(isolate_);
 	context_.Reset(isolate_, context);
 	Context::Scope context_scope(context);
 
-	Run_Script(isolate_, "main.js");
+	run_script(isolate_, "main.js");
 	return 0;
 }
 
