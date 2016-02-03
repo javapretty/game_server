@@ -2,12 +2,10 @@
  * Login_Player.cpp
  *
  *  Created on: 2016年1月21日
- *      Author: root
+ *      Author: zhangyalei
  */
 
 #include "Login_Manager.h"
-#include "Login_Player.h"
-#include "Log.h"
 
 Login_Player::Login_Player(void) : cid_(0) { }
 

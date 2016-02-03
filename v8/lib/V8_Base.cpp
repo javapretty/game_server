@@ -38,8 +38,8 @@ void Read(const FunctionCallbackInfo<Value>& args) {
 }
 
 // Reads a file into a v8 string.
-MaybeLocal<String> ReadFile(Isolate* isolate, const std::string& name) {
-  FILE* file = fopen(name.c_str(), "rb");
+MaybeLocal<String> ReadFile(Isolate* isolate, const char* file_path) {
+  FILE* file = fopen(file_path, "rb");
   if (file == NULL) return MaybeLocal<String>();
 
   fseek(file, 0, SEEK_END);

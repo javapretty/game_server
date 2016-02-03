@@ -7,16 +7,14 @@
 #ifndef GAME_MANAGER_H_
 #define GAME_MANAGER_H_
 
-#include "Msg_Define.h"
-#include "Public_Struct.h"
+#include "Log.h"
 #include "Block_Buffer.h"
 #include "Thread.h"
 #include "List.h"
 #include "Block_List.h"
 #include "Object_Pool.h"
-#include "Log.h"
+#include "Game_Player.h"
 
-class Game_Player;
 class Game_Manager: public Thread {
 public:
 	typedef Object_Pool<Block_Buffer, Thread_Mutex> Block_Pool;
@@ -50,6 +48,8 @@ public:
 
 	Game_Player *pop_game_player(void);
 	int push_game_player(Game_Player *player);
+	Block_Buffer *pop_block_buffer(void);
+	int push_block_buffer(Block_Buffer *buf);
 
 	/// 发送数据接口
 	int send_to_gate(int cid, Block_Buffer &buf);
@@ -62,10 +62,10 @@ public:
 	/// 通信层投递消息到Game_Manager
 	void push_drop_gate_cid(int cid);
 	int push_game_gate_data(Block_Buffer *buf);
+	Block_Buffer* pop_game_gate_data();
 	int push_game_db_data(Block_Buffer *buf);
 	int push_game_master_data(Block_Buffer *buf);
 	int push_self_loop_message(Block_Buffer &msg_buf);
-	Block_Buffer* pop_game_gate_data();
 
 	/// 消息处理
 	int process_list();
@@ -160,6 +160,22 @@ private:
 #define GAME_MANAGER Game_Manager::instance()
 
 ////////////////////////////////////////////////////////////////////////////////
+inline Game_Player *Game_Manager::pop_game_player(void) {
+	return game_player_pool_.pop();
+}
+
+inline int Game_Manager::push_game_player(Game_Player *player) {
+	return game_player_pool_.push(player);
+}
+
+inline Block_Buffer *Game_Manager::pop_block_buffer(void) {
+	return block_pool_.pop();
+}
+
+inline int Game_Manager::push_block_buffer(Block_Buffer *buf) {
+	return block_pool_.push(buf);
+}
+
 inline Game_Manager::Logining_Map &Game_Manager::logining_map(void) {
 	return logining_map_;
 }
@@ -175,6 +191,10 @@ inline void Game_Manager::push_drop_gate_cid(int cid) {
 inline int Game_Manager::push_game_gate_data(Block_Buffer *buf) {
 	game_gate_data_list_.push_back(buf);
 	return 0;
+}
+
+inline Block_Buffer* Game_Manager::pop_game_gate_data() {
+	return game_gate_data_list_.pop_front();
 }
 
 inline int Game_Manager::push_game_db_data(Block_Buffer *buf) {
@@ -203,24 +223,14 @@ inline int Game_Manager::push_game_master_data(Block_Buffer *buf) {
 }
 
 inline int Game_Manager::push_self_loop_message(Block_Buffer &msg_buf) {
-	Block_Buffer *buf = block_pool_.pop();
-	if (! buf) {
-		MSG_USER("block_pool_.pop return 0");
+	Block_Buffer *buf = pop_block_buffer();
+	if (!buf) {
 		return -1;
 	}
 	buf->reset();
 	buf->copy(&msg_buf);
 	self_loop_block_list_.push_back(buf);
 	return 0;
-}
-
-inline Block_Buffer* Game_Manager::pop_game_gate_data() {
-	Block_Buffer *buf = game_gate_data_list_.pop_front();
-	if (buf) {
-		return buf;
-	} else {
-		return nullptr;
-	}
 }
 
 inline const Time_Value &Game_Manager::tick_time(void) {

@@ -1,5 +1,5 @@
 require('error.js');
-print(error.ERROR_CLIENT_SESSION);
+require('mail.js');
 
 while (1) {	
 	var buf = pop_block();
@@ -19,7 +19,14 @@ while (1) {
 	} else {
 		var player = get_player(gate_cid, player_cid);
 		if (player) {
-			
+			print('----------find game player success, player role_name:', player.role_name());
+			switch(msg_id) {
+			case 120200:
+				fetch_mail_info(player);
+				break;
+			default:
+				break;
+			}
 		}
 	}
 	

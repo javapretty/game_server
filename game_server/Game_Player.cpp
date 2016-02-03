@@ -4,7 +4,6 @@
  */
 
 #include "Game_Manager.h"
-#include "Game_Player.h"
 #include "Common_Func.h"
 
 Game_Player::Game_Player(void):

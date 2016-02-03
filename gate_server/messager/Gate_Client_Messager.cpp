@@ -6,7 +6,6 @@
 
 #include "Gate_Client_Messager.h"
 #include "Gate_Manager.h"
-#include "Gate_Player.h"
 #include "Common_Func.h"
 
 Gate_Client_Messager::Gate_Client_Messager(void) { }

@@ -5,7 +5,6 @@
 
 #include "Gate_Inner_Messager.h"
 #include "Gate_Manager.h"
-#include "Gate_Player.h"
 
 Gate_Inner_Messager::Gate_Inner_Messager(void) { }
 

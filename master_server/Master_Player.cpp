@@ -4,8 +4,6 @@
  */
 
 #include "Master_Manager.h"
-#include "Master_Player.h"
-#include "Log.h"
 
 Master_Player::Master_Player(void) { }
 

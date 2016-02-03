@@ -7,15 +7,15 @@
 #ifndef GATE_MANAGER_H_
 #define GATE_MANAGER_H_
 
-#include "Public_Struct.h"
+#include "Log.h"
 #include "Block_Buffer.h"
 #include "Thread.h"
 #include "List.h"
 #include "Block_List.h"
 #include "Object_Pool.h"
-#include "Log.h"
+#include "Gate_Player.h"
 
-class Gate_Player;
+
 class Gate_Manager: public Thread {
 public:
 	typedef Object_Pool<Block_Buffer, Thread_Mutex> Block_Pool;
@@ -135,7 +135,6 @@ private:
 	Server_Info gate_client_server_info_;
 
 	Gate_Player_Cid_Map player_cid_map_; /// cid - Login_Player map
-
 	Gate_Player_Account_Map player_account_map_;
 
 	Tick_Info tick_info_;
@@ -155,6 +154,13 @@ private:
 #define GATE_MANAGER Gate_Manager::instance()
 
 ////////////////////////////////////////////////////////////////////////////////
+inline Gate_Player *Gate_Manager::pop_gate_player(void) {
+	return gate_player_pool_.pop();
+}
+
+inline int Gate_Manager::push_gate_player(Gate_Player *player) {
+	return gate_player_pool_.push(player);
+}
 
 inline void Gate_Manager::push_drop_cid(int cid) {
 	drop_cid_list_.push_back(cid);
@@ -183,7 +189,6 @@ inline int Gate_Manager::push_gate_master_data(Block_Buffer *buf) {
 inline int Gate_Manager::push_self_loop_message(Block_Buffer &msg_buf) {
 	Block_Buffer *buf = block_pool_.pop();
 	if (! buf) {
-		MSG_USER("block_pool_.pop return 0");
 		return -1;
 	}
 	buf->reset();
@@ -203,8 +208,6 @@ inline int Gate_Manager::get_verify_pack_onoff(void) {
 inline void Gate_Manager::set_msg_count_onoff(int v) {
 	if (v == 0 || v == 1) {
 		msg_count_onoff_ = v;
-	} else {
-		MSG_USER("error value v = %d", v);
 	}
 }
 

@@ -20,7 +20,7 @@ using namespace v8;
 
 const char* ToCString(const String::Utf8Value& value);
 void Read(const FunctionCallbackInfo<Value>& args);
-MaybeLocal<String> ReadFile(Isolate* isolate, const std::string& name);
+MaybeLocal<String> ReadFile(Isolate* isolate, const char* file_path);
 void Load(const FunctionCallbackInfo<Value>& args);
 bool ExecuteString(Isolate* isolate, Local<String> source,
                    Local<Value> name, bool print_result,

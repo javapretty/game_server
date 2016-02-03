@@ -7,15 +7,14 @@
 #ifndef MASTER_MANAGER_H_
 #define MASTER_MANAGER_H_
 
-#include "Public_Struct.h"
+#include "Log.h"
 #include "Block_Buffer.h"
 #include "Thread.h"
 #include "List.h"
 #include "Block_List.h"
 #include "Object_Pool.h"
-#include "Log.h"
+#include "Master_Player.h"
 
-class Master_Player;
 
 class Master_Manager: public Thread {
 public:
@@ -120,6 +119,14 @@ private:
 #define MASTER_MANAGER Master_Manager::instance()
 
 ////////////////////////////////////////////////////////////////////////////////
+inline Master_Player *Master_Manager::pop_master_player(void) {
+	return master_player_pool_.pop();
+}
+
+inline int Master_Manager::push_master_player(Master_Player *player) {
+	return master_player_pool_.push(player);
+}
+
 inline Master_Manager::Master_Player_Role_Id_Map& Master_Manager::player_role_id_map(void) {
 	return player_role_id_map_;
 }

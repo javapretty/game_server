@@ -1,12 +1,12 @@
 /*
  * check_accout.h
  *
- *  Created on: 2016��1��7��
- *      Author: root
+ *  Created on: 2016年1月4日
+ *      Author: zhangyalei
  */
 
-#ifndef LOGIN_SERVER_CHECK_ACCOUNT_H_
-#define LOGIN_SERVER_CHECK_ACCOUNT_H_
+#ifndef CHECK_ACCOUNT_H_
+#define CHECK_ACCOUNT_H_
 
 #include <string>
 #include "Mysql_Conn.h"
@@ -28,4 +28,4 @@ private:
 	Mysql_DB_Conn* mysql_db_conn_;
 };
 
-#endif /* LOGIN_SERVER_CHECK_ACCOUNT_H_ */
+#endif /* CHECK_ACCOUNT_H_ */

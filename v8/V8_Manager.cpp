@@ -43,7 +43,7 @@ int V8_Manager::init(void) {
 	context_.Reset(isolate_, context);
 	Context::Scope context_scope(context);
 
-	run_script(isolate_, "main.js");
+	run_script(isolate_, "js/server.js");
 	return 0;
 }
 

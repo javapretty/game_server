@@ -2,11 +2,11 @@
  * Login_Player.h
  *
  *  Created on: 2016年1月21日
- *      Author: root
+ *      Author: zhangyalei
  */
 
-#ifndef LOGIN_SERVER_LOGIN_PLAYER_H_
-#define LOGIN_SERVER_LOGIN_PLAYER_H_
+#ifndef LOGIN_PLAYER_H_
+#define LOGIN_PLAYER_H_
 
 #include "Public_Struct.h"
 
@@ -65,4 +65,4 @@ inline int Login_Player::recycle_status(void) {
 	return recycle_tick_.status_;
 }
 
-#endif /* LOGIN_SERVER_LOGIN_PLAYER_H_ */
+#endif /* LOGIN_PLAYER_H_ */

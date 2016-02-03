@@ -6,13 +6,11 @@
 #include "HotUpdate.h"
 #include "Configurator.h"
 #include "Common_Func.h"
-#include "Master_Timer.h"
-#include "Master_Player.h"
 #include "Master_Manager.h"
+#include "Master_Timer.h"
 #include "Master_Server.h"
 #include "Master_Client_Messager.h"
 #include "Master_Inner_Messager.h"
-#include "Master_Player.h"
 
 Master_Manager::Master_Manager(void):
   player_role_id_map_(get_hash_table_size(12000)),
@@ -66,14 +64,6 @@ int Master_Manager::time_up(const Time_Value &now) {
 		return 0;
 
 	return 0;
-}
-
-Master_Player *Master_Manager::pop_master_player(void) {
-	return master_player_pool_.pop();
-}
-
-int Master_Manager::push_master_player(Master_Player *player) {
-	return master_player_pool_.push(player);
 }
 
 int Master_Manager::send_to_gate(int cid, Block_Buffer &buf) {

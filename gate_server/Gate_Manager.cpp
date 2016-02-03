@@ -3,17 +3,15 @@
  *      Author: zhangyalei
  */
 
-
+#include "Common_Func.h"
+#include "Configurator.h"
 #include "Gate_Client_Messager.h"
 #include "Gate_Inner_Messager.h"
 #include "Gate_Server.h"
 #include "Gate_Connector.h"
 #include "Gate_Manager.h"
 #include "Gate_Timer.h"
-#include "Common_Func.h"
 #include "HotUpdate.h"
-#include "Configurator.h"
-#include "Gate_Player.h"
 
 Gate_Manager::Gate_Manager(void):
   player_cid_map_(get_hash_table_size(12000)),
@@ -74,14 +72,6 @@ int Gate_Manager::time_up(const Time_Value &now) {
 		return 0;
 
 	return 0;
-}
-
-Gate_Player *Gate_Manager::pop_gate_player(void) {
-	return gate_player_pool_.pop();
-}
-
-int Gate_Manager::push_gate_player(Gate_Player *player) {
-	return gate_player_pool_.push(player);
 }
 
 int Gate_Manager::send_to_client(int cid, Block_Buffer &buf) {

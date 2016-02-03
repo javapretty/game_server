@@ -1,8 +1,8 @@
 /*
  * check_accout.cpp
  *
- *  Created on: 2016��1��7��
- *      Author: root
+ *  Created on: 2016年1月4日
+ *      Author: zhangyalei
  */
 
 #include "Msg_Define.h"

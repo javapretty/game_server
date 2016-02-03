@@ -4,9 +4,7 @@
  */
 
 #include "Master_Inner_Messager.h"
-#include "Master_Player.h"
 #include "Master_Manager.h"
-#include "Log.h"
 #include "Configurator.h"
 
 Master_Inner_Messager::Master_Inner_Messager(void) { }

@@ -38,15 +38,17 @@ void require(const FunctionCallbackInfo<Value>& args) {
 		return ;
 	}
 
-	String::Utf8Value script_path(args[0]);
-	run_script(args.GetIsolate(), *script_path);
+	String::Utf8Value str(args[0]);
+	char file_path[128];
+	sprintf(file_path, "js/%s", *str);
+	run_script(args.GetIsolate(), file_path);
 }
 
-void run_script(Isolate* isolate, const std::string& script_path) {
+void run_script(Isolate* isolate, const char* file_path) {
 	HandleScope handle_scope(isolate);
 	Local<String> source;
-	if (!ReadFile(isolate, script_path).ToLocal(&source)) {
-		MSG_USER("script:%s not exist\n", script_path.c_str());
+	if (!ReadFile(isolate, file_path).ToLocal(&source)) {
+		MSG_USER("script:%s not exist\n", file_path);
 		return;
 	}
   Local<Script> script = Script::Compile(isolate->GetCurrentContext(), source).ToLocalChecked();
@@ -107,25 +109,25 @@ void pop_block(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = GAME_MANAGER->pop_game_gate_data();
 	if (buf) {
 		//将C++指针包装成V8内部对象
-		Local<External> external_ptr = External::New(args.GetIsolate(), buf);
+		Local<External> buf_ptr = External::New(args.GetIsolate(), buf);
 		//将指针存在V8对象内部
-		Local<Object> external_obj = localTemplate->NewInstance(args.GetIsolate()->GetCurrentContext()).ToLocalChecked();
-		external_obj->SetInternalField(0, external_ptr);
+		Local<Object> buf_obj = localTemplate->NewInstance(args.GetIsolate()->GetCurrentContext()).ToLocalChecked();
+		buf_obj->SetInternalField(0, buf_ptr);
 
 		// 为当前对象设置其对外函数接口
-		external_obj->Set(args.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(args.GetIsolate(), "read_int16", NewStringType::kNormal).ToLocalChecked(),
+		buf_obj->Set(args.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(args.GetIsolate(), "read_int16", NewStringType::kNormal).ToLocalChecked(),
 		                    FunctionTemplate::New(args.GetIsolate(), read_int16)->GetFunction()) ;
 
-		external_obj->Set(args.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(args.GetIsolate(), "read_int32", NewStringType::kNormal).ToLocalChecked(),
+		buf_obj->Set(args.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(args.GetIsolate(), "read_int32", NewStringType::kNormal).ToLocalChecked(),
 		                    FunctionTemplate::New(args.GetIsolate(), read_int32)->GetFunction()) ;
 
-		external_obj->Set(args.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(args.GetIsolate(), "push_block", NewStringType::kNormal).ToLocalChecked(),
+		buf_obj->Set(args.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(args.GetIsolate(), "push_block", NewStringType::kNormal).ToLocalChecked(),
 		                    FunctionTemplate::New(args.GetIsolate(), push_block)->GetFunction()) ;
 
-		external_obj->Set(args.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(args.GetIsolate(), "process_login_block", NewStringType::kNormal).ToLocalChecked(),
+		buf_obj->Set(args.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(args.GetIsolate(), "process_login_block", NewStringType::kNormal).ToLocalChecked(),
 		                    FunctionTemplate::New(args.GetIsolate(), process_login_block)->GetFunction()) ;
 
-		args.GetReturnValue().Set(external_obj);
+		args.GetReturnValue().Set(buf_obj);
 	} else {
 		//设置对象为空
 		args.GetReturnValue().SetNull();
@@ -200,27 +202,33 @@ void get_player(const FunctionCallbackInfo<Value>& args) {
 	}
 
 	Local<ObjectTemplate> localTemplate = ObjectTemplate::New(args.GetIsolate());
-	localTemplate->SetInternalFieldCount(1);
+	localTemplate->SetInternalFieldCount(2);
 
 	int gate_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int player_cid = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	Cid_Info cid_info(gate_cid, 0, player_cid);
 	Game_Player *player = GAME_MANAGER->find_cid_game_player(cid_info);
-	if (player) {
+	Block_Buffer *buf = GAME_MANAGER->pop_block_buffer();
+	if (player && buf) {
 		//将C++指针包装成V8内部对象
-		Local<External> external_ptr = External::New(args.GetIsolate(), player);
+		Local<External> player_ptr = External::New(args.GetIsolate(), player);
+		Local<External> buf_ptr = External::New(args.GetIsolate(), buf);
 		// Store the request pointer in the JavaScript wrapper.
-		Local<Object> external_obj = localTemplate->NewInstance(args.GetIsolate()->GetCurrentContext()).ToLocalChecked();
-		external_obj->SetInternalField(0, external_ptr);
+		Local<Object> player_obj = localTemplate->NewInstance(args.GetIsolate()->GetCurrentContext()).ToLocalChecked();
+		player_obj->SetInternalField(0, player_ptr);
+		player_obj->SetInternalField(1, buf_ptr);
 
 		// 为当前对象设置其对外函数接口
-		external_obj->Set(args.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(args.GetIsolate(), "respond_success_result", NewStringType::kNormal).ToLocalChecked(),
+		player_obj->Set(args.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(args.GetIsolate(), "respond_success_result", NewStringType::kNormal).ToLocalChecked(),
 		                    FunctionTemplate::New(args.GetIsolate(), respond_success_result)->GetFunction()) ;
 
-		external_obj->Set(args.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(args.GetIsolate(), "respond_error_result", NewStringType::kNormal).ToLocalChecked(),
+		player_obj->Set(args.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(args.GetIsolate(), "respond_error_result", NewStringType::kNormal).ToLocalChecked(),
 		                    FunctionTemplate::New(args.GetIsolate(), respond_error_result)->GetFunction()) ;
 
-		args.GetReturnValue().Set(external_obj);
+		player_obj->Set(args.GetIsolate()->GetCurrentContext(), String::NewFromUtf8(args.GetIsolate(), "role_name", NewStringType::kNormal).ToLocalChecked(),
+		                    FunctionTemplate::New(args.GetIsolate(), role_name)->GetFunction()) ;
+
+		args.GetReturnValue().Set(player_obj);
 	} else {
 		//设置对象为空
 		args.GetReturnValue().SetNull();
@@ -233,23 +241,23 @@ void get_player(const FunctionCallbackInfo<Value>& args) {
 }
 
 void respond_success_result(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 2) {
+	if (args.Length() != 1) {
 		args.GetIsolate()->ThrowException(
 			v8::String::NewFromUtf8(args.GetIsolate(), "Bad parameters",
 			v8::NewStringType::kNormal).ToLocalChecked());
 	}
 
 	Local<Object> obj = args.Holder();
-	Handle<External> field = Handle<External>::Cast(obj->GetInternalField(0)) ;
-	void* raw_obj_ptr = field->Value() ;
-	Game_Player *player= static_cast<Game_Player*>(raw_obj_ptr);
-	if (!player) {
+	void* player_ptr = Handle<External>::Cast(obj->GetInternalField(0))->Value();
+	Game_Player *player = static_cast<Game_Player*>(player_ptr);
+	void* buf_ptr = Handle<External>::Cast(obj->GetInternalField(1))->Value();
+	Block_Buffer *buf = static_cast<Block_Buffer*>(buf_ptr);
+	if (!player || !buf) {
 		return;
 	}
 
 	int msg_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	int error_code = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	player->respond_error_result(msg_id, error_code);
+	player->respond_success_result(msg_id, buf);
 }
 
 void respond_error_result(const FunctionCallbackInfo<Value>& args) {
@@ -270,4 +278,17 @@ void respond_error_result(const FunctionCallbackInfo<Value>& args) {
 	int msg_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int error_code = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	player->respond_error_result(msg_id, error_code);
+}
+
+void role_name(const FunctionCallbackInfo<Value>& args) {
+	Local<Object> obj = args.Holder();
+	Handle<External> field = Handle<External>::Cast(obj->GetInternalField(0)) ;
+	void* raw_obj_ptr = field->Value() ;
+	Game_Player *player= static_cast<Game_Player*>(raw_obj_ptr);
+	if (!player) {
+		return;
+	}
+	std::string role_name = player->game_player_info().role_name;
+	Local<String> v8Str = String::NewFromUtf8(args.GetIsolate(), role_name.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
+	args.GetReturnValue().Set(v8Str);
 }

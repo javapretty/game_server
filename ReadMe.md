@@ -19,7 +19,7 @@ GameServer:
 4、移动AOI模块
 5、定时器管理模块
 6、怪物AI模块
-7、V8引擎集成
+7、游戏逻辑
 
 MasterServer：
 1、管理GameServer，玩家在GameServer间跳转
@@ -38,4 +38,4 @@ LogClient:
 实现写日志相关接口，可供所有服务器调用
 
 V8:
-用来处理js脚本
+将V8引擎集成到项目中，V8执行环境，暴露C++接口给js，通过js编写游戏逻辑

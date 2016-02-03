@@ -3,14 +3,13 @@
  *      Author: zhangyalei
  */
 
-
+#include "Common_Func.h"
 #include "Configurator.h"
+#include "Login_Manager.h"
 #include "Login_Server.h"
 #include "Login_Timer.h"
 #include "Login_Client_Messager.h"
 #include "Login_Inner_Messager.h"
-#include "Login_Manager.h"
-#include "Login_Player.h"
 
 Login_Manager::Login_Manager(void):
   is_register_timer_(false),
@@ -74,14 +73,6 @@ void Login_Manager::get_gate_ip(std::string &account, std::string &ip, int &port
 	int index = hash % (gate_ip_vec_.size());
 	ip = gate_ip_vec_[index].ip;
 	port = gate_ip_vec_[index].port;
-}
-
-Login_Player *Login_Manager::pop_login_player(void) {
-	return login_player_pool_.pop();
-}
-
-int Login_Manager::push_login_player(Login_Player *player) {
-	return login_player_pool_.push(player);
 }
 
 int Login_Manager::bind_account_login_player(std::string& account, Login_Player *player) {

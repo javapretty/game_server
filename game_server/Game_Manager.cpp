@@ -12,8 +12,6 @@
 #include "Game_Connector.h"
 #include "Game_Client_Messager.h"
 #include "Game_Inner_Messager.h"
-#include "Game_Player.h"
-
 
 Game_Manager::Game_Manager(void):
 	db_cache_(0),
@@ -67,14 +65,6 @@ int Game_Manager::load_db_cache(void) {
 	buf.finish_message();
 	send_to_db(buf);
 	return 0;
-}
-
-Game_Player *Game_Manager::pop_game_player(void) {
-	return game_player_pool_.pop();
-}
-
-int Game_Manager::push_game_player(Game_Player *player) {
-	return game_player_pool_.push(player);
 }
 
 int Game_Manager::send_to_gate(int cid, Block_Buffer &buf) {
@@ -161,7 +151,7 @@ int Game_Manager::process_list(void) {
 			buf = self_loop_block_list_.front();
 			self_loop_block_list_.pop_front();
 			GAME_INNER_MESSAGER->process_self_loop_block(*buf);
-			block_pool_.push(buf);
+			push_block_buffer(buf);
 		}
 
 		if (all_empty)

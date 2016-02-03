@@ -7,10 +7,8 @@
 #ifndef LOGIN_CLIENT_MESSAGER_H_
 #define LOGIN_CLIENT_MESSAGER_H_
 
-#include "Msg_Define.h"
 #include "Block_Buffer.h"
 
-class Login_Player;
 class Login_Client_Messager {
 public:
 	static Login_Client_Messager *instance(void);

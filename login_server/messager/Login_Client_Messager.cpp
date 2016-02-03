@@ -3,9 +3,10 @@
  *      Author: zhangyalei
  */
 
+#include "Msg_Define.h"
+#include "Common_Func.h"
 #include "Login_Client_Messager.h"
 #include "Login_Manager.h"
-#include "Login_Player.h"
 
 Login_Client_Messager::Login_Client_Messager(void) { }
 

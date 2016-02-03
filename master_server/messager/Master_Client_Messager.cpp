@@ -4,7 +4,6 @@
  */
 
 #include "Master_Client_Messager.h"
-#include "Master_Player.h"
 #include "Master_Manager.h"
 
 Master_Client_Messager::Master_Client_Messager(void) { }

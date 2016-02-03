@@ -7,17 +7,16 @@
 #ifndef LOGIN_MANAGER_H_
 #define LOGIN_MANAGER_H_
 
-#include "Common_Func.h"
-#include "Public_Struct.h"
+#include "Log.h"
 #include "Block_Buffer.h"
 #include "Thread.h"
 #include "List.h"
-#include "Log.h"
 #include "Block_List.h"
 #include "Object_Pool.h"
 #include "Check_Account.h"
+#include "Login_Player.h"
 
-class Login_Player;
+
 class Login_Manager: public Thread {
 public:
 	typedef Object_Pool<Block_Buffer, Thread_Mutex> Block_Pool;
@@ -45,8 +44,6 @@ public:
 	int init_gate_ip(void);
 	void get_gate_ip(std::string &account, std::string &ip, int &port);
 
-	void process_drop_cid(int cid);
-	void push_drop_cid(int cid);
 	Login_Player *pop_login_player(void);
 	int push_login_player(Login_Player *player);
 
@@ -76,12 +73,14 @@ public:
 	int self_close_process(void);
 
 	/// 通信层投递消息到Login_Manager
+	void push_drop_cid(int cid);
 	int push_login_client_data(Block_Buffer *buf);
 	int push_login_gate_data(Block_Buffer *buf);
 	int push_self_loop_message(Block_Buffer &msg_buf);
 
 	/// 消息处理
 	int process_list();
+	void process_drop_cid(int cid);
 
 	int tick(void);
 	int close_list_tick(Time_Value &now);
@@ -150,6 +149,17 @@ private:
 #define LOGIN_MANAGER Login_Manager::instance()
 
 ////////////////////////////////////////////////////////////////////////////////
+inline Login_Player *Login_Manager::pop_login_player(void) {
+	return login_player_pool_.pop();
+}
+
+inline int Login_Manager::push_login_player(Login_Player *player) {
+	return login_player_pool_.push(player);
+}
+
+inline void Login_Manager::push_drop_cid(int cid) {
+	drop_cid_list_.push_back(cid);
+}
 
 inline int Login_Manager::push_login_client_data(Block_Buffer *buf) {
 	login_client_data_list_.push_back(buf);
@@ -206,10 +216,6 @@ inline void Login_Manager::inner_msg_count(int msg_id) {
 
 inline Check_Account &Login_Manager::check_account(void) {
 	return check_account_;
-}
-
-inline void Login_Manager::push_drop_cid(int cid) {
-	drop_cid_list_.push_back(cid);
 }
 
 #endif /* LOGIN_MANAGER_H_ */
