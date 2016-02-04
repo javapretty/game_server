@@ -24,6 +24,15 @@ while (1) {
 			case 120200:
 				fetch_mail_info(player);
 				break;
+			case 120201:
+				pickup_mail(player, buf);
+				break;
+			case 120202:
+				delete_mail(player, buf);
+				break;
+			case 120203:
+				send_mail(player, buf);
+				break;
 			default:
 				break;
 			}

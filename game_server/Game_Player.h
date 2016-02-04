@@ -9,7 +9,6 @@
 
 #include "Public_Struct.h"
 #include "Bag.h"
-#include "Mail.h"
 
 class Game_Player {
 public:
@@ -24,9 +23,10 @@ public:
 	int respond_success_result(int msg_id, Block_Buffer *buf = 0);
 	int respond_error_result(int msg_id, int err, Block_Buffer *buf = 0);
 
-	Game_Player_Info const &game_player_info(void) const;
+	Player_Data const &player_data(void) const { return player_data_; }
+	Game_Player_Info const &game_player_info(void) const { return player_data_.game_player_info; }
+	Mail_Info &mail_info(void) { return player_data_.mail_info; }
 	Bag& bag(void) { return bag_; }
-	Mail& mail(void) { return mail_; }
 
 	int sign_in(std::string account);
 	int sign_out(void);
@@ -43,8 +43,7 @@ public:
 	int register_timer(void);
 	int unregister_timer(void);
 
-	int load_player_data(Player_Data &player_data);
-	int save_player_data(Player_Data &player_data);
+	int load_player(Player_Data &player_data);
 	int save_player(bool is_logout = false);
 
 	int link_close(void);
@@ -52,15 +51,19 @@ public:
 	int login_success(void);
 	int respond_role_login(void);
 
+    //拾取邮件内的附件和钱
+  int pickup_mail(Mail_Detail &mail_detail);
+  //发送邮件
+  int send_mail(role_id_t receiver_id, Mail_Detail &mail_detail);
+
 private:
 	bool is_register_timer_;
 	Cid_Info cid_info_;		///登录信息，包括gate_cid和player_cid
-	Game_Player_Info player_info_;
+	Player_Data player_data_;
 	Recycle_Tick recycle_tick_;
 	Time_Value last_save_timestamp_;
 
 	Bag bag_;
-	Mail mail_;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -70,10 +73,6 @@ inline void Game_Player::set_cid_info(Cid_Info &cid_info) {
 
 inline Cid_Info &Game_Player::cid_info(void) {
 	return cid_info_;
-}
-
-inline Game_Player_Info const &Game_Player::game_player_info(void) const {
-	return player_info_;
 }
 
 inline int Game_Player::link_close() {
@@ -90,6 +89,5 @@ inline void Game_Player::set_recycle(void) {
 inline int Game_Player::recycle_status(void) {
 	return recycle_tick_.status_;
 }
-
 
 #endif /* GAME_PLAYER_H_ */

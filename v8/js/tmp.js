@@ -1,37 +1,3 @@
-/*
- * aa.cpp
- *
- *  Created on: Jun 7, 2012
- *      Author: ChenLong
- */
-
-#include "Mail.h"
-#include "Game_Player.h"
-#include "Game_Manager.h"
-
-Mail::Mail(void):player_(0) { }
-
-Mail::~Mail(void) { }
-
-int Mail::init(Game_Player *player) {
-	player_ = player;
-	return 0;
-}
-
-int Mail::load_data(Player_Data &data) {
-	mail_info_ = data.mail_info;
-	return 0;
-}
-
-int Mail::save_data(Player_Data &data) {
-	data.mail_info = mail_info_;
-	mail_info_.is_change = false;
-	return 0;
-}
-
-void Mail::reset(void) {
-	mail_info_.reset();
-}
 
 int Mail::fetch_mail_info(void) {
 	Block_Buffer buf;
@@ -53,14 +19,14 @@ int Mail::pickup_mail(MSG_120201 &msg) {
 		if (iter == mail_info_.mail_map.end()) {
 			player_->respond_error_result(RES_PICKUP_MAIL, ERROR_CLIENT_PARAM);
 		}
-		result = this->pickup_mail(iter->second);
+		result = player_->pickup_mail(iter->second);
 		if (result == 0) {
 			res_msg.mail_id_vec.push_back(msg.mail_id);
 		}
 	} else {
 		for (Mail_Info::Mail_Map::iterator iter = mail_info_.mail_map.begin();
 					iter != mail_info_.mail_map.end(); ++iter) {
-			result = this->pickup_mail(iter->second);
+			result = player_->pickup_mail(iter->second);
 			if (result == 0) {
 				res_msg.mail_id_vec.push_back(iter->first);
 			}
@@ -83,7 +49,7 @@ int Mail::delete_mail(MSG_120202 &msg) {
 		if (iter == mail_info_.mail_map.end()) {
 			player_->respond_error_result(RES_PICKUP_MAIL, ERROR_CLIENT_PARAM);
 		}
-		result = this->pickup_mail(iter->second);
+		result = player_->pickup_mail(iter->second);
 		if (result == 0) {
 			res_msg.mail_id_vec.push_back(msg.mail_id);
 		}
@@ -91,7 +57,7 @@ int Mail::delete_mail(MSG_120202 &msg) {
 	} else {
 		for (Mail_Info::Mail_Map::iterator iter = mail_info_.mail_map.begin();
 				iter != mail_info_.mail_map.end();) {
-			result = this->pickup_mail(iter->second);
+			result = player_->pickup_mail(iter->second);
 			if (result == 0) {
 				res_msg.mail_id_vec.push_back(msg.mail_id);
 			}
@@ -143,87 +109,7 @@ int Mail::send_mail(MSG_120203 &msg) {
 	}
 	player_->bag().bag_sub_money(money_sub_list);
 
-	this->send_mail(receiver_id, msg.mail_detail);
+	player_->send_mail(receiver_id, msg.mail_detail);
 
 	return player_->respond_success_result(RES_SEND_MAIL);
-}
-
-int Mail::pickup_mail(Mail_Detail &mail_detail) {
-	std::vector<Money_Add_Info> money_add_list;
-	if (mail_detail.money_info.copper > 0)
-		money_add_list.push_back(Money_Add_Info(COPPER, mail_detail.money_info.copper));
-	if (mail_detail.money_info.bind_copper > 0)
-		money_add_list.push_back(Money_Add_Info(BIND_COPPER, mail_detail.money_info.bind_copper));
-	if (mail_detail.money_info.gold > 0)
-		money_add_list.push_back(Money_Add_Info(GOLD, mail_detail.money_info.gold));
-	if (mail_detail.money_info.bind_gold > 0)
-		money_add_list.push_back(Money_Add_Info(BIND_GOLD, mail_detail.money_info.bind_gold));
-
-	if (money_add_list.size() > 0) {
-	int result = player_->bag().bag_try_add_money(money_add_list);
-	if (result != 0)
-		return result;
-	}
-
-  std::vector<Item_Info> item_list;
-  for (std::vector<Item_Basic_Info>::iterator iter = mail_detail.item_vector.begin(); iter != mail_detail.item_vector.end(); ++iter) {
-	  	item_list.push_back(Item_Info(*iter));
-   	}
-  int result = player_->bag().bag_insert_item(BAG_T_BAG_INDEX, item_list);
-  if (result != 0) {
-    	return result;
-   	}
-
-  if (money_add_list.size() > 0) {
-	  player_->bag().bag_add_money(money_add_list);
-    }
-
-  mail_detail.pickup = 1;
-	return 0;
-}
-
-int Mail::send_mail(role_id_t receiver_id, Mail_Detail &mail_detail) {
-	int result = 0;
-	//参数验证
-	if (receiver_id <= 0 || mail_detail.sender_type <= 0 || mail_detail.sender_id <= 0 || mail_detail.sender_name.empty()
-			|| mail_detail.mail_title.empty() || mail_detail.money_info.gold < 0 || mail_detail.money_info.copper < 0
-			|| mail_detail.money_info.bind_copper < 0 || mail_detail.money_info.bind_gold < 0) {
-		result = ERROR_CLIENT_PARAM;
-	}
-
-	Game_Player *receiver = GAME_MANAGER->find_role_id_game_player(receiver_id);
-	if (receiver) {
-		Mail_Info &mail_info = receiver->mail().mail_info();
-		mail_info.total_count++;
-		mail_detail.mail_id = mail_info.total_count + 1000000;
-		mail_detail.send_time = Time_Value::gettimeofday().sec();
-		mail_info.mail_map.insert(std::make_pair(mail_detail.mail_id, mail_detail));
-
-		//邮件数量超过100，删除最后一封
-		if (mail_info.mail_map.size() > 100) {
-			for (Mail_Info::Mail_Map::iterator iter = mail_info.mail_map.begin();
-					iter != mail_info.mail_map.end(); ++iter) {
-				mail_info.mail_map.erase(iter);
-				break;
-			}
-		}
-
-		Block_Buffer buf;
-		MSG_300200 msg;
-		msg.reset();
-		msg.mail_detail_vec.push_back(mail_detail);
-		msg.serialize(buf);
-		receiver->respond_success_result(ACTIVE_RECEIVE_MAIL, &buf);
-	} else {
-		Block_Buffer buf;
-		buf.make_inner_message(SYNC_GAME_DB_SAVE_MAIL_INFO);
-		MSG_150004 msg;
-		msg.role_id = receiver_id;
-		msg.mail_detail = mail_detail;
-		msg.serialize(buf);
-		buf.finish_message();
-		GAME_MANAGER->send_to_db(buf);
-	}
-
-	return result;
 }

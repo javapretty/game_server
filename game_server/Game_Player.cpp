@@ -53,21 +53,20 @@ int Game_Player::respond_error_result(int msg_id, int err, Block_Buffer *buf) {
 
 int Game_Player::sign_in(std::string account) {
 	MSG_DEBUG("player sign in game_server. account=[%s], gate_cid = %d, player_cid = %d, role_id=%ld, name=%s",
-			account.c_str(), cid_info_.gate_cid, cid_info_.player_cid, player_info_.role_id, player_info_.role_name.c_str());
+			account.c_str(), cid_info_.gate_cid, cid_info_.player_cid, player_data_.game_player_info.role_id, player_data_.game_player_info.role_name.c_str());
 
 	login_success();
 	register_timer();
 	sync_signin_to_master();
 
 	bag_.init(this);
-	mail_.init(this);
 	return 0;
 }
 
 int Game_Player::sign_out(void) {
 	Time_Value now = GAME_MANAGER->tick_time();
 
-	this->player_info_.last_sign_out_time = now.sec();
+	this->player_data_.game_player_info.last_sign_out_time = now.sec();
 
 	save_player(true);
 	unregister_timer();
@@ -83,19 +82,18 @@ void Game_Player::reset(void) {
 	recycle_tick_.reset();
 	last_save_timestamp_ = Time_Value::zero;
 
-	player_info_.reset();
+	player_data_.reset();
 	bag_.reset();
-	mail_.reset();
 }
 
 int Game_Player::sync_signin_to_master(void) {
 	Block_Buffer buf;
 	buf.make_player_message(SYNC_GAME_MASTER_PLYAER_SIGNIN, 0, cid_info_.player_cid);
 	MSG_160001 msg;
-	msg.player_info.role_id = player_info_.role_id;
-	msg.player_info.account = player_info_.account;
-	msg.player_info.role_name = player_info_.role_name;
-	msg.player_info.level = player_info_.level;
+	msg.player_info.role_id = player_data_.game_player_info.role_id;
+	msg.player_info.account = player_data_.game_player_info.account;
+	msg.player_info.role_name = player_data_.game_player_info.role_name;
+	msg.player_info.level = player_data_.game_player_info.level;
 	msg.serialize(buf);
 	buf.finish_message();
 	return GAME_MANAGER->send_to_master(buf);
@@ -105,7 +103,7 @@ int Game_Player::sync_signout_to_master(void) {
 	Block_Buffer buf;
 	buf.make_player_message(SYNC_GAME_MASTER_PLAYER_SIGNOUT, 0, cid_info_.player_cid);
 	MSG_160002 msg;
-	msg.role_id = player_info_.role_id;
+	msg.role_id = player_data_.game_player_info.role_id;
 	msg.serialize(buf);
 	buf.finish_message();
 	return GAME_MANAGER->send_to_master(buf);
@@ -136,27 +134,19 @@ int Game_Player::unregister_timer(void) {
 	return 0;
 }
 
-int Game_Player::load_player_data(Player_Data &player_data) {
+int Game_Player::load_player(Player_Data &player_data) {
 	GAME_MANAGER->logining_map().erase(player_data.game_player_info.account);
-	player_info_ = player_data.game_player_info;
+	player_data_ = player_data;
+	player_data_.role_id = player_data_.game_player_info.role_id;
 	bag_.load_data(player_data);
-	mail_.load_data(player_data);
-
-	return 0;
-}
-
-int Game_Player::save_player_data(Player_Data &player_data) {
-	player_data.role_id = player_info_.role_id;
-	player_data.game_player_info = player_info_;
-	bag_.save_data(player_data);
-	mail_.save_data(player_data);
 
 	return 0;
 }
 
 int Game_Player::save_player(bool is_logout) {
 	MSG_150003 msg;
-	save_player_data(msg.player_data);
+	msg.player_data = player_data_;
+	bag_.save_data(msg.player_data);
 	if (!is_logout && !msg.player_data.can_save()) {
 		return -1;
 	}
@@ -185,12 +175,12 @@ int Game_Player::login_success(void) {
 int Game_Player::respond_role_login(void) {
 	MSG_520001 msg;
 	msg.reset();
-	msg.role_info.role_id = player_info_.role_id;
-	msg.role_info.account = player_info_.account;
-	msg.role_info.role_name = player_info_.role_name;
-	msg.role_info.career = player_info_.career;
-	msg.role_info.gender = player_info_.gender;
-	msg.role_info.level = player_info_.level;
+	msg.role_info.role_id = player_data_.game_player_info.role_id;
+	msg.role_info.account = player_data_.game_player_info.account;
+	msg.role_info.role_name = player_data_.game_player_info.role_name;
+	msg.role_info.career = player_data_.game_player_info.career;
+	msg.role_info.gender = player_data_.game_player_info.gender;
+	msg.role_info.level = player_data_.game_player_info.level;
 
 	Block_Buffer buf;
 	buf.reset();
@@ -207,7 +197,7 @@ int Game_Player::recycle_tick(const Time_Value &now) {
 	if (now - recycle_tick_.last_tick_ts_ > Recycle_Tick::tick_interval_) {
 		recycle_tick_.last_tick_ts_ = now;
 		if (recycle_tick_.status_ == Recycle_Tick::RECYCLE && now - recycle_tick_.last_change_status_ts_ > Recycle_Tick::recycle_time_) {
-			MSG_DEBUG("game_player recyle, role_id = %ld, role_name = %s", player_info_.role_id, player_info_.role_name.c_str());
+			MSG_DEBUG("game_player recyle, role_id = %ld, role_name = %s", player_data_.game_player_info.role_id, player_data_.game_player_info.role_name.c_str());
 			ret = 1;
 			GAME_MANAGER->unbind_game_player(*this);
 			sign_out();
@@ -215,4 +205,84 @@ int Game_Player::recycle_tick(const Time_Value &now) {
 		}
 	}
 	return ret;
+}
+
+int Game_Player::pickup_mail(Mail_Detail &mail_detail) {
+	std::vector<Money_Add_Info> money_add_list;
+	if (mail_detail.money_info.copper > 0)
+		money_add_list.push_back(Money_Add_Info(COPPER, mail_detail.money_info.copper));
+	if (mail_detail.money_info.bind_copper > 0)
+		money_add_list.push_back(Money_Add_Info(BIND_COPPER, mail_detail.money_info.bind_copper));
+	if (mail_detail.money_info.gold > 0)
+		money_add_list.push_back(Money_Add_Info(GOLD, mail_detail.money_info.gold));
+	if (mail_detail.money_info.bind_gold > 0)
+		money_add_list.push_back(Money_Add_Info(BIND_GOLD, mail_detail.money_info.bind_gold));
+
+	if (money_add_list.size() > 0) {
+	int result = bag_.bag_try_add_money(money_add_list);
+	if (result != 0)
+		return result;
+	}
+
+  std::vector<Item_Info> item_list;
+  for (std::vector<Item_Basic_Info>::iterator iter = mail_detail.item_vector.begin(); iter != mail_detail.item_vector.end(); ++iter) {
+	  	item_list.push_back(Item_Info(*iter));
+   	}
+  int result = bag_.bag_insert_item(BAG_T_BAG_INDEX, item_list);
+  if (result != 0) {
+    	return result;
+   	}
+
+  if (money_add_list.size() > 0) {
+	  bag_.bag_add_money(money_add_list);
+    }
+
+  mail_detail.pickup = 1;
+	return 0;
+}
+
+int Game_Player::send_mail(role_id_t receiver_id, Mail_Detail &mail_detail) {
+	int result = 0;
+	//参数验证
+	if (receiver_id <= 0 || mail_detail.sender_type <= 0 || mail_detail.sender_id <= 0 || mail_detail.sender_name.empty()
+			|| mail_detail.mail_title.empty() || mail_detail.money_info.gold < 0 || mail_detail.money_info.copper < 0
+			|| mail_detail.money_info.bind_copper < 0 || mail_detail.money_info.bind_gold < 0) {
+		result = ERROR_CLIENT_PARAM;
+	}
+
+	Game_Player *receiver = GAME_MANAGER->find_role_id_game_player(receiver_id);
+	if (receiver) {
+		Mail_Info &mail_info = receiver->mail_info();
+		mail_info.total_count++;
+		mail_detail.mail_id = mail_info.total_count + 1000000;
+		mail_detail.send_time = Time_Value::gettimeofday().sec();
+		mail_info.mail_map.insert(std::make_pair(mail_detail.mail_id, mail_detail));
+
+		//邮件数量超过100，删除最后一封
+		if (mail_info.mail_map.size() > 100) {
+			for (Mail_Info::Mail_Map::iterator iter = mail_info.mail_map.begin();
+					iter != mail_info.mail_map.end(); ++iter) {
+				mail_info.mail_map.erase(iter);
+				break;
+			}
+		}
+
+		Block_Buffer buf;
+		MSG_300200 msg;
+		msg.reset();
+		msg.mail_detail_vec.push_back(mail_detail);
+		msg.serialize(buf);
+		receiver->respond_success_result(ACTIVE_RECEIVE_MAIL, &buf);
+	} else {
+		Block_Buffer buf;
+		buf.make_inner_message(SYNC_GAME_DB_SAVE_MAIL_INFO);
+		MSG_150004 msg;
+		msg.role_id = receiver_id;
+		msg.mail_detail = mail_detail;
+		msg.serialize(buf);
+		buf.finish_message();
+		GAME_MANAGER->send_to_db(buf);
+	}
+
+	return result;
 }
