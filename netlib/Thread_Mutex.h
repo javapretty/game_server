@@ -1,4 +1,3 @@
-// -*- C++ -*-
 /*
  * Thread_Mutex.h
  *

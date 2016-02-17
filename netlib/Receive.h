@@ -1,6 +1,5 @@
-// -*- C++ -*-
 /*
- * Receiver.h
+ * Receive.h
  *
  *  Created on: Dec 16,2015
  *      Author: zhangyalei

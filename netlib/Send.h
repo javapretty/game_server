@@ -1,6 +1,5 @@
-// -*- C++ -*-
 /*
- * Sender.h
+ * Send.h
  *
  *  Created on: Dec 16,2015
  *      Author: zhangyalei

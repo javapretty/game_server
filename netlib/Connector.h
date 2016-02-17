@@ -1,7 +1,7 @@
 /*
  * Connector.h
  *
- *  Created on: 2016年1月12日
+ *  Created on: Jan 16,2016
  *      Author: zhangyalei
  */
 

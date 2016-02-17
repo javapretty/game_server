@@ -1,6 +1,5 @@
-// -*- C++ -*-
 /*
- * Connector.h
+ * Connect.h
  *
  *  Created on: Dec 16,2015
  *      Author: zhangyalei

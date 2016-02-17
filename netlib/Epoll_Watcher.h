@@ -1,4 +1,3 @@
-// -*- C++ -*-
 /*
  * Epoll_Watcher.h
  *

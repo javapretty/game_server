@@ -1,4 +1,3 @@
-// -*- C++ -*-
 /*
  * Event_Handler.cpp
  *
