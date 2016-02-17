@@ -60,6 +60,7 @@ private:
 	bool is_register_timer_;
 	Cid_Info cid_info_;		///登录信息，包括gate_cid和player_cid
 	Player_Data player_data_;
+	Block_Buffer player_buffer_;
 	Recycle_Tick recycle_tick_;
 	Time_Value last_save_timestamp_;
 

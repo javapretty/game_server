@@ -24,7 +24,6 @@ while (1) {
 			switch(msg_id) {
 			case 120200:
 				fetch_mail_info(player);
-				testMap();
 				break;
 			case 120201:
 				pickup_mail(player, buf);

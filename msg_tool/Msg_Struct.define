@@ -37,5 +37,4 @@ struct Mail_Detail {
 	std::string mail_title;			//邮件标题
 	std::string mail_content;		//邮件内容
 	Money_Info money_info;			//金钱信息
-	std::vector<Item_Basic_Info> item_vector;	//物品信息
 };

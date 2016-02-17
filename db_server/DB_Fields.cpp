@@ -57,7 +57,6 @@ const std::string Mail_Fields::Mail_Detail::SENDER_ID = "sender_id";
 const std::string Mail_Fields::Mail_Detail::SENDER_NAME = "sender_name";
 const std::string Mail_Fields::Mail_Detail::MAIL_TITLE = "mail_title";
 const std::string Mail_Fields::Mail_Detail::MAIL_CONTENT = "mail_content";
-const std::string Mail_Fields::Mail_Detail::ITEM = "item";
 const std::string Mail_Fields::Mail_Detail::COPPER = "copper";
 const std::string Mail_Fields::Mail_Detail::BIND_COPPER = "bind_copper";
 const std::string Mail_Fields::Mail_Detail::GOLD = "gold";

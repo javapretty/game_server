@@ -97,8 +97,6 @@ struct Mail_Detail {
 
 	Money_Info money_info; //金钱信息
 
-	std::vector<Item_Basic_Info> item_vector; //物品信息
-
 	Mail_Detail(void);
 
 	void serialize(Block_Buffer & w) const;

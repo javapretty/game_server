@@ -1,3 +1,8 @@
+Local<ArrayBuffer> buffer = ArrayBuffer::New(...);
+ArrayBuffer::Contents contents = buffer->GetContents();
+memcpy(contents.Data(), <你的C++数据>);
+Local<Uint8Array> typeArray =TypedArray::New(buffer, <buffer里的offset，填0，单位：字节>, <字节数>);
+
 
 int Mail::fetch_mail_info(void) {
 	Block_Buffer buf;
@@ -87,29 +92,10 @@ int Mail::send_mail(MSG_120203 &msg) {
 		money_sub_list.push_back(Money_Sub_Info(COPPER_ONLY, msg.mail_detail.money_info.copper));
 	if (msg.mail_detail.money_info.gold > 0)
 		money_sub_list.push_back(Money_Sub_Info(GOLD_ONLY, msg.mail_detail.money_info.gold));
-	int result = player_->bag().bag_try_sub_money(money_sub_list);
+	int result = player_->bag().bag_sub_money(money_sub_list);
 	if (result != 0)
 		return player_->respond_error_result(RES_SEND_MAIL, result);
 
-	std::vector<Item_Info> item_vector;
-	for (std::vector<Item_Basic_Info>::iterator it = msg.mail_detail.item_vector.begin();
-			it != msg.mail_detail.item_vector.end(); ++it) {
-		Bag_Info::Item_Map::const_iterator iter = player_->bag().bag_info().item_map.find(it->index);
-		if (iter == player_->bag().bag_info().item_map.end()) {
-			return player_->respond_error_result(RES_SEND_MAIL, ERROR_CLIENT_PARAM);
-		}
-		item_vector.push_back(iter->second);
-		break;
-	}
-
-	if (msg.mail_detail.item_vector.size() > 0) {
-		result = player_->bag().bag_erase_item(Index_Amount(msg.mail_detail.item_vector[0].index, msg.mail_detail.item_vector[0].amount, UNBIND_ONLY));
-		if (result != 0)
-			return player_->respond_error_result(RES_SEND_MAIL, result);
-	}
-	player_->bag().bag_sub_money(money_sub_list);
-
 	player_->send_mail(receiver_id, msg.mail_detail);
-
 	return player_->respond_success_result(RES_SEND_MAIL);
 }

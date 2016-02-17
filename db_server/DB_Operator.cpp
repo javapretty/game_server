@@ -426,17 +426,6 @@ int DB_Operator::load_mail_info(Mail_Info &mail_info) {
 		mail_detail.money_info.bind_copper = obj[Mail_Fields::Mail_Detail::BIND_COPPER].numberInt();
 		mail_detail.money_info.gold = obj[Mail_Fields::Mail_Detail::GOLD].numberInt();
 		mail_detail.money_info.bind_gold = obj[Mail_Fields::Mail_Detail::BIND_GOLD].numberInt();
-
-		//加载附件信息
-		BSONObjIterator item_iter(obj.getObjectField(Mail_Fields::Mail_Detail::ITEM.c_str()));
-		while (item_iter.more()) {
-			BSONObj item_obj = item_iter.next().embeddedObject();
-			Item_Info item;
-			int result = load_item_detail(item_obj, item);
-			if (result != 0)
-				continue;
-			mail_detail.item_vector.push_back(item.item_basic);
-		}
 		mail_info.mail_map.insert(std::make_pair(mail_detail.mail_id, mail_detail));
 	}
 
@@ -447,15 +436,6 @@ int DB_Operator::save_mail_info(Mail_Info &mail_info) {
 	std::vector<BSONObj> mail_vector;
 	for (Mail_Info::Mail_Map::const_iterator iter = mail_info.mail_map.begin();
 			iter != mail_info.mail_map.end(); iter++) {
-
-		std::vector<BSONObj> item_vector;
-		BSONObj obj;
-		for (std::vector<Item_Basic_Info>::const_iterator it = iter->second.item_vector.begin();
-				it != iter->second.item_vector.end(); ++it) {
-			save_item_detail(Item_Info(*it), obj);
-			item_vector.push_back(obj);
-		}
-
 		mail_vector.push_back(BSON(Mail_Fields::Mail_Detail::MAIL_ID << iter->second.mail_id
 				<< Mail_Fields::Mail_Detail::PICKUP << iter->second.pickup
 				<< Mail_Fields::Mail_Detail::SEND_TIME << iter->second.send_time
@@ -464,7 +444,6 @@ int DB_Operator::save_mail_info(Mail_Info &mail_info) {
 				<< Mail_Fields::Mail_Detail::SENDER_NAME << iter->second.sender_name
 				<< Mail_Fields::Mail_Detail::MAIL_TITLE << iter->second.mail_title
 				<< Mail_Fields::Mail_Detail::MAIL_CONTENT << iter->second.mail_content
-				<< Mail_Fields::Mail_Detail::ITEM << item_vector
 				<< Mail_Fields::Mail_Detail::COPPER << iter->second.money_info.copper
 				<< Mail_Fields::Mail_Detail::BIND_COPPER<< iter->second.money_info.bind_copper
 				<< Mail_Fields::Mail_Detail::GOLD << iter->second.money_info.gold

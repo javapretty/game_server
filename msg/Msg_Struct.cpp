@@ -99,12 +99,6 @@ void Mail_Detail::serialize(Block_Buffer & w) const {
 	w.write_string(mail_title);
 	w.write_string(mail_content);
 	money_info.serialize(w);
-	uint16_t __item_vector_vec_size = item_vector.size();
-	w.write_uint16(__item_vector_vec_size);
-	for(uint16_t i = 0; i < __item_vector_vec_size; ++i) {
-		item_vector[i].serialize(w);
-	}
-
 }
 
 int Mail_Detail::deserialize(Block_Buffer & r) {
@@ -117,14 +111,6 @@ int Mail_Detail::deserialize(Block_Buffer & r) {
 	mail_title = r.read_string();
 	mail_content = r.read_string();
 	money_info.deserialize(r);
-	uint16_t __item_vector_vec_size = r.read_uint16();
-	Item_Basic_Info v;
-	for(uint16_t i = 0; i < __item_vector_vec_size; ++i) {
-		if(v.deserialize(r))
-			return -1;
-		item_vector.push_back(v);
-	}
-
 	return 0;
 }
 
@@ -138,5 +124,4 @@ void Mail_Detail::reset(){
 	mail_title.clear();
 	mail_content.clear();
 	money_info.reset();
-	item_vector.clear();
 }

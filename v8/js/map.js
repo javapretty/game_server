@@ -6,7 +6,7 @@
  * m.each(function(key,value,index) {
  *         s += index+":"+ key+"="+value+"\n";
  * });
- * alert(s);
+ * print(s);
  */
 
 Array.prototype.remove = function(s) {

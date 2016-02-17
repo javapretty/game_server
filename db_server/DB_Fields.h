@@ -76,7 +76,6 @@ struct Mail_Fields {
 		static const std::string SENDER_NAME;
 		static const std::string MAIL_TITLE;
 		static const std::string MAIL_CONTENT;
-		static const std::string ITEM;
 		static const std::string COPPER;
 		static const std::string BIND_COPPER;
 		static const std::string GOLD;

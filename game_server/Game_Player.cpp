@@ -138,6 +138,7 @@ int Game_Player::load_player(Player_Data &player_data) {
 	GAME_MANAGER->logining_map().erase(player_data.game_player_info.account);
 	player_data_ = player_data;
 	player_data_.role_id = player_data_.game_player_info.role_id;
+	player_data_.serialize(player_buffer_);
 	bag_.load_data(player_data);
 
 	return 0;
@@ -219,23 +220,10 @@ int Game_Player::pickup_mail(Mail_Detail &mail_detail) {
 		money_add_list.push_back(Money_Add_Info(BIND_GOLD, mail_detail.money_info.bind_gold));
 
 	if (money_add_list.size() > 0) {
-	int result = bag_.bag_try_add_money(money_add_list);
+	int result = bag_.bag_add_money(money_add_list);
 	if (result != 0)
 		return result;
 	}
-
-  std::vector<Item_Info> item_list;
-  for (std::vector<Item_Basic_Info>::iterator iter = mail_detail.item_vector.begin(); iter != mail_detail.item_vector.end(); ++iter) {
-	  	item_list.push_back(Item_Info(*iter));
-   	}
-  int result = bag_.bag_insert_item(BAG_T_BAG_INDEX, item_list);
-  if (result != 0) {
-    	return result;
-   	}
-
-  if (money_add_list.size() > 0) {
-	  bag_.bag_add_money(money_add_list);
-    }
 
   mail_detail.pickup = 1;
 	return 0;
