@@ -1,9 +1,10 @@
 function fetch_mail_info(player) {
 	print('fetch_mail_info, role_id:', player.role_id(), " role_name:", player.role_name());
 	var buf = pop_block();
-	buf.write_int32(1001);
-	buf.write_string('name');
-	player.respond_error_result(msg_res.RES_FETCH_MAIL_INFO, error.ERROR_CLIENT_SESSION);
+	buf.write_int32(1990);
+	buf.write_string('zhangyalei');
+	player.respond_success_result(msg_res.RES_FETCH_MAIL_INFO, buf);
+	push_block(buf);
 }
 
 function pickup_mail(player, buf) {
