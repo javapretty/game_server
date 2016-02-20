@@ -45,6 +45,7 @@ private:
 	Platform* platform_;
 	Isolate* isolate_;
 	Global<Context> context_;
+	Global<Function> load_data_;
 };
 
 #define V8_MANAGER V8_Manager::instance()

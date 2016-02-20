@@ -357,7 +357,7 @@ void write_string(const FunctionCallbackInfo<Value>& args)
 	}
 }
 
-void pop_buf(const FunctionCallbackInfo<Value>& args) {
+void pop_buffer(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = nullptr;
 	if (args.Length() == 1) {
 		//buf from client
@@ -374,7 +374,7 @@ void pop_buf(const FunctionCallbackInfo<Value>& args) {
 	}
 }
 
-void push_buf(const FunctionCallbackInfo<Value>& args) {
+void push_buffer(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() < 1) {
 		MSG_USER("process_login_block args wrong, length: %d\n", args.Length());
 	}

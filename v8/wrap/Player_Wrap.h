@@ -17,7 +17,7 @@ using namespace v8;
 Local<Object> wrap_player(Isolate* isolate, Game_Player *player);
 Game_Player *unwrap_player(Local<Object> obj);
 
-void process_login_buf(const FunctionCallbackInfo<Value>& args);
+void process_login_buffer(const FunctionCallbackInfo<Value>& args);
 void get_player(const FunctionCallbackInfo<Value>& args);
 void respond_success_result(const FunctionCallbackInfo<Value>& args);
 void respond_error_result(const FunctionCallbackInfo<Value>& args);

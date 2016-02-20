@@ -22,12 +22,12 @@ Local<Context> create_v8_context(Isolate* isolate) {
 		FunctionTemplate::New(isolate, print));
 	global->Set(String::NewFromUtf8(isolate, "sleep", NewStringType::kNormal).ToLocalChecked(),
 		FunctionTemplate::New(isolate, sleep));
-	global->Set(String::NewFromUtf8(isolate, "pop_buf", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, pop_buf));
-	global->Set(String::NewFromUtf8(isolate, "push_buf", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, push_buf));
-	global->Set(String::NewFromUtf8(isolate, "process_login_buf", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, process_login_buf));
+	global->Set(String::NewFromUtf8(isolate, "pop_buffer", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, pop_buffer));
+	global->Set(String::NewFromUtf8(isolate, "push_buffer", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, push_buffer));
+	global->Set(String::NewFromUtf8(isolate, "process_login_buffer", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, process_login_buffer));
 	global->Set(String::NewFromUtf8(isolate, "get_player", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, get_player));
 

@@ -45,7 +45,7 @@ Game_Player *unwrap_player(Local<Object> obj) {
 	return static_cast<Game_Player*>(ptr);
 }
 
-void process_login_buf(const FunctionCallbackInfo<Value>& args) {
+void process_login_buffer(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 4) {
 		MSG_USER("process_login_block args wrong, length: %d\n", args.Length());
 	}

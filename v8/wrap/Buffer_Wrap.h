@@ -41,7 +41,7 @@ void write_double(const FunctionCallbackInfo<Value>& args);
 void write_bool(const FunctionCallbackInfo<Value>& args);
 void write_string(const FunctionCallbackInfo<Value>& args);
 
-void pop_buf(const FunctionCallbackInfo<Value>& args);
-void push_buf(const FunctionCallbackInfo<Value>& args);
+void pop_buffer(const FunctionCallbackInfo<Value>& args);
+void push_buffer(const FunctionCallbackInfo<Value>& args);
 
 #endif /* BLOCK_WRAP_H_ */
