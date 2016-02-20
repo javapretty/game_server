@@ -3,8 +3,9 @@
  *      Author: zhangyalei
  */
 
-#include "Game_Manager.h"
 #include "Common_Func.h"
+#include "Game_Manager.h"
+#include "V8_Manager.h"
 
 Game_Player::Game_Player(void):
   is_register_timer_(0)
@@ -49,6 +50,41 @@ int Game_Player::respond_error_result(int msg_id, int err, Block_Buffer *buf) {
 		buf->set_read_idx(rd_idx); /// 复位传入的buf参数
 		return 0;
 	}
+}
+
+int Game_Player::load_player(Player_Data &player_data) {
+	GAME_MANAGER->logining_map().erase(player_data.game_player_info.account);
+	player_data_ = player_data;
+	player_data_.role_id = player_data_.game_player_info.role_id;
+	player_data_.mail_info.serialize(player_buffer_);
+	bag_.load_data(player_data);
+
+	V8_MANAGER->js_load_player_data(player_buffer_);
+	return 0;
+}
+
+int Game_Player::save_player(bool is_logout) {
+	MSG_150003 msg;
+	msg.player_data = player_data_;
+	bag_.save_data(msg.player_data);
+	if (!is_logout && !msg.player_data.can_save()) {
+		return -1;
+	}
+	if (is_logout) {
+		msg.player_data.status = Player_Data::ROLE_SAVE_OFFLINE;
+	}
+	Block_Buffer buf;
+	buf.make_inner_message(SYNC_GAME_DB_SAVE_PLAYER_INFO);
+	msg.serialize(buf);
+	buf.finish_message();
+	GAME_MANAGER->send_to_db(buf);
+
+	// 登出的时候要确保玩家信息正常保存后才可登录
+	if (is_logout) {
+		GAME_MANAGER->saving_map().insert(std::make_pair(this->game_player_info().role_id, Saving_Info(this->game_player_info().role_id, Time_Value::gettimeofday())));
+	}
+
+	return 0;
 }
 
 int Game_Player::sign_in(std::string account) {
@@ -131,40 +167,6 @@ int Game_Player::register_timer(void) {
 
 int Game_Player::unregister_timer(void) {
 	is_register_timer_ = false;
-	return 0;
-}
-
-int Game_Player::load_player(Player_Data &player_data) {
-	GAME_MANAGER->logining_map().erase(player_data.game_player_info.account);
-	player_data_ = player_data;
-	player_data_.role_id = player_data_.game_player_info.role_id;
-	player_data_.mail_info.serialize(player_buffer_);
-	bag_.load_data(player_data);
-
-	return 0;
-}
-
-int Game_Player::save_player(bool is_logout) {
-	MSG_150003 msg;
-	msg.player_data = player_data_;
-	bag_.save_data(msg.player_data);
-	if (!is_logout && !msg.player_data.can_save()) {
-		return -1;
-	}
-	if (is_logout) {
-		msg.player_data.status = Player_Data::ROLE_SAVE_OFFLINE;
-	}
-	Block_Buffer buf;
-	buf.make_inner_message(SYNC_GAME_DB_SAVE_PLAYER_INFO);
-	msg.serialize(buf);
-	buf.finish_message();
-	GAME_MANAGER->send_to_db(buf);
-
-	// 登出的时候要确保玩家信息正常保存后才可登录
-	if (is_logout) {
-		GAME_MANAGER->saving_map().insert(std::make_pair(this->game_player_info().role_id, Saving_Info(this->game_player_info().role_id, Time_Value::gettimeofday())));
-	}
-
 	return 0;
 }
 

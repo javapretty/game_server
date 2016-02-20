@@ -21,7 +21,7 @@ void run_script(Isolate* isolate, const char* file_path);
 void sleep(const FunctionCallbackInfo<Value>& args);
 void print(const FunctionCallbackInfo<Value>& args);
 
-void process_login_block(const FunctionCallbackInfo<Value>& args);
+void process_login_buf(const FunctionCallbackInfo<Value>& args);
 void get_player(const FunctionCallbackInfo<Value>& args);
 void respond_success_result(const FunctionCallbackInfo<Value>& args);
 void respond_error_result(const FunctionCallbackInfo<Value>& args);

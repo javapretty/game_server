@@ -32,6 +32,8 @@ public:
 	int init(void);
 	int fini(void);
 
+	int js_load_player_data(Block_Buffer &buf);
+
 private:
 	V8_Manager(void);
 	virtual ~V8_Manager(void);

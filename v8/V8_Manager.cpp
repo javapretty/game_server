@@ -7,6 +7,7 @@
 
 #include "V8_Manager.h"
 #include "V8_Wrap.h"
+#include "Buffer_Wrap.h"
 
 V8_Manager::V8_Manager(void):platform_(nullptr), isolate_(nullptr) { }
 
@@ -53,5 +54,31 @@ int V8_Manager::fini(void) {
 	V8::Dispose();
 	V8::ShutdownPlatform();
 	delete platform_;
+	return 0;
+}
+
+int V8_Manager::js_load_player_data(Block_Buffer &buf) {
+	HandleScope handle_scope(isolate_);
+	Local<Context> context = Local<Context>::New(isolate_, context_);
+	// Enter this processor's context so all the remaining operations
+	Context::Scope context_scope(context);
+
+	//获取js函数
+	Local<String> func_name = String::NewFromUtf8(isolate_, "load_data", NewStringType::kNormal).ToLocalChecked();
+	Local<Value> func_value;
+	if (!context->Global()->Get(context, func_name).ToLocal(&func_value) || !func_value->IsFunction()) {
+	    return -1;
+	 }
+	//转换成js函数对象
+	Local<Function> js_func = Local<Function>::Cast(func_value);
+
+	// Invoke the process function, giving the global object as 'this'
+	Local<Object> buf_obj = WrapBuffer(isolate_, &buf);
+	const int argc = 1;
+	Local<Value> argv[argc] = {buf_obj};
+	Local<Value> result;
+	if (!js_func->Call(context, context->Global(), argc, argv).ToLocal(&result)) {
+		return -1;
+	}
 	return 0;
 }

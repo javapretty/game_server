@@ -7,7 +7,7 @@
 
 #include "V8_Base.h"
 #include "V8_Wrap.h"
-#include "Block_Wrap.h"
+#include "Buffer_Wrap.h"
 #include "Time_Value.h"
 #include "Public_Define.h"
 #include "Game_Manager.h"
@@ -22,12 +22,12 @@ Local<Context> create_v8_context(Isolate* isolate) {
 		FunctionTemplate::New(isolate, print));
 	global->Set(String::NewFromUtf8(isolate, "sleep", NewStringType::kNormal).ToLocalChecked(),
 		FunctionTemplate::New(isolate, sleep));
-	global->Set(String::NewFromUtf8(isolate, "pop_block", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, pop_block));
-	global->Set(String::NewFromUtf8(isolate, "push_block", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, push_block));
-	global->Set(String::NewFromUtf8(isolate, "process_login_block", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, process_login_block));
+	global->Set(String::NewFromUtf8(isolate, "pop_buf", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, pop_buf));
+	global->Set(String::NewFromUtf8(isolate, "push_buf", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, push_buf));
+	global->Set(String::NewFromUtf8(isolate, "process_login_buf", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, process_login_buf));
 	global->Set(String::NewFromUtf8(isolate, "get_player", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, get_player));
 
@@ -78,7 +78,7 @@ void print(const FunctionCallbackInfo<Value>& args) {
   fflush(stdout);
 }
 
-void process_login_block(const FunctionCallbackInfo<Value>& args) {
+void process_login_buf(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 4) {
 		MSG_USER("process_login_block args wrong, length: %d\n", args.Length());
 	}

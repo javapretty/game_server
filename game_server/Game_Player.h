@@ -28,6 +28,9 @@ public:
 	Mail_Info &mail_info(void) { return player_data_.mail_info; }
 	Bag& bag(void) { return bag_; }
 
+	int load_player(Player_Data &player_data);
+	int save_player(bool is_logout = false);
+
 	int sign_in(std::string account);
 	int sign_out(void);
 	void reset(void);
@@ -42,9 +45,6 @@ public:
 
 	int register_timer(void);
 	int unregister_timer(void);
-
-	int load_player(Player_Data &player_data);
-	int save_player(bool is_logout = false);
 
 	int link_close(void);
 

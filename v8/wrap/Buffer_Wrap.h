@@ -14,6 +14,9 @@
 
 using namespace v8;
 
+Local<Object> WrapBuffer(Isolate* isolate, Block_Buffer *buf);
+Block_Buffer *UnwrapBuffer(Local<Object> obj);
+
 void read_int8(const FunctionCallbackInfo<Value>& args);
 void read_int16(const FunctionCallbackInfo<Value>& args);
 void read_int32(const FunctionCallbackInfo<Value>& args);
@@ -38,7 +41,7 @@ void write_double(const FunctionCallbackInfo<Value>& args);
 void write_bool(const FunctionCallbackInfo<Value>& args);
 void write_string(const FunctionCallbackInfo<Value>& args);
 
-void pop_block(const FunctionCallbackInfo<Value>& args);
-void push_block(const FunctionCallbackInfo<Value>& args);
+void pop_buf(const FunctionCallbackInfo<Value>& args);
+void push_buf(const FunctionCallbackInfo<Value>& args);
 
 #endif /* BLOCK_WRAP_H_ */
