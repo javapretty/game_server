@@ -14,8 +14,8 @@
 
 using namespace v8;
 
-Local<Object> WrapBuffer(Isolate* isolate, Block_Buffer *buf);
-Block_Buffer *UnwrapBuffer(Local<Object> obj);
+Local<Object> wrap_buffer(Isolate* isolate, Block_Buffer *buf);
+Block_Buffer *unwrap_buffer(Local<Object> obj);
 
 void read_int8(const FunctionCallbackInfo<Value>& args);
 void read_int16(const FunctionCallbackInfo<Value>& args);

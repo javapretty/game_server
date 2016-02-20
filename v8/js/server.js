@@ -17,7 +17,7 @@ while (1) {
 	var player_cid = buf.read_int32();
 	
 	if (msg_id == msg_req.REQ_FETCH_ROLE_INFO || msg_id == msg_req.REQ_CREATE_ROLE || msg_id == msg_req.SYNC_GATE_GAME_PLAYER_SIGNOUT) {
-		process_login_buf(gate_cid, player_cid, msg_id, buf);
+		process_login_buf(buf, gate_cid, player_cid, msg_id);
 	} else {
 		var player = get_player(gate_cid, player_cid);
 		if (player) {

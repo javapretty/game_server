@@ -5,12 +5,13 @@
  *      Author: zhangyalei
  */
 
-#include <Buffer_Wrap.h>
 #include "V8_Base.h"
+#include "Buffer_Wrap.h"
 #include "Game_Server.h"
 #include "Game_Manager.h"
 
-Local<Object> WrapBuffer(Isolate* isolate, Block_Buffer *buf) {
+
+Local<Object> wrap_buffer(Isolate* isolate, Block_Buffer *buf) {
 	EscapableHandleScope handle_scope(isolate);
 
 	Local<ObjectTemplate> localTemplate = ObjectTemplate::New(isolate);
@@ -90,7 +91,7 @@ Local<Object> WrapBuffer(Isolate* isolate, Block_Buffer *buf) {
 	return handle_scope.Escape(buf_obj);
 }
 
-Block_Buffer *UnwrapBuffer(Local<Object> obj) {
+Block_Buffer *unwrap_buffer(Local<Object> obj) {
 	Local<External> field = Local<External>::Cast(obj->GetInternalField(0));
 	void* ptr = field->Value();
 	return static_cast<Block_Buffer*>(ptr);
@@ -98,7 +99,7 @@ Block_Buffer *UnwrapBuffer(Local<Object> obj) {
 
 void read_int8(const FunctionCallbackInfo<Value>& args)
 {
-	Block_Buffer *buf= UnwrapBuffer(args.Holder());
+	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		args.GetReturnValue().Set(buf->read_int8());
 	} else {
@@ -108,7 +109,7 @@ void read_int8(const FunctionCallbackInfo<Value>& args)
 
 void read_int16(const FunctionCallbackInfo<Value>& args)
 {
-	Block_Buffer *buf= UnwrapBuffer(args.Holder());
+	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		args.GetReturnValue().Set(buf->read_int16());
 	} else {
@@ -118,7 +119,7 @@ void read_int16(const FunctionCallbackInfo<Value>& args)
 
 void read_int32(const FunctionCallbackInfo<Value>& args)
 {
-	Block_Buffer *buf= UnwrapBuffer(args.Holder());
+	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		args.GetReturnValue().Set(buf->read_int32());
 	} else {
@@ -128,7 +129,7 @@ void read_int32(const FunctionCallbackInfo<Value>& args)
 
 void read_int64(const FunctionCallbackInfo<Value>& args)
 {
-	Block_Buffer *buf= UnwrapBuffer(args.Holder());
+	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		double value = buf->read_int64();
 		args.GetReturnValue().Set(value);
@@ -139,7 +140,7 @@ void read_int64(const FunctionCallbackInfo<Value>& args)
 
 void read_uint8(const FunctionCallbackInfo<Value>& args)
 {
-	Block_Buffer *buf= UnwrapBuffer(args.Holder());
+	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		args.GetReturnValue().Set(buf->read_uint8());
 	} else {
@@ -149,7 +150,7 @@ void read_uint8(const FunctionCallbackInfo<Value>& args)
 
 void read_uint16(const FunctionCallbackInfo<Value>& args)
 {
-	Block_Buffer *buf= UnwrapBuffer(args.Holder());
+	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		args.GetReturnValue().Set(buf->read_uint16());
 	} else {
@@ -159,7 +160,7 @@ void read_uint16(const FunctionCallbackInfo<Value>& args)
 
 void read_uint32(const FunctionCallbackInfo<Value>& args)
 {
-	Block_Buffer *buf= UnwrapBuffer(args.Holder());
+	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		args.GetReturnValue().Set(buf->read_uint32());
 	} else {
@@ -169,7 +170,7 @@ void read_uint32(const FunctionCallbackInfo<Value>& args)
 
 void read_uint64(const FunctionCallbackInfo<Value>& args)
 {
-	Block_Buffer *buf= UnwrapBuffer(args.Holder());
+	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		double value = buf->read_uint64();
 		args.GetReturnValue().Set(value);
@@ -180,7 +181,7 @@ void read_uint64(const FunctionCallbackInfo<Value>& args)
 
 void read_double(const FunctionCallbackInfo<Value>& args)
 {
-	Block_Buffer *buf= UnwrapBuffer(args.Holder());
+	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		double value = buf->read_double();
 		args.GetReturnValue().Set(value);
@@ -191,7 +192,7 @@ void read_double(const FunctionCallbackInfo<Value>& args)
 
 void read_bool(const FunctionCallbackInfo<Value>& args)
 {
-	Block_Buffer *buf= UnwrapBuffer(args.Holder());
+	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		bool value = buf->read_bool();
 		args.GetReturnValue().Set(value);
@@ -202,7 +203,7 @@ void read_bool(const FunctionCallbackInfo<Value>& args)
 
 void read_string(const FunctionCallbackInfo<Value>& args)
 {
-	Block_Buffer *buf= UnwrapBuffer(args.Holder());
+	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		std::string str = buf->read_string();
 		Local<String> v8Str = String::NewFromUtf8(args.GetIsolate(), str.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
@@ -218,7 +219,7 @@ void write_int8(const FunctionCallbackInfo<Value>& args)
 		MSG_USER("write_int8 args wrong, length: %d\n", args.Length());
 		return;
 	}
-	Block_Buffer *buf= UnwrapBuffer(args.Holder());
+	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		int8_t value = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 		buf->write_int8(value);
@@ -231,7 +232,7 @@ void write_int16(const FunctionCallbackInfo<Value>& args)
 		MSG_USER("write_int16 args wrong, length: %d\n", args.Length());
 		return;
 	}
-	Block_Buffer *buf= UnwrapBuffer(args.Holder());
+	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		int16_t value = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 		buf->write_int16(value);
@@ -244,7 +245,7 @@ void write_int32(const FunctionCallbackInfo<Value>& args)
 		MSG_USER("write_int32 args wrong, length: %d\n", args.Length());
 		return;
 	}
-	Block_Buffer *buf= UnwrapBuffer(args.Holder());
+	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		int32_t value = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 		buf->write_int32(value);
@@ -257,7 +258,7 @@ void write_int64(const FunctionCallbackInfo<Value>& args)
 		MSG_USER("write_int64 args wrong, length: %d\n", args.Length());
 		return;
 	}
-	Block_Buffer *buf= UnwrapBuffer(args.Holder());
+	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		int64_t value = args[0]->IntegerValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 		buf->write_int64(value);
@@ -270,7 +271,7 @@ void write_uint8(const FunctionCallbackInfo<Value>& args)
 		MSG_USER("write_int8 args wrong, length: %d\n", args.Length());
 		return;
 	}
-	Block_Buffer *buf= UnwrapBuffer(args.Holder());
+	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		uint8_t value = args[0]->Uint32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 		buf->write_uint8(value);
@@ -283,7 +284,7 @@ void write_uint16(const FunctionCallbackInfo<Value>& args)
 		MSG_USER("write_int16 args wrong, length: %d\n", args.Length());
 		return;
 	}
-	Block_Buffer *buf= UnwrapBuffer(args.Holder());
+	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		uint16_t value = args[0]->Uint32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 		buf->write_uint16(value);
@@ -296,7 +297,7 @@ void write_uint32(const FunctionCallbackInfo<Value>& args)
 		MSG_USER("write_int32 args wrong, length: %d\n", args.Length());
 		return;
 	}
-	Block_Buffer *buf= UnwrapBuffer(args.Holder());
+	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		uint32_t value = args[0]->Uint32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 		buf->write_uint32(value);
@@ -309,7 +310,7 @@ void write_uint64(const FunctionCallbackInfo<Value>& args)
 		MSG_USER("write_int64 args wrong, length: %d\n", args.Length());
 		return;
 	}
-	Block_Buffer *buf= UnwrapBuffer(args.Holder());
+	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		uint64_t value = args[0]->IntegerValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 		buf->write_uint64(value);
@@ -322,7 +323,7 @@ void write_double(const FunctionCallbackInfo<Value>& args)
 		MSG_USER("write_double args wrong, length: %d\n", args.Length());
 		return;
 	}
-	Block_Buffer *buf= UnwrapBuffer(args.Holder());
+	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		double value = args[0]->NumberValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 		buf->write_double(value);
@@ -335,7 +336,7 @@ void write_bool(const FunctionCallbackInfo<Value>& args)
 		MSG_USER("write_double args wrong, length: %d\n", args.Length());
 		return;
 	}
-	Block_Buffer *buf= UnwrapBuffer(args.Holder());
+	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		bool value = args[0]->BooleanValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 		buf->write_bool(value);
@@ -348,7 +349,7 @@ void write_string(const FunctionCallbackInfo<Value>& args)
 		MSG_USER("write_string args wrong, length: %d\n", args.Length());
 		return;
 	}
-	Block_Buffer *buf= UnwrapBuffer(args.Holder());
+	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		String::Utf8Value str(args[0]);
 		const char* cstr = ToCString(str);
@@ -366,7 +367,7 @@ void pop_buf(const FunctionCallbackInfo<Value>& args) {
 		buf = GAME_MANAGER->pop_block_buffer();
 	}
 	if (buf) {
-		args.GetReturnValue().Set(WrapBuffer(args.GetIsolate(), buf));
+		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
 	} else {
 		//设置对象为空
 		args.GetReturnValue().SetNull();
@@ -378,7 +379,7 @@ void push_buf(const FunctionCallbackInfo<Value>& args) {
 		MSG_USER("process_login_block args wrong, length: %d\n", args.Length());
 	}
 
-	Block_Buffer *buf= UnwrapBuffer(args[0]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
+	Block_Buffer *buf= unwrap_buffer(args[0]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
 	if (buf) {
 		if (args.Length() == 2) {
 			GAME_GATE_SERVER->push_block(args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0), buf);

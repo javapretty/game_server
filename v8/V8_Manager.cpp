@@ -73,7 +73,7 @@ int V8_Manager::js_load_player_data(Block_Buffer &buf) {
 	Local<Function> js_func = Local<Function>::Cast(func_value);
 
 	// Invoke the process function, giving the global object as 'this'
-	Local<Object> buf_obj = WrapBuffer(isolate_, &buf);
+	Local<Object> buf_obj = wrap_buffer(isolate_, &buf);
 	const int argc = 1;
 	Local<Value> argv[argc] = {buf_obj};
 	Local<Value> result;
