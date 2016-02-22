@@ -3,21 +3,35 @@ require('message.js');
 require('player.js');
 require('mail.js');
 
-while (1) {	
-	var buf = pop_buffer(true);
-	if (buf == null) {
-		sleep();
-		continue;	
+while (true) {
+	var all_empty = true;
+	var buffer = pop_buffer(true);
+	if (buffer != null) {
+		all_empty = false;
+		process_client_buffer(buffer);
 	}
 	
-	var gate_cid = buf.read_int32();
-	var len = buf.read_int16();
-	var msg_id = buf.read_int32();
-	var status = buf.read_int32();
-	var player_cid = buf.read_int32();
+	buffer = get_player_data_buffer();
+	if (buffer != null) {
+		all_empty = false;
+		load_data(buffer);
+	}
+	
+	if (all_empty) {
+		sleep();
+		continue;
+	}
+}
+
+function process_client_buffer(buffer) {
+	var gate_cid = buffer.read_int32();
+	var len = buffer.read_int16();
+	var msg_id = buffer.read_int32();
+	var status = buffer.read_int32();
+	var player_cid = buffer.read_int32();
 	
 	if (msg_id == msg_req.REQ_FETCH_ROLE_INFO || msg_id == msg_req.REQ_CREATE_ROLE || msg_id == msg_req.SYNC_GATE_GAME_PLAYER_SIGNOUT) {
-		process_login_buffer(buf, gate_cid, player_cid, msg_id);
+		process_login_buffer(buffer, gate_cid, player_cid, msg_id);
 	} else {
 		var player = get_player(gate_cid, player_cid);
 		if (player) {
@@ -27,19 +41,18 @@ while (1) {
 				fetch_mail_info(player);
 				break;
 			case msg_req.REQ_PICKUP_MAIL:
-				pickup_mail(player, buf);
+				pickup_mail(player, buffer);
 				break;
 			case msg_req.REQ_DEL_MAIL:
-				delete_mail(player, buf);
+				delete_mail(player, buffer);
 				break;
 			case msg_req.REQ_SEND_MAIL:
-				send_mail(player, buf);
+				send_mail(player, buffer);
 				break;
 			default:
 				break;
 			}
 		}
 	}
-	
-	push_buffer(buf, gate_cid);
+	push_buffer(buffer, gate_cid);
 }

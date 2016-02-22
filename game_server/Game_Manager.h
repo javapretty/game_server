@@ -67,6 +67,9 @@ public:
 	int push_game_master_data(Block_Buffer *buf);
 	int push_self_loop_message(Block_Buffer &msg_buf);
 
+	int push_player_data(Block_Buffer *buf);
+	Block_Buffer* pop_player_data(void);
+
 	/// 消息处理
 	int process_list();
 	void process_drop_gate_cid(int gate_cid);
@@ -136,6 +139,7 @@ private:
 	Data_List game_db_data_list_;						///db-->game
 	Data_List game_master_data_list_;				///master-->game
 	Data_List self_loop_block_list_; 				///self_loop_block_list
+	Data_List player_data_list_; 						//玩家登录数据
 
 	Server_Info game_gate_server_info_;
 
@@ -231,6 +235,15 @@ inline int Game_Manager::push_self_loop_message(Block_Buffer &msg_buf) {
 	buf->copy(&msg_buf);
 	self_loop_block_list_.push_back(buf);
 	return 0;
+}
+
+inline int Game_Manager::push_player_data(Block_Buffer *buf) {
+	player_data_list_.push_back(buf);
+	return 0;
+}
+
+inline Block_Buffer* Game_Manager::pop_player_data(void) {
+	return player_data_list_.pop_front();
 }
 
 inline const Time_Value &Game_Manager::tick_time(void) {

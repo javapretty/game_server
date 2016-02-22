@@ -26,6 +26,8 @@ Local<Context> create_v8_context(Isolate* isolate) {
 			FunctionTemplate::New(isolate, pop_buffer));
 	global->Set(String::NewFromUtf8(isolate, "push_buffer", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, push_buffer));
+	global->Set(String::NewFromUtf8(isolate, "get_player_data_buffer", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, get_player_data_buffer));
 	global->Set(String::NewFromUtf8(isolate, "process_login_buffer", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, process_login_buffer));
 	global->Set(String::NewFromUtf8(isolate, "get_player", NewStringType::kNormal).ToLocalChecked(),

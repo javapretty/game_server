@@ -15,6 +15,7 @@
 
 using namespace v8;
 
+class Block_Buffer;
 class ArrayBufferAllocator : public ArrayBuffer::Allocator {
  public:
   virtual void* Allocate(size_t length) {
@@ -32,7 +33,7 @@ public:
 	int init(void);
 	int fini(void);
 
-	int js_load_player_data(Block_Buffer &buf);
+	int js_load_player_data(Block_Buffer *buf);
 
 private:
 	V8_Manager(void);
@@ -45,7 +46,6 @@ private:
 	Platform* platform_;
 	Isolate* isolate_;
 	Global<Context> context_;
-	Global<Function> load_data_;
 };
 
 #define V8_MANAGER V8_Manager::instance()

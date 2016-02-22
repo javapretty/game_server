@@ -5,7 +5,6 @@
 
 #include "Common_Func.h"
 #include "Game_Manager.h"
-#include "V8_Manager.h"
 
 Game_Player::Game_Player(void):
   is_register_timer_(0)
@@ -59,7 +58,7 @@ int Game_Player::load_player(Player_Data &player_data) {
 	player_data_.mail_info.serialize(player_buffer_);
 	bag_.load_data(player_data);
 
-	V8_MANAGER->js_load_player_data(player_buffer_);
+	GAME_MANAGER->push_player_data(&player_buffer_);
 	return 0;
 }
 

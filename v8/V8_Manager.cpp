@@ -45,8 +45,8 @@ int V8_Manager::init(void) {
 	context_.Reset(isolate_, context);
 	//进入V8执行环境内部
 	Context::Scope context_scope(context);
-
 	run_script(isolate_, "js/server.js");
+
 	return 0;
 }
 
@@ -54,14 +54,13 @@ int V8_Manager::fini(void) {
 	//释放V8资源
 	isolate_->LowMemoryNotification();
 	context_.Reset();
-	load_data_.Reset();
 	V8::Dispose();
 	V8::ShutdownPlatform();
 	delete platform_;
 	return 0;
 }
 
-int V8_Manager::js_load_player_data(Block_Buffer &buf) {
+int V8_Manager::js_load_player_data(Block_Buffer *buf) {
 	//执行V8代码前，必须先进入V8的Isolate，初始化V8运行环境
 	Isolate::Scope isolate_scope(isolate_);
 	HandleScope handle_scope(isolate_);
@@ -79,7 +78,7 @@ int V8_Manager::js_load_player_data(Block_Buffer &buf) {
 
 	// Invoke the process function, giving the global object as 'this'
 	TryCatch try_catch(isolate_);
-	Local<Object> buf_obj = wrap_buffer(isolate_, &buf);
+	Local<Object> buf_obj = wrap_buffer(isolate_, buf);
 	const int argc = 1;
 	Local<Value> argv[argc] = {buf_obj};
 	Local<Value> result;
