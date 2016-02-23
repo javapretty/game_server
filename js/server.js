@@ -13,10 +13,10 @@ while (true) {
 		process_client_buffer(buffer);
 	}
 	
-	buffer = get_player_data_buffer();
+	buffer = get_player_data();
 	if (buffer != null) {
 		all_empty = false;
-		load_data(buffer);
+		load_player_data(buffer);
 	}
 	
 	if (all_empty) {

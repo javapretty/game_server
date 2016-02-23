@@ -55,9 +55,10 @@ int Game_Player::load_player(Player_Data &player_data) {
 	GAME_MANAGER->logining_map().erase(player_data.game_player_info.account);
 	player_data_ = player_data;
 	player_data_.role_id = player_data_.game_player_info.role_id;
-	player_data_.mail_info.serialize(player_buffer_);
 	bag_.load_data(player_data);
 
+	player_data_.game_player_info.serialize(player_buffer_);
+	player_data_.mail_info.serialize(player_buffer_);
 	GAME_MANAGER->push_player_data(&player_buffer_);
 	return 0;
 }

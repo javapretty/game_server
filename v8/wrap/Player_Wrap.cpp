@@ -45,16 +45,6 @@ Game_Player *unwrap_player(Local<Object> obj) {
 	return static_cast<Game_Player*>(ptr);
 }
 
-void get_player_data_buffer(const FunctionCallbackInfo<Value>& args) {
-	Block_Buffer *buf = GAME_MANAGER->pop_player_data();
-	if (buf) {
-		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
-	} else {
-		//设置对象为空
-		args.GetReturnValue().SetNull();
-	}
-}
-
 void process_login_buffer(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 4) {
 		MSG_USER("process_login_block args wrong, length: %d\n", args.Length());
@@ -90,6 +80,16 @@ void process_login_buffer(const FunctionCallbackInfo<Value>& args) {
 	}
 	default:
 		break;
+	}
+}
+
+void get_player_data(const FunctionCallbackInfo<Value>& args) {
+	Block_Buffer *buf = GAME_MANAGER->pop_player_data();
+	if (buf) {
+		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
+	} else {
+		//设置对象为空
+		args.GetReturnValue().SetNull();
 	}
 }
 
