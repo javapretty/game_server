@@ -3,17 +3,6 @@ ArrayBuffer::Contents contents = buffer->GetContents();
 memcpy(contents.Data(), <你的C++数据>);
 Local<Uint8Array> typeArray =TypedArray::New(buffer, <buffer里的offset，填0，单位：字节>, <字节数>);
 
-
-int Mail::fetch_mail_info(void) {
-	Block_Buffer buf;
-	MSG_520200 msg;
-  for (Mail_Info::Mail_Map::iterator iter = mail_info_.mail_map.begin(); iter != mail_info_.mail_map.end(); ++iter) {
-    	msg.mail_detail_vec.push_back(iter->second);
-    }
-  msg.serialize(buf);
-  return player_->respond_success_result(RES_FETCH_MAIL_INFO, &buf);
-}
-
 int Mail::pickup_mail(MSG_120201 &msg) {
 	Block_Buffer res_buf;
 	MSG_520201 res_msg;

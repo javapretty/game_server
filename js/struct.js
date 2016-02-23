@@ -13,33 +13,33 @@ function Mail_Detail() {
 	this.gold = 0;					//元宝
 	
 	this.serialize = function(buffer) {
-		buffer.write_int8(pickup);
-		buffer.write_int32(mail_id);
-		buffer.write_int32(send_time);
-		buffer.write_int32(sender_type);
-		buffer.write_int64(sender_id);
-		buffer.write_string(sender_name);
-		buffer.write_string(mail_title);
-		buffer.write_string(mail_content);
-		buffer.write_int32(bind_copper);
-		buffer.write_int32(copper);
-		buffer.write_int32(bind_gold);
-		buffer.write_int32(gold);
+		buffer.write_int8(this.pickup);
+		buffer.write_int32(this.mail_id);
+		buffer.write_int32(this.send_time);
+		buffer.write_int32(this.sender_type);
+		buffer.write_int64(this.sender_id);
+		buffer.write_string(this.sender_name);
+		buffer.write_string(this.mail_title);
+		buffer.write_string(this.mail_content);
+		buffer.write_int32(this.bind_copper);
+		buffer.write_int32(this.copper);
+		buffer.write_int32(this.bind_gold);
+		buffer.write_int32(this.gold);
 	}
 
 	this.deserialize = function(buffer) {
-		pickup = buffer.read_int8();
-		mail_id = buffer.read_int32();
-		send_time = buffer.read_int32();
-		sender_type = buffer.read_int32();
-		sender_id = buffer.read_int64();
-		sender_name = buffer.read_string();
-		mail_title = buffer.read_string();
-		mail_content = buffer.read_string();
-		bind_copper = buffer.read_int32();
-		copper = buffer.read_int32();
-		bind_gold = buffer.read_int32();
-		gold = buffer.read_int32();
+		this.pickup = buffer.read_int8();
+		this.mail_id = buffer.read_int32();
+		this.send_time = buffer.read_int32();
+		this.sender_type = buffer.read_int32();
+		this.sender_id = buffer.read_int64();
+		this.sender_name = buffer.read_string();
+		this.mail_title = buffer.read_string();
+		this.mail_content = buffer.read_string();
+		this.bind_copper = buffer.read_int32();
+		this.copper = buffer.read_int32();
+		this.bind_gold = buffer.read_int32();
+		this.gold = buffer.read_int32();
     };
 }
 
@@ -50,13 +50,13 @@ function Mail_Info() {
 	this.is_change = false;			//邮件数据是否改变
 	
 	this.serialize = function(buffer) {
-		buffer.write_int64(role_id);
-		buffer.write_int32(total_count);
-		buffer.write_uint16(mail_map.size());
-		mail_map.each(function(key,value,index) {
+		buffer.write_int64(this.role_id);
+		buffer.write_int32(this.total_count);
+		buffer.write_uint16(this.mail_map.size());
+		this.mail_map.each(function(key,value,index) {
 			value.serialize(buffer);
      	});
-		buffer.write_bool(is_change);
+		buffer.write_bool(this.is_change);
 	}
 	
 	this.deserialize = function(buffer) {
