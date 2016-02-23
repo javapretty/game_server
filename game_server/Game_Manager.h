@@ -69,6 +69,8 @@ public:
 
 	int push_player_data(Block_Buffer *buf);
 	Block_Buffer* pop_player_data(void);
+	int push_drop_player_cid(int cid);
+	int pop_drop_player_cid(void);
 
 	/// 消息处理
 	int process_list();
@@ -139,7 +141,9 @@ private:
 	Data_List game_db_data_list_;						///db-->game
 	Data_List game_master_data_list_;				///master-->game
 	Data_List self_loop_block_list_; 				///self_loop_block_list
-	Data_List player_data_list_; 						//玩家登录数据
+
+	Data_List player_data_list_; 						//玩家数据,传送给js层
+	Int_List drop_player_cid_list_;					//掉线的玩家cid列表
 
 	Server_Info game_gate_server_info_;
 
@@ -244,6 +248,18 @@ inline int Game_Manager::push_player_data(Block_Buffer *buf) {
 
 inline Block_Buffer* Game_Manager::pop_player_data(void) {
 	return player_data_list_.pop_front();
+}
+
+inline int Game_Manager::push_drop_player_cid(int cid) {
+	drop_player_cid_list_.push_back(cid);
+	return 0;
+}
+
+inline int Game_Manager::pop_drop_player_cid(void) {
+	if (drop_player_cid_list_.empty()) {
+		return 0;
+	}
+	return drop_player_cid_list_.pop_front();
 }
 
 inline const Time_Value &Game_Manager::tick_time(void) {

@@ -24,6 +24,7 @@ public:
 	int respond_error_result(int msg_id, int err, Block_Buffer *buf = 0);
 
 	Player_Data const &player_data(void) const { return player_data_; }
+	Block_Buffer *player_data_buffer(void) { return player_data_buffer_; }
 	Game_Player_Info const &game_player_info(void) const { return player_data_.game_player_info; }
 	Mail_Info &mail_info(void) { return player_data_.mail_info; }
 	Bag& bag(void) { return bag_; }
@@ -39,14 +40,13 @@ public:
 	int sync_signout_to_master(void);
 
 	int tick(Time_Value &now);
+	int link_close(void);
 	void set_recycle(void);
 	int recycle_status(void);
 	int recycle_tick(const Time_Value &now);
 
 	int register_timer(void);
 	int unregister_timer(void);
-
-	int link_close(void);
 
 	int login_success(void);
 	int respond_role_login(void);
@@ -60,7 +60,7 @@ private:
 	bool is_register_timer_;
 	Cid_Info cid_info_;		///登录信息，包括gate_cid和player_cid
 	Player_Data player_data_;
-	Block_Buffer player_buffer_;
+	Block_Buffer *player_data_buffer_;
 	Recycle_Tick recycle_tick_;
 	Time_Value last_save_timestamp_;
 
@@ -74,21 +74,6 @@ inline void Game_Player::set_cid_info(Cid_Info &cid_info) {
 
 inline Cid_Info &Game_Player::cid_info(void) {
 	return cid_info_;
-}
-
-inline int Game_Player::link_close() {
-	if (recycle_tick_.status_ == Recycle_Tick::RECYCLE) return 0;
-
-	this->set_recycle();
-	return 0;
-}
-
-inline void Game_Player::set_recycle(void) {
-	recycle_tick_.set(Recycle_Tick::RECYCLE);
-}
-
-inline int Game_Player::recycle_status(void) {
-	return recycle_tick_.status_;
 }
 
 #endif /* GAME_PLAYER_H_ */

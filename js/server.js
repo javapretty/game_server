@@ -23,6 +23,15 @@ while (true) {
 		player_map.put(player.cid, player);
 	}
 	
+	var cid = get_drop_player_cid();
+	if (cid > 0) {
+		all_empty = false;
+		var player = player_map.get(cid);
+		if (player) {
+			player.save_player_data();
+		}
+	}
+	
 	if (all_empty) {
 		sleep();
 		continue;

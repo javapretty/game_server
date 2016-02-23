@@ -19,7 +19,9 @@ Game_Player *unwrap_player(Local<Object> obj);
 
 void process_login_buffer(const FunctionCallbackInfo<Value>& args);
 void get_player_data(const FunctionCallbackInfo<Value>& args);
+void get_drop_player_cid(const FunctionCallbackInfo<Value>& args);
 void get_player(const FunctionCallbackInfo<Value>& args);
+void get_data_buffer(const FunctionCallbackInfo<Value>& args);
 void respond_success_result(const FunctionCallbackInfo<Value>& args);
 void respond_error_result(const FunctionCallbackInfo<Value>& args);
 

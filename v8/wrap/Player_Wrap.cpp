@@ -24,6 +24,9 @@ Local<Object> wrap_player(Isolate* isolate, Game_Player *player) {
 	player_obj->SetInternalField(0, player_ptr);
 
 	// 为当前对象设置其对外函数接口
+	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "get_data_buffer", NewStringType::kNormal).ToLocalChecked(),
+		                    FunctionTemplate::New(isolate, get_data_buffer)->GetFunction()) ;
+
 	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "respond_success_result", NewStringType::kNormal).ToLocalChecked(),
 	                    FunctionTemplate::New(isolate, respond_success_result)->GetFunction()) ;
 
@@ -87,6 +90,11 @@ void get_player_data(const FunctionCallbackInfo<Value>& args) {
 	}
 }
 
+void get_drop_player_cid(const FunctionCallbackInfo<Value>& args) {
+	int cid = GAME_MANAGER->pop_drop_player_cid();
+	args.GetReturnValue().Set(cid);
+}
+
 void get_player(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 2) {
 		MSG_USER("get_player args wrong, length: %d\n", args.Length());
@@ -106,6 +114,23 @@ void get_player(const FunctionCallbackInfo<Value>& args) {
 		msg_buf.make_player_message(ACTIVE_DISCONNECT, ERROR_CLIENT_PARAM, player_cid);
 		msg_buf.finish_message();
 		GAME_MANAGER->send_to_gate(gate_cid, msg_buf);
+	}
+}
+
+void get_data_buffer(const FunctionCallbackInfo<Value>& args) {
+	Game_Player *player = unwrap_player(args.Holder());
+	if (!player) {
+		args.GetReturnValue().SetNull();
+		return;
+	}
+
+	Block_Buffer *buf = player->player_data_buffer();
+	if (buf) {
+		buf->reset();
+		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
+	} else {
+		//设置对象为空
+		args.GetReturnValue().SetNull();
 	}
 }
 

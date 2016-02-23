@@ -7,7 +7,8 @@
 #include "Game_Manager.h"
 
 Game_Player::Game_Player(void):
-  is_register_timer_(0)
+  is_register_timer_(0),
+  player_data_buffer_(0)
 { }
 
 Game_Player::~Game_Player(void) { }
@@ -56,12 +57,6 @@ int Game_Player::load_player(Player_Data &player_data) {
 	player_data_ = player_data;
 	player_data_.role_id = player_data_.game_player_info.role_id;
 	bag_.load_data(player_data);
-
-	player_buffer_.write_int32(cid_info_.gate_cid);
-	player_buffer_.write_int32(cid_info_.player_cid);
-	player_data_.game_player_info.serialize(player_buffer_);
-	player_data_.mail_info.serialize(player_buffer_);
-	GAME_MANAGER->push_player_data(&player_buffer_);
 	return 0;
 }
 
@@ -93,6 +88,13 @@ int Game_Player::sign_in(std::string account) {
 	MSG_DEBUG("player sign in game_server. account=[%s], gate_cid = %d, player_cid = %d, role_id=%ld, name=%s",
 			account.c_str(), cid_info_.gate_cid, cid_info_.player_cid, player_data_.game_player_info.role_id, player_data_.game_player_info.role_name.c_str());
 
+	player_data_buffer_ = GAME_MANAGER->pop_block_buffer();
+	player_data_buffer_->write_int32(cid_info_.gate_cid);
+	player_data_buffer_->write_int32(cid_info_.player_cid);
+	player_data_.game_player_info.serialize(*player_data_buffer_);
+	player_data_.mail_info.serialize(*player_data_buffer_);
+	GAME_MANAGER->push_player_data(player_data_buffer_);
+
 	login_success();
 	register_timer();
 	sync_signin_to_master();
@@ -102,8 +104,11 @@ int Game_Player::sign_in(std::string account) {
 }
 
 int Game_Player::sign_out(void) {
-	Time_Value now = GAME_MANAGER->tick_time();
+	player_data_.game_player_info.deserialize(*player_data_buffer_);
+	player_data_.mail_info.deserialize(*player_data_buffer_);
+	GAME_MANAGER->push_block_buffer(player_data_buffer_);
 
+	Time_Value now = GAME_MANAGER->tick_time();
 	this->player_data_.game_player_info.last_sign_out_time = now.sec();
 
 	save_player(true);
@@ -195,6 +200,24 @@ int Game_Player::respond_role_login(void) {
 	GAME_MANAGER->send_to_gate(cid_info_.gate_cid, buf);
 
 	return 0;
+}
+
+int Game_Player::link_close() {
+	if (recycle_tick_.status_ == Recycle_Tick::RECYCLE) return 0;
+
+	this->set_recycle();
+	return 0;
+}
+
+void Game_Player::set_recycle(void) {
+	recycle_tick_.set(Recycle_Tick::RECYCLE);
+
+	int cid = cid_info_.gate_cid * 10000 + cid_info_.player_cid;
+	GAME_MANAGER->push_drop_player_cid(cid);
+}
+
+int Game_Player::recycle_status(void) {
+	return recycle_tick_.status_;
 }
 
 int Game_Player::recycle_tick(const Time_Value &now) {

@@ -18,4 +18,14 @@ function Player() {
 		this.player_data.mail_info.deserialize(buffer);	
 		print('------load_data,role_id:', this.player_data.player_info.role_id, " role_name:", this.player_data.player_info.role_name);
 	}
+	
+	this.save_player_data = function() {
+		var buffer = this.cplayer.get_data_buffer();
+		if (buffer == null) {
+			return;
+		}
+		this.player_data.player_info.serialize(buffer);
+		this.player_data.mail_info.serialize(buffer);
+		print('------save_data,role_id:', this.player_data.player_info.role_id, " role_name:", this.player_data.player_info.role_name);
+	}
 }
