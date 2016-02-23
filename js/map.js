@@ -128,6 +128,6 @@ function testMap(){
     var s ="";
     m.each(function(key,value,index){
         s += index+":"+ key+"="+value+"\n";
-     });
+    	});
     print(s);
 }

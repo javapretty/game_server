@@ -1,5 +1,7 @@
 require('error.js');
 require('message.js');
+require('map.js');
+require('struct.js');
 require('player.js');
 require('mail.js');
 
