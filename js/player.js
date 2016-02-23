@@ -1,13 +1,21 @@
-var player_data = new Object();
-player_data.player_info = new Player_Info();
-player_data.mail_info = new Mail_Info();
+function Player() {
+	this.cid = 0;
+	this.cplayer = null;
+	this.player_data = new Object();
+	this.player_data.player_info = new Player_Info();
+	this.player_data.mail_info = new Mail_Info();
 
-function load_player_data(buffer) {
-	if (buffer == null) {
-		return;
-	}
+	this.load_player_data = function(buffer) {
+		if (buffer == null) {
+			return;
+		}
 	
-	player_data.player_info.deserialize(buffer);
-	player_data.mail_info.deserialize(buffer);	
-	print('------load_data,role_id:', player_data.player_info.role_id, " role_name:", player_data.player_info.role_name);
+		var gate_cid = buffer.read_int32();
+		var player_cid = buffer.read_int32();
+		this.cid = gate_cid * 10000 + player_cid;
+		this.cplayer = get_player(gate_cid, player_cid);
+		this.player_data.player_info.deserialize(buffer);
+		this.player_data.mail_info.deserialize(buffer);	
+		print('------load_data,role_id:', this.player_data.player_info.role_id, " role_name:", this.player_data.player_info.role_name);
+	}
 }

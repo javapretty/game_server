@@ -57,6 +57,8 @@ int Game_Player::load_player(Player_Data &player_data) {
 	player_data_.role_id = player_data_.game_player_info.role_id;
 	bag_.load_data(player_data);
 
+	player_buffer_.write_int32(cid_info_.gate_cid);
+	player_buffer_.write_int32(cid_info_.player_cid);
 	player_data_.game_player_info.serialize(player_buffer_);
 	player_data_.mail_info.serialize(player_buffer_);
 	GAME_MANAGER->push_player_data(&player_buffer_);

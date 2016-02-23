@@ -22,7 +22,5 @@ void get_player_data(const FunctionCallbackInfo<Value>& args);
 void get_player(const FunctionCallbackInfo<Value>& args);
 void respond_success_result(const FunctionCallbackInfo<Value>& args);
 void respond_error_result(const FunctionCallbackInfo<Value>& args);
-void role_id(const FunctionCallbackInfo<Value>& args);
-void role_name(const FunctionCallbackInfo<Value>& args);
 
 #endif /* PLAYER_WRAP_H_ */

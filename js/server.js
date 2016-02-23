@@ -5,6 +5,8 @@ require('struct.js');
 require('player.js');
 require('mail.js');
 
+var player_map = new Map();
+
 while (true) {
 	var all_empty = true;
 	var buffer = pop_buffer(true);
@@ -16,7 +18,9 @@ while (true) {
 	buffer = get_player_data();
 	if (buffer != null) {
 		all_empty = false;
-		load_player_data(buffer);
+		var player = new Player();
+		player.load_player_data(buffer);
+		player_map.put(player.cid, player);
 	}
 	
 	if (all_empty) {
@@ -35,9 +39,9 @@ function process_client_buffer(buffer) {
 	if (msg_id == msg_req.REQ_FETCH_ROLE_INFO || msg_id == msg_req.REQ_CREATE_ROLE || msg_id == msg_req.SYNC_GATE_GAME_PLAYER_SIGNOUT) {
 		process_login_buffer(buffer, gate_cid, player_cid, msg_id);
 	} else {
-		var player = get_player(gate_cid, player_cid);
+		var cid = gate_cid * 10000 + player_cid;
+		var player = player_map.get(cid);
 		if (player) {
-			print('find game player success, role_id:', player.role_id(), " role_name:", player.role_name());
 			switch(msg_id) {
 			case msg_req.REQ_FETCH_MAIL_INFO:
 				fetch_mail_info(player);
@@ -54,6 +58,8 @@ function process_client_buffer(buffer) {
 			default:
 				break;
 			}
+		} else {
+			print('find game player wrong, gate_cid:', gate_cid, " player_cid:", player_cid, " msg_id:", msg_id);
 		}
 	}
 	push_buffer(buffer, gate_cid);

@@ -30,12 +30,6 @@ Local<Object> wrap_player(Isolate* isolate, Game_Player *player) {
 	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "respond_error_result", NewStringType::kNormal).ToLocalChecked(),
 	                    FunctionTemplate::New(isolate, respond_error_result)->GetFunction()) ;
 
-	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "role_id", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, role_id)->GetFunction()) ;
-
-	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "role_name", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, role_name)->GetFunction()) ;
-
 	return handle_scope.Escape(player_obj);
 }
 
@@ -141,23 +135,4 @@ void respond_error_result(const FunctionCallbackInfo<Value>& args) {
 	int msg_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int error_code = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	player->respond_error_result(msg_id, error_code);
-}
-
-void role_id(const FunctionCallbackInfo<Value>& args) {
-	Game_Player *player = unwrap_player(args.Holder());
-	if (!player) {
-		return;
-	}
-	double role_id = player->game_player_info().role_id;
-	args.GetReturnValue().Set(role_id);
-}
-
-void role_name(const FunctionCallbackInfo<Value>& args) {
-	Game_Player *player = unwrap_player(args.Holder());
-	if (!player) {
-		return;
-	}
-	std::string role_name = player->game_player_info().role_name;
-	Local<String> v8Str = String::NewFromUtf8(args.GetIsolate(), role_name.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
-	args.GetReturnValue().Set(v8Str);
 }
