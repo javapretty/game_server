@@ -5,12 +5,12 @@ MSG_400001::MSG_400001(void){
 	reset();
 }
 
-void MSG_400001::serialize(Block_Buffer & w) const {
-	w.write_string(module);
+void MSG_400001::serialize(Block_Buffer &buffer) const {
+	buffer.write_string(module);
 }
 
-int MSG_400001::deserialize(Block_Buffer & r) {
-	module = r.read_string();
+int MSG_400001::deserialize(Block_Buffer &buffer) {
+	module = buffer.read_string();
 	return 0;
 }
 

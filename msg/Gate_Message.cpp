@@ -5,18 +5,18 @@ MSG_112000::MSG_112000(void){
 	reset();
 }
 
-void MSG_112000::serialize(Block_Buffer & w) const {
-	w.write_int32(gate_port);
-	w.write_string(account);
-	w.write_string(session);
-	w.write_string(gate_ip);
+void MSG_112000::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(gate_port);
+	buffer.write_string(account);
+	buffer.write_string(session);
+	buffer.write_string(gate_ip);
 }
 
-int MSG_112000::deserialize(Block_Buffer & r) {
-	gate_port = r.read_int32();
-	account = r.read_string();
-	session = r.read_string();
-	gate_ip = r.read_string();
+int MSG_112000::deserialize(Block_Buffer &buffer) {
+	gate_port = buffer.read_int32();
+	account = buffer.read_string();
+	session = buffer.read_string();
+	gate_ip = buffer.read_string();
 	return 0;
 }
 
@@ -31,12 +31,12 @@ MSG_112001::MSG_112001(void){
 	reset();
 }
 
-void MSG_112001::serialize(Block_Buffer & w) const {
-	w.write_string(account);
+void MSG_112001::serialize(Block_Buffer &buffer) const {
+	buffer.write_string(account);
 }
 
-int MSG_112001::deserialize(Block_Buffer & r) {
-	account = r.read_string();
+int MSG_112001::deserialize(Block_Buffer &buffer) {
+	account = buffer.read_string();
 	return 0;
 }
 

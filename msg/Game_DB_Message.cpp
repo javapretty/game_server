@@ -5,10 +5,10 @@ MSG_150000::MSG_150000(void){
 	reset();
 }
 
-void MSG_150000::serialize(Block_Buffer & w) const {
+void MSG_150000::serialize(Block_Buffer &buffer) const {
 }
 
-int MSG_150000::deserialize(Block_Buffer & r) {
+int MSG_150000::deserialize(Block_Buffer &buffer) {
 	return 0;
 }
 
@@ -19,20 +19,20 @@ MSG_550000::MSG_550000(void){
 	reset();
 }
 
-void MSG_550000::serialize(Block_Buffer & w) const {
+void MSG_550000::serialize(Block_Buffer &buffer) const {
 	uint16_t __db_cache_vec_vec_size = db_cache_vec.size();
-	w.write_uint16(__db_cache_vec_vec_size);
+	buffer.write_uint16(__db_cache_vec_vec_size);
 	for(uint16_t i = 0; i < __db_cache_vec_vec_size; ++i) {
-		db_cache_vec[i].serialize(w);
+		db_cache_vec[i].serialize(buffer);
 	}
 
 }
 
-int MSG_550000::deserialize(Block_Buffer & r) {
-	uint16_t __db_cache_vec_vec_size = r.read_uint16();
+int MSG_550000::deserialize(Block_Buffer &buffer) {
+	uint16_t __db_cache_vec_vec_size = buffer.read_uint16();
 	Player_DB_Cache v;
 	for(uint16_t i = 0; i < __db_cache_vec_vec_size; ++i) {
-		if(v.deserialize(r))
+		if(v.deserialize(buffer))
 			return -1;
 		db_cache_vec.push_back(v);
 	}
@@ -48,12 +48,12 @@ MSG_150001::MSG_150001(void){
 	reset();
 }
 
-void MSG_150001::serialize(Block_Buffer & w) const {
-	account_info.serialize(w);
+void MSG_150001::serialize(Block_Buffer &buffer) const {
+	account_info.serialize(buffer);
 }
 
-int MSG_150001::deserialize(Block_Buffer & r) {
-	account_info.deserialize(r);
+int MSG_150001::deserialize(Block_Buffer &buffer) {
+	account_info.deserialize(buffer);
 	return 0;
 }
 
@@ -65,12 +65,12 @@ MSG_550001::MSG_550001(void){
 	reset();
 }
 
-void MSG_550001::serialize(Block_Buffer & w) const {
-	player_data.serialize(w);
+void MSG_550001::serialize(Block_Buffer &buffer) const {
+	player_data.serialize(buffer);
 }
 
-int MSG_550001::deserialize(Block_Buffer & r) {
-	player_data.deserialize(r);
+int MSG_550001::deserialize(Block_Buffer &buffer) {
+	player_data.deserialize(buffer);
 	return 0;
 }
 
@@ -82,12 +82,12 @@ MSG_150002::MSG_150002(void){
 	reset();
 }
 
-void MSG_150002::serialize(Block_Buffer & w) const {
-	player_info.serialize(w);
+void MSG_150002::serialize(Block_Buffer &buffer) const {
+	player_info.serialize(buffer);
 }
 
-int MSG_150002::deserialize(Block_Buffer & r) {
-	player_info.deserialize(r);
+int MSG_150002::deserialize(Block_Buffer &buffer) {
+	player_info.deserialize(buffer);
 	return 0;
 }
 
@@ -99,12 +99,12 @@ MSG_550002::MSG_550002(void){
 	reset();
 }
 
-void MSG_550002::serialize(Block_Buffer & w) const {
-	player_data.serialize(w);
+void MSG_550002::serialize(Block_Buffer &buffer) const {
+	player_data.serialize(buffer);
 }
 
-int MSG_550002::deserialize(Block_Buffer & r) {
-	player_data.deserialize(r);
+int MSG_550002::deserialize(Block_Buffer &buffer) {
+	player_data.deserialize(buffer);
 	return 0;
 }
 
@@ -116,12 +116,12 @@ MSG_150003::MSG_150003(void){
 	reset();
 }
 
-void MSG_150003::serialize(Block_Buffer & w) const {
-	player_data.serialize(w);
+void MSG_150003::serialize(Block_Buffer &buffer) const {
+	player_data.serialize(buffer);
 }
 
-int MSG_150003::deserialize(Block_Buffer & r) {
-	player_data.deserialize(r);
+int MSG_150003::deserialize(Block_Buffer &buffer) {
+	player_data.deserialize(buffer);
 	return 0;
 }
 
@@ -133,12 +133,12 @@ MSG_550003::MSG_550003(void){
 	reset();
 }
 
-void MSG_550003::serialize(Block_Buffer & w) const {
-	w.write_int64(role_id);
+void MSG_550003::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(role_id);
 }
 
-int MSG_550003::deserialize(Block_Buffer & r) {
-	role_id = r.read_int64();
+int MSG_550003::deserialize(Block_Buffer &buffer) {
+	role_id = buffer.read_int64();
 	return 0;
 }
 
@@ -150,14 +150,14 @@ MSG_150004::MSG_150004(void){
 	reset();
 }
 
-void MSG_150004::serialize(Block_Buffer & w) const {
-	w.write_int64(role_id);
-	mail_detail.serialize(w);
+void MSG_150004::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(role_id);
+	mail_detail.serialize(buffer);
 }
 
-int MSG_150004::deserialize(Block_Buffer & r) {
-	role_id = r.read_int64();
-	mail_detail.deserialize(r);
+int MSG_150004::deserialize(Block_Buffer &buffer) {
+	role_id = buffer.read_int64();
+	mail_detail.deserialize(buffer);
 	return 0;
 }
 

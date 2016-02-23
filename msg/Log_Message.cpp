@@ -5,22 +5,22 @@ MSG_180000::MSG_180000(void){
 	reset();
 }
 
-void MSG_180000::serialize(Block_Buffer & w) const {
-	w.write_int32(pid);
-	w.write_int64(tid);
-	w.write_uint8(log_type);
-	w.write_uint8(log_sub_type);
-	w.write_uint32(time);
-	w.write_string(log_str);
+void MSG_180000::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(pid);
+	buffer.write_int64(tid);
+	buffer.write_uint8(log_type);
+	buffer.write_uint8(log_sub_type);
+	buffer.write_uint32(time);
+	buffer.write_string(log_str);
 }
 
-int MSG_180000::deserialize(Block_Buffer & r) {
-	pid = r.read_int32();
-	tid = r.read_int64();
-	log_type = r.read_uint8();
-	log_sub_type = r.read_uint8();
-	time = r.read_uint32();
-	log_str = r.read_string();
+int MSG_180000::deserialize(Block_Buffer &buffer) {
+	pid = buffer.read_int32();
+	tid = buffer.read_int64();
+	log_type = buffer.read_uint8();
+	log_sub_type = buffer.read_uint8();
+	time = buffer.read_uint32();
+	log_str = buffer.read_string();
 	return 0;
 }
 
@@ -37,20 +37,20 @@ MSG_180001::MSG_180001(void){
 	reset();
 }
 
-void MSG_180001::serialize(Block_Buffer & w) const {
-	w.write_int64(role_id);
-	w.write_uint8(log_type);
-	w.write_uint8(log_sub_type);
-	w.write_string(file_name);
-	w.write_string(buf);
+void MSG_180001::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(role_id);
+	buffer.write_uint8(log_type);
+	buffer.write_uint8(log_sub_type);
+	buffer.write_string(file_name);
+	buffer.write_string(buf);
 }
 
-int MSG_180001::deserialize(Block_Buffer & r) {
-	role_id = r.read_int64();
-	log_type = r.read_uint8();
-	log_sub_type = r.read_uint8();
-	file_name = r.read_string();
-	buf = r.read_string();
+int MSG_180001::deserialize(Block_Buffer &buffer) {
+	role_id = buffer.read_int64();
+	log_type = buffer.read_uint8();
+	log_sub_type = buffer.read_uint8();
+	file_name = buffer.read_string();
+	buf = buffer.read_string();
 	return 0;
 }
 
@@ -66,14 +66,14 @@ MSG_185000::MSG_185000(void){
 	reset();
 }
 
-void MSG_185000::serialize(Block_Buffer & w) const {
-	w.write_int32(id);
-	w.write_string(name);
+void MSG_185000::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(id);
+	buffer.write_string(name);
 }
 
-int MSG_185000::deserialize(Block_Buffer & r) {
-	id = r.read_int32();
-	name = r.read_string();
+int MSG_185000::deserialize(Block_Buffer &buffer) {
+	id = buffer.read_int32();
+	name = buffer.read_string();
 	return 0;
 }
 
@@ -86,26 +86,26 @@ MSG_185001::MSG_185001(void){
 	reset();
 }
 
-void MSG_185001::serialize(Block_Buffer & w) const {
-	w.write_int64(role_id);
-	w.write_uint16(level);
-	w.write_uint32(login_time);
-	w.write_uint32(logout_time);
-	w.write_uint32(online_time);
-	w.write_string(role_name);
-	w.write_string(account);
-	w.write_string(client_ip);
+void MSG_185001::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(role_id);
+	buffer.write_uint16(level);
+	buffer.write_uint32(login_time);
+	buffer.write_uint32(logout_time);
+	buffer.write_uint32(online_time);
+	buffer.write_string(role_name);
+	buffer.write_string(account);
+	buffer.write_string(client_ip);
 }
 
-int MSG_185001::deserialize(Block_Buffer & r) {
-	role_id = r.read_int64();
-	level = r.read_uint16();
-	login_time = r.read_uint32();
-	logout_time = r.read_uint32();
-	online_time = r.read_uint32();
-	role_name = r.read_string();
-	account = r.read_string();
-	client_ip = r.read_string();
+int MSG_185001::deserialize(Block_Buffer &buffer) {
+	role_id = buffer.read_int64();
+	level = buffer.read_uint16();
+	login_time = buffer.read_uint32();
+	logout_time = buffer.read_uint32();
+	online_time = buffer.read_uint32();
+	role_name = buffer.read_string();
+	account = buffer.read_string();
+	client_ip = buffer.read_string();
 	return 0;
 }
 

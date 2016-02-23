@@ -24,11 +24,8 @@ struct Role_Info {
 	uint16_t level;
 
 	Role_Info(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -52,11 +49,8 @@ struct Item_Basic_Info {
 	uint8_t bind;/*是否绑定（0）不绑，（2）已绑 其他值非法*/
 
 	Item_Basic_Info(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 struct Money_Info {
@@ -70,11 +64,8 @@ struct Money_Info {
 	int32_t gold;
 
 	Money_Info(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 struct Mail_Detail {
@@ -98,11 +89,8 @@ struct Mail_Detail {
 	Money_Info money_info; //金钱信息
 
 	Mail_Detail(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 

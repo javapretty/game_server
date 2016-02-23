@@ -23,11 +23,8 @@ struct MSG_110000 {
 	std::string password;/*密码*/
 
 	MSG_110000(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -43,11 +40,8 @@ struct MSG_510000 {
 	std::string session;
 
 	MSG_510000(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -61,11 +55,8 @@ struct MSG_110001 {
 	std::string password;/*密码*/
 
 	MSG_110001(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -81,11 +72,8 @@ struct MSG_510001 {
 	std::string session;
 
 	MSG_510001(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 

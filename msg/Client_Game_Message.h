@@ -31,11 +31,8 @@ struct MSG_120001 {
 	int32_t server_num;
 
 	MSG_120001(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -51,11 +48,8 @@ struct MSG_520001 {
 	Role_Info role_info;
 
 	MSG_520001(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -75,11 +69,8 @@ struct MSG_120002 {
 	int32_t server_num;/*服*/
 
 	MSG_120002(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -91,11 +82,8 @@ struct MSG_520002 {
 	int64_t role_id;
 
 	MSG_520002(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -113,11 +101,8 @@ struct MSG_120100 {
 	uint32_t bag_type;/*背包类型 背包：10000 仓库：20000*/
 
 	MSG_120100(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -133,11 +118,8 @@ struct MSG_120101 {
 	uint16_t add_capacity;/*请求扩大的容量*/
 
 	MSG_120101(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -149,11 +131,8 @@ struct MSG_120102 {
 	std::vector<uint32_t> item_index_vec;/*指定格子中的物品被丢弃*/
 
 	MSG_120102(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -167,11 +146,8 @@ struct MSG_120103 {
 	uint32_t index_to;/**/
 
 	MSG_120103(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -185,11 +161,8 @@ struct MSG_120104 {
 	int16_t split_num;/*拆分出的数量*/
 
 	MSG_120104(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -201,11 +174,8 @@ struct MSG_120105 {
 	uint32_t bag_type;/*背包:10000 仓库:20000*/
 
 	MSG_120105(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -219,11 +189,8 @@ struct MSG_120106 {
 	uint32_t bag_type;/*背包类型*/
 
 	MSG_120106(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -237,11 +204,8 @@ struct MSG_120107 {
 	std::vector<uint32_t> item_index_vec;/*指定格子中的物品被出售*/
 
 	MSG_120107(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -257,11 +221,8 @@ struct MSG_520100 {
 	std::vector<Item_Basic_Info> item_info_vec;
 
 	MSG_520100(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -271,11 +232,8 @@ struct MSG_520100 {
 struct MSG_520101 {
 
 	MSG_520101(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -285,11 +243,8 @@ struct MSG_520101 {
 struct MSG_520102 {
 
 	MSG_520102(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -299,11 +254,8 @@ struct MSG_520102 {
 struct MSG_520103 {
 
 	MSG_520103(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -313,11 +265,8 @@ struct MSG_520103 {
 struct MSG_520104 {
 
 	MSG_520104(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -327,11 +276,8 @@ struct MSG_520104 {
 struct MSG_520106 {
 
 	MSG_520106(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -341,11 +287,8 @@ struct MSG_520106 {
 struct MSG_520107 {
 
 	MSG_520107(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -355,11 +298,8 @@ struct MSG_520107 {
 struct MSG_120200 {
 
 	MSG_120200(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -371,11 +311,8 @@ struct MSG_120201 {
 	int32_t mail_id; /*邮件ID,收取所有邮件附件时候id为0*/
 
 	MSG_120201(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -387,11 +324,8 @@ struct MSG_120202 {
 	int32_t mail_id;/*邮件ID,删除所有邮件时候id为0*/
 
 	MSG_120202(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -405,11 +339,8 @@ struct MSG_120203 {
 	Mail_Detail mail_detail;
 
 	MSG_120203(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -421,11 +352,8 @@ struct MSG_520200 {
 	std::vector<Mail_Detail> mail_detail_vec;
 
 	MSG_520200(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -437,11 +365,8 @@ struct MSG_520201 {
 	std::vector<int32_t> mail_id_vec;/*成功收取附件的邮件id*/
 
 	MSG_520201(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -453,11 +378,8 @@ struct MSG_520202 {
 	std::vector<int32_t> mail_id_vec;/*删除的邮件ID数组*/
 
 	MSG_520202(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -467,11 +389,8 @@ struct MSG_520202 {
 struct MSG_520203 {
 
 	MSG_520203(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 

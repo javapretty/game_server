@@ -20,11 +20,8 @@ struct MSG_160001 {
 	Master_Player_Info player_info;
 
 	MSG_160001(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 struct MSG_160002 {
@@ -32,11 +29,8 @@ struct MSG_160002 {
 	int64_t role_id;
 
 	MSG_160002(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 

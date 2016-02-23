@@ -34,11 +34,8 @@ struct MSG_180000 {
 	std::string log_str;/**/
 
 	MSG_180000(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -58,11 +55,8 @@ struct MSG_180001 {
 	std::string buf;/**/
 
 	MSG_180001(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -76,11 +70,8 @@ struct MSG_185000 {
 	std::string name;
 
 	MSG_185000(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
@@ -106,11 +97,8 @@ struct MSG_185001 {
 	uint32_t online_time;/*在线时长*/
 
 	MSG_185001(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 

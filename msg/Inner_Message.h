@@ -24,11 +24,8 @@ struct MSG_400001 {
 	std::string module;
 
 	MSG_400001(void);
-
-	void serialize(Block_Buffer & w) const;
-
-	int deserialize(Block_Buffer & r);
-
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 

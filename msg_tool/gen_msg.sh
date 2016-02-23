@@ -28,9 +28,9 @@ function do_vectorserialize()
 	while [ $# -gt 1 ]
     do		
 		echo -e "\tuint16_t ${1}_size = ${1}.size();" >> $_DST_FILE_C_
-		echo -e "\tw.write_uint16(${1}_size);" >> $_DST_FILE_C_
+		echo -e "\tbuffer.write_uint16(${1}_size);" >> $_DST_FILE_C_
 		echo -e "\tfor(uint16_t i = 0; i < ${1}_size; ++i) {" >> $_DST_FILE_C_
-		echo -e "\t\tw.${seriType}(${1}[i]);" >> $_DST_FILE_C_
+		echo -e "\t\tbuffer.${seriType}(${1}[i]);" >> $_DST_FILE_C_
 		echo -e "\t}\n" >> $_DST_FILE_C_
         shift
     done
@@ -43,9 +43,9 @@ function do_vectordeserialize()
 	shift
 	while [ $# -gt 1 ]
     do		
-		echo -e "\tuint16_t ${1}_size = r.read_uint16();" >> $_DST_FILE_C_
+		echo -e "\tuint16_t ${1}_size = buffer.read_uint16();" >> $_DST_FILE_C_
 		echo -e "\tfor(uint16_t i = 0; i < ${1}_size; ++i) {" >> $_DST_FILE_C_
-		echo -e "\t\t${seriType} v = r.${readType}();" >> $_DST_FILE_C_
+		echo -e "\t\t${seriType} v = buffer.${readType}();" >> $_DST_FILE_C_
 		echo -e "\t\t${1}.push_back(v);" >> $_DST_FILE_C_
 		echo -e "\t}" >> $_DST_FILE_C_
         shift
@@ -66,7 +66,7 @@ function do_serialize()
 	eval seriType=\$$#
     while [ $# -gt 1 ]
     do
-		echo -e "\tw.${seriType}(${1});" >> $_DST_FILE_C_
+		echo -e "\tbuffer.${seriType}(${1});" >> $_DST_FILE_C_
         shift
     done
 }
@@ -76,7 +76,7 @@ function do_deserialize()
 	eval seriType=\$$#
     while [ $# -gt 1 ]
     do
-		echo -e "\t${1} = r.${seriType}();" >> $_DST_FILE_C_
+		echo -e "\t${1} = buffer.${seriType}();" >> $_DST_FILE_C_
         shift
     done
 }
@@ -117,81 +117,81 @@ function do_genconstruct()
 function do_genserialize()
 {
 	#1.1.generate serialize function
-	echo -e "\nvoid $_STRUCT_NAME_::serialize(Block_Buffer & w) const {" >> $_DST_FILE_C_
+	echo -e "\nvoid $_STRUCT_NAME_::serialize(Block_Buffer &buffer) const {" >> $_DST_FILE_C_
 	if [ ${_STRUCT_NUMBER_FLAG_[0]} != 0 ];then
-		#echo -e "\tw.write_int8(${_STRUCT_NUMBERS_[0]});" >> $_DST_FILE_C_	
+		#echo -e "\tbuffer.write_int8(${_STRUCT_NUMBERS_[0]});" >> $_DST_FILE_C_	
 		_ARRAY_=(${_STRUCT_NUMBERS_[0]})
 		do_serialize "${_ARRAY_[@]}" write_int8
 	fi
 	
 	if [ ${_STRUCT_NUMBER_FLAG_[1]} != 0 ];then
-		#echo -e "\tw.write_int16(${_STRUCT_NUMBERS_[1]});" >> $_DST_FILE_C_
+		#echo -e "\tbuffer.write_int16(${_STRUCT_NUMBERS_[1]});" >> $_DST_FILE_C_
 		_ARRAY_=(${_STRUCT_NUMBERS_[1]})
 		do_serialize "${_ARRAY_[@]}" write_int16
 	fi
 	
 	if [ ${_STRUCT_NUMBER_FLAG_[2]} != 0 ];then
-		#echo -e "\tw.write_int32(${_STRUCT_NUMBERS_[2]});" >> $_DST_FILE_C_
+		#echo -e "\tbuffer.write_int32(${_STRUCT_NUMBERS_[2]});" >> $_DST_FILE_C_
 		_ARRAY_=(${_STRUCT_NUMBERS_[2]})
 		do_serialize "${_ARRAY_[@]}" write_int32
 	fi
 	
 	if [ ${_STRUCT_NUMBER_FLAG_[3]} != 0 ];then
-		#echo -e "\tw.write_int64(${_STRUCT_NUMBERS_[3]});" >> $_DST_FILE_C_
+		#echo -e "\tbuffer.write_int64(${_STRUCT_NUMBERS_[3]});" >> $_DST_FILE_C_
 		_ARRAY_=(${_STRUCT_NUMBERS_[3]})
 		do_serialize "${_ARRAY_[@]}" write_int64
 	fi
 	
 	if [ ${_STRUCT_NUMBER_FLAG_[4]} != 0 ];then
-		#echo -e "\tw.write_uint8(${_STRUCT_NUMBERS_[4]});" >> $_DST_FILE_C_
+		#echo -e "\tbuffer.write_uint8(${_STRUCT_NUMBERS_[4]});" >> $_DST_FILE_C_
 		_ARRAY_=(${_STRUCT_NUMBERS_[4]})
 		do_serialize "${_ARRAY_[@]}" write_uint8
 	fi
 	
 	if [ ${_STRUCT_NUMBER_FLAG_[5]} != 0 ];then
-		#echo -e "\tw.write_uint16(${_STRUCT_NUMBERS_[5]});" >> $_DST_FILE_C_
+		#echo -e "\tbuffer.write_uint16(${_STRUCT_NUMBERS_[5]});" >> $_DST_FILE_C_
 		_ARRAY_=(${_STRUCT_NUMBERS_[5]})
 		do_serialize "${_ARRAY_[@]}" write_uint16
 	fi
 	
 	if [ ${_STRUCT_NUMBER_FLAG_[6]} != 0 ];then
-		#echo -e "\tw.write_uint32(${_STRUCT_NUMBERS_[6]});" >> $_DST_FILE_C_
+		#echo -e "\tbuffer.write_uint32(${_STRUCT_NUMBERS_[6]});" >> $_DST_FILE_C_
 		_ARRAY_=(${_STRUCT_NUMBERS_[6]})
 		do_serialize "${_ARRAY_[@]}" write_uint32
 	fi
 	
 	if [ ${_STRUCT_NUMBER_FLAG_[7]} != 0 ];then
-		#echo -e "\tw.write_uint64(${_STRUCT_NUMBERS_[7]});" >> $_DST_FILE_C_
+		#echo -e "\tbuffer.write_uint64(${_STRUCT_NUMBERS_[7]});" >> $_DST_FILE_C_
 		_ARRAY_=(${_STRUCT_NUMBERS_[7]})
 		do_serialize "${_ARRAY_[@]}" write_uint64
 	fi
 	
 	if [ ${_STRUCT_NUMBER_FLAG_[8]} != 0 ];then
-		#echo -e "\tw.write_double(${_STRUCT_NUMBERS_[8]});" >> $_DST_FILE_C_
+		#echo -e "\tbuffer.write_double(${_STRUCT_NUMBERS_[8]});" >> $_DST_FILE_C_
 		_ARRAY_=(${_STRUCT_NUMBERS_[8]})
 		do_serialize "${_ARRAY_[@]}" write_double
 	fi
 	
 	if [ ${_STRUCT_NUMBER_FLAG_[9]} != 0 ];then
-		#echo -e "\tw.write_bool(${_STRUCT_NUMBERS_[9]});" >> $_DST_FILE_C_
+		#echo -e "\tbuffer.write_bool(${_STRUCT_NUMBERS_[9]});" >> $_DST_FILE_C_
 		_ARRAY_=(${_STRUCT_NUMBERS_[9]})
 		do_serialize "${_ARRAY_[@]}" write_bool
 	fi
 	
 	if [ ${_STRUCT_NUMBER_FLAG_[10]} != 0 ];then
-		#echo -e "\tw.write_string(${_STRUCT_NUMBERS_[10]});" >> $_DST_FILE_C_
+		#echo -e "\tbuffer.write_string(${_STRUCT_NUMBERS_[10]});" >> $_DST_FILE_C_
 		_ARRAY_=(${_STRUCT_NUMBERS_[10]})
 		do_serialize "${_ARRAY_[@]}" write_string
 	fi
 	
 	#special do Custom type 
 	if [ ${_STRUCT_NUMBER_FLAG_[11]} != 0 ];then
-		#echo -e "\tw.write_string(${_STRUCT_NUMBERS_[10]});" >> $_DST_FILE_C_
+		#echo -e "\tbuffer.write_string(${_STRUCT_NUMBERS_[10]});" >> $_DST_FILE_C_
 		_ARRAY_=(${_STRUCT_NUMBERS_[11]})
 		
 		for data in ${_ARRAY_[@]}  
 		do  
-			echo -e "\t${data}.serialize(w);" >> $_DST_FILE_C_
+			echo -e "\t${data}.serialize(buffer);" >> $_DST_FILE_C_
 		done
 	fi
 	
@@ -260,9 +260,9 @@ function do_genserialize()
 			while [ ${i} -lt ${#_ARRAY_[@]} ]
 			do
 				echo -e "\tuint16_t __${_ARRAY_[$i]}_vec_size = ${_ARRAY_[$i]}.size();" >> $_DST_FILE_C_
-				echo -e "\tw.write_uint16(__${_ARRAY_[$i]}_vec_size);" >> $_DST_FILE_C_
+				echo -e "\tbuffer.write_uint16(__${_ARRAY_[$i]}_vec_size);" >> $_DST_FILE_C_
 				echo -e "\tfor(uint16_t i = 0; i < __${_ARRAY_[$i]}_vec_size; ++i) {" >> $_DST_FILE_C_
-				echo -e "\t\t${_ARRAY_[$i]}[i].serialize(w);" >> $_DST_FILE_C_
+				echo -e "\t\t${_ARRAY_[$i]}[i].serialize(buffer);" >> $_DST_FILE_C_
 				echo -e "\t}\n" >> $_DST_FILE_C_
 				let i=i+2
 			done
@@ -276,7 +276,7 @@ function do_genserialize()
 function do_gendeserialize()
 {
 	#1.2.generate deserialize function
-	echo -e "\nint $_STRUCT_NAME_::deserialize(Block_Buffer & r) {" >> $_DST_FILE_C_
+	echo -e "\nint $_STRUCT_NAME_::deserialize(Block_Buffer &buffer) {" >> $_DST_FILE_C_
 	if [ ${_STRUCT_NUMBER_FLAG_[0]} != 0 ];then
 		_ARRAY_=(${_STRUCT_NUMBERS_[0]})
 		#do_deserialize 0 "${_ARRAY_[@]}" read_int8
@@ -344,12 +344,12 @@ function do_gendeserialize()
 	fi
 	
 	if [ ${_STRUCT_NUMBER_FLAG_[11]} != 0 ];then
-		#echo -e "\tw.write_string(${_STRUCT_NUMBERS_[10]});" >> $_DST_FILE_C_
+		#echo -e "\tbuffer.write_string(${_STRUCT_NUMBERS_[10]});" >> $_DST_FILE_C_
 		_ARRAY_=(${_STRUCT_NUMBERS_[11]})
 		
 		for data in ${_ARRAY_[@]}  
 		do  
-			echo -e "\t${data}.deserialize(r);" >> $_DST_FILE_C_
+			echo -e "\t${data}.deserialize(buffer);" >> $_DST_FILE_C_
 		done
 	fi
 	
@@ -418,10 +418,10 @@ function do_gendeserialize()
 			while [ ${i} -lt ${#_ARRAY_[@]} ]
 			do
 				let j=i+1
-				echo -e "\tuint16_t __${_ARRAY_[$i]}_vec_size = r.read_uint16();" >> $_DST_FILE_C_
+				echo -e "\tuint16_t __${_ARRAY_[$i]}_vec_size = buffer.read_uint16();" >> $_DST_FILE_C_
 				echo -e "\t${_ARRAY_[$j]} v;" >> $_DST_FILE_C_
 				echo -e "\tfor(uint16_t i = 0; i < __${_ARRAY_[$i]}_vec_size; ++i) {" >> $_DST_FILE_C_
-				echo -e "\t\tif(v.deserialize(r))" >> $_DST_FILE_C_
+				echo -e "\t\tif(v.deserialize(buffer))" >> $_DST_FILE_C_
 				echo -e "\t\t\treturn -1;" >> $_DST_FILE_C_
 				echo -e "\t\t${_ARRAY_[$i]}.push_back(v);" >> $_DST_FILE_C_
 				echo -e "\t}\n" >> $_DST_FILE_C_
@@ -601,9 +601,9 @@ function do_gencppfile()
 function do_genhfile()
 {
 	echo -e "\n\t${_STRUCT_NAME_}(void);" >> $_DST_FILE_H_ 
-	echo -e "\n\tvoid serialize(Block_Buffer & w) const;" >> $_DST_FILE_H_ 
-	echo -e "\n\tint deserialize(Block_Buffer & r);" >> $_DST_FILE_H_ 
-	echo -e "\n\tvoid reset(void);" >> $_DST_FILE_H_ 
+	echo -e "\tvoid serialize(Block_Buffer &buffer) const;" >> $_DST_FILE_H_ 
+	echo -e "\tint deserialize(Block_Buffer &buffer);" >> $_DST_FILE_H_ 
+	echo -e "\tvoid reset(void);" >> $_DST_FILE_H_ 
 	echo -e "};" >> $_DST_FILE_H_ 
 }
 

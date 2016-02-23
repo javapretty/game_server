@@ -5,12 +5,12 @@ MSG_111000::MSG_111000(void){
 	reset();
 }
 
-void MSG_111000::serialize(Block_Buffer & w) const {
-	w.write_int32(client_time);
+void MSG_111000::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(client_time);
 }
 
-int MSG_111000::deserialize(Block_Buffer & r) {
-	client_time = r.read_int32();
+int MSG_111000::deserialize(Block_Buffer &buffer) {
+	client_time = buffer.read_int32();
 	return 0;
 }
 
@@ -22,14 +22,14 @@ MSG_511000::MSG_511000(void){
 	reset();
 }
 
-void MSG_511000::serialize(Block_Buffer & w) const {
-	w.write_int32(client_time);
-	w.write_int32(server_time);
+void MSG_511000::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(client_time);
+	buffer.write_int32(server_time);
 }
 
-int MSG_511000::deserialize(Block_Buffer & r) {
-	client_time = r.read_int32();
-	server_time = r.read_int32();
+int MSG_511000::deserialize(Block_Buffer &buffer) {
+	client_time = buffer.read_int32();
+	server_time = buffer.read_int32();
 	return 0;
 }
 
@@ -42,14 +42,14 @@ MSG_111001::MSG_111001(void){
 	reset();
 }
 
-void MSG_111001::serialize(Block_Buffer & w) const {
-	w.write_string(account);
-	w.write_string(session);
+void MSG_111001::serialize(Block_Buffer &buffer) const {
+	buffer.write_string(account);
+	buffer.write_string(session);
 }
 
-int MSG_111001::deserialize(Block_Buffer & r) {
-	account = r.read_string();
-	session = r.read_string();
+int MSG_111001::deserialize(Block_Buffer &buffer) {
+	account = buffer.read_string();
+	session = buffer.read_string();
 	return 0;
 }
 
@@ -62,12 +62,12 @@ MSG_511001::MSG_511001(void){
 	reset();
 }
 
-void MSG_511001::serialize(Block_Buffer & w) const {
-	w.write_string(account);
+void MSG_511001::serialize(Block_Buffer &buffer) const {
+	buffer.write_string(account);
 }
 
-int MSG_511001::deserialize(Block_Buffer & r) {
-	account = r.read_string();
+int MSG_511001::deserialize(Block_Buffer &buffer) {
+	account = buffer.read_string();
 	return 0;
 }
 
