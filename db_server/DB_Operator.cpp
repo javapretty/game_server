@@ -422,10 +422,10 @@ int DB_Operator::load_mail_info(Mail_Info &mail_info) {
 		mail_detail.sender_name = obj[Mail_Fields::Mail_Detail::SENDER_NAME].valuestrsafe();
 		mail_detail.mail_title = obj[Mail_Fields::Mail_Detail::MAIL_TITLE].valuestrsafe();
 		mail_detail.mail_content = obj[Mail_Fields::Mail_Detail::MAIL_CONTENT].valuestrsafe();
-		mail_detail.money_info.copper = obj[Mail_Fields::Mail_Detail::COPPER].numberInt();
-		mail_detail.money_info.bind_copper = obj[Mail_Fields::Mail_Detail::BIND_COPPER].numberInt();
-		mail_detail.money_info.gold = obj[Mail_Fields::Mail_Detail::GOLD].numberInt();
-		mail_detail.money_info.bind_gold = obj[Mail_Fields::Mail_Detail::BIND_GOLD].numberInt();
+		mail_detail.copper = obj[Mail_Fields::Mail_Detail::COPPER].numberInt();
+		mail_detail.bind_copper = obj[Mail_Fields::Mail_Detail::BIND_COPPER].numberInt();
+		mail_detail.gold = obj[Mail_Fields::Mail_Detail::GOLD].numberInt();
+		mail_detail.bind_gold = obj[Mail_Fields::Mail_Detail::BIND_GOLD].numberInt();
 		mail_info.mail_map.insert(std::make_pair(mail_detail.mail_id, mail_detail));
 	}
 
@@ -444,10 +444,10 @@ int DB_Operator::save_mail_info(Mail_Info &mail_info) {
 				<< Mail_Fields::Mail_Detail::SENDER_NAME << iter->second.sender_name
 				<< Mail_Fields::Mail_Detail::MAIL_TITLE << iter->second.mail_title
 				<< Mail_Fields::Mail_Detail::MAIL_CONTENT << iter->second.mail_content
-				<< Mail_Fields::Mail_Detail::COPPER << iter->second.money_info.copper
-				<< Mail_Fields::Mail_Detail::BIND_COPPER<< iter->second.money_info.bind_copper
-				<< Mail_Fields::Mail_Detail::GOLD << iter->second.money_info.gold
-				<< Mail_Fields::Mail_Detail::BIND_GOLD << iter->second.money_info.bind_gold));
+				<< Mail_Fields::Mail_Detail::COPPER << iter->second.copper
+				<< Mail_Fields::Mail_Detail::BIND_COPPER<< iter->second.bind_copper
+				<< Mail_Fields::Mail_Detail::GOLD << iter->second.gold
+				<< Mail_Fields::Mail_Detail::BIND_GOLD << iter->second.bind_gold));
 	}
 
 	BSONObjBuilder set_builder;

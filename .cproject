@@ -47,7 +47,7 @@
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.956831052" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="LOCAL_DEBUG"/>
-									<listOptionValue builtIn="false" value="__cplusplus=201103L"/>
+									<listOptionValue builtIn="false" value=""/>
 								</option>
 								<option id="gnu.cpp.compiler.option.dialect.std.847613006" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.other.other.137227094" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 -std=c++11" valueType="string"/>

@@ -55,13 +55,13 @@ struct Item_Basic_Info {
 };
 struct Money_Info {
 
-	int32_t bind_copper;
-
 	int32_t copper;
 
-	int32_t bind_gold;
+	int32_t bind_copper;
 
 	int32_t gold;
+
+	int32_t bind_gold;
 
 	Money_Info(void);
 	void serialize(Block_Buffer &buffer) const;
@@ -70,9 +70,9 @@ struct Money_Info {
 };
 struct Mail_Detail {
 
-	int32_t mail_id; //邮件id
+	bool pickup; //是否收取过附件
 
-	int8_t pickup; //是否收取过附件
+	int32_t mail_id; //邮件id
 
 	int32_t send_time; //发邮件时间
 
@@ -86,7 +86,13 @@ struct Mail_Detail {
 
 	std::string mail_content; //邮件内容
 
-	Money_Info money_info; //金钱信息
+	int32_t copper; //铜钱
+
+	int32_t bind_copper; //绑定铜钱
+
+	int32_t gold; //元宝
+
+	int32_t bind_gold; //绑定元宝
 
 	Mail_Detail(void);
 	void serialize(Block_Buffer &buffer) const;

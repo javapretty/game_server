@@ -22,6 +22,8 @@ Local<Context> create_v8_context(Isolate* isolate) {
 		FunctionTemplate::New(isolate, print));
 	global->Set(String::NewFromUtf8(isolate, "sleep", NewStringType::kNormal).ToLocalChecked(),
 		FunctionTemplate::New(isolate, sleep));
+	global->Set(String::NewFromUtf8(isolate, "msec", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, msec));
 	global->Set(String::NewFromUtf8(isolate, "pop_buffer", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, pop_buffer));
 	global->Set(String::NewFromUtf8(isolate, "push_buffer", NewStringType::kNormal).ToLocalChecked(),
@@ -63,10 +65,6 @@ void run_script(Isolate* isolate, const char* file_path) {
   script->Run(isolate->GetCurrentContext()).ToLocalChecked();
 }
 
-void sleep(const FunctionCallbackInfo<Value>& args) {
-	Time_Value::sleep(SLEEP_TIME);
-}
-
 void print(const FunctionCallbackInfo<Value>& args) {
   bool first = true;
   for (int i = 0; i < args.Length(); i++) {
@@ -82,4 +80,14 @@ void print(const FunctionCallbackInfo<Value>& args) {
   }
   printf("\n");
   fflush(stdout);
+}
+
+void sleep(const FunctionCallbackInfo<Value>& args) {
+	Time_Value::sleep(SLEEP_TIME);
+}
+
+void msec(const FunctionCallbackInfo<Value>& args) {
+	Time_Value now = Time_Value::gettimeofday();
+	double msec = now.msec();
+	args.GetReturnValue().Set(msec);
 }

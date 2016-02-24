@@ -7,7 +7,8 @@
 */
 
 function fetch_mail_info(player) {
-	print('fetch_mail_info, role_id:', player.player_data.player_info.role_id, " role_name:", player.player_data.player_info.role_name);
+	print('fetch_mail_info, role_id:', player.player_data.player_info.role_id, " role_name:", player.player_data.player_info.role_name, " msec:", msec());
+	
 	var buf = pop_buffer();
 	buf.write_uint16(player.player_data.mail_info.mail_map.size());
 	player.player_data.mail_info.mail_map.each(function(key,value,index) {
@@ -18,7 +19,8 @@ function fetch_mail_info(player) {
 }
 
 function pickup_mail(player, buffer) {
-	print('pickup_mail, role_id:', player.player_data.player_info.role_id, " role_name:", player.player_data.player_info.role_name);
+	print('pickup_mail, role_id:', player.player_data.player_info.role_id, " role_name:", player.player_data.player_info.role_name, " msec:", msec());
+	
 	var mail_id = buffer.read_int32();
 	var mail_array = new Array();
 	if (mail_id == 0) {
@@ -26,7 +28,7 @@ function pickup_mail(player, buffer) {
 			var result = player.cplayer.bag_add_money(value.bind_copper, value.copper, value.bind_gold, value.gold);
 			if (result == 0) {
 				mail_array.push(key);
-				value.pickup = 1;
+				value.pickup = true;
 			}
     	});
 	} else {
@@ -37,7 +39,7 @@ function pickup_mail(player, buffer) {
 		var result = player.cplayer.bag_add_money(mail_detail.bind_copper, mail_detail.copper, mail_detail.bind_gold, mail_detail.gold);
 		if (result == 0) {
 			mail_array.push(key);
-			mail_detail.pickup = 1;
+			mail_detail.pickup = true;
 		}
 	}
 	
@@ -52,7 +54,8 @@ function pickup_mail(player, buffer) {
 }
 
 function delete_mail(player, buffer) {
-	print('delete_mail, role_id:', player.player_data.player_info.role_id, " role_name:", player.player_data.player_info.role_name);
+	print('delete_mail, role_id:', player.player_data.player_info.role_id, " role_name:", player.player_data.player_info.role_name, " msec:", msec());
+	
 	var mail_id = buffer.read_int32();
 	var mail_array = new Array();
 	if (mail_id == 0) {
@@ -60,7 +63,7 @@ function delete_mail(player, buffer) {
 			var result = player.cplayer.bag_add_money(value.bind_copper, value.copper, value.bind_gold, value.gold);
 			if (result == 0) {
 				mail_array.push(key);
-				value.pickup = 1;
+				value.pickup = true;
 			}
     	});
     	player.player_data.mail_info.mail_map.clear();
@@ -72,7 +75,7 @@ function delete_mail(player, buffer) {
 		var result = player.cplayer.bag_add_money(mail_detail.bind_copper, mail_detail.copper, mail_detail.bind_gold, mail_detail.gold);
 		if (result == 0) {
 			mail_array.push(key);
-			mail_detail.pickup = 1;
+			mail_detail.pickup = true;
 			player.player_data.mail_info.mail_map.remove(mail_id);
 		}
 	}
@@ -88,7 +91,7 @@ function delete_mail(player, buffer) {
 }
 
 function send_mail(player, buffer) {
-	print('send_mail, role_id:', player.player_data.player_info.role_id, " role_name:", player.player_data.player_info.role_name);
+	print('fetch_mail_info, role_id:', player.player_data.player_info.role_id, " role_name:", player.player_data.player_info.role_name, " msec:", msec());
 	
 	var receiver_name = buffer.read_string();
 	var mail_detail = new Mail_Detail();

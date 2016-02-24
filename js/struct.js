@@ -67,13 +67,13 @@ function Mail_Detail() {
 	this.sender_name = ""; 	//发件人名字
 	this.mail_title = ""; 	//邮件标题
 	this.mail_content = ""; //邮件内容
-	this.bind_copper = 0;		//绑定铜钱
 	this.copper = 0;				//铜钱
-	this.bind_gold = 0;			//绑定元宝
+	this.bind_copper = 0;		//绑定铜钱
 	this.gold = 0;					//元宝
+	this.bind_gold = 0;			//绑定元宝
 	
 	this.serialize = function(buffer) {
-		buffer.write_int8(this.pickup);
+		buffer.write_bool(this.pickup);
 		buffer.write_int32(this.mail_id);
 		buffer.write_int32(this.send_time);
 		buffer.write_int32(this.sender_type);
@@ -81,14 +81,14 @@ function Mail_Detail() {
 		buffer.write_string(this.sender_name);
 		buffer.write_string(this.mail_title);
 		buffer.write_string(this.mail_content);
-		buffer.write_int32(this.bind_copper);
 		buffer.write_int32(this.copper);
-		buffer.write_int32(this.bind_gold);
+		buffer.write_int32(this.bind_copper);
 		buffer.write_int32(this.gold);
+		buffer.write_int32(this.bind_gold);
 	}
 
 	this.deserialize = function(buffer) {
-		this.pickup = buffer.read_int8();
+		this.pickup = buffer.read_bool();
 		this.mail_id = buffer.read_int32();
 		this.send_time = buffer.read_int32();
 		this.sender_type = buffer.read_int32();
@@ -96,10 +96,10 @@ function Mail_Detail() {
 		this.sender_name = buffer.read_string();
 		this.mail_title = buffer.read_string();
 		this.mail_content = buffer.read_string();
-		this.bind_copper = buffer.read_int32();
 		this.copper = buffer.read_int32();
-		this.bind_gold = buffer.read_int32();
+		this.bind_copper = buffer.read_int32();
 		this.gold = buffer.read_int32();
+		this.bind_gold = buffer.read_int32();
     };
 }
 

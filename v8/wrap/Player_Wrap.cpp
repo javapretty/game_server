@@ -26,14 +26,19 @@ Local<Object> wrap_player(Isolate* isolate, Game_Player *player) {
 	// 为当前对象设置其对外函数接口
 	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "player_data_buffer", NewStringType::kNormal).ToLocalChecked(),
 		                    FunctionTemplate::New(isolate, player_data_buffer)->GetFunction()) ;
+
 	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "role_id", NewStringType::kNormal).ToLocalChecked(),
 			                    FunctionTemplate::New(isolate, role_id)->GetFunction()) ;
+
 	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "respond_success_result", NewStringType::kNormal).ToLocalChecked(),
 	                    FunctionTemplate::New(isolate, respond_success_result)->GetFunction()) ;
+
 	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "respond_error_result", NewStringType::kNormal).ToLocalChecked(),
 	                    FunctionTemplate::New(isolate, respond_error_result)->GetFunction()) ;
+
 	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "bag_add_money", NewStringType::kNormal).ToLocalChecked(),
 		                    FunctionTemplate::New(isolate, bag_add_money)->GetFunction()) ;
+
 	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "send_mail", NewStringType::kNormal).ToLocalChecked(),
 			                    FunctionTemplate::New(isolate, send_mail)->GetFunction()) ;
 
@@ -102,7 +107,7 @@ void get_drop_player_cid(const FunctionCallbackInfo<Value>& args) {
 
 void get_player_by_cid(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 2) {
-		MSG_USER("get_player args wrong, length: %d\n", args.Length());
+		MSG_USER("get_player_by_cid args wrong, length: %d\n", args.Length());
 		args.GetReturnValue().SetNull();
 		return;
 	}
@@ -126,7 +131,7 @@ void get_player_by_cid(const FunctionCallbackInfo<Value>& args) {
 
 void get_player_by_name(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 1) {
-		MSG_USER("get_player args wrong, length: %d\n", args.Length());
+		MSG_USER("get_player_by_name args wrong, length: %d\n", args.Length());
 		args.GetReturnValue().SetNull();
 		return;
 	}
@@ -235,7 +240,7 @@ void bag_add_money(const FunctionCallbackInfo<Value>& args) {
 
 void send_mail(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 2) {
-		MSG_USER("bag_add_money args wrong, length: %d\n", args.Length());
+		MSG_USER("send_mail args wrong, length: %d\n", args.Length());
 		return;
 	}
 
@@ -245,6 +250,59 @@ void send_mail(const FunctionCallbackInfo<Value>& args) {
 	}
 
 	role_id_t receiver_id = args[0]->IntegerValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	Local<Object> mail_obj= args[1]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked();
 	Mail_Detail mail_detail;
+	mail_detail.pickup = (mail_obj->Get(args.GetIsolate()->GetCurrentContext(),
+			String::NewFromUtf8(args.GetIsolate(), "pickup", NewStringType::kNormal).ToLocalChecked()).ToLocalChecked())
+			->BooleanValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+
+	mail_detail.mail_id = (mail_obj->Get(args.GetIsolate()->GetCurrentContext(),
+				String::NewFromUtf8(args.GetIsolate(), "mail_id", NewStringType::kNormal).ToLocalChecked()).ToLocalChecked())
+				->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+
+	mail_detail.send_time = (mail_obj->Get(args.GetIsolate()->GetCurrentContext(),
+				String::NewFromUtf8(args.GetIsolate(), "send_time", NewStringType::kNormal).ToLocalChecked()).ToLocalChecked())
+				->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+
+	mail_detail.sender_type = (mail_obj->Get(args.GetIsolate()->GetCurrentContext(),
+				String::NewFromUtf8(args.GetIsolate(), "sender_type", NewStringType::kNormal).ToLocalChecked()).ToLocalChecked())
+				->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+
+	mail_detail.sender_id = (mail_obj->Get(args.GetIsolate()->GetCurrentContext(),
+				String::NewFromUtf8(args.GetIsolate(), "sender_id", NewStringType::kNormal).ToLocalChecked()).ToLocalChecked())
+				->NumberValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+
+	mail_detail.sender_name = (mail_obj->Get(args.GetIsolate()->GetCurrentContext(),
+				String::NewFromUtf8(args.GetIsolate(), "sender_name", NewStringType::kNormal).ToLocalChecked()).ToLocalChecked())
+				->NumberValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+
+	String::Utf8Value sender_name(mail_obj->Get(args.GetIsolate()->GetCurrentContext(),
+			String::NewFromUtf8(args.GetIsolate(), "sender_name", NewStringType::kNormal).ToLocalChecked()).ToLocalChecked());
+	mail_detail.sender_name = std::string(*sender_name);
+
+	String::Utf8Value mail_title(mail_obj->Get(args.GetIsolate()->GetCurrentContext(),
+			String::NewFromUtf8(args.GetIsolate(), "mail_title", NewStringType::kNormal).ToLocalChecked()).ToLocalChecked());
+	mail_detail.mail_title = std::string(*mail_title);
+
+	String::Utf8Value mail_content(mail_obj->Get(args.GetIsolate()->GetCurrentContext(),
+				String::NewFromUtf8(args.GetIsolate(), "mail_content", NewStringType::kNormal).ToLocalChecked()).ToLocalChecked());
+	mail_detail.mail_content = std::string(*mail_content);
+
+	mail_detail.copper = (mail_obj->Get(args.GetIsolate()->GetCurrentContext(),
+				String::NewFromUtf8(args.GetIsolate(), "copper", NewStringType::kNormal).ToLocalChecked()).ToLocalChecked())
+				->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+
+	mail_detail.bind_copper = (mail_obj->Get(args.GetIsolate()->GetCurrentContext(),
+				String::NewFromUtf8(args.GetIsolate(), "bind_copper", NewStringType::kNormal).ToLocalChecked()).ToLocalChecked())
+				->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+
+	mail_detail.gold = (mail_obj->Get(args.GetIsolate()->GetCurrentContext(),
+				String::NewFromUtf8(args.GetIsolate(), "gold", NewStringType::kNormal).ToLocalChecked()).ToLocalChecked())
+				->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+
+	mail_detail.bind_gold = (mail_obj->Get(args.GetIsolate()->GetCurrentContext(),
+				String::NewFromUtf8(args.GetIsolate(), "bind_gold", NewStringType::kNormal).ToLocalChecked()).ToLocalChecked())
+				->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+
 	player->send_mail(receiver_id, mail_detail);
 }
