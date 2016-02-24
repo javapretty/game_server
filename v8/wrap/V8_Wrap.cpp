@@ -32,8 +32,10 @@ Local<Context> create_v8_context(Isolate* isolate) {
 			FunctionTemplate::New(isolate, get_player_data));
 	global->Set(String::NewFromUtf8(isolate, "get_drop_player_cid", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, get_drop_player_cid));
-	global->Set(String::NewFromUtf8(isolate, "get_player", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, get_player));
+	global->Set(String::NewFromUtf8(isolate, "get_player_by_cid", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, get_player_by_cid));
+	global->Set(String::NewFromUtf8(isolate, "get_player_by_name", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, get_player_by_name));
 
 	return Context::New(isolate, NULL, global);
 }

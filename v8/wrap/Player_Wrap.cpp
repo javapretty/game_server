@@ -26,12 +26,16 @@ Local<Object> wrap_player(Isolate* isolate, Game_Player *player) {
 	// 为当前对象设置其对外函数接口
 	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "player_data_buffer", NewStringType::kNormal).ToLocalChecked(),
 		                    FunctionTemplate::New(isolate, player_data_buffer)->GetFunction()) ;
-
+	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "role_id", NewStringType::kNormal).ToLocalChecked(),
+			                    FunctionTemplate::New(isolate, role_id)->GetFunction()) ;
 	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "respond_success_result", NewStringType::kNormal).ToLocalChecked(),
 	                    FunctionTemplate::New(isolate, respond_success_result)->GetFunction()) ;
-
 	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "respond_error_result", NewStringType::kNormal).ToLocalChecked(),
 	                    FunctionTemplate::New(isolate, respond_error_result)->GetFunction()) ;
+	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "bag_add_money", NewStringType::kNormal).ToLocalChecked(),
+		                    FunctionTemplate::New(isolate, bag_add_money)->GetFunction()) ;
+	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "send_mail", NewStringType::kNormal).ToLocalChecked(),
+			                    FunctionTemplate::New(isolate, send_mail)->GetFunction()) ;
 
 	return handle_scope.Escape(player_obj);
 }
@@ -45,6 +49,7 @@ Game_Player *unwrap_player(Local<Object> obj) {
 void process_login_buffer(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 4) {
 		MSG_USER("process_login_block args wrong, length: %d\n", args.Length());
+		return;
 	}
 
 	Block_Buffer *buf = unwrap_buffer(args[0]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
@@ -95,9 +100,11 @@ void get_drop_player_cid(const FunctionCallbackInfo<Value>& args) {
 	args.GetReturnValue().Set(cid);
 }
 
-void get_player(const FunctionCallbackInfo<Value>& args) {
+void get_player_by_cid(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 2) {
 		MSG_USER("get_player args wrong, length: %d\n", args.Length());
+		args.GetReturnValue().SetNull();
+		return;
 	}
 
 	int gate_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
@@ -114,6 +121,24 @@ void get_player(const FunctionCallbackInfo<Value>& args) {
 		msg_buf.make_player_message(ACTIVE_DISCONNECT, ERROR_CLIENT_PARAM, player_cid);
 		msg_buf.finish_message();
 		GAME_MANAGER->send_to_gate(gate_cid, msg_buf);
+	}
+}
+
+void get_player_by_name(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 1) {
+		MSG_USER("get_player args wrong, length: %d\n", args.Length());
+		args.GetReturnValue().SetNull();
+		return;
+	}
+
+	String::Utf8Value str(args[0]);
+	std::string role_name(ToCString(str));
+	Game_Player *player = GAME_MANAGER->find_role_name_game_player(role_name);
+	if (player) {
+		args.GetReturnValue().Set(wrap_player(args.GetIsolate(), player));
+	} else {
+		//设置对象为空
+		args.GetReturnValue().SetNull();
 	}
 }
 
@@ -134,30 +159,92 @@ void player_data_buffer(const FunctionCallbackInfo<Value>& args) {
 	}
 }
 
+void role_id(const FunctionCallbackInfo<Value>& args) {
+	Game_Player *player = unwrap_player(args.Holder());
+	if (!player) {
+		args.GetReturnValue().Set(0);
+	} else {
+		double role_id = player->game_player_info().role_id;
+		args.GetReturnValue().Set(role_id);
+	}
+}
+
 void respond_success_result(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 2) {
 		MSG_USER("respond_success_result args wrong, length: %d\n", args.Length());
-	}
-
-	int msg_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	Game_Player *player = unwrap_player(args.Holder());
-	Block_Buffer *buf = unwrap_buffer(args[1]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
-	if (!player || !buf) {
 		return;
-	}
-	player->respond_success_result(msg_id, buf);
-}
-
-void respond_error_result(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 2) {
-		MSG_USER("respond_error_result args wrong, length: %d\n", args.Length());
 	}
 
 	Game_Player *player = unwrap_player(args.Holder());
 	if (!player) {
 		return;
 	}
+
+	int msg_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	Block_Buffer *buf = unwrap_buffer(args[1]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
+	player->respond_success_result(msg_id, buf);
+}
+
+void respond_error_result(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 2) {
+		MSG_USER("respond_error_result args wrong, length: %d\n", args.Length());
+		return;
+	}
+
+	Game_Player *player = unwrap_player(args.Holder());
+	if (!player) {
+		return;
+	}
+
 	int msg_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int error_code = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	player->respond_error_result(msg_id, error_code);
+}
+
+void bag_add_money(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 4) {
+		MSG_USER("bag_add_money args wrong, length: %d\n", args.Length());
+		return;
+	}
+
+	Game_Player *player = unwrap_player(args.Holder());
+	if (!player) {
+		return;
+	}
+
+	int bind_copper = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int copper = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int bind_gold = args[2]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int gold = args[4]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+
+	std::vector<Money_Add_Info> money_add_list;
+	if (bind_copper > 0)
+		money_add_list.push_back(Money_Add_Info(BIND_COPPER, bind_copper));
+	if (copper > 0)
+		money_add_list.push_back(Money_Add_Info(COPPER, copper));
+	if (bind_gold > 0)
+		money_add_list.push_back(Money_Add_Info(BIND_GOLD, bind_gold));
+	if (gold > 0)
+		money_add_list.push_back(Money_Add_Info(GOLD, gold));
+
+	if (money_add_list.size() > 0) {
+		int result = player->bag().bag_add_money(money_add_list);
+		args.GetReturnValue().Set(result);
+	}
+}
+
+void send_mail(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 2) {
+		MSG_USER("bag_add_money args wrong, length: %d\n", args.Length());
+		return;
+	}
+
+	Game_Player *player = unwrap_player(args.Holder());
+	if (!player) {
+		return;
+	}
+
+	role_id_t receiver_id = args[0]->IntegerValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	Mail_Detail mail_detail;
+	player->send_mail(receiver_id, mail_detail);
 }

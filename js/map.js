@@ -1,6 +1,10 @@
-/**
- * map类
- */
+/*
+*	描述：关联容器map类
+*	作者：张亚磊
+*	时间：2016/02/24
+*	qq:784599938
+*	tel:18268193219
+*/
 
 Array.prototype.remove = function(s) {
 	for (var i = 0; i < this.length; i++) {

@@ -3,59 +3,6 @@ ArrayBuffer::Contents contents = buffer->GetContents();
 memcpy(contents.Data(), <你的C++数据>);
 Local<Uint8Array> typeArray =TypedArray::New(buffer, <buffer里的offset，填0，单位：字节>, <字节数>);
 
-int Game_Player::pickup_mail(Mail_Detail &mail_detail) {
-	std::vector<Money_Add_Info> money_add_list;
-	if (mail_detail.money_info.copper > 0)
-		money_add_list.push_back(Money_Add_Info(COPPER, mail_detail.money_info.copper));
-	if (mail_detail.money_info.bind_copper > 0)
-		money_add_list.push_back(Money_Add_Info(BIND_COPPER, mail_detail.money_info.bind_copper));
-	if (mail_detail.money_info.gold > 0)
-		money_add_list.push_back(Money_Add_Info(GOLD, mail_detail.money_info.gold));
-	if (mail_detail.money_info.bind_gold > 0)
-		money_add_list.push_back(Money_Add_Info(BIND_GOLD, mail_detail.money_info.bind_gold));
-
-	if (money_add_list.size() > 0) {
-	int result = bag_.bag_add_money(money_add_list);
-	if (result != 0)
-		return result;
-	}
-
-  mail_detail.pickup = 1;
-	return 0;
-}
-
-int Mail::delete_mail(MSG_120202 &msg) {
-	Block_Buffer res_buf;
-	MSG_520202 res_msg;
-	int result = 0;
-	if (msg.mail_id != 0) {
-		//删除一封邮件附件
-		Mail_Info::Mail_Map::iterator iter = mail_info_.mail_map.find(msg.mail_id);
-		if (iter == mail_info_.mail_map.end()) {
-			player_->respond_error_result(RES_PICKUP_MAIL, ERROR_CLIENT_PARAM);
-		}
-		result = player_->pickup_mail(iter->second);
-		if (result == 0) {
-			res_msg.mail_id_vec.push_back(msg.mail_id);
-		}
-		mail_info_.mail_map.erase(iter);
-	} else {
-		for (Mail_Info::Mail_Map::iterator iter = mail_info_.mail_map.begin();
-				iter != mail_info_.mail_map.end();) {
-			result = player_->pickup_mail(iter->second);
-			if (result == 0) {
-				res_msg.mail_id_vec.push_back(msg.mail_id);
-			}
-			mail_info_.mail_map.erase(iter++);	//map erese后迭代器失效，所以要先将迭代器++
-		}
-	}
-	res_msg.serialize(res_buf);
-	player_->respond_success_result(RES_DEL_MAIL, &res_buf);
-
-	mail_info_.save_change();
-	return 0;
-}
-
 int Mail::send_mail(MSG_120203 &msg) {
 	Game_Player *player = GAME_MANAGER->find_role_name_game_player(msg.receiver_name);
 	if (!player) {

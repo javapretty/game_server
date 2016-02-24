@@ -1,3 +1,11 @@
+/*
+*	描述：服务器脚本主循环
+*	作者：张亚磊
+*	时间：2016/02/24
+*	qq:784599938
+*	tel:18268193219
+*/
+
 require('error.js');
 require('message.js');
 require('map.js');

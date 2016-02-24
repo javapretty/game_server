@@ -1,3 +1,11 @@
+/*
+*	描述：脚本结构体
+*	作者：张亚磊
+*	时间：2016/02/24
+*	qq:784599938
+*	tel:18268193219
+*/
+
 function Player_Info() {
 	this.role_id = 0;							//角色id
 	this.agent_num = 0;						//平台编号

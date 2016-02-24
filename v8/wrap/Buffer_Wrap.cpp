@@ -366,6 +366,7 @@ void pop_buffer(const FunctionCallbackInfo<Value>& args) {
 		// new buf for write data
 		buf = GAME_MANAGER->pop_block_buffer();
 	}
+
 	if (buf) {
 		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
 	} else {
@@ -377,6 +378,7 @@ void pop_buffer(const FunctionCallbackInfo<Value>& args) {
 void push_buffer(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() < 1) {
 		MSG_USER("process_login_block args wrong, length: %d\n", args.Length());
+		return;
 	}
 
 	Block_Buffer *buf= unwrap_buffer(args[0]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
