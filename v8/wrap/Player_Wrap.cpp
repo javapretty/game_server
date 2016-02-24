@@ -272,10 +272,6 @@ void send_mail(const FunctionCallbackInfo<Value>& args) {
 				String::NewFromUtf8(args.GetIsolate(), "sender_id", NewStringType::kNormal).ToLocalChecked()).ToLocalChecked())
 				->NumberValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 
-	mail_detail.sender_name = (mail_obj->Get(args.GetIsolate()->GetCurrentContext(),
-				String::NewFromUtf8(args.GetIsolate(), "sender_name", NewStringType::kNormal).ToLocalChecked()).ToLocalChecked())
-				->NumberValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-
 	String::Utf8Value sender_name(mail_obj->Get(args.GetIsolate()->GetCurrentContext(),
 			String::NewFromUtf8(args.GetIsolate(), "sender_name", NewStringType::kNormal).ToLocalChecked()).ToLocalChecked());
 	mail_detail.sender_name = std::string(*sender_name);
