@@ -48,7 +48,7 @@ function pickup_mail(player, buffer) {
 	for (var i = 0; i < mail_array.length; ++i) {
 		buffer.write_int32(mail_array[i]);
 	}
-	player.cplayer.respond_success_result(msg_res.RES_PICKUP_MAIL, buffer);
+	player.cplayer.respond_success_result(msg_res.RES_PICKUP_MAIL, buf);
 	push_buffer(buffer);
 	player.player_data.mail_info.save_change();
 }
@@ -85,7 +85,7 @@ function delete_mail(player, buffer) {
 	for (var i = 0; i < mail_array.length; ++i) {
 		buffer.write_int32(mail_array[i]);
 	}
-	player.cplayer.respond_success_result(msg_res.RES_DEL_MAIL, buffer);
+	player.cplayer.respond_success_result(msg_res.RES_DEL_MAIL, buf);
 	push_buffer(buffer);
 	player.player_data.mail_info.save_change();
 }

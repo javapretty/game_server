@@ -365,6 +365,9 @@ void pop_buffer(const FunctionCallbackInfo<Value>& args) {
 	} else {
 		// new buf for write data
 		buf = GAME_MANAGER->pop_block_buffer();
+		if (buf) {
+			buf->reset();
+		}
 	}
 
 	if (buf) {
