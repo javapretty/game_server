@@ -51,8 +51,6 @@ public:
 	int login_success(void);
 	int respond_role_login(void);
 
-    //拾取邮件内的附件和钱
-  int pickup_mail(Mail_Detail &mail_detail);
   //发送邮件
   int send_mail(role_id_t receiver_id, Mail_Detail &mail_detail);
 

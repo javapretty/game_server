@@ -24,8 +24,8 @@ Local<Object> wrap_player(Isolate* isolate, Game_Player *player) {
 	player_obj->SetInternalField(0, player_ptr);
 
 	// 为当前对象设置其对外函数接口
-	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "get_data_buffer", NewStringType::kNormal).ToLocalChecked(),
-		                    FunctionTemplate::New(isolate, get_data_buffer)->GetFunction()) ;
+	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "player_data_buffer", NewStringType::kNormal).ToLocalChecked(),
+		                    FunctionTemplate::New(isolate, player_data_buffer)->GetFunction()) ;
 
 	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "respond_success_result", NewStringType::kNormal).ToLocalChecked(),
 	                    FunctionTemplate::New(isolate, respond_success_result)->GetFunction()) ;
@@ -117,7 +117,7 @@ void get_player(const FunctionCallbackInfo<Value>& args) {
 	}
 }
 
-void get_data_buffer(const FunctionCallbackInfo<Value>& args) {
+void player_data_buffer(const FunctionCallbackInfo<Value>& args) {
 	Game_Player *player = unwrap_player(args.Holder());
 	if (!player) {
 		args.GetReturnValue().SetNull();

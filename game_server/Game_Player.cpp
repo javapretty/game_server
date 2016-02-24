@@ -235,27 +235,6 @@ int Game_Player::recycle_tick(const Time_Value &now) {
 	return ret;
 }
 
-int Game_Player::pickup_mail(Mail_Detail &mail_detail) {
-	std::vector<Money_Add_Info> money_add_list;
-	if (mail_detail.money_info.copper > 0)
-		money_add_list.push_back(Money_Add_Info(COPPER, mail_detail.money_info.copper));
-	if (mail_detail.money_info.bind_copper > 0)
-		money_add_list.push_back(Money_Add_Info(BIND_COPPER, mail_detail.money_info.bind_copper));
-	if (mail_detail.money_info.gold > 0)
-		money_add_list.push_back(Money_Add_Info(GOLD, mail_detail.money_info.gold));
-	if (mail_detail.money_info.bind_gold > 0)
-		money_add_list.push_back(Money_Add_Info(BIND_GOLD, mail_detail.money_info.bind_gold));
-
-	if (money_add_list.size() > 0) {
-	int result = bag_.bag_add_money(money_add_list);
-	if (result != 0)
-		return result;
-	}
-
-  mail_detail.pickup = 1;
-	return 0;
-}
-
 int Game_Player::send_mail(role_id_t receiver_id, Mail_Detail &mail_detail) {
 	int result = 0;
 	//参数验证

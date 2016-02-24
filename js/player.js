@@ -20,7 +20,7 @@ function Player() {
 	}
 	
 	this.save_player_data = function() {
-		var buffer = this.cplayer.get_data_buffer();
+		var buffer = this.cplayer.player_data_buffer();
 		if (buffer == null) {
 			return;
 		}

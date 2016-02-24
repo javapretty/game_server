@@ -29,6 +29,7 @@ while (true) {
 		var player = player_map.get(cid);
 		if (player) {
 			player.save_player_data();
+			player_map.remove(cid);
 		}
 	}
 	
