@@ -45,6 +45,19 @@ if (typeof msg_res == "undefined") {
 
 	msg_res.RES_FETCH_MAIL_INFO								= 	520200;	//获取邮件信息(返回)
 	msg_res.RES_PICKUP_MAIL 									=	520201;	//收取附件(返回)
-	msg_res.RES_DEL_MAIL 										= 	520202;	//删除邮件(返回)
+	msg_res.RES_DEL_MAIL 											= 	520202;	//删除邮件(返回)
 	msg_res.RES_SEND_MAIL 										= 	520203;	//发送邮件(返回)
+}
+
+if (typeof msg_active == "undefined") {
+	var msg_active = {};
+	msg_active.ACTIVE_DISCONNECT 								=	300000;	//断开连接
+
+	msg_active.ACTIVE_ITEM_INFO 									= 300100;	//物品信息更新
+	msg_active.ACTIVE_ITEM_ADDIT_INFO 						= 300101;	//物品附加信息更新
+	msg_active.ACTIVE_BAG_CAPACITY 							= 300102;	//背包容量改变
+	msg_active.ACTIVE_MONEY_INFO 								= 300103;	//金钱更新
+	msg_active.ACTIVE_ITEM_ERASE 								= 300104;	//物品删除
+
+	msg_active.ACTIVE_RECEIVE_MAIL 							= 300200;	//收到邮件
 }

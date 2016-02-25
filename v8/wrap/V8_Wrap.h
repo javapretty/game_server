@@ -18,6 +18,7 @@ void require(const FunctionCallbackInfo<Value>& args);
 void run_script(Isolate* isolate, const char* file_path);
 void print(const FunctionCallbackInfo<Value>& args);
 void sleep(const FunctionCallbackInfo<Value>& args);
+void sec(const FunctionCallbackInfo<Value>& args);
 void msec(const FunctionCallbackInfo<Value>& args);
 
 #endif /* V8_WRAP_H_ */

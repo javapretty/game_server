@@ -11,9 +11,11 @@ require('message.js');
 require('map.js');
 require('struct.js');
 require('player.js');
+require('bag.js');
 require('mail.js');
 
-var player_map = new Map();
+var player_cid_map = new Map();
+var player_role_id_map = new Map();
 
 while (true) {
 	var all_empty = true;
@@ -28,16 +30,18 @@ while (true) {
 		all_empty = false;
 		var player = new Player();
 		player.load_player_data(buffer);
-		player_map.put(player.cid, player);
+		player_role_id_map.put(player.player_data.player_info.role_id, player);
+		player_cid_map.put(player.cid, player);
 	}
 	
 	var cid = get_drop_player_cid();
 	if (cid > 0) {
 		all_empty = false;
-		var player = player_map.get(cid);
+		var player = player_cid_map.get(cid);
 		if (player) {
 			player.save_player_data();
-			player_map.remove(cid);
+			player_role_id_map.remove(player.player_data.player_info.role_id);
+			player_cid_map.remove(cid);
 		}
 	}
 	
@@ -58,7 +62,7 @@ function process_client_buffer(buffer) {
 		process_login_buffer(buffer, gate_cid, player_cid, msg_id);
 	} else {
 		var cid = gate_cid * 10000 + player_cid;
-		var player = player_map.get(cid);
+		var player = player_cid_map.get(cid);
 		if (player) {
 			switch(msg_id) {
 			case msg_req.REQ_FETCH_MAIL_INFO:

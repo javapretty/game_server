@@ -48,9 +48,6 @@ public:
 	int login_success(void);
 	int respond_role_login(void);
 
-  //发送邮件
-  int send_mail(int64_t receiver_id, Mail_Detail &mail_detail);
-
 private:
 	bool is_register_timer_;
 	Cid_Info cid_info_;		///登录信息，包括gate_cid和player_cid

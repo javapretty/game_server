@@ -57,6 +57,19 @@ function Map() {
 		this.data = new Object();
     };
     
+     /**
+     * 删除第一个元素
+     */
+	this.pop_front = function() {
+		var len = this.keys.length;
+		if (len <= 0) {
+			return;
+		}
+		var key = this.keys[0];
+		this.keys.remove(key);
+		this.data[key] = null;
+    };
+    
     /**
      * 遍历Map,执行处理函数
      * 
