@@ -7,64 +7,15 @@
 #ifndef PUBLIC_STURCT_H_
 #define PUBLIC_STURCT_H_
 
+#include "boost/unordered_map.hpp"
 #include "Time_Value.h"
 #include "Misc.h"
-#include "Public_Define.h"
 #include "Msg_Struct.h"
-
-const int ITEM_INDEX_GAP = 100000000;
-const int BAG_INDEX_GAP = 10000;				//背包索引间隔10000
-const int BAG_GRID_PER_LINE = 7;				//背包一行7个格子
-const int STORAGE_GRID_PER_LINE = 10;		//仓库一行10个格子
 
 enum Bind_Verify {
 	BIND_NONE = 0,
 	BIND_ONLY = 1,
 	UNBIND_ONLY = 2
-};
-
-enum MERGE_WAY {
-	MERGE_WAY_EQUAL,
-	MERGE_WAY_SIMILAR
-};
-
-enum Pack_Try {
-	WITH_TRY = 0,
-	WITHOUT_TRY = 1
-};
-
-enum Money_Opt_Type {
-	MONEY_OPT_TRY,
-	MONEY_OPT_REAL,
-};
-
-enum {
-	MAX_LOCK_SEC = 5,
-};
-
-// 增加money bind_copper/copper/...
-enum Money_Type {
-	BIND_COPPER = 1,
-	COPPER = 2,
-	BIND_GOLD = 3,
-	GOLD = 4,
-	MONEY_TYPE_END
-};
-
-// 使用money的方式
-enum Money_Sub_Type {
-	BIND_COPPER_FIRST = 1,
-	BIND_COPPER_ONLY = 2,
-	COPPER_ONLY = 3,
-	BIND_GOLD_ONLY = 4,
-	GOLD_ONLY = 5,
-};
-
-// 包裹类型
-enum Bag_Type {
-	BAG_T_BAG_INDEX 				= 10000,	//玩家背包
-	BAG_T_STORAGE_INDEX 		= 20000,	//玩家仓库
-	BAG_T_ALL_INDEX = 0
 };
 
 enum Sender_Type {
@@ -353,8 +304,6 @@ struct Bag_Info {
 	Capacity capacity;
 	Money_Info money_info;
 	Item_Map item_map;
-	Int_Int_Map money_lock_map;		// 锁定后只能加不能减少
-	Int_Int_Map item_lock_map;
 	bool is_change;
 };
 

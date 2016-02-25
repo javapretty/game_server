@@ -28,7 +28,7 @@ void Master_Gate_Server::process_list(void) {
 			MASTER_MANAGER->push_master_gate_data(buf);
 		} else {
 			//没有数据时候延迟
-			Time_Value::sleep(SLEEP_TIME);
+			Time_Value::sleep(Time_Value(0,100));
 		}
 	}
 }
@@ -54,7 +54,7 @@ void Master_Game_Server::process_list(void) {
 			MASTER_MANAGER->push_master_game_data(buf);
 		} else {
 			//没有数据时候延迟
-			Time_Value::sleep(SLEEP_TIME);
+			Time_Value::sleep(Time_Value(0,100));
 		}
 	}
 }

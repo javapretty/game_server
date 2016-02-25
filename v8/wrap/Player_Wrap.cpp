@@ -211,25 +211,6 @@ void bag_add_money(const FunctionCallbackInfo<Value>& args) {
 		MSG_USER("bag_add_money args wrong, length: %d\n", args.Length());
 		return;
 	}
-
-	Game_Player *player = unwrap_player(args.Holder());
-	if (!player) {
-		return;
-	}
-
-	int copper = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	int gold = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-
-	std::vector<Money_Add_Info> money_add_list;
-	if (copper > 0)
-		money_add_list.push_back(Money_Add_Info(COPPER, copper));
-	if (gold > 0)
-		money_add_list.push_back(Money_Add_Info(GOLD, gold));
-
-	if (money_add_list.size() > 0) {
-		int result = player->bag().bag_add_money(money_add_list);
-		args.GetReturnValue().Set(result);
-	}
 }
 
 void send_mail(const FunctionCallbackInfo<Value>& args) {

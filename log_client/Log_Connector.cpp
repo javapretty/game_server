@@ -6,7 +6,6 @@
  */
 
 #include "Log_Connector.h"
-#include "Public_Define.h"
 
 Log_Connector::Log_Connector(void) { }
 
@@ -51,7 +50,7 @@ void Log_Connector::process_list(void) {
 			block_pool_.push(buf);
 		} else {
 			//没有数据时候延迟
-			Time_Value::sleep(SLEEP_TIME);
+			Time_Value::sleep(Time_Value(0,100));
 		}
 	}
 }

@@ -43,7 +43,7 @@ void DB_Worker::process_list(void) {
 		}
 
 		if (all_empty)
-			Time_Value::sleep(SLEEP_TIME);
+			Time_Value::sleep(Time_Value(0,100));
 	}
 }
 

@@ -37,7 +37,7 @@ void Game_Gate_Server::process_list(void) {
 		}
 		if (all_empty) {
 			//没有数据时候延迟
-			Time_Value::sleep(SLEEP_TIME);
+			Time_Value::sleep(Time_Value(0,100));
 		}
 	}
 }

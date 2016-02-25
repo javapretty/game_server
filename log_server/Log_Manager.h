@@ -11,7 +11,6 @@
 #include "Thread.h"
 #include "Thread_Mutex.h"
 #include "List.h"
-#include "Public_Define.h"
 #include "Block_Buffer.h"
 #include "File_Record.h"
 #include "DB_Record.h"

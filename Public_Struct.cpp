@@ -289,7 +289,7 @@ bool operator<(const Item_Info &item1, const Item_Info &item2) {
 	}
 }
 
-Bag_Info::Bag_Info(void):money_lock_map(16), item_lock_map(16) { reset(); }
+Bag_Info::Bag_Info(void) { reset(); }
 
 int Bag_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int64(role_id);
@@ -339,8 +339,6 @@ void Bag_Info::reset(void) {
 	capacity.storage_cap = STORAGE_INIT_CAPACITY;
 	money_info.reset();
 	item_map.clear();
-	money_lock_map.clear();
-	item_lock_map.clear();
 	is_change = false;
 }
 

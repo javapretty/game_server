@@ -28,7 +28,7 @@ void Log_Server::process_list(void) {
 			LOG_MANAGER->push_data_block(buf);
 		} else {
 			//没有数据时候延迟
-			Time_Value::sleep(SLEEP_TIME);
+			Time_Value::sleep(Time_Value(0,100));
 		}
 	}
 }

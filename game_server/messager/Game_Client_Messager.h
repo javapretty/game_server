@@ -15,8 +15,6 @@ class Game_Client_Messager {
 public:
 	static Game_Client_Messager *instance(void);
 
-	int process_bag_block(int msg_id, Block_Buffer &buf, Game_Player *player);
-
 	/// 获取角色信息
 	int process_120001(int gate_cid, int player_cid, MSG_120001 &msg);
 	/// 创建角色

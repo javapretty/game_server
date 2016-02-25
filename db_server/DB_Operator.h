@@ -26,6 +26,8 @@ class DB_Operator {
 public:
 	typedef boost::unordered_map<int64_t, DBClientConnection *> Connection_Map;
 	typedef Object_Pool<DBClientConnection, Thread_Mutex> Connection_Pool;
+	typedef std::set<int> Int_Set;
+	typedef boost::unordered_map<int, Int_Set> Int_IntSet_Map;
 
 	static DB_Operator *instance(void);
 	mongo::DBClientConnection &connection(void);

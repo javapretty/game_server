@@ -80,7 +80,7 @@ int Log_Manager::process_list(void) {
 			tick();
 		}
 		if (all_empty) {
-			Time_Value::sleep(SLEEP_TIME);
+			Time_Value::sleep(Time_Value(0,100));
 		}
 	}
 

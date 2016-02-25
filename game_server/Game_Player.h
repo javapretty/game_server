@@ -8,7 +8,6 @@
 #define GAME_PLAYER_H_
 
 #include "Public_Struct.h"
-#include "Bag.h"
 
 class Game_Player {
 public:
@@ -23,11 +22,9 @@ public:
 	int respond_success_result(int msg_id, Block_Buffer *buf = 0);
 	int respond_error_result(int msg_id, int err, Block_Buffer *buf = 0);
 
-	Player_Data const &player_data(void) const { return player_data_; }
+	Player_Data &player_data(void) { return player_data_; }
 	Block_Buffer *player_data_buffer(void) { return player_data_buffer_; }
 	Game_Player_Info const &game_player_info(void) const { return player_data_.game_player_info; }
-	Mail_Info &mail_info(void) { return player_data_.mail_info; }
-	Bag& bag(void) { return bag_; }
 
 	int load_player(Player_Data &player_data);
 	int save_player(bool is_logout = false);
@@ -61,8 +58,6 @@ private:
 	Block_Buffer *player_data_buffer_;
 	Recycle_Tick recycle_tick_;
 	Time_Value last_save_timestamp_;
-
-	Bag bag_;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

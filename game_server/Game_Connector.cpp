@@ -28,7 +28,7 @@ void Game_DB_Connector::process_list(void) {
 			GAME_MANAGER->push_game_db_data(buf);
 		} else {
 			//没有数据时候延迟
-			Time_Value::sleep(SLEEP_TIME);
+			Time_Value::sleep(Time_Value(0,100));
 		}
 	}
 }
@@ -55,7 +55,7 @@ void Game_Master_Connector::process_list(void) {
 			GAME_MANAGER->push_game_master_data(buf);
 		} else {
 			//没有数据时候延迟
-			Time_Value::sleep(SLEEP_TIME);
+			Time_Value::sleep(Time_Value(0,100));
 		}
 	}
 }

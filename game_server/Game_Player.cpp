@@ -56,14 +56,12 @@ int Game_Player::load_player(Player_Data &player_data) {
 	GAME_MANAGER->logining_map().erase(player_data.game_player_info.account);
 	player_data_ = player_data;
 	player_data_.role_id = player_data_.game_player_info.role_id;
-	bag_.load_data(player_data);
 	return 0;
 }
 
 int Game_Player::save_player(bool is_logout) {
 	MSG_150003 msg;
 	msg.player_data = player_data_;
-	bag_.save_data(msg.player_data);
 	if (!is_logout && !msg.player_data.can_save()) {
 		return -1;
 	}
@@ -98,8 +96,6 @@ int Game_Player::sign_in(std::string account) {
 	login_success();
 	register_timer();
 	sync_signin_to_master();
-
-	bag_.init(this);
 	return 0;
 }
 
@@ -126,7 +122,6 @@ void Game_Player::reset(void) {
 	last_save_timestamp_ = Time_Value::zero;
 
 	player_data_.reset();
-	bag_.reset();
 }
 
 int Game_Player::sync_signin_to_master(void) {
@@ -245,7 +240,7 @@ int Game_Player::send_mail(int64_t receiver_id, Mail_Detail &mail_detail) {
 
 	Game_Player *receiver = GAME_MANAGER->find_role_id_game_player(receiver_id);
 	if (receiver) {
-		Mail_Info &mail_info = receiver->mail_info();
+		Mail_Info &mail_info = receiver->player_data().mail_info;
 		mail_info.total_count++;
 		mail_detail.mail_id = mail_info.total_count + 1000000;
 		mail_detail.send_time = Time_Value::gettimeofday().sec();

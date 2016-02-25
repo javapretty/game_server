@@ -14,6 +14,7 @@
 #include "Block_List.h"
 #include "Object_Pool.h"
 #include "Game_Player.h"
+#include "Msg_Define.h"
 
 class Game_Manager: public Thread {
 public:

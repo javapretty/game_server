@@ -11,8 +11,6 @@
 #include "Buffer_Wrap.h"
 #include "Player_Wrap.h"
 #include "Time_Value.h"
-#include "Public_Define.h"
-
 
 Local<Context> create_v8_context(Isolate* isolate) {
 	Local<ObjectTemplate> global = ObjectTemplate::New(isolate);
@@ -83,7 +81,7 @@ void print(const FunctionCallbackInfo<Value>& args) {
 }
 
 void sleep(const FunctionCallbackInfo<Value>& args) {
-	Time_Value::sleep(SLEEP_TIME);
+	Time_Value::sleep(Time_Value(0,100));
 }
 
 void msec(const FunctionCallbackInfo<Value>& args) {

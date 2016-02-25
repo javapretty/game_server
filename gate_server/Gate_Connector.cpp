@@ -28,7 +28,7 @@ void Gate_Game_Connector::process_list(void) {
 			GATE_MANAGER->push_gate_game_data(buf);
 		} else {
 			//没有数据时候延迟
-			Time_Value::sleep(SLEEP_TIME);
+			Time_Value::sleep(Time_Value(0,100));
 		}
 	}
 }
@@ -55,7 +55,7 @@ void Gate_Login_Connector::process_list(void) {
 			GATE_MANAGER->push_gate_login_data(buf);
 		} else {
 			//没有数据时候延迟
-			Time_Value::sleep(SLEEP_TIME);
+			Time_Value::sleep(Time_Value(0,100));
 		}
 	}
 }
@@ -82,7 +82,7 @@ void Gate_Master_Connector::process_list(void) {
 			GATE_MANAGER->push_gate_master_data(buf);
 		} else {
 			//没有数据时候延迟
-			Time_Value::sleep(SLEEP_TIME);
+			Time_Value::sleep(Time_Value(0,100));
 		}
 	}
 }
