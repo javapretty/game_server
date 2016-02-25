@@ -17,6 +17,14 @@ using namespace v8;
 Local<Object> wrap_buffer(Isolate* isolate, Block_Buffer *buf);
 Block_Buffer *unwrap_buffer(Local<Object> obj);
 
+void pop_buffer(const FunctionCallbackInfo<Value>& args);
+void push_buffer(const FunctionCallbackInfo<Value>& args);
+
+void buffer_reset(const FunctionCallbackInfo<Value>& args);
+void make_inner_message(const FunctionCallbackInfo<Value>& args);
+void make_player_message(const FunctionCallbackInfo<Value>& args);
+void finish_message(const FunctionCallbackInfo<Value>& args);
+
 void read_int8(const FunctionCallbackInfo<Value>& args);
 void read_int16(const FunctionCallbackInfo<Value>& args);
 void read_int32(const FunctionCallbackInfo<Value>& args);
@@ -40,8 +48,5 @@ void write_uint64(const FunctionCallbackInfo<Value>& args);
 void write_double(const FunctionCallbackInfo<Value>& args);
 void write_bool(const FunctionCallbackInfo<Value>& args);
 void write_string(const FunctionCallbackInfo<Value>& args);
-
-void pop_buffer(const FunctionCallbackInfo<Value>& args);
-void push_buffer(const FunctionCallbackInfo<Value>& args);
 
 #endif /* BLOCK_WRAP_H_ */

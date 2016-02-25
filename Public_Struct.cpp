@@ -109,34 +109,40 @@ Game_Player_Info::Game_Player_Info(void) { reset(); }
 
 int Game_Player_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int64(role_id);
-	buffer.write_int32(agent_num);
-	buffer.write_int32(server_num);
 	buffer.write_string(account);
 	buffer.write_string(role_name);
-	buffer.write_uint32(gender);
+	buffer.write_string(client_ip);
+	buffer.write_int32(agent_num);
+	buffer.write_int32(server_num);
 	buffer.write_int32(level);
+	buffer.write_uint32(gender);
 	buffer.write_uint32(career);
 	buffer.write_int32(create_time);
 	buffer.write_int32(last_sign_in_time);
 	buffer.write_int32(last_sign_out_time);
-	buffer.write_string(ip);
+	buffer.write_int32(vitality);
+	buffer.write_int32(vip);
+	buffer.write_int32(charge_gold);
 	buffer.write_bool(is_change);
 	return 0;
 }
 
 int Game_Player_Info::deserialize(Block_Buffer &buffer) {
 	role_id = buffer.read_int64();
-	agent_num = buffer.read_int32();
-	server_num = buffer.read_int32();
 	account = buffer.read_string();
 	role_name = buffer.read_string();
-	gender = buffer.read_int32();
+	client_ip = buffer.read_string();
+	agent_num = buffer.read_int32();
+	server_num = buffer.read_int32();
 	level = buffer.read_int32();
+	gender = buffer.read_int32();
 	career = buffer.read_int32();
 	create_time = buffer.read_int32();
 	last_sign_in_time = buffer.read_int32();
 	last_sign_out_time = buffer.read_int32();
-	ip = buffer.read_string();
+	vitality = buffer.read_int32();
+	vip = buffer.read_int32();
+	charge_gold = buffer.read_int32();
 	is_change = buffer.read_bool();
 	return 0;
 }
@@ -151,17 +157,20 @@ int Game_Player_Info::save(void) {
 
 void Game_Player_Info::reset(void) {
 	role_id = 0;
-	agent_num = 0;
-	server_num = 0;
 	account.clear();
 	role_name.clear();
+	client_ip.clear();
+	agent_num = 0;
+	server_num = 0;
+	level = 0;
 	gender = 0;
 	career = 0;
 	create_time = 0;
-	level = 0;
 	last_sign_in_time = 0;
 	last_sign_out_time = 0;
-	ip.clear();
+	vitality = 0;
+	vip = 0;
+	charge_gold = 0;
 	is_change = false;
 }
 

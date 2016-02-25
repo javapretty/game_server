@@ -22,7 +22,7 @@ public:
 	typedef Object_Pool<Master_Player, Spin_Lock> Master_Player_Pool;
 	typedef Block_List<Thread_Mutex> Data_List;
 
-	typedef boost::unordered_map<role_id_t, Master_Player *> Master_Player_Role_Id_Map;
+	typedef boost::unordered_map<int64_t, Master_Player *> Master_Player_Role_Id_Map;
 	typedef boost::unordered_map<int, int> Msg_Count_Map;
 
 public:
@@ -58,9 +58,9 @@ public:
 	/// 消息处理
 	int process_list();
 
-	int bind_role_id_master_player(role_id_t role_id, Master_Player &player);
-	int unbind_role_id_master_player(role_id_t role_id);
-	Master_Player *find_role_id_master_player(role_id_t role_id);
+	int bind_role_id_master_player(int64_t role_id, Master_Player &player);
+	int unbind_role_id_master_player(int64_t role_id);
+	Master_Player *find_role_id_master_player(int64_t role_id);
 	int unbind_master_player(Master_Player &player);
 
 	int tick(void);

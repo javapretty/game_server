@@ -23,18 +23,21 @@ struct Global_Fields {
 struct Role_Fields {
 	static const std::string COLLECTION;
 
+	static const std::string ROLE_ID;
+	static const std::string ACCOUNT;
+	static const std::string ROLE_NAME;
+	static const std::string CLIENT_IP;
 	static const std::string AGENT_NUM;
 	static const std::string SERVER_NUM;
-	static const std::string ACCOUNT;
-	static const std::string ROLE_ID;
-	static const std::string ROLE_NAME;
-	static const std::string ROLE_GENDER;
+	static const std::string LEVEL;
+	static const std::string GENDER;
 	static const std::string CAREER;
 	static const std::string CREATE_TIME;
-	static const std::string LEVEL;
 	static const std::string LAST_SIGN_IN_TIME;
 	static const std::string LAST_SIGN_OUT_TIME;
-	static const std::string IP;
+	static const std::string VITALITY;
+	static const std::string VIP;
+	static const std::string CHARGE_GOLD;
 };
 
 struct Bag_Fields {
@@ -77,9 +80,7 @@ struct Mail_Fields {
 		static const std::string MAIL_TITLE;
 		static const std::string MAIL_CONTENT;
 		static const std::string COPPER;
-		static const std::string BIND_COPPER;
 		static const std::string GOLD;
-		static const std::string BIND_GOLD;
 	};
 };
 

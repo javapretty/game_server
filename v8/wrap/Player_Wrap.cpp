@@ -207,7 +207,7 @@ void respond_error_result(const FunctionCallbackInfo<Value>& args) {
 }
 
 void bag_add_money(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 4) {
+	if (args.Length() != 2) {
 		MSG_USER("bag_add_money args wrong, length: %d\n", args.Length());
 		return;
 	}
@@ -217,18 +217,12 @@ void bag_add_money(const FunctionCallbackInfo<Value>& args) {
 		return;
 	}
 
-	int bind_copper = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	int copper = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	int bind_gold = args[2]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	int gold = args[4]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int copper = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int gold = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 
 	std::vector<Money_Add_Info> money_add_list;
-	if (bind_copper > 0)
-		money_add_list.push_back(Money_Add_Info(BIND_COPPER, bind_copper));
 	if (copper > 0)
 		money_add_list.push_back(Money_Add_Info(COPPER, copper));
-	if (bind_gold > 0)
-		money_add_list.push_back(Money_Add_Info(BIND_GOLD, bind_gold));
 	if (gold > 0)
 		money_add_list.push_back(Money_Add_Info(GOLD, gold));
 
@@ -249,7 +243,7 @@ void send_mail(const FunctionCallbackInfo<Value>& args) {
 		return;
 	}
 
-	role_id_t receiver_id = args[0]->IntegerValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int64_t receiver_id = args[0]->IntegerValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	Local<Object> mail_obj= args[1]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked();
 	Mail_Detail mail_detail;
 	mail_detail.pickup = (mail_obj->Get(args.GetIsolate()->GetCurrentContext(),
@@ -288,16 +282,8 @@ void send_mail(const FunctionCallbackInfo<Value>& args) {
 				String::NewFromUtf8(args.GetIsolate(), "copper", NewStringType::kNormal).ToLocalChecked()).ToLocalChecked())
 				->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 
-	mail_detail.bind_copper = (mail_obj->Get(args.GetIsolate()->GetCurrentContext(),
-				String::NewFromUtf8(args.GetIsolate(), "bind_copper", NewStringType::kNormal).ToLocalChecked()).ToLocalChecked())
-				->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-
 	mail_detail.gold = (mail_obj->Get(args.GetIsolate()->GetCurrentContext(),
 				String::NewFromUtf8(args.GetIsolate(), "gold", NewStringType::kNormal).ToLocalChecked()).ToLocalChecked())
-				->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-
-	mail_detail.bind_gold = (mail_obj->Get(args.GetIsolate()->GetCurrentContext(),
-				String::NewFromUtf8(args.GetIsolate(), "bind_gold", NewStringType::kNormal).ToLocalChecked()).ToLocalChecked())
 				->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 
 	player->send_mail(receiver_id, mail_detail);

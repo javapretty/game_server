@@ -135,19 +135,19 @@ int Master_Manager::server_status(void) {
 	return status_;
 }
 
-int Master_Manager::bind_role_id_master_player(role_id_t role_id, Master_Player &player) {
+int Master_Manager::bind_role_id_master_player(int64_t role_id, Master_Player &player) {
 	if (! player_role_id_map_.insert(std::make_pair(role_id, &player)).second) {
 		MSG_USER_TRACE("insert failure");
 	}
 	return 0;
 }
 
-int Master_Manager::unbind_role_id_master_player(role_id_t role_id) {
+int Master_Manager::unbind_role_id_master_player(int64_t role_id) {
 	player_role_id_map_.erase(role_id);
 	return 0;
 }
 
-Master_Player *Master_Manager::find_role_id_master_player(role_id_t role_id) {
+Master_Player *Master_Manager::find_role_id_master_player(int64_t role_id) {
 	Master_Player_Role_Id_Map::iterator it = player_role_id_map_.find(role_id);
 	if (it != player_role_id_map_.end())
 		return it->second;

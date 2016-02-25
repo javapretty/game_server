@@ -193,19 +193,19 @@ Game_Player* Game_Manager::find_cid_game_player(Cid_Info &cid_info) {
 		return 0;
 }
 
-int Game_Manager::bind_role_id_game_player(role_id_t role_id, Game_Player &player) {
+int Game_Manager::bind_role_id_game_player(int64_t role_id, Game_Player &player) {
 	if (! player_role_id_map_.insert(std::make_pair(role_id, &player)).second) {
 		MSG_USER("insert failure");
 	}
 	return 0;
 }
 
-int Game_Manager::unbind_role_id_game_player(role_id_t role_id) {
+int Game_Manager::unbind_role_id_game_player(int64_t role_id) {
 	player_role_id_map_.erase(role_id);
 	return 0;
 }
 
-Game_Player *Game_Manager::find_role_id_game_player(role_id_t role_id) {
+Game_Player *Game_Manager::find_role_id_game_player(int64_t role_id) {
 	Game_Player_Role_Id_Map::iterator it = player_role_id_map_.find(role_id);
 	if (it != player_role_id_map_.end())
 		return it->second;

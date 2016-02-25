@@ -123,11 +123,11 @@ struct Ip_Info {
 };
 
 struct Saving_Info {
-	role_id_t role_id;		// 角色
+	int64_t role_id;		// 角色
 	Time_Value timestamp;	// 保存时的时间错
 
 	Saving_Info(void) : role_id(0) {}
-	Saving_Info(role_id_t role_id_, Time_Value timestamp_) : role_id(role_id_), timestamp(timestamp_) {};
+	Saving_Info(int64_t role_id_, Time_Value timestamp_) : role_id(role_id_), timestamp(timestamp_) {};
 };
 
 struct Close_Info {
@@ -203,7 +203,7 @@ struct Login_Player_Info {
 };
 
 struct Gate_Player_Info {
-	role_id_t role_id;
+	int64_t role_id;
 	std::string account;
 
 	Gate_Player_Info(void);
@@ -213,7 +213,7 @@ struct Gate_Player_Info {
 };
 
 struct Master_Player_Info {
-	role_id_t role_id;
+	int64_t role_id;
 	std::string account;
 	std::string role_name;
 	int level;
@@ -225,18 +225,21 @@ struct Master_Player_Info {
 };
 
 struct Game_Player_Info {
-	role_id_t role_id;
-	int agent_num;
-	int server_num;
-	std::string account;
-	std::string role_name;
-	int gender; 					/// 0 = 女(female), 1 = 男(male)
-	int career; 					///  职业 1-4	([1,4] 荒蛮，玄羽，莲华，妙冰)
-	int create_time;				/// 创建角色时刻
-	int level;     			   		/// 避免连表查询
-	int last_sign_in_time;			/// 最后登录时间
-	int last_sign_out_time;			/// 最后登出时间
-	std::string ip;					/// IP
+	int64_t role_id;					//玩家id
+	std::string account;			//玩家账号名
+	std::string role_name;		//玩家名字
+	std::string client_ip;		//客户端ip
+	int agent_num;						//平台编号
+	int server_num;						//服务器编号
+	int level;     			   		//玩家等级
+	int gender; 							//0(女),1(男)
+	int career; 							//职业1-3
+	int create_time;					//创建角色时刻
+	int last_sign_in_time;		//最后登录时间
+	int last_sign_out_time;		//最后登出时间
+	int vitality;							//玩家体力
+	int vip;									//vip等级
+	int charge_gold;					//总共充值的元宝数
 	bool is_change;
 
 	Game_Player_Info(void);
@@ -346,7 +349,7 @@ struct Bag_Info {
 	void erase(Item_Map::iterator iter);
 	void erase(Item_Map::iterator begin, Item_Map::iterator end);
 
-	role_id_t role_id;
+	int64_t role_id;
 	Capacity capacity;
 	Money_Info money_info;
 	Item_Map item_map;
@@ -366,7 +369,7 @@ struct Mail_Info {
 
 	typedef std::map<int, Mail_Detail> Mail_Map;	//邮件map要按照邮件id排序，不能改成unordered_map
 
-	role_id_t role_id;		//角色ID
+	int64_t role_id;		//角色ID
 	int total_count; 			//邮件的总数量，即目前为止收到的所有邮件数
 	Mail_Map mail_map;
 	bool is_change;
@@ -382,7 +385,7 @@ struct Player_Data {
 		ROLE_SAVE_OFFLINE,	/// 角色下线保存
 	};
 
-	role_id_t role_id;
+	int64_t role_id;
 	int8_t status;
 
 	Game_Player_Info game_player_info;
@@ -395,7 +398,7 @@ struct Player_Data {
 		mail_info.is_change = is_change;
 	}
 
-	void set_all_role_id(role_id_t p_role_id) {
+	void set_all_role_id(int64_t p_role_id) {
 		role_id = p_role_id;
 
 		game_player_info.role_id = p_role_id;
@@ -413,7 +416,7 @@ struct Player_Data {
 };
 
 struct Player_DB_Cache {
-	role_id_t role_id;
+	int64_t role_id;
 	std::string account;
 	std::string role_name;
 	int agent_num;
@@ -428,7 +431,7 @@ struct Player_DB_Cache {
 };
 
 struct DB_Cache {
-	typedef boost::unordered_map<role_id_t, Player_DB_Cache> ID_Player_Cache_Map;
+	typedef boost::unordered_map<int64_t, Player_DB_Cache> ID_Player_Cache_Map;
 	typedef boost::unordered_map<std::string, Player_DB_Cache> Account_Player_Cache_Map;
 
 	const static int player_cache_map_bucket_num = 50000;

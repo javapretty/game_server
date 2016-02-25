@@ -94,9 +94,7 @@ void Mail_Detail::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(send_time);
 	buffer.write_int32(sender_type);
 	buffer.write_int32(copper);
-	buffer.write_int32(bind_copper);
 	buffer.write_int32(gold);
-	buffer.write_int32(bind_gold);
 	buffer.write_int64(sender_id);
 	buffer.write_bool(pickup);
 	buffer.write_string(sender_name);
@@ -109,9 +107,7 @@ int Mail_Detail::deserialize(Block_Buffer &buffer) {
 	send_time = buffer.read_int32();
 	sender_type = buffer.read_int32();
 	copper = buffer.read_int32();
-	bind_copper = buffer.read_int32();
 	gold = buffer.read_int32();
-	bind_gold = buffer.read_int32();
 	sender_id = buffer.read_int64();
 	pickup = buffer.read_bool();
 	sender_name = buffer.read_string();
@@ -125,9 +121,7 @@ void Mail_Detail::reset(){
 	send_time = 0;
 	sender_type = 0;
 	copper = 0;
-	bind_copper = 0;
 	gold = 0;
-	bind_gold = 0;
 	sender_id = 0;
 	pickup = false;
 	sender_name.clear();

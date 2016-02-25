@@ -1515,7 +1515,7 @@ int Bag::bag_sub_money(const std::vector<Money_Sub_Info> &money_sub_list, Money_
 }
 
 void Bag::recovery() {
-	role_id_t role_id = bag_info_.role_id;
+	int64_t role_id = bag_info_.role_id;
 	bag_info_.reset();
 	bag_info_.role_id = role_id;
 }

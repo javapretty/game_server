@@ -52,7 +52,7 @@ public:
 	int respond_role_login(void);
 
   //发送邮件
-  int send_mail(role_id_t receiver_id, Mail_Detail &mail_detail);
+  int send_mail(int64_t receiver_id, Mail_Detail &mail_detail);
 
 private:
 	bool is_register_timer_;

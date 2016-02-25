@@ -22,71 +22,83 @@ Local<Object> wrap_buffer(Isolate* isolate, Block_Buffer *buf) {
 	buf_obj->SetInternalField(0, buf_ptr);
 
 	// 为当前对象设置其对外函数接口
+	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "reset", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, buffer_reset)->GetFunction());
+
+	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "make_inner_message", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, make_inner_message)->GetFunction());
+
+	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "make_player_message", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, make_player_message)->GetFunction());
+
+	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "finish_message", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, finish_message)->GetFunction());
+
 	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "read_int8", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, read_int8)->GetFunction()) ;
+	                    FunctionTemplate::New(isolate, read_int8)->GetFunction());
 
 	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "read_int16", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, read_int16)->GetFunction()) ;
+	                    FunctionTemplate::New(isolate, read_int16)->GetFunction());
 
 	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "read_int32", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, read_int32)->GetFunction()) ;
+	                    FunctionTemplate::New(isolate, read_int32)->GetFunction());
 
 	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "read_int64", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, read_int64)->GetFunction()) ;
+	                    FunctionTemplate::New(isolate, read_int64)->GetFunction());
 
 	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "read_uint8", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, read_uint8)->GetFunction()) ;
+	                    FunctionTemplate::New(isolate, read_uint8)->GetFunction());
 
 	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "read_uint16", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, read_uint16)->GetFunction()) ;
+	                    FunctionTemplate::New(isolate, read_uint16)->GetFunction());
 
 	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "read_uint32", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, read_uint32)->GetFunction()) ;
+	                    FunctionTemplate::New(isolate, read_uint32)->GetFunction());
 
 	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "read_uint64", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, read_uint64)->GetFunction()) ;
+	                    FunctionTemplate::New(isolate, read_uint64)->GetFunction());
 
 	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "read_double", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, read_double)->GetFunction()) ;
+	                    FunctionTemplate::New(isolate, read_double)->GetFunction());
 
 	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "read_bool", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, read_bool)->GetFunction()) ;
+	                    FunctionTemplate::New(isolate, read_bool)->GetFunction());
 
 	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "read_string", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, read_string)->GetFunction()) ;
+	                    FunctionTemplate::New(isolate, read_string)->GetFunction());
 
 	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "write_int8", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, write_int8)->GetFunction()) ;
+	                    FunctionTemplate::New(isolate, write_int8)->GetFunction());
 
 	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "write_int16", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, write_int16)->GetFunction()) ;
+	                    FunctionTemplate::New(isolate, write_int16)->GetFunction());
 
 	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "write_int32", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, write_int32)->GetFunction()) ;
+	                    FunctionTemplate::New(isolate, write_int32)->GetFunction());
 
 	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "write_int64", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, write_int64)->GetFunction()) ;
+	                    FunctionTemplate::New(isolate, write_int64)->GetFunction());
 
 	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "write_uint8", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, write_uint8)->GetFunction()) ;
+	                    FunctionTemplate::New(isolate, write_uint8)->GetFunction());
 
 	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "write_uint16", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, write_uint16)->GetFunction()) ;
+	                    FunctionTemplate::New(isolate, write_uint16)->GetFunction());
 
 	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "write_uint32", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, write_uint32)->GetFunction()) ;
+	                    FunctionTemplate::New(isolate, write_uint32)->GetFunction());
 
 	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "write_uint64", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, write_uint64)->GetFunction()) ;
+	                    FunctionTemplate::New(isolate, write_uint64)->GetFunction());
 
 	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "write_double", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, write_double)->GetFunction()) ;
+	                    FunctionTemplate::New(isolate, write_double)->GetFunction());
 
 	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "write_bool", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, write_bool)->GetFunction()) ;
+	                    FunctionTemplate::New(isolate, write_bool)->GetFunction());
 
 	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "write_string", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, write_string)->GetFunction()) ;
+	                    FunctionTemplate::New(isolate, write_string)->GetFunction());
 
 	return handle_scope.Escape(buf_obj);
 }
@@ -95,6 +107,87 @@ Block_Buffer *unwrap_buffer(Local<Object> obj) {
 	Local<External> field = Local<External>::Cast(obj->GetInternalField(0));
 	void* ptr = field->Value();
 	return static_cast<Block_Buffer*>(ptr);
+}
+
+void pop_buffer(const FunctionCallbackInfo<Value>& args) {
+	Block_Buffer *buf = nullptr;
+	if (args.Length() == 1) {
+		//buf from client
+		buf = GAME_MANAGER->pop_game_gate_data();
+	} else {
+		// new buf for write data
+		buf = GAME_MANAGER->pop_block_buffer();
+		if (buf) {
+			buf->reset();
+		}
+	}
+
+	if (buf) {
+		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
+	} else {
+		//设置对象为空
+		args.GetReturnValue().SetNull();
+	}
+}
+
+void push_buffer(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() < 1) {
+		MSG_USER("process_login_block args wrong, length: %d\n", args.Length());
+		return;
+	}
+
+	Block_Buffer *buf= unwrap_buffer(args[0]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
+	if (buf) {
+		if (args.Length() == 2) {
+			GAME_GATE_SERVER->push_block(args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0), buf);
+		} else {
+			GAME_MANAGER->push_block_buffer(buf);
+		}
+	}
+}
+
+void buffer_reset(const FunctionCallbackInfo<Value>& args)
+{
+	Block_Buffer *buf= unwrap_buffer(args.Holder());
+	if (buf) {
+		buf->reset();
+	}
+}
+
+void make_inner_message(const FunctionCallbackInfo<Value>& args)
+{
+	if (args.Length() != 1) {
+		MSG_USER("make_inner_message args wrong, length: %d\n", args.Length());
+		return;
+	}
+	Block_Buffer *buf= unwrap_buffer(args.Holder());
+	if (buf) {
+		int msg_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+		buf->make_inner_message(msg_id);
+	}
+}
+
+void make_player_message(const FunctionCallbackInfo<Value>& args)
+{
+	if (args.Length() != 3) {
+		MSG_USER("make_player_message args wrong, length: %d\n", args.Length());
+		return;
+	}
+	Block_Buffer *buf= unwrap_buffer(args.Holder());
+	if (buf) {
+		int msg_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+		int status = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+		int player_cid = args[2]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+		buf->make_player_message(msg_id, status, player_cid);
+	}
+}
+
+void finish_message(const FunctionCallbackInfo<Value>& args)
+{
+	Block_Buffer *buf= unwrap_buffer(args.Holder());
+	if (buf) {
+		buf->finish_message();
+	}
 }
 
 void read_int8(const FunctionCallbackInfo<Value>& args)
@@ -354,42 +447,5 @@ void write_string(const FunctionCallbackInfo<Value>& args)
 		String::Utf8Value str(args[0]);
 		const char* cstr = ToCString(str);
 		buf->write_string(cstr);
-	}
-}
-
-void pop_buffer(const FunctionCallbackInfo<Value>& args) {
-	Block_Buffer *buf = nullptr;
-	if (args.Length() == 1) {
-		//buf from client
-		buf = GAME_MANAGER->pop_game_gate_data();
-	} else {
-		// new buf for write data
-		buf = GAME_MANAGER->pop_block_buffer();
-		if (buf) {
-			buf->reset();
-		}
-	}
-
-	if (buf) {
-		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
-	} else {
-		//设置对象为空
-		args.GetReturnValue().SetNull();
-	}
-}
-
-void push_buffer(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() < 1) {
-		MSG_USER("process_login_block args wrong, length: %d\n", args.Length());
-		return;
-	}
-
-	Block_Buffer *buf= unwrap_buffer(args[0]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
-	if (buf) {
-		if (args.Length() == 2) {
-			GAME_GATE_SERVER->push_block(args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0), buf);
-		} else {
-			GAME_MANAGER->push_block_buffer(buf);
-		}
 	}
 }

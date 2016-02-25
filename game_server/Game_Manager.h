@@ -23,11 +23,11 @@ public:
 	typedef List<int, Thread_Mutex> Int_List;
 
 	typedef boost::unordered_map<std::string, Cid_Info> Logining_Map;
-	typedef boost::unordered_map<role_id_t, Saving_Info> Saving_Map;
+	typedef boost::unordered_map<int64_t, Saving_Info> Saving_Map;
 
 	//通过某个gate连接到game的玩家放到同map内,该map用player_cid和gate_cid作为key
 	typedef boost::unordered_map<Cid_Info, Game_Player* > Game_Player_Cid_Map;
-	typedef boost::unordered_map<role_id_t, Game_Player* > Game_Player_Role_Id_Map;
+	typedef boost::unordered_map<int64_t, Game_Player* > Game_Player_Role_Id_Map;
 	typedef boost::unordered_map<std::string, Game_Player* > Game_Player_Role_Name_Map;
 	typedef boost::unordered_map<int, int> Msg_Count_Map;
 
@@ -82,9 +82,9 @@ public:
 	Game_Player* find_cid_game_player(Cid_Info &cid_info);
 
 	//通过role_id定位玩家
-	int bind_role_id_game_player(role_id_t role_id, Game_Player &player);
-	int unbind_role_id_game_player(role_id_t role_id);
-	Game_Player* find_role_id_game_player(role_id_t role_id);
+	int bind_role_id_game_player(int64_t role_id, Game_Player &player);
+	int unbind_role_id_game_player(int64_t role_id);
+	Game_Player* find_role_id_game_player(int64_t role_id);
 
 	//通过role_name定位玩家
 	int bind_role_name_game_player(std::string &role_name, Game_Player &player);

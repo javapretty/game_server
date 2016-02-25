@@ -25,7 +25,7 @@ function pickup_mail(player, buffer) {
 	var mail_array = new Array();
 	if (mail_id == 0) {
 		player.player_data.mail_info.mail_map.each(function(key,value,index) {
-			var result = player.cplayer.bag_add_money(value.bind_copper, value.copper, value.bind_gold, value.gold);
+			var result = player.cplayer.bag_add_money(value.copper, value.gold);
 			if (result == 0) {
 				mail_array.push(key);
 				value.pickup = true;
@@ -36,7 +36,7 @@ function pickup_mail(player, buffer) {
 		if (mail_detail == null) {
 			return player.cplayer.respond_error_result(msg_res.RES_PICKUP_MAIL, error.ERROR_CLIENT_PARAM);
 		}
-		var result = player.cplayer.bag_add_money(mail_detail.bind_copper, mail_detail.copper, mail_detail.bind_gold, mail_detail.gold);
+		var result = player.cplayer.bag_add_money(mail_detail.copper, mail_detail.gold);
 		if (result == 0) {
 			mail_array.push(key);
 			mail_detail.pickup = true;
@@ -60,7 +60,7 @@ function delete_mail(player, buffer) {
 	var mail_array = new Array();
 	if (mail_id == 0) {
 		player.player_data.mail_info.mail_map.each(function(key,value,index) {
-			var result = player.cplayer.bag_add_money(value.bind_copper, value.copper, value.bind_gold, value.gold);
+			var result = player.cplayer.bag_add_money(value.copper, value.gold);
 			if (result == 0) {
 				mail_array.push(key);
 				value.pickup = true;
@@ -72,7 +72,7 @@ function delete_mail(player, buffer) {
 		if (mail_detail == null) {
 			return player.cplayer.respond_error_result(msg_res.RES_DEL_MAIL, error.ERROR_CLIENT_PARAM);
 		}
-		var result = player.cplayer.bag_add_money(mail_detail.bind_copper, mail_detail.copper, mail_detail.bind_gold, mail_detail.gold);
+		var result = player.cplayer.bag_add_money(mail_detail.copper, mail_detail.gold);
 		if (result == 0) {
 			mail_array.push(key);
 			mail_detail.pickup = true;
@@ -104,7 +104,7 @@ function send_mail(player, buffer) {
 	if (receiver_id == player.player_data.player_info.role_id || mail_detail.mail_title.length > 64 || mail_detail.mail_content.length > 512)
 		return player.cplayer.respond_error_result(msg_res.RES_SEND_MAIL, error.ERROR_CLIENT_PARAM);
 	
-	var result = player.cplayer.bag_add_money(mail_detail.bind_copper, mail_detail.copper, mail_detail.bind_gold, mail_detail.gold);
+	var result = player.cplayer.bag_add_money(mail_detail.copper, mail_detail.gold);
 	if (result != 0) {
 		return player.cplayer.respond_error_result(msg_res.RES_SEND_MAIL, result);
 	}

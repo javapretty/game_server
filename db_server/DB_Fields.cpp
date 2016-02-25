@@ -15,18 +15,21 @@ const std::string Global_Fields::TIME = "time";
 
 
 const std::string Role_Fields::COLLECTION = "mmo.role";
+const std::string Role_Fields::ROLE_ID = "role_id";
+const std::string Role_Fields::ACCOUNT = "account";
+const std::string Role_Fields::ROLE_NAME = "role_name";
+const std::string Role_Fields::CLIENT_IP = "client_ip";
 const std::string Role_Fields::AGENT_NUM = "agent_num";
 const std::string Role_Fields::SERVER_NUM = "server_num";
-const std::string Role_Fields::ACCOUNT = "account";
-const std::string Role_Fields::ROLE_ID = "role_id";
-const std::string Role_Fields::ROLE_NAME = "role_name";
-const std::string Role_Fields::ROLE_GENDER = "role_gender";
+const std::string Role_Fields::LEVEL = "level";
+const std::string Role_Fields::GENDER = "gender";
 const std::string Role_Fields::CAREER = "career";
 const std::string Role_Fields::CREATE_TIME = "create_time";
-const std::string Role_Fields::LEVEL = "level";
 const std::string Role_Fields::LAST_SIGN_IN_TIME = "last_sign_in_time";
 const std::string Role_Fields::LAST_SIGN_OUT_TIME = "last_sign_out_time";
-const std::string Role_Fields::IP = "ip";
+const std::string Role_Fields::VITALITY = "vitality";
+const std::string Role_Fields::VIP = "vip";
+const std::string Role_Fields::CHARGE_GOLD = "charge_gold";
 
 
 const std::string Bag_Fields::COLLECTION = "mmo.bag";
@@ -58,6 +61,4 @@ const std::string Mail_Fields::Mail_Detail::SENDER_NAME = "sender_name";
 const std::string Mail_Fields::Mail_Detail::MAIL_TITLE = "mail_title";
 const std::string Mail_Fields::Mail_Detail::MAIL_CONTENT = "mail_content";
 const std::string Mail_Fields::Mail_Detail::COPPER = "copper";
-const std::string Mail_Fields::Mail_Detail::BIND_COPPER = "bind_copper";
 const std::string Mail_Fields::Mail_Detail::GOLD = "gold";
-const std::string Mail_Fields::Mail_Detail::BIND_GOLD = "bind_gold";

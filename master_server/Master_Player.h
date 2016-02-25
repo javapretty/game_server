@@ -17,7 +17,7 @@ public:
 	void set_cid_info(Cid_Info &cid_info);
 	Cid_Info &cid_info(void);
 
-	role_id_t role_id(void) { return player_info_.role_id; }
+	int64_t role_id(void) { return player_info_.role_id; }
 	Master_Player_Info const &master_player_info(void) const;
 
 	int sign_in(Master_Player_Info &player_info);

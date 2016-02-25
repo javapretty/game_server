@@ -235,12 +235,11 @@ int Game_Player::recycle_tick(const Time_Value &now) {
 	return ret;
 }
 
-int Game_Player::send_mail(role_id_t receiver_id, Mail_Detail &mail_detail) {
+int Game_Player::send_mail(int64_t receiver_id, Mail_Detail &mail_detail) {
 	int result = 0;
 	//参数验证
 	if (receiver_id <= 0 || mail_detail.sender_type <= 0 || mail_detail.sender_id <= 0 || mail_detail.sender_name.empty()
-			|| mail_detail.mail_title.empty() || mail_detail.gold < 0 || mail_detail.copper < 0
-			|| mail_detail.bind_copper < 0 || mail_detail.bind_gold < 0) {
+			|| mail_detail.mail_title.empty() || mail_detail.gold < 0 || mail_detail.copper < 0) {
 		result = ERROR_CLIENT_PARAM;
 	}
 

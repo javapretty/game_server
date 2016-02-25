@@ -88,11 +88,7 @@ struct Mail_Detail {
 
 	int32_t copper; //铜钱
 
-	int32_t bind_copper; //绑定铜钱
-
 	int32_t gold; //元宝
-
-	int32_t bind_gold; //绑定元宝
 
 	Mail_Detail(void);
 	void serialize(Block_Buffer &buffer) const;
