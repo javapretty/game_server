@@ -178,14 +178,6 @@ Item_Info::Item_Info(void) {
 	reset();
 }
 
-Item_Info::Item_Info(uint32_t id, int32_t amount, uint8_t bind) {
-	reset();
-	item_basic.id = id;
-	item_basic.amount = amount;
-	item_basic.bind = bind;
-	init();
-}
-
 Item_Info::Item_Info(const Item_Basic_Info &item) {
 	reset();
 	item_basic = item;
@@ -195,17 +187,6 @@ Item_Info::Item_Info(const Item_Basic_Info &item) {
 Item_Info::~Item_Info() {}
 
 int Item_Info::init() {
-	switch (item_basic.bind) {
-	case UNBIND:
-	case USED_BIND:
-		item_basic.bind = UNBIND;
-		break;
-	// 若策划配置错了，物品为绑定
-	default:
-		item_basic.bind = BIND;
-		break;
-	}
-
 	get_item_type(item_basic.id, type);
 	memset(&addon, 0x00, sizeof (addon));
 	return 0;
@@ -241,28 +222,9 @@ void Item_Info::reset(void){
 	memset(&addon, 0x00, sizeof(addon));
 }
 
-int Item_Info::is_item_type(const uint32_t item_id, Item_Type item_type) {
-	bool is_infer_type = false;
-	return is_infer_type? 0 : -1;
-}
-
 int Item_Info::get_item_type(const uint32_t item_id, Item_Type &item_type) {
 	item_type = NORMAL;
 	return 0;
-}
-
-void Item_Info::set_basic(const uint32_t index, const uint32_t id, const int32_t amount, const uint8_t bind) {
-	item_basic.index = index;
-	item_basic.id = id;
-	item_basic.amount = (amount > 0)? amount : 0;
-	item_basic.bind = bind;
-	init();
-}
-
-int32_t Item_Info::get_item_stack_upper(const uint32_t item_id) {
-	if (CONFIG_INSTANCE->item(item_id)["overlap"].asInt() == 1) return 1;
-	// 若以后服务端客户端用不同的配置文件，此判断可以去掉，只保留一个机制（配置overlap），不引入如果是XX，那么堆叠是XX的补丁式代码
-	return 100;
 }
 
 bool Item_Info::operator == (const Item_Info &cmp) const {
@@ -280,10 +242,6 @@ bool operator<(const Item_Info &item1, const Item_Info &item2) {
 		return true;
 	} else if (sort1 == sort2 && item1.item_basic.id > item2.item_basic.id) {
 		return true;
-	} else if (sort1 == sort2 && item1.item_basic.id == item2.item_basic.id && item1.item_basic.bind > item2.item_basic.bind) {
-		return true;
-	} else if (sort1 == sort2 && item1.item_basic.id == item2.item_basic.id && item1.item_basic.bind == item2.item_basic.bind && item1.item_basic.index < item2.item_basic.index) {
-		return true;
 	} else {
 		return false;
 	}
@@ -293,12 +251,11 @@ Bag_Info::Bag_Info(void) { reset(); }
 
 int Bag_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int64(role_id);
-	buffer.write_uint16(capacity.bag_cap);
-	buffer.write_uint16(capacity.storage_cap);
-	money_info.serialize(buffer);
+	buffer.write_int32(copper);
+	buffer.write_int32(gold);
 
-	uint16_t item_count = item_map.size();
-	buffer.write_uint16(item_count);
+	uint16_t item_size = item_map.size();
+	buffer.write_uint16(item_size);
 	for (Item_Map::const_iterator it = item_map.begin(); it != item_map.end(); ++it) {
 		it->second.serialize(buffer);
 	}
@@ -308,15 +265,14 @@ int Bag_Info::serialize(Block_Buffer &buffer) const {
 
 int Bag_Info::deserialize(Block_Buffer &buffer) {
 	role_id = buffer.read_int64();
-	capacity.bag_cap = buffer.read_uint16();
-	capacity.storage_cap = buffer.read_uint16();
-	money_info.deserialize(buffer);
+	copper = buffer.read_int32();
+	gold = buffer.read_int32();
 
-	uint16_t item_count = buffer.read_uint16();
-	for (int i = 0; i < item_count; ++i) {
+	uint16_t item_size = buffer.read_uint16();
+	for (int i = 0; i < item_size; ++i) {
 		Item_Info item;
 		item.deserialize(buffer);
-		item_map[item.item_basic.index] = item;
+		item_map[item.item_basic.id] = item;
 	}
 	is_change = buffer.read_bool();
 	return 0;
@@ -335,41 +291,10 @@ int Bag_Info::save(void) {
 
 void Bag_Info::reset(void) {
 	role_id = 0;
-	capacity.bag_cap = BAG_INIT_CAPACITY;
-	capacity.storage_cap = STORAGE_INIT_CAPACITY;
-	money_info.reset();
+	copper = 0;
+	gold = 0;
 	item_map.clear();
 	is_change = false;
-}
-
-Bag_Info &Bag_Info::operator=(Bag_Info &detail) {
-	role_id = detail.role_id;
-	capacity = detail.capacity;
-	money_info = detail.money_info;
-	for (Item_Map::iterator it = detail.item_map.begin(); it != detail.item_map.end(); ++it) {
-		item_map[it->second.item_basic.index] = it->second;
-	}
-
-	is_change = detail.is_change;
-
-	return *this;
-}
-
-void Bag_Info::erase(uint32_t index) {
-	Item_Map::iterator it = item_map.find(index);
-	if (it != item_map.end()) {
-		item_map.erase(it);
-	}
-}
-
-void Bag_Info::erase(Item_Map::iterator iter) {
-	item_map.erase(iter);
-}
-
-void Bag_Info::erase(Item_Map::iterator begin, Item_Map::iterator end) {
-	for (Item_Map::iterator it = begin; it != end; ) {
-		item_map.erase(it++);
-	}
 }
 
 Mail_Info::Mail_Info() { reset(); }

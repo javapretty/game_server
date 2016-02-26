@@ -6,29 +6,29 @@ Role_Info::Role_Info(void){
 }
 
 void Role_Info::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(level);
+	buffer.write_int32(career);
+	buffer.write_int32(gender);
 	buffer.write_int64(role_id);
-	buffer.write_uint8(career);
-	buffer.write_uint8(gender);
-	buffer.write_uint16(level);
 	buffer.write_string(account);
 	buffer.write_string(role_name);
 }
 
 int Role_Info::deserialize(Block_Buffer &buffer) {
+	level = buffer.read_int32();
+	career = buffer.read_int32();
+	gender = buffer.read_int32();
 	role_id = buffer.read_int64();
-	career = buffer.read_uint8();
-	gender = buffer.read_uint8();
-	level = buffer.read_uint16();
 	account = buffer.read_string();
 	role_name = buffer.read_string();
 	return 0;
 }
 
 void Role_Info::reset(){
-	role_id = 0;
+	level = 0;
 	career = 0;
 	gender = 0;
-	level = 0;
+	role_id = 0;
 	account.clear();
 	role_name.clear();
 }
@@ -38,51 +38,19 @@ Item_Basic_Info::Item_Basic_Info(void){
 }
 
 void Item_Basic_Info::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(id);
 	buffer.write_int32(amount);
-	buffer.write_uint8(bind);
-	buffer.write_uint32(index);
-	buffer.write_uint32(id);
 }
 
 int Item_Basic_Info::deserialize(Block_Buffer &buffer) {
+	id = buffer.read_int32();
 	amount = buffer.read_int32();
-	bind = buffer.read_uint8();
-	index = buffer.read_uint32();
-	id = buffer.read_uint32();
 	return 0;
 }
 
 void Item_Basic_Info::reset(){
-	amount = 0;
-	bind = 0;
-	index = 0;
 	id = 0;
-}
-
-Money_Info::Money_Info(void){
-	reset();
-}
-
-void Money_Info::serialize(Block_Buffer &buffer) const {
-	buffer.write_int32(copper);
-	buffer.write_int32(bind_copper);
-	buffer.write_int32(gold);
-	buffer.write_int32(bind_gold);
-}
-
-int Money_Info::deserialize(Block_Buffer &buffer) {
-	copper = buffer.read_int32();
-	bind_copper = buffer.read_int32();
-	gold = buffer.read_int32();
-	bind_gold = buffer.read_int32();
-	return 0;
-}
-
-void Money_Info::reset(){
-	copper = 0;
-	bind_copper = 0;
-	gold = 0;
-	bind_gold = 0;
+	amount = 0;
 }
 
 Mail_Detail::Mail_Detail(void){

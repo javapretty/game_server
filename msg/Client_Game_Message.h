@@ -89,16 +89,8 @@ struct MSG_520002 {
 /*
 
 	获取背包信息
-
-	备注：
-
-	1、更新容量
-
-	2、更新物品
 */
 struct MSG_120100 {
-
-	uint32_t bag_type;/*背包类型 背包：10000 仓库：20000*/
 
 	MSG_120100(void);
 	void serialize(Block_Buffer &buffer) const;
@@ -107,15 +99,13 @@ struct MSG_120100 {
 };
 /*
 
-	增加容量
+	使用物品
 */
 struct MSG_120101 {
 
-	uint8_t pay_type;/*0包裹 1 礼券 2元宝*/
+	int32_t item_id; //物品id
 
-	uint32_t bag_type;/*背包类型 背包：10000 仓库：20000*/
-
-	uint16_t add_capacity;/*请求扩大的容量*/
+	int32_t item_amount; //物品数量
 
 	MSG_120101(void);
 	void serialize(Block_Buffer &buffer) const;
@@ -124,84 +114,13 @@ struct MSG_120101 {
 };
 /*
 
-	丢弃物品
-*/
-struct MSG_120102 {
-
-	std::vector<uint32_t> item_index_vec;/*指定格子中的物品被丢弃*/
-
-	MSG_120102(void);
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-};
-/*
-
-	移动物品
-*/
-struct MSG_120103 {
-
-	uint32_t index_from;/**/
-
-	uint32_t index_to;/**/
-
-	MSG_120103(void);
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-};
-/*
-
-	拆分物品
-*/
-struct MSG_120104 {
-
-	uint32_t index;/*拆分的格子*/
-
-	int16_t split_num;/*拆分出的数量*/
-
-	MSG_120104(void);
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-};
-/*
-
-	整理物品
-*/
-struct MSG_120105 {
-
-	uint32_t bag_type;/*背包:10000 仓库:20000*/
-
-	MSG_120105(void);
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-};
-/*
-
-	请求合并物品
-
-	备注：整理并合并物品，可能会将非绑定物品转成绑定物品以节约空间，同凡2的合并
-*/
-struct MSG_120106 {
-
-	uint32_t bag_type;/*背包类型*/
-
-	MSG_120106(void);
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-};
-/*
-
-	请求出售物品
-
-	备注：金钱的改变由主动消息通知，此消息不同于商店模块的，出售之后不能找回。
+	出售物品
 */
 struct MSG_120107 {
 
-	std::vector<uint32_t> item_index_vec;/*指定格子中的物品被出售*/
+	int32_t item_id; //物品id
+
+	int32_t item_amount; //物品数量
 
 	MSG_120107(void);
 	void serialize(Block_Buffer &buffer) const;
@@ -214,10 +133,6 @@ struct MSG_120107 {
 */
 struct MSG_520100 {
 
-	uint32_t bag_type;/*背包类型*/
-
-	int16_t capacity;/*背包容量*/
-
 	std::vector<Item_Basic_Info> item_info_vec;
 
 	MSG_520100(void);
@@ -227,7 +142,7 @@ struct MSG_520100 {
 };
 /*
 
-	增加背包容量(返回)
+	使用物品容量(返回)
 */
 struct MSG_520101 {
 
@@ -238,55 +153,11 @@ struct MSG_520101 {
 };
 /*
 
-	丢弃物品(返回)
+	出售物品(返回)
 */
 struct MSG_520102 {
 
 	MSG_520102(void);
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-};
-/*
-
-	移动物品(返回)
-*/
-struct MSG_520103 {
-
-	MSG_520103(void);
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-};
-/*
-
-	拆分物品(返回)
-*/
-struct MSG_520104 {
-
-	MSG_520104(void);
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-};
-/*
-
-	请求合并物品(返回)
-*/
-struct MSG_520106 {
-
-	MSG_520106(void);
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-};
-/*
-
-	请求出售物品(返回)
-*/
-struct MSG_520107 {
-
-	MSG_520107(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

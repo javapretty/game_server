@@ -335,14 +335,8 @@ int DB_Operator::load_bag_info(Bag_Info &bag_info) {
 		return -1;
 	}
 
-	bag_info.capacity.bag_cap = res[Bag_Fields::BAG_CAPACITY].numberInt();
-	bag_info.capacity.storage_cap = res[Bag_Fields::STORAGE_CAPACITY].numberInt();
-
-	BSONObj money = res.getObjectField(Bag_Fields::MONEY.c_str());
-	bag_info.money_info.bind_copper = money[Bag_Fields::Money::BIND_COPPER].numberInt();
-	bag_info.money_info.copper = money[Bag_Fields::Money::COPPER].numberInt();
-	bag_info.money_info.bind_gold = money[Bag_Fields::Money::BIND_GOLD].numberInt();
-	bag_info.money_info.gold = money[Bag_Fields::Money::GOLD].numberInt();
+	bag_info.copper = res[Bag_Fields::Money::COPPER].numberInt();
+	bag_info.gold = res[Bag_Fields::Money::GOLD].numberInt();
 
 	BSONObjIterator iter(res.getObjectField(Bag_Fields::ITEM.c_str()));
 	BSONObj obj;
@@ -350,28 +344,24 @@ int DB_Operator::load_bag_info(Bag_Info &bag_info) {
 		obj = iter.next().embeddedObject();
 		Item_Info item;
 		if (load_item_detail(obj, item) == 0) {
-			bag_info.item_map[item.item_basic.index] = item;
+			bag_info.item_map[item.item_basic.id] = item;
 		}
 	}
 	return 0;
 }
 
 int DB_Operator::save_bag_info(Bag_Info &bag_info) {
-	std::vector<BSONObj> vc_item;
+	std::vector<BSONObj> item_vec;
 	BSONObj obj;
 	for (Bag_Info::Item_Map::const_iterator iter = bag_info.item_map.begin(); iter != bag_info.item_map.end(); ++iter) {
 		save_item_detail(iter->second, obj);
-		vc_item.push_back(obj);
+		item_vec.push_back(obj);
 	}
 
 	BSONObjBuilder tmp_builder;
-	tmp_builder << Bag_Fields::BAG_CAPACITY << bag_info.capacity.bag_cap
-		<< Bag_Fields::STORAGE_CAPACITY << bag_info.capacity.storage_cap
-		<< Bag_Fields::MONEY << BSON(Bag_Fields::Money::BIND_COPPER << bag_info.money_info.bind_copper
-		<< Bag_Fields::Money::COPPER << bag_info.money_info.copper
-		<< Bag_Fields::Money::BIND_GOLD << bag_info.money_info.bind_gold
-		<< Bag_Fields::Money::GOLD << bag_info.money_info.gold)
-		<< Bag_Fields::ITEM << vc_item;
+	tmp_builder << Bag_Fields::Money::COPPER << bag_info.copper
+		<< Bag_Fields::Money::GOLD << bag_info.gold
+		<< Bag_Fields::ITEM << item_vec;
 
 	CACHED_CONNECTION.update(Bag_Fields::COLLECTION, MONGO_QUERY(Role_Fields::ROLE_ID << (long long int)bag_info.role_id),
 			BSON("$set" << tmp_builder.obj()), true);
@@ -380,24 +370,17 @@ int DB_Operator::save_bag_info(Bag_Info &bag_info) {
 }
 
 int DB_Operator::load_item_detail(const BSONObj &obj, Item_Info &item) {
-	int result = -1;
-	if (obj.hasField(Bag_Fields::Item::INDEX.c_str()) && obj.hasField(Bag_Fields::Item::ID.c_str())
-			&& obj.hasField(Bag_Fields::Item::AMOUNT.c_str()) && obj.hasField(Bag_Fields::Item::BIND.c_str())) {
-		result = 0;
-		item.reset();
-		// set_basic为指针以及固定的值如hole分配了空间
-		item.set_basic(obj[Bag_Fields::Item::INDEX].numberInt(), obj[Bag_Fields::Item::ID].numberInt(),
-				obj[Bag_Fields::Item::AMOUNT].numberInt(), obj[Bag_Fields::Item::BIND].numberInt());
-	}
+	item.reset();
+	item.item_basic.id = obj[Bag_Fields::Item::ID].numberInt();
+	item.item_basic.amount = obj[Bag_Fields::Item::AMOUNT].numberInt();
+	item.init();
 
-	return result;
+	return 0;
 }
 
 int DB_Operator::save_item_detail(const Item_Info &item, mongo::BSONObj &obj) {
 	BSONObjBuilder item_builder;
-	item_builder << Bag_Fields::Item::INDEX << item.item_basic.index << Bag_Fields::Item::ID
-			<< item.item_basic.id << Bag_Fields::Item::AMOUNT << item.item_basic.amount
-			<< Bag_Fields::Item::BIND << item.item_basic.bind;
+	item_builder << Bag_Fields::Item::ID << item.item_basic.id << Bag_Fields::Item::AMOUNT << item.item_basic.amount;
 	obj = item_builder.obj();
 	return 0;
 }

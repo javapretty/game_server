@@ -212,15 +212,7 @@ struct Item_Info {
 		ITEM_END = 400000000,
 	};
 
-	enum Bind_Type {
-		UNBIND = 0,
-		USED_BIND = 1,
-		BIND = 2,
-		DEFINE_BY_CFG = 3
-	};
-
 	Item_Info(void);
-	explicit Item_Info(uint32_t id, int32_t amount, uint8_t bind = DEFINE_BY_CFG);
 	explicit Item_Info(const Item_Basic_Info &item);
 	virtual ~Item_Info();
 	int init();
@@ -229,26 +221,11 @@ struct Item_Info {
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 
-	void set_basic(const uint32_t index, const uint32_t id, const int32_t amount, const uint8_t bind = DEFINE_BY_CFG);
-
-	static int is_item_type(const uint32_t item_id, Item_Type item_type);
 	static int get_item_type(const uint32_t item_id, Item_Type &item_type);
-	static int32_t get_item_stack_upper(const uint32_t item_id);
-	int get_item_remain_amount(void) {
-		return get_item_stack_upper(item_basic.id) - item_basic.amount;
-	}
-
 	friend bool operator<(const Item_Info &item1, const Item_Info &item2);
 	bool operator == (const Item_Info &cmp) const;
-
-	// 同类道具，如都是白铁剑，但绑定状态不一样
-	friend bool is_similar_item(const Item_Info &item1, const Item_Info &item2) {
-		return item1.item_basic.id == item2.item_basic.id;
-	}
-
-	// 完全相等的道具
 	friend bool is_equal_item(const Item_Info &item1, const Item_Info &item2) {
-		if (item1.item_basic.id == item2.item_basic.id && item1.item_basic.bind == item2.item_basic.bind) {
+		if (item1.item_basic.id == item2.item_basic.id) {
 			if (0 == memcmp(&item1.addon, &item2.addon, sizeof(Addon))) {
 				return true;
 			}
@@ -266,24 +243,11 @@ struct Item_Info {
 inline std::size_t hash_value(const Item_Info &item) {
     std::size_t seed = 0;
     boost::hash_combine(seed, item.item_basic.id);
-    boost::hash_combine(seed, item.item_basic.bind);
     return seed;
 }
 
 struct Bag_Info {
-	typedef std::map<uint32_t, Item_Info> Item_Map;
-
-	enum {
-		BAG_MAX_CAPACITY = 210,
-		STORAGE_MAX_CAPACITY = 210,
-		BAG_INIT_CAPACITY = 56,
-		STORAGE_INIT_CAPACITY = 40,
-	};
-
-	struct Capacity {
-		uint16_t bag_cap;
-		uint16_t storage_cap;
-	};
+	typedef boost::unordered_map<int32_t, Item_Info> Item_Map;
 
 	Bag_Info();
 	int serialize(Block_Buffer &buffer) const;
@@ -293,16 +257,14 @@ struct Bag_Info {
 	void reset(void);
 	inline void save_change(void) { is_change = true; };
 
-	Bag_Info &operator=(Bag_Info &detail);
-
 	// 仅背包内部用!!
 	void erase(uint32_t index);
 	void erase(Item_Map::iterator iter);
 	void erase(Item_Map::iterator begin, Item_Map::iterator end);
 
 	int64_t role_id;
-	Capacity capacity;
-	Money_Info money_info;
+	int32_t copper;
+	int32_t gold;
 	Item_Map item_map;
 	bool is_change;
 };

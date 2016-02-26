@@ -17,53 +17,24 @@ struct Role_Info {
 
 	std::string role_name;
 
-	uint8_t career;
+	int32_t level;
 
-	uint8_t gender;
+	int32_t career;
 
-	uint16_t level;
+	int32_t gender;
 
 	Role_Info(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
-/*
-
-	物品基本信息
-
-	备注：
-
-	EQUIP_INDEX = 10000,
-
-	PACKAGE_INDEX = EQUIP_INDEX + INDEX_GAP,
-*/
 struct Item_Basic_Info {
 
-	uint32_t index;/*位置标识符*/
+	int32_t id; //物品id
 
-	uint32_t id;/*道具id（图标id整合到此id）*/
-
-	int32_t amount;/*总量*/
-
-	uint8_t bind;/*是否绑定（0）不绑，（2）已绑 其他值非法*/
+	int32_t amount; //物品数量
 
 	Item_Basic_Info(void);
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-};
-struct Money_Info {
-
-	int32_t copper;
-
-	int32_t bind_copper;
-
-	int32_t gold;
-
-	int32_t bind_gold;
-
-	Money_Info(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

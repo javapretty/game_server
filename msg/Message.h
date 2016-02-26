@@ -74,13 +74,8 @@ enum Client_Game_Message {
 	REQ_CREATE_ROLE 									= 	120002,	//创建角色
 
 	REQ_FETCH_BAG_INFO 								= 120100,	//获取背包信息
-	REQ_ADD_CAPACITY 									= 120101,	//增加容量
-	REQ_DISCARD_ITEM 									= 120102,	//丢弃物品
-	REQ_MOVE_ITEM 										= 120103,	//移动物品
-	REQ_SPLIT_ITEM 										= 120104,	//拆分物品
-	REQ_SORT_ITEM 										= 120105,	//整理物品
-	REQ_MERGE_ITEM 										= 120106,	//合并物品
-	REQ_SELL_ITEM 										= 120107,	//出售物品
+	REQ_USE_ITEM 											= 120101,	//使用物品
+	REQ_SELL_ITEM 										= 120102,	//出售物品
 
 	REQ_FETCH_MAIL_INFO 							= 120200,	//获取邮件信息
 	REQ_PICKUP_MAIL 									= 120201,	//收取附件和金钱
@@ -93,13 +88,8 @@ enum Game_Client_Message {
 	RES_CREATE_ROLE 									= 	520002,	//创建角色(返回)
 
 	RES_FETCH_BAG_INFO 								= 520100,	//获取背包信息(返回)
-	RES_ADD_CAPACITY 									= 520101,	//增加背包容量(返回)
-	RES_DISCARD_ITEM 									= 520102,	//丢弃物品(返回)
-	RES_MOVE_ITEM 										= 520103,	//移动物品(返回)
-	RES_SPLIT_ITEM 										= 520104,	//拆分物品(返回)
-	RES_SORT_ITEM 										= 520105,	//整理物品(返回)
-	RES_MERGE_ITEM 										= 520106,	//合并物品(返回)
-	RES_SELL_ITEM 										= 520107,	//出售物品(返回)
+	RES_USE_ITEM											= 520101,	//使用物品(返回)
+	RES_SELL_ITEM 										= 520102,	//出售物品(返回)
 
 	RES_FETCH_MAIL_INFO								= 520200,	//获取邮件信息(返回)
 	RES_PICKUP_MAIL 									=	520201,	//收取附件(返回)
@@ -149,9 +139,7 @@ enum Active_Message{
 
 	ACTIVE_ITEM_INFO 									= 300100,	//物品信息更新
 	ACTIVE_ITEM_ADDIT_INFO 						= 300101,	//物品附加信息更新
-	ACTIVE_BAG_CAPACITY 							= 300102,	//背包容量改变
-	ACTIVE_MONEY_INFO 								= 300103,	//金钱更新
-	ACTIVE_ITEM_ERASE 								= 300104,	//物品删除
+	ACTIVE_MONEY_INFO 								= 300102,	//金钱更新
 
 	ACTIVE_RECEIVE_MAIL 							= 300200,	//收到邮件
 };
