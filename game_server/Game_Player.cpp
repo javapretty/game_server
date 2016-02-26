@@ -90,6 +90,7 @@ int Game_Player::sign_in(std::string account) {
 	player_data_buffer_->write_int32(cid_info_.gate_cid);
 	player_data_buffer_->write_int32(cid_info_.player_cid);
 	player_data_.game_player_info.serialize(*player_data_buffer_);
+	player_data_.bag_info.serialize(*player_data_buffer_);
 	player_data_.mail_info.serialize(*player_data_buffer_);
 	GAME_MANAGER->push_player_data(player_data_buffer_);
 
@@ -101,6 +102,7 @@ int Game_Player::sign_in(std::string account) {
 
 int Game_Player::sign_out(void) {
 	player_data_.game_player_info.deserialize(*player_data_buffer_);
+	player_data_.bag_info.deserialize(*player_data_buffer_);
 	player_data_.mail_info.deserialize(*player_data_buffer_);
 	GAME_MANAGER->push_block_buffer(player_data_buffer_);
 

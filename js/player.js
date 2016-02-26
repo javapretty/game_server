@@ -9,9 +9,9 @@
 function Player() {
 	this.cid = 0;
 	this.cplayer = null;
-	this.player_data = new Object();
-	this.player_data.player_info = new Player_Info();
-	this.player_data.mail_info = new Mail_Info();
+	this.player_info = new Player_Info();
+	this.bag = new Bag();
+	this.mail = new Mail();
 
 	this.load_player_data = function(buffer) {
 		if (buffer == null) {
@@ -22,9 +22,10 @@ function Player() {
 		var player_cid = buffer.read_int32();
 		this.cid = gate_cid * 10000 + player_cid;
 		this.cplayer = get_player_by_cid(gate_cid, player_cid);
-		this.player_data.player_info.deserialize(buffer);
-		this.player_data.mail_info.deserialize(buffer);	
-		print('------load_data,role_id:', this.player_data.player_info.role_id, " role_name:", this.player_data.player_info.role_name);
+		this.player_info.deserialize(buffer);
+		this.bag.load_data(this, buffer);
+		this.mail.load_data(this, buffer);
+		print('------load_data,role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name);
 	}
 	
 	this.save_player_data = function() {
@@ -32,8 +33,10 @@ function Player() {
 		if (buffer == null) {
 			return;
 		}
-		this.player_data.player_info.serialize(buffer);
-		this.player_data.mail_info.serialize(buffer);
-		print('------save_data,role_id:', this.player_data.player_info.role_id, " role_name:", this.player_data.player_info.role_name);
+		
+		this.player_info.serialize(buffer);
+		this.bag.save_data(buffer);
+		this.mail.save_data(buffer);
+		print('------save_data,role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name);
 	}
 }

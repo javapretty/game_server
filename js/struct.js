@@ -67,6 +67,60 @@ function Player_Info() {
 	}
 }
 
+function Item_Info() {
+	this.id = 0;				//物品id
+	this.amount = 0;		//物品数量
+	this.type = 0;			//物品类型
+	
+	this.serialize = function(buffer) {
+		buffer.write_int32(id);
+		buffer.write_int32(amount);
+		buffer.write_int32(type);
+	}
+	
+	this.deserialize = function(buffer) {
+		id = buffer.read_int32();
+		amount = buffer.read_int32();
+		type = buffer.read_int32();
+	}
+}
+
+function Bag_Info() {
+	this.role_id = 0;						//角色ID
+	this.copper = 0; 						//铜钱
+	this.gold = 0;							//元宝
+	this.item_map = new Map();		//物品信息
+	this.is_change = false;			//数据是否改变
+	
+	this.serialize = function(buffer) {
+		buffer.write_int64(this.role_id);
+		buffer.write_int32(this.copper);
+		buffer.write_int32(this.gold);
+		buffer.write_uint16(this.item_map.size());
+		this.item_map.each(function(key,value,index) {
+			value.serialize(buffer);
+     	});
+		buffer.write_bool(this.is_change);
+	}
+	
+	this.deserialize = function(buffer) {
+		this.role_id = buffer.read_int64();
+		this.copper = buffer.read_int32();
+		this.gold = buffer.read_int32();
+		var len = buffer.read_uint16();
+		for (var i = 0; i < len; ++i) {
+			var item_info = new Item_Info();
+			item_info.deserialize(buffer);
+			this.mail_map.put(item_info.id, item_info);
+		}
+		this.is_change = buffer.read_bool();
+	}
+	
+	this.save_change = function() {
+		this.is_change = true;
+	}
+}
+
 function Mail_Detail() {
 	this.pickup = 0; 				//是否收取过附件
 	this.mail_id = 0; 			//邮件id
@@ -109,7 +163,7 @@ function Mail_Detail() {
 function Mail_Info() {
 	this.role_id = 0;						//角色ID
 	this.total_count = 0; 			//邮件的总数量，即目前为止收到的所有邮件数
-	this.mail_map = new Map();		//邮件信息map
+	this.mail_map = new Map();		//邮件信息
 	this.is_change = false;			//数据是否改变
 	
 	this.serialize = function(buffer) {

@@ -12,12 +12,6 @@
 #include "Misc.h"
 #include "Msg_Struct.h"
 
-enum Bind_Verify {
-	BIND_NONE = 0,
-	BIND_ONLY = 1,
-	UNBIND_ONLY = 2
-};
-
 enum Sender_Type {
 	ROLE_MAIL = 1,
 	SYSTEM_MAIL = 2,
@@ -256,11 +250,6 @@ struct Bag_Info {
 	int save(void);
 	void reset(void);
 	inline void save_change(void) { is_change = true; };
-
-	// 仅背包内部用!!
-	void erase(uint32_t index);
-	void erase(Item_Map::iterator iter);
-	void erase(Item_Map::iterator begin, Item_Map::iterator end);
 
 	int64_t role_id;
 	int32_t copper;

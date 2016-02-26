@@ -30,7 +30,7 @@ while (true) {
 		all_empty = false;
 		var player = new Player();
 		player.load_player_data(buffer);
-		player_role_id_map.put(player.player_data.player_info.role_id, player);
+		player_role_id_map.put(player.player_info.role_id, player);
 		player_cid_map.put(player.cid, player);
 	}
 	
@@ -40,7 +40,7 @@ while (true) {
 		var player = player_cid_map.get(cid);
 		if (player) {
 			player.save_player_data();
-			player_role_id_map.remove(player.player_data.player_info.role_id);
+			player_role_id_map.remove(player.player_info.role_id);
 			player_cid_map.remove(cid);
 		}
 	}
@@ -66,16 +66,16 @@ function process_client_buffer(buffer) {
 		if (player) {
 			switch(msg_id) {
 			case msg_req.REQ_FETCH_MAIL_INFO:
-				fetch_mail_info(player);
+				player.mail.fetch_mail_info();
 				break;
 			case msg_req.REQ_PICKUP_MAIL:
-				pickup_mail(player, buffer);
+				player.mail.pickup_mail(buffer);
 				break;
 			case msg_req.REQ_DEL_MAIL:
-				delete_mail(player, buffer);
+				player.mail.delete_mail(buffer);
 				break;
 			case msg_req.REQ_SEND_MAIL:
-				send_mail(player, buffer);
+				player.mail.send_mail(buffer);
 				break;
 			default:
 				break;
