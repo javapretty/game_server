@@ -116,13 +116,13 @@ struct MSG_120101 {
 
 	出售物品
 */
-struct MSG_120107 {
+struct MSG_120102 {
 
 	int32_t item_id; //物品id
 
 	int32_t item_amount; //物品数量
 
-	MSG_120107(void);
+	MSG_120102(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

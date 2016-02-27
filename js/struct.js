@@ -70,18 +70,15 @@ function Player_Info() {
 function Item_Info() {
 	this.id = 0;				//物品id
 	this.amount = 0;		//物品数量
-	this.type = 0;			//物品类型
 	
 	this.serialize = function(buffer) {
 		buffer.write_int32(id);
 		buffer.write_int32(amount);
-		buffer.write_int32(type);
 	}
 	
 	this.deserialize = function(buffer) {
 		id = buffer.read_int32();
 		amount = buffer.read_int32();
-		type = buffer.read_int32();
 	}
 }
 

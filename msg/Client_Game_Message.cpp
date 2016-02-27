@@ -130,22 +130,22 @@ void MSG_120101::reset(){
 	item_amount = 0;
 }
 
-MSG_120107::MSG_120107(void){
+MSG_120102::MSG_120102(void){
 	reset();
 }
 
-void MSG_120107::serialize(Block_Buffer &buffer) const {
+void MSG_120102::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(item_id);
 	buffer.write_int32(item_amount);
 }
 
-int MSG_120107::deserialize(Block_Buffer &buffer) {
+int MSG_120102::deserialize(Block_Buffer &buffer) {
 	item_id = buffer.read_int32();
 	item_amount = buffer.read_int32();
 	return 0;
 }
 
-void MSG_120107::reset(){
+void MSG_120102::reset(){
 	item_id = 0;
 	item_amount = 0;
 }

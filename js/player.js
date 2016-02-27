@@ -1,5 +1,5 @@
 /*
-*	描述：玩家功能类
+*	描述：玩家系统
 *	作者：张亚磊
 *	时间：2016/02/24
 *	qq:784599938
@@ -26,6 +26,9 @@ function Player() {
 		this.bag.load_data(this, buffer);
 		this.mail.load_data(this, buffer);
 		print('------load_data,role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name);
+		
+		player_cid_map.put(this.cid, this);
+		player_role_id_map.put(this.player_info.role_id, this);
 	}
 	
 	this.save_player_data = function() {
@@ -38,5 +41,8 @@ function Player() {
 		this.bag.save_data(buffer);
 		this.mail.save_data(buffer);
 		print('------save_data,role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name);
+		
+		player_cid_map.remove(this.cid);
+		player_role_id_map.remove(this.player_info.role_id);
 	}
 }

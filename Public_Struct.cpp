@@ -181,70 +181,22 @@ Item_Info::Item_Info(void) {
 Item_Info::Item_Info(const Item_Basic_Info &item) {
 	reset();
 	item_basic = item;
-	init();
 }
 
 Item_Info::~Item_Info() {}
 
-int Item_Info::init() {
-	get_item_type(item_basic.id, type);
-	memset(&addon, 0x00, sizeof (addon));
-	return 0;
-}
-
 int Item_Info::serialize(Block_Buffer &buffer) const {
 	item_basic.serialize(buffer);
-	buffer.write_int32(type);
-	switch (type) {
-	default:
-		break;
-	}
-
 	return 0;
 }
 
 int Item_Info::deserialize(Block_Buffer &buffer){
-	reset();
 	item_basic.deserialize(buffer);
-	int type_value = buffer.read_int32();
-	type = static_cast<Item_Type>(type_value);
-	switch (type) {
-	default:
-		break;
-	}
-
 	return 0;
 }
 
 void Item_Info::reset(void){
 	item_basic.reset();
-	type = NORMAL;
-	memset(&addon, 0x00, sizeof(addon));
-}
-
-int Item_Info::get_item_type(const uint32_t item_id, Item_Type &item_type) {
-	item_type = NORMAL;
-	return 0;
-}
-
-bool Item_Info::operator == (const Item_Info &cmp) const {
-	if (is_equal_item(*this, cmp)) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
-bool operator<(const Item_Info &item1, const Item_Info &item2) {
-	int sort1 = CONFIG_INSTANCE->item(item1.item_basic.id)["sort"].asInt();
-	int sort2 = CONFIG_INSTANCE->item(item2.item_basic.id)["sort"].asInt();
-	if (sort1 < sort2) {
-		return true;
-	} else if (sort1 == sort2 && item1.item_basic.id > item2.item_basic.id) {
-		return true;
-	} else {
-		return false;
-	}
 }
 
 Bag_Info::Bag_Info(void) { reset(); }

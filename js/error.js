@@ -28,4 +28,9 @@ if (typeof error == "undefined") {
 	error.ERROR_EXIST_ROLE_NAME 					= 10000018;				//角色名已存在
 	error.ERROR_ROLE_OFFLINE 						= 10000019;				//玩家已离线
 	error.ERROR_REGISTER_VERIFY_FAIL			= 10000020;				//注册验证失败
+	error.ERROR_BAG_FULL								= 10000100,				//背包已满
+	error.ERROR_ITEM_NOT_EXIST						= 10000101;				//物品不存在
+	error.ERROR_ITEM_NOT_ENOUGH					= 10000102;				//物品不足
+	error.ERROR_COPPER_NOT_ENOUGH				= 10000103;				//铜钱不足
+	error.ERROR_GOLD_NOT_ENOUGH					= 10000104;				//元宝不足
 }

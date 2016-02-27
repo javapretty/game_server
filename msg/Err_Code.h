@@ -31,21 +31,10 @@ enum Err_Code {
 		ERROR_REGISTER_VERIFY_FAIL			= 10000020,				//注册验证失败
 
 		ERROR_BAG_FULL								= 10000100,				//背包已满
-		ERROR_BAG_LOCK								= 10000101,				//背包已经锁定
-		ERROR_BAG_INDEX_NOT_EXIST			= 10000102,				//背包索引不存在
-		ERROR_ITEM_FORBID_DROP				= 10000103,				//物品禁止丢弃
-		ERROR_ITEM_NOT_EXIST					= 10000104,				//物品不存在
-		ERROR_UNBIND_ITEM_NOT_ENOUGH		= 10000105,				//非绑定物品不足
-		ERROR_BIND_ITEM_NOT_ENOUGH			= 10000106,				//绑定物品不足
-		ERROR_ITEM_NOT_ENOUGH					= 10000107,				//物品不足
-		ERROR_NO_ITEM_GET							= 10000108,				//没有物品获得
-		ERROR_MONEY_TYPE_ILLEGAL  			= 10000109,				//金钱类型非法
-		ERROR_ALL_COPPER_NOT_ENOUGH		= 10000110,				//所有铜钱不足
-		ERROR_COPPER_NOT_ENOUGH				= 10000111,				//铜钱不足
-		ERROR_BIND_COPPER_NOT_ENOUGH		= 10000112,				//绑定铜钱不足
-		ERROR_BIND_GOLD_NOT_ENOUGH			= 10000113,				//绑定元宝不足
-		ERROR_GOLD_NOT_ENOUGH					= 10000114,				//元宝不足
-
+		ERROR_ITEM_NOT_EXIST					= 10000101,				//物品不存在
+		ERROR_ITEM_NOT_ENOUGH					= 10000102,				//物品不足
+		ERROR_COPPER_NOT_ENOUGH				= 10000103,				//铜钱不足
+		ERROR_GOLD_NOT_ENOUGH					= 10000104,				//元宝不足
 };
 
 #endif /* _ERRCODE_H_ */

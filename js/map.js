@@ -25,7 +25,7 @@ function Map() {
      * @param {Object} value
      */
 	this.put = function(key, value) {
-		if(this.data[key] == null){
+		if (this.data[key] == null) {
 			this.keys.push(key);
 		}
 		this.data[key] = value;

@@ -373,7 +373,6 @@ int DB_Operator::load_item_detail(const BSONObj &obj, Item_Info &item) {
 	item.reset();
 	item.item_basic.id = obj[Bag_Fields::Item::ID].numberInt();
 	item.item_basic.amount = obj[Bag_Fields::Item::AMOUNT].numberInt();
-	item.init();
 
 	return 0;
 }

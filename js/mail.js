@@ -153,7 +153,7 @@ function send_mail_inner(receiver_id, mail_detail) {
 			push_buffer(buf);
 		} else {
 			var buf = pop_buffer();
-			buf.make_inner_message(SYNC_GAME_DB_SAVE_MAIL_INFO);
+			buf.make_inner_message(msg_db.SYNC_GAME_DB_SAVE_MAIL_INFO);
 			buf.write_int64(receiver_id);
 			mail_detail.serialize(buf);
 			buf.finish_message();

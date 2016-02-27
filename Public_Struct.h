@@ -197,48 +197,16 @@ struct Game_Player_Info {
 };
 
 struct Item_Info {
-	enum Item_Type {
-		NORMAL = 0,
-	};
-
-	enum Item_Index {
-		ITEM_START = 100000000,
-		ITEM_END = 400000000,
-	};
-
 	Item_Info(void);
 	explicit Item_Info(const Item_Basic_Info &item);
 	virtual ~Item_Info();
-	int init();
 
 	int serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 
-	static int get_item_type(const uint32_t item_id, Item_Type &item_type);
-	friend bool operator<(const Item_Info &item1, const Item_Info &item2);
-	bool operator == (const Item_Info &cmp) const;
-	friend bool is_equal_item(const Item_Info &item1, const Item_Info &item2) {
-		if (item1.item_basic.id == item2.item_basic.id) {
-			if (0 == memcmp(&item1.addon, &item2.addon, sizeof(Addon))) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	Item_Basic_Info item_basic;
-	Item_Type type;
-	union Addon {
-	};
-	Addon addon;
 };
-
-inline std::size_t hash_value(const Item_Info &item) {
-    std::size_t seed = 0;
-    boost::hash_combine(seed, item.item_basic.id);
-    return seed;
-}
 
 struct Bag_Info {
 	typedef boost::unordered_map<int32_t, Item_Info> Item_Map;
