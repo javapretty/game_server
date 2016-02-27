@@ -177,6 +177,7 @@ struct Game_Player_Info {
 	int agent_num;						//平台编号
 	int server_num;						//服务器编号
 	int level;     			   		//玩家等级
+	int experience;						//玩家经验
 	int gender; 							//0(女),1(男)
 	int career; 							//职业1-3
 	int create_time;					//创建角色时刻

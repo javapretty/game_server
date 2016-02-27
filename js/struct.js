@@ -14,6 +14,7 @@ function Player_Info() {
 	this.agent_num = 0;						//平台编号
 	this.server_num = 0;					//服务器编号
 	this.level = 0;     			  		//玩家等级
+	this.experience = 0;					//玩家经验
 	this.gender = 0; 							//0(女),1(男)
 	this.career = 0; 							//职业1-3
 	this.create_time = 0;					//创建角色时刻
@@ -32,6 +33,7 @@ function Player_Info() {
 		buffer.write_int32(this.agent_num);
 		buffer.write_int32(this.server_num);
 		buffer.write_int32(this.level);
+		buffer.write_int32(this.experience);
 		buffer.write_uint32(this.gender);
 		buffer.write_uint32(this.career);
 		buffer.write_int32(this.create_time);
@@ -51,6 +53,7 @@ function Player_Info() {
 		this.agent_num = buffer.read_int32();
 		this.server_num = buffer.read_int32();
 		this.level = buffer.read_int32();
+		this.experience = buffer.read_int32();
 		this.gender = buffer.read_int32();
 		this.career = buffer.read_int32();
 		this.create_time = buffer.read_int32();

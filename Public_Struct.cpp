@@ -115,8 +115,9 @@ int Game_Player_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(agent_num);
 	buffer.write_int32(server_num);
 	buffer.write_int32(level);
-	buffer.write_uint32(gender);
-	buffer.write_uint32(career);
+	buffer.write_int32(experience);
+	buffer.write_int32(gender);
+	buffer.write_int32(career);
 	buffer.write_int32(create_time);
 	buffer.write_int32(last_sign_in_time);
 	buffer.write_int32(last_sign_out_time);
@@ -135,6 +136,7 @@ int Game_Player_Info::deserialize(Block_Buffer &buffer) {
 	agent_num = buffer.read_int32();
 	server_num = buffer.read_int32();
 	level = buffer.read_int32();
+	experience = buffer.read_int32();
 	gender = buffer.read_int32();
 	career = buffer.read_int32();
 	create_time = buffer.read_int32();
@@ -163,6 +165,7 @@ void Game_Player_Info::reset(void) {
 	agent_num = 0;
 	server_num = 0;
 	level = 0;
+	experience = 0;
 	gender = 0;
 	career = 0;
 	create_time = 0;

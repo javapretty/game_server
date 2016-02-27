@@ -7,7 +7,6 @@
 
 #include "Msg_Define.h"
 #include "DB_Operator.h"
-#include "DB_Fields.h"
 #include "Configurator.h"
 #include "DB_Manager.h"
 #include "mongo/client/dbclient.h"
@@ -112,64 +111,66 @@ int DB_Operator::init(void) {
 
 int DB_Operator::create_index(void) {
 	{//global
-		CACHED_CONNECTION.createIndex(Global_Fields::COLLECTION, BSON(Global_Fields::KEY << 1));
+		CACHED_CONNECTION.createIndex("mmo.global", BSON("key" << 1));
 
-		if (CACHED_CONNECTION.count(Global_Fields::COLLECTION, BSON(Global_Fields::KEY << Global_Fields::ROLE)) == 0) {
+		if (CACHED_CONNECTION.count("mmo.global", BSON("key" << "role")) == 0) {
 			BSONObjBuilder builder;
-			builder << Global_Fields::KEY << Global_Fields::ROLE
-					<< Global_Fields::ID << 0;
+			builder << "key" << "role" << "id" << 0;
 
-			CACHED_CONNECTION.update(Global_Fields::COLLECTION, MONGO_QUERY(Global_Fields::KEY << Global_Fields::ROLE),
+			CACHED_CONNECTION.update("mmo.global", MONGO_QUERY("key" << "role"),
 					BSON("$set" << builder.obj()), true);
 		}
 	}
 	{
 		//role
-		CACHED_CONNECTION.createIndex(Role_Fields::COLLECTION, BSON(Role_Fields::ROLE_ID << 1));
-		CACHED_CONNECTION.createIndex(Role_Fields::COLLECTION, BSON(Role_Fields::ROLE_NAME << 1));
-		CACHED_CONNECTION.createIndex(Role_Fields::COLLECTION, BSON(Role_Fields::ACCOUNT << 1));
+		CACHED_CONNECTION.createIndex("mmo.role", BSON("role_id" << 1));
+		CACHED_CONNECTION.createIndex("mmo.role", BSON("role_name" << 1));
+		CACHED_CONNECTION.createIndex("mmo.role", BSON("account" << 1));
 
-		CACHED_CONNECTION.createIndex(Role_Fields::COLLECTION, BSON(Role_Fields::ACCOUNT << 1 << Role_Fields::AGENT_NUM << 1 << Role_Fields::SERVER_NUM << 1));
-		CACHED_CONNECTION.createIndex(Role_Fields::COLLECTION, BSON(Role_Fields::ACCOUNT << 1 << Role_Fields::LEVEL << -1));
+		CACHED_CONNECTION.createIndex("mmo.role", BSON("account" << 1 << "agent_num" << 1 << "server_num" << 1));
+		CACHED_CONNECTION.createIndex("mmo.role", BSON("account" << 1 << "level" << -1));
+	}
+	{ // bag index
+		CACHED_CONNECTION.createIndex("mmo.bag", BSON("role_id" << 1));
 	}
 	{ // mail index
-		CACHED_CONNECTION.createIndex(Mail_Fields::COLLECTION, BSON(Mail_Fields::ROLE_ID << 1));
+		CACHED_CONNECTION.createIndex("mmo.mail", BSON("role_id" << 1));
 	}
 	return 0;
 }
 
 int DB_Operator::load_db_cache(int cid) {
-	unsigned long long res_count = CACHED_CONNECTION.count(Role_Fields::COLLECTION);
+	unsigned long long res_count = CACHED_CONNECTION.count("mmo.role");
 	BSONObjBuilder field_builder;
-	field_builder << Role_Fields::ROLE_ID << 1
-					<< Role_Fields::ACCOUNT << 1
-					<< Role_Fields::ROLE_NAME << 1
-					<< Role_Fields::AGENT_NUM << 1
-					<< Role_Fields::SERVER_NUM << 1
-					<< Role_Fields::LEVEL << 1
-					<< Role_Fields::GENDER << 1
-					<< Role_Fields::CAREER << 1
-					<< Role_Fields::LAST_SIGN_OUT_TIME << 1;
+	field_builder << "role_id" << 1
+					<< "account" << 1
+					<< "role_name" << 1
+					<< "agent_num" << 1
+					<< "server_num" << 1
+					<< "level" << 1
+					<< "gender" << 1
+					<< "career" << 1
+					<< "last_sign_out_time" << 1;
 
 	BSONObj field_bson = field_builder.obj();
 	std::vector<BSONObj> iter_record;
 	iter_record.reserve(res_count);
 
-	CACHED_CONNECTION.findN(iter_record, Role_Fields::COLLECTION, mongo::Query(), res_count, 0, &field_bson);
+	CACHED_CONNECTION.findN(iter_record, "mmo.role", mongo::Query(), res_count, 0, &field_bson);
 
 	MSG_550000 msg;
 	for (std::vector<BSONObj>::iterator iter = iter_record.begin(); iter != iter_record.end(); ++iter) {
 		BSONObj obj = *iter;
 
 		Player_DB_Cache db_cache;
-		db_cache.role_id = obj[Role_Fields::ROLE_ID].numberLong();
-		db_cache.account = obj[Role_Fields::ACCOUNT].valuestrsafe();
-		db_cache.role_name = obj[Role_Fields::ROLE_NAME].valuestrsafe();
-		db_cache.agent_num = obj[Role_Fields::AGENT_NUM].numberInt();
-		db_cache.server_num = obj[Role_Fields::SERVER_NUM].numberInt();
-		db_cache.level = obj[Role_Fields::LEVEL].numberInt();
-		db_cache.gender = obj[Role_Fields::GENDER].numberInt();
-		db_cache.career = obj[Role_Fields::CAREER].numberInt();
+		db_cache.role_id = obj["role_id"].numberLong();
+		db_cache.account = obj["account"].valuestrsafe();
+		db_cache.role_name = obj["role_name"].valuestrsafe();
+		db_cache.agent_num = obj["agent_num"].numberInt();
+		db_cache.server_num = obj["server_num"].numberInt();
+		db_cache.level = obj["level"].numberInt();
+		db_cache.gender = obj["gender"].numberInt();
+		db_cache.career = obj["career"].numberInt();
 		msg.db_cache_vec.push_back(db_cache);
 	}
 
@@ -198,9 +199,9 @@ int64_t DB_Operator::create_init_player(Game_Player_Info &player_info) {
 	}
 #endif
 
-	BSONObj fields = BSON(Role_Fields::ACCOUNT << 1 << Role_Fields::ROLE_ID << 1 << Role_Fields::ROLE_NAME << 1);
-	BSONObj res = CACHED_CONNECTION.findOne(Role_Fields::COLLECTION,
-			MONGO_QUERY(Role_Fields::ROLE_NAME << player_info.role_name), &fields);
+	BSONObj fields = BSON("account" << 1 << "role_id" << 1 << "role_name" << 1);
+	BSONObj res = CACHED_CONNECTION.findOne("mmo.role",
+			MONGO_QUERY("role_name" << player_info.role_name), &fields);
 
 	if (res.isEmpty() == false) {
 		MSG_USER("role_name = [%s] has already existed.", player_info.role_name.c_str());
@@ -220,84 +221,67 @@ int64_t DB_Operator::create_init_player(Game_Player_Info &player_info) {
 
 	player_info.role_id = role_id;
 	int now_sec = Time_Value::gettimeofday().sec();
-	CACHED_CONNECTION.update(Role_Fields::COLLECTION, MONGO_QUERY(Role_Fields::ROLE_ID << ((long long int)role_id)), BSON("$set" <<
-			BSON(Role_Fields::ACCOUNT << player_info.account
-					<< Role_Fields::AGENT_NUM << player_info.agent_num
-					<< Role_Fields::SERVER_NUM << player_info.server_num
-					<< Role_Fields::ROLE_ID << (long long int)role_id
-					<< Role_Fields::CAREER << 0
-					<< Role_Fields::LEVEL << 1
-					<< Role_Fields::ROLE_NAME << player_info.role_name
-					<< Role_Fields::GENDER << player_info.gender
-					<< Role_Fields::LAST_SIGN_IN_TIME << now_sec
-					<< Role_Fields::LAST_SIGN_OUT_TIME << now_sec)), true);
+	CACHED_CONNECTION.update("mmo.role", MONGO_QUERY("role_id" << ((long long int)role_id)), BSON("$set" <<
+			BSON("role_id" << (long long int)role_id
+					<< "agent_num" << player_info.agent_num
+					<< "server_num" << player_info.server_num
+					<< "account" << player_info.account
+					<< "role_name" << player_info.role_name
+					<< "level" << 1
+					<< "gender" << player_info.gender
+					<< "career" << 0
+					<< "last_sign_in_time" << now_sec
+					<< "last_sign_out_time" << now_sec)), true);
 	return role_id;
 }
 
-int DB_Operator::has_role_by_account(std::string &account, const int agent_num, const int server_num) {
-	BSONObj res = CACHED_CONNECTION.findOne(Role_Fields::COLLECTION, MONGO_QUERY(Role_Fields::ACCOUNT << account << Role_Fields::AGENT_NUM << agent_num << Role_Fields::SERVER_NUM << server_num));
-	if (res.isEmpty()) return 0;
-	else return 1;
+bool DB_Operator::has_role_by_account(std::string &account, const int agent_num, const int server_num) {
+	BSONObj res = CACHED_CONNECTION.findOne("mmo.role", MONGO_QUERY("account" << account << "agent_num" << agent_num << "server_num" << server_num));
+	if (res.isEmpty()) {
+		return false;
+	} else {
+		return true;
+	}
 }
 
 int64_t DB_Operator::get_role_id(const std::string &account, const int agent_num, const int server_num) {
-	BSONObj res = CACHED_CONNECTION.findOne(Role_Fields::COLLECTION, MONGO_QUERY(Role_Fields::ACCOUNT << account << Role_Fields::AGENT_NUM << agent_num << Role_Fields::SERVER_NUM << server_num));
+	BSONObj res = CACHED_CONNECTION.findOne("mmo.role", MONGO_QUERY("account" << account << "agent_num" << agent_num << "server_num" << server_num));
 	if (res.isEmpty()) {
-		res = CACHED_CONNECTION.findOne(Role_Fields::COLLECTION, MONGO_QUERY(Role_Fields::ACCOUNT << account).sort(BSON(Role_Fields::LEVEL << -1)));
+		res = CACHED_CONNECTION.findOne("mmo.role", MONGO_QUERY("account" << account).sort(BSON("level" << -1)));
 		if (!res.isEmpty()) {
-			return res[Role_Fields::ROLE_ID].numberLong();
+			return res["role_id"].numberLong();
 		}
 		return 0;
 	}
-	else return res[Role_Fields::ROLE_ID].numberLong();
+	else return res["role_id"].numberLong();
 }
-
-int DB_Operator::get_role_name_by_id(int64_t role_id, std::string &name) {
-	BSONObj res = CACHED_CONNECTION.findOne(Role_Fields::COLLECTION, MONGO_QUERY(Role_Fields::ROLE_ID << (long long int)role_id));
-	if (res.isEmpty()) return 0;
-	name = res[Role_Fields::ROLE_NAME].valuestrsafe();
-	return 1;
-}
-
-int DB_Operator::get_account_by_id(int64_t role_id, std::string &account) {
-	BSONObj res = CACHED_CONNECTION.findOne(Role_Fields::COLLECTION, MONGO_QUERY(Role_Fields::ROLE_ID << (long long int)role_id));
-	if (res.isEmpty()) return 0;
-	account = res[Role_Fields::ACCOUNT].valuestrsafe();
-	return 1;
-}
-
-int DB_Operator::has_role_by_id(int64_t role_id) {
-	BSONObj res = CACHED_CONNECTION.findOne(Role_Fields::COLLECTION, MONGO_QUERY(Role_Fields::ROLE_ID << (long long int)role_id));
-	if (res.isEmpty()) return 0;
-	else return 1;
-}
-
 
 /////////////////// Base Info DB Operator ///////////////////
 int DB_Operator::load_player_info(Game_Player_Info &player_info) {
-	BSONObj res = CACHED_CONNECTION.findOne(Role_Fields::COLLECTION, MONGO_QUERY(Role_Fields::ROLE_ID << (long long int)player_info.role_id));
+	BSONObj res = CACHED_CONNECTION.findOne("mmo.role", MONGO_QUERY("role_id" << (long long int)player_info.role_id));
 	if (! res.isEmpty()) {
-		player_info.role_id = res[Role_Fields::ROLE_ID].numberLong();
-		player_info.account = res[Role_Fields::ACCOUNT].valuestrsafe();
-		player_info.role_name = res[Role_Fields::ROLE_NAME].valuestrsafe();
-		player_info.client_ip = res[Role_Fields::CLIENT_IP].valuestrsafe();
-		player_info.agent_num = res[Role_Fields::AGENT_NUM].numberInt();
+		player_info.role_id = res["role_id"].numberLong();
+		player_info.account = res["account"].valuestrsafe();
+		player_info.role_name = res["role_name"].valuestrsafe();
+		player_info.client_ip = res["client_ip"].valuestrsafe();
+		player_info.agent_num = res["agent_num"].numberInt();
 		if (player_info.agent_num == 0) {
 			player_info.server_num = player_info.role_id / 10000000000000L;
 		}
-		player_info.server_num = res[Role_Fields::SERVER_NUM].numberInt();
+		player_info.server_num = res["server_num"].numberInt();
 		if (player_info.server_num == 0) {
 			player_info.server_num = player_info.role_id / 1000000000L % 10000L;
 		}
-		player_info.level = res[Role_Fields::LEVEL].numberInt();
-		player_info.gender = res[Role_Fields::GENDER].numberInt();
-		player_info.career = res[Role_Fields::CAREER].numberInt();
-		player_info.create_time = res[Role_Fields::CREATE_TIME].numberInt();
-		player_info.last_sign_in_time = res[Role_Fields::LAST_SIGN_IN_TIME].numberInt();
-		player_info.last_sign_out_time = res[Role_Fields::LAST_SIGN_OUT_TIME].numberInt();
-		player_info.vitality = res[Role_Fields::VITALITY].numberInt();
-		player_info.vip = res[Role_Fields::VIP].numberInt();
-		player_info.charge_gold = res[Role_Fields::CHARGE_GOLD].numberInt();
+		player_info.level = res["level"].numberInt();
+		player_info.experience = res["experience"].numberInt();
+		player_info.gender = res["gender"].numberInt();
+		player_info.career = res["career"].numberInt();
+		player_info.create_time = res["create_time"].numberInt();
+		player_info.last_sign_in_time = res["last_sign_in_time"].numberInt();
+		player_info.last_sign_out_time = res["last_sign_out_time"].numberInt();
+		player_info.vitality = res["vitality"].numberInt();
+		player_info.vip = res["vip"].numberInt();
+		player_info.charge_gold = res["charge_gold"].numberInt();
 		return 0;
 	} else {
 		return -1;
@@ -306,39 +290,40 @@ int DB_Operator::load_player_info(Game_Player_Info &player_info) {
 
 int DB_Operator::save_player_info(Game_Player_Info &player_info) {
 	BSONObjBuilder builder;
-	builder << Role_Fields::ROLE_ID << (long long int)player_info.role_id
-			<< Role_Fields::ACCOUNT << player_info.account
-			<< Role_Fields::ROLE_NAME << player_info.role_name
-			<< Role_Fields::CLIENT_IP << (player_info.client_ip)
-			<< Role_Fields::AGENT_NUM << player_info.agent_num
-			<< Role_Fields::SERVER_NUM << player_info.server_num
-			<< Role_Fields::LEVEL << player_info.level
-			<< Role_Fields::GENDER << player_info.gender
-			<< Role_Fields::CAREER << player_info.career
-			<< Role_Fields::CREATE_TIME << player_info.create_time
-			<< Role_Fields::LAST_SIGN_IN_TIME << player_info.last_sign_in_time
-			<< Role_Fields::LAST_SIGN_OUT_TIME << player_info.last_sign_out_time
-			<< Role_Fields::VITALITY << player_info.vitality
-			<< Role_Fields::VIP << player_info.vip
-			<< Role_Fields::CHARGE_GOLD << player_info.charge_gold;
+	builder << "role_id" << (long long int)player_info.role_id
+			<< "account" << player_info.account
+			<< "role_name" << player_info.role_name
+			<< "client_ip" << (player_info.client_ip)
+			<< "agent_num" << player_info.agent_num
+			<< "server_num" << player_info.server_num
+			<< "level" << player_info.level
+			<< "experience" << player_info.experience
+			<< "gender" << player_info.gender
+			<< "career" << player_info.career
+			<< "create_time" << player_info.create_time
+			<< "last_sign_in_time" << player_info.last_sign_in_time
+			<< "last_sign_out_time" << player_info.last_sign_out_time
+			<< "vitality" << player_info.vitality
+			<< "vip" << player_info.vip
+			<< "charge_gold" << player_info.charge_gold;
 
-	CACHED_CONNECTION.update(Role_Fields::COLLECTION, MONGO_QUERY(Role_Fields::ROLE_ID << (long long int)player_info.role_id),
+	CACHED_CONNECTION.update("mmo.role", MONGO_QUERY("role_id" << (long long int)player_info.role_id),
 			BSON("$set" << builder.obj()), true);
 
 	return 0;
 }
 
 int DB_Operator::load_bag_info(Bag_Info &bag_info) {
-	BSONObj res = CACHED_CONNECTION.findOne(Bag_Fields::COLLECTION,
-			MONGO_QUERY(Role_Fields::ROLE_ID << (long long int)bag_info.role_id));
+	BSONObj res = CACHED_CONNECTION.findOne("mmo.bag",
+			MONGO_QUERY("role_id" << (long long int)bag_info.role_id));
 	if (res.isEmpty()) {
 		return -1;
 	}
 
-	bag_info.copper = res[Bag_Fields::Money::COPPER].numberInt();
-	bag_info.gold = res[Bag_Fields::Money::GOLD].numberInt();
+	bag_info.copper = res["copper"].numberInt();
+	bag_info.gold = res["gold"].numberInt();
 
-	BSONObjIterator iter(res.getObjectField(Bag_Fields::ITEM.c_str()));
+	BSONObjIterator iter(res.getObjectField("item"));
 	BSONObj obj;
 	while (iter.more()){
 		obj = iter.next().embeddedObject();
@@ -359,11 +344,11 @@ int DB_Operator::save_bag_info(Bag_Info &bag_info) {
 	}
 
 	BSONObjBuilder tmp_builder;
-	tmp_builder << Bag_Fields::Money::COPPER << bag_info.copper
-		<< Bag_Fields::Money::GOLD << bag_info.gold
-		<< Bag_Fields::ITEM << item_vec;
+	tmp_builder << "copper" << bag_info.copper
+		<< "gold" << bag_info.gold
+		<< "item" << item_vec;
 
-	CACHED_CONNECTION.update(Bag_Fields::COLLECTION, MONGO_QUERY(Role_Fields::ROLE_ID << (long long int)bag_info.role_id),
+	CACHED_CONNECTION.update("mmo.bag", MONGO_QUERY("role_id" << (long long int)bag_info.role_id),
 			BSON("$set" << tmp_builder.obj()), true);
 
 	return 0;
@@ -371,42 +356,42 @@ int DB_Operator::save_bag_info(Bag_Info &bag_info) {
 
 int DB_Operator::load_item_detail(const BSONObj &obj, Item_Info &item) {
 	item.reset();
-	item.item_basic.id = obj[Bag_Fields::Item::ID].numberInt();
-	item.item_basic.amount = obj[Bag_Fields::Item::AMOUNT].numberInt();
+	item.item_basic.id = obj["id"].numberInt();
+	item.item_basic.amount = obj["amount"].numberInt();
 
 	return 0;
 }
 
 int DB_Operator::save_item_detail(const Item_Info &item, mongo::BSONObj &obj) {
 	BSONObjBuilder item_builder;
-	item_builder << Bag_Fields::Item::ID << item.item_basic.id << Bag_Fields::Item::AMOUNT << item.item_basic.amount;
+	item_builder << "id" << item.item_basic.id << "amount" << item.item_basic.amount;
 	obj = item_builder.obj();
 	return 0;
 }
 
 int DB_Operator::load_mail_info(Mail_Info &mail_info) {
-	BSONObj res = CACHED_CONNECTION.findOne(Mail_Fields::COLLECTION, MONGO_QUERY(Role_Fields::ROLE_ID << (long long int)mail_info.role_id));
+	BSONObj res = CACHED_CONNECTION.findOne("mmo.mail", MONGO_QUERY("role_id" << (long long int)mail_info.role_id));
 	if (res.isEmpty()) {
 		return -1;
 	}
 
-	mail_info.total_count = res[Mail_Fields::TOTAL_COUNT.c_str()].numberInt();
+	mail_info.total_count = res["total_count"].numberInt();
 
-	BSONObj mail = res.getObjectField(Mail_Fields::MAIL_DETAIL.c_str());
+	BSONObj mail = res.getObjectField("mail_detail");
 	BSONObjIterator iter(mail);
 	while (iter.more()) {
 		BSONObj obj = iter.next().embeddedObject();
 		Mail_Detail mail_detail;
-		mail_detail.mail_id = obj[Mail_Fields::Mail_Detail::MAIL_ID].numberInt();
-		mail_detail.pickup = obj[Mail_Fields::Mail_Detail::PICKUP].numberInt();
-		mail_detail.send_time = obj[Mail_Fields::Mail_Detail::SEND_TIME].numberInt();
-		mail_detail.sender_type = obj[Mail_Fields::Mail_Detail::SENDER_TYPE].numberInt();
-		mail_detail.sender_id = obj[Mail_Fields::Mail_Detail::SENDER_ID].numberLong();
-		mail_detail.sender_name = obj[Mail_Fields::Mail_Detail::SENDER_NAME].valuestrsafe();
-		mail_detail.mail_title = obj[Mail_Fields::Mail_Detail::MAIL_TITLE].valuestrsafe();
-		mail_detail.mail_content = obj[Mail_Fields::Mail_Detail::MAIL_CONTENT].valuestrsafe();
-		mail_detail.copper = obj[Mail_Fields::Mail_Detail::COPPER].numberInt();
-		mail_detail.gold = obj[Mail_Fields::Mail_Detail::GOLD].numberInt();
+		mail_detail.mail_id = obj["mail_id"].numberInt();
+		mail_detail.pickup = obj["pickup"].numberInt();
+		mail_detail.send_time = obj["send_time"].numberInt();
+		mail_detail.sender_type = obj["sender_type"].numberInt();
+		mail_detail.sender_id = obj["sender_id"].numberLong();
+		mail_detail.sender_name = obj["sender_name"].valuestrsafe();
+		mail_detail.mail_title = obj["mail_title"].valuestrsafe();
+		mail_detail.mail_content = obj["mail_content"].valuestrsafe();
+		mail_detail.copper = obj["copper"].numberInt();
+		mail_detail.gold = obj["gold"].numberInt();
 		mail_info.mail_map.insert(std::make_pair(mail_detail.mail_id, mail_detail));
 	}
 
@@ -417,23 +402,23 @@ int DB_Operator::save_mail_info(Mail_Info &mail_info) {
 	std::vector<BSONObj> mail_vector;
 	for (Mail_Info::Mail_Map::const_iterator iter = mail_info.mail_map.begin();
 			iter != mail_info.mail_map.end(); iter++) {
-		mail_vector.push_back(BSON(Mail_Fields::Mail_Detail::MAIL_ID << iter->second.mail_id
-				<< Mail_Fields::Mail_Detail::PICKUP << iter->second.pickup
-				<< Mail_Fields::Mail_Detail::SEND_TIME << iter->second.send_time
-				<< Mail_Fields::Mail_Detail::SENDER_TYPE << iter->second.sender_type
-				<< Mail_Fields::Mail_Detail::SENDER_ID << (long long int)iter->second.sender_id
-				<< Mail_Fields::Mail_Detail::SENDER_NAME << iter->second.sender_name
-				<< Mail_Fields::Mail_Detail::MAIL_TITLE << iter->second.mail_title
-				<< Mail_Fields::Mail_Detail::MAIL_CONTENT << iter->second.mail_content
-				<< Mail_Fields::Mail_Detail::COPPER << iter->second.copper
-				<< Mail_Fields::Mail_Detail::GOLD << iter->second.gold));
+		mail_vector.push_back(BSON("mail_id" << iter->second.mail_id
+				<< "pickup" << iter->second.pickup
+				<< "send_time" << iter->second.send_time
+				<< "sender_type" << iter->second.sender_type
+				<< "sender_id" << (long long int)iter->second.sender_id
+				<< "sender_name" << iter->second.sender_name
+				<< "mail_title" << iter->second.mail_title
+				<< "mail_content" << iter->second.mail_content
+				<< "copper" << iter->second.copper
+				<< "gold" << iter->second.gold));
 	}
 
 	BSONObjBuilder set_builder;
-	set_builder << Mail_Fields::TOTAL_COUNT << mail_info.total_count
-			<< Mail_Fields::MAIL_DETAIL << mail_vector;
+	set_builder << "total_count" << mail_info.total_count
+			<< "mail_detail" << mail_vector;
 
-	CACHED_CONNECTION.update(Mail_Fields::COLLECTION, MONGO_QUERY(Role_Fields::ROLE_ID << (long long int)mail_info.role_id),
+	CACHED_CONNECTION.update("mmo.mail", MONGO_QUERY("role_id" << (long long int)mail_info.role_id),
 			BSON("$set" << set_builder.obj() ), true);
 
 	return 0;
