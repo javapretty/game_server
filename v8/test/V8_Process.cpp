@@ -5,7 +5,7 @@
  *      Author: zhangyalei
  */
 
-#include "V8_Base.h"
+#include "V8_Wrap.h"
 #include "V8_Process.h"
 
 static void LogCallback(const v8::FunctionCallbackInfo<v8::Value>& args) {

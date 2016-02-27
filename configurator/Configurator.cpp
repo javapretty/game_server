@@ -72,8 +72,6 @@ int Configurator::hot_update_conf(std::string &module, int server) {
 		}
 		Lib_Log::instance()->set_switcher(log_misc_json["lib_log_switcher"].asInt());
 		Log::instance()->set_switcher(log_misc_json["msg_log_switcher"].asInt());
-	} else if (module == "role") {
-		load_role_config();
 	} else {
 		MSG_USER("hot update fail module:%s not init", module.c_str());
 		return -1;
@@ -84,7 +82,4 @@ int Configurator::hot_update_conf(std::string &module, int server) {
 
 void Configurator::load_all_config(void) {
 	load_server_config();
-	load_role_config();
-	load_bag_config();
-	load_mail_config();
 }

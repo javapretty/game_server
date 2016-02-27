@@ -41,7 +41,7 @@ int V8_Manager::init(void) {
 	Isolate::Scope isolate_scope(isolate_);
 	//创建V8执行环境
 	HandleScope handle_scope(isolate_);
-	Local<Context> context = create_v8_context(isolate_);
+	Local<Context> context = Create_Context(isolate_);
 	context_.Reset(isolate_, context);
 	//进入V8执行环境内部
 	Context::Scope context_scope(context);

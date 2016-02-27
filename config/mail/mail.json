@@ -1,22 +1,3 @@
-{/*物品对应的颜色值*/
-   "1" : "#FFFFFF",
-   "2" : "#00FF00",
-   "3" : "#0066FF",
-   "4" : "#FF00FF",
-   "5" : "#FF7F00",
-   "answer_award" : {
-      "mail_content" : "恭喜你，在答题活动中取得第%d名，获得%sX%d",
-      "mail_title" : "答题奖励",
-      "sender_name" : "系统"
-   },
-   "zhuanpan_award" : {
-      "mail_content" : "乐不停，转不停，请查收您在本次快乐大转盘中所获得的奖励，见附件！",
-      "mail_title" : "转盘奖励",
-      "sender_name" : "系统"
-   },
-   "store" : {
-      "mail_content" : "购买成功",
-      "mail_title" : "神秘商店",
-      "sender_name" : "系统"
-   }
+{
+   "mail_type" : 1
 }

@@ -9,7 +9,7 @@
 
 #include "include/libplatform/libplatform.h"
 #include "include/v8.h"
-#include "V8_Base.h"
+#include "V8_Wrap.h"
 #include "Object_Wrap.h"
 
 using namespace v8;
