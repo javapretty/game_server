@@ -60,20 +60,14 @@
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.1773328660" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug.1166576254" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug">
 								<option id="gnu.cpp.link.option.libs.620121734" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" value="jsoncpp"/>
-									<listOptionValue builtIn="false" value="dl"/>
-									<listOptionValue builtIn="false" value="v8_libbase"/>
-									<listOptionValue builtIn="false" value="v8_external_snapshot"/>
 									<listOptionValue builtIn="false" value="v8"/>
-									<listOptionValue builtIn="false" value="v8_nosnapshot"/>
 									<listOptionValue builtIn="false" value="v8_libplatform"/>
-									<listOptionValue builtIn="false" value="v8_base"/>
 									<listOptionValue builtIn="false" value="netlib"/>
 									<listOptionValue builtIn="false" value="mysqlcppconn"/>
-									<listOptionValue builtIn="false" value="boost_filesystem"/>
-									<listOptionValue builtIn="false" value="boost_program_options"/>
-									<listOptionValue builtIn="false" value="boost_thread-mt"/>
+									<listOptionValue builtIn="false" value="jsoncpp"/>
 									<listOptionValue builtIn="false" value="mongoclient"/>
+									<listOptionValue builtIn="false" value="boost_filesystem"/>
+									<listOptionValue builtIn="false" value="boost_thread-mt"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.590043412" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.292783278" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
