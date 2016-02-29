@@ -3,14 +3,43 @@
 
 一、从git下载代码
 git clone https://github.com/jice1001/server.git
+
 二、安装eclipse
 http://www.eclipse.rg/downloads/download.php?file=/technology/epp/downloads/release/mars/1/eclipse-cpp-mars-1-linux-gtk-x86_64.tar.gz
 从这里下载64位eclipse for c++，放到/root 目录下面，执行下面命令
 tar -zxvf eclipse-cpp-mars-1-linux-gtk-x86_64.tar.gz
-三、安装XManager 4.0以上版本，使用xshell在windows打开eclipse,将项目导入到eclipse里面
-四、安装boost
+
+三、安装boost
     yum install boost  
-    yum install boost-devel 
+    yum install boost-devel
+    
+四、安装openssl
+1、安装zlib
+yum install zlib-devel
+2、源码安装openssl
+cd /root
+wget https://www.openssl.org/source/openssl-1.0.1g.tar.gz
+tar -zxvf openssl-1.0.1g.tar.gz
+cd openssl-1.0.1g
+./config shared zlib-dynamic
+make && make install
+重命名原来的openssl命令
+mv /usr/bin/openssl  /usr/bin/openssl.old
+重命名原来的openssl目录
+mv /usr/include/openssl  /usr/include/openssl.old
+将安装好的openssl 的openssl命令软连到/usr/bin/openssl
+ln -s /usr/local/ssl/bin/openssl  /usr/bin/openssl
+将安装好的openssl 的openssl目录软连到/usr/include/openssl
+ln -s /usr/local/ssl/include/openssl  /usr/include/openssl
+修改系统自带的openssl库文件，如/usr/local/lib64/libssl.so(根据机器环境而定) 软链到升级后的libssl.so
+ln -s /usr/local/ssl/lib/libssl.so /usr/local/lib64/libssl.so
+执行命令查看openssl依赖库版本是否为1.0.1g：
+openssl version
+在/etc/ld.so.conf文件中写入openssl库文件的搜索路径
+echo "/usr/local/ssl/lib" >> /etc/ld.so.conf
+使修改后的/etc/ld.so.conf生效 
+ldconfig
+
 五、安装jsoncpp
 	1、解压jsoncpp-bin-0.5.0.tar.bz2文件。
 	2、将其中include/json目录拷贝到/usr/local/include。
