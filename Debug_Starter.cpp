@@ -74,7 +74,7 @@ int Debug_Starter::fini(void) {
 
 int Debug_Starter::start(int argc, char *argv[]) {
 	const Json::Value &server_conf = CONFIG_INSTANCE->server_conf();
-	Time_Value recv_timeout(server_conf["client_heartbeat_sec"].asInt(), 0);
+	Time_Value recv_timeout(server_conf["recv_timeout"].asInt(), 0);
 	Time_Value server_send_interval(0, 100);
 	Time_Value connector_send_interval(0, 100);
 	int log_port = server_conf["log_server"]["port"].asInt();

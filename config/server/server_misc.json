@@ -1,17 +1,6 @@
 {
-    "command" : {
-        "mode" : 1,
-        /* 0：关 1：全开 2：按test_command*/
-        "test_command" : {
-            "debug" : 1,
-            "moveable" : 1,
-            "total" : 1,
-            "version" : 1
-        },
-        "users" : {
-            "ti" : 1
-        }
-    },
-	"no_verify_pack" : 1,	/* 是否关闭包验证 */
+	"lib_log_switcher" : 127,		//网络库日志开关
+  "msg_log_switcher" : 127	,		//消息日志开关
+	"verify_pack" : 1,					//是否开启包验证
 	"client_heartbeat_sec" : 120
 }

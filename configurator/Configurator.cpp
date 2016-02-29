@@ -1,4 +1,3 @@
-// -*- C++ -*-
 /*
  * Configurator.cpp
  *
@@ -6,7 +5,6 @@
  *      Author: zhangyalei
  */
 
-#include "Configurator.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -15,11 +13,12 @@
 #include <cstdio>
 #include <cstdlib>
 #include <string>
+#include "Configurator.h"
 #include "Common_Func.h"
 #include "Log.h"
 
 Configurator::Configurator(void) {
-	load_all_config();
+	load_server_config();
 }
 
 Configurator::~Configurator(void) { }
@@ -66,20 +65,16 @@ int Configurator::hot_update_conf(std::string &module, int server) {
 	MSG_DEBUG("server:%d self update %s", server, module.c_str());
 	if (module == "server") {
 		load_server_config();
-		const Json::Value &log_misc_json = CONFIG_INSTANCE->log_misc();
-		if (log_misc_json == Json::Value::null) {
+		const Json::Value &server_misc_json = CONFIG_INSTANCE->server_misc();
+		if (server_misc_json == Json::Value::null) {
 			MSG_ABORT("configure file error.");
 		}
-		Lib_Log::instance()->set_switcher(log_misc_json["lib_log_switcher"].asInt());
-		Log::instance()->set_switcher(log_misc_json["msg_log_switcher"].asInt());
+		Lib_Log::instance()->set_switcher(server_misc_json["lib_log_switcher"].asInt());
+		Log::instance()->set_switcher(server_misc_json["msg_log_switcher"].asInt());
 	} else {
 		MSG_USER("hot update fail module:%s not init", module.c_str());
 		return -1;
 	}
 
 	return 0;
-}
-
-void Configurator::load_all_config(void) {
-	load_server_config();
 }

@@ -1,4 +1,3 @@
-// -*- C++ -*-
 /*
  * Configurator.h
  *
@@ -62,7 +61,6 @@ public:
 
 public:
 	struct Server_Config {
-		Config_Entry log_misc;
 		Config_Entry server_conf;
 		Config_Entry server_list;
 		Config_Entry server_maintainer;
@@ -82,11 +80,9 @@ public:
 	inline const Json::Value &get_json_value_with_rlock_in_map(Config_Lock &lock, const int id, Config_Entry &config);
 
 	int hot_update_conf(std::string &module, int server = 0);
-	void load_all_config(void);
 
 	/// server
 	void load_server_config(void);
-	const Json::Value &log_misc(void);
 	const Json::Value &server_conf(void);
 	const Json::Value &server_list(void);
 	const Json::Value &server_maintainer(void);

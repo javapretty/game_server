@@ -5,9 +5,8 @@
  *      Author: zhangyalei
  */
 
-#include "HotUpdate.h"
 #include <dirent.h>
-//#include <openssl/md5.h>
+#include <openssl/md5.h>
 #include <fstream>
 #include <iostream>
 #include <unistd.h>
@@ -15,6 +14,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include "HotUpdate.h"
 #include "Game_Manager.h"
 
 Hot_Update::Hot_Update() {
@@ -69,51 +69,29 @@ int Hot_Update::notice_update(const std::string module) {
 }
 
 std::string Hot_Update::file_md5(std::string file_name) {
-	//MD5_CTX md5;
+	MD5_CTX md5;
 	unsigned char md[16];
 	char tmp[33] = {'\0'};
 	int length = 0, i = 0;
 	char buffer[1024];
 	std::string hash = "";
-	//MD5_Init(&md5);
+	MD5_Init(&md5);
 
 	int fd = 0;
 	if ((fd = open(file_name.c_str(), O_RDONLY)) < 0) {
 		return hash;
 	}
 
-	/*
-	static struct flock lock;
-	lock.l_type = F_WRLCK;
-	lock.l_start = 0;
-	lock.l_whence = SEEK_SET;
-	lock.l_len = 0;
-	lock.l_pid = getpid();
-	if ( fcntl(fd, F_SETLKW, &lock) == -1 ) {
-		close(fd);
-		return hash;
-	}
-	*/
-
 	while (true) {
 		length = read(fd, buffer, 1024);
 		if (length == 0 || ((length == -1) && (errno != EINTR))) {
 			break;
 		} else if (length > 0) {
-			//MD5_Update(&md5, buffer, length);
+			MD5_Update(&md5, buffer, length);
 		}
 	}
 
-	/*
-	lock.l_type = F_UNLCK;
-	lock.l_start = 0;
-	lock.l_whence = SEEK_SET;
-	lock.l_len = 0;
-	lock.l_pid = getpid();
-	fcntl(fd, F_SETLKW, &lock);
-	*/
-
-	//MD5_Final(md, &md5);
+	MD5_Final(md, &md5);
 	for(i=0; i < 16; i++) {
 		sprintf(tmp, "%02X", md[i]);
 		hash += (std::string)tmp;
@@ -132,7 +110,6 @@ void Hot_Update::check_config(std::string module) {
 	get_md5_str(module, md5_str_set);
 	for (MD5_STR_SET::iterator it = md5_str_set.begin(); it != md5_str_set.end(); ++it) {
 		if (find_it->second.count(*it) == 0) {
-			//MSG_DEBUG("config change:%s md5:%s", full_dir_path.c_str(), md5_str.c_str());
 			need_once = true;
 		}
 	}

@@ -16,7 +16,6 @@
 Gate_Manager::Gate_Manager(void):
   player_cid_map_(get_hash_table_size(12000)),
   is_register_timer_(false),
-  verify_pack_onoff_(1),
   msg_count_onoff_(true) {
 	register_timer();
 }
@@ -46,8 +45,8 @@ int Gate_Manager::init(void) {
 
 	{ /// 包验证开关
 		const Json::Value &server_misc = CONFIG_INSTANCE->server_misc();
-		if (server_misc["no_verify_pack"].asInt()) {
-			set_verify_pack_onoff(0);
+		if (server_misc["verify_pack"].asInt()) {
+			set_verify_pack_onoff(1);
 		}
 	}
 	return 0;

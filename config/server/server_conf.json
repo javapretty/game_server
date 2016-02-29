@@ -1,5 +1,5 @@
 {
-	"client_heartbeat_sec" : 900,
+	"recv_timeout" : 900,
    "log_server" : {
     	"port" : 7500
     },
