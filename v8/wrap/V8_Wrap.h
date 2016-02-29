@@ -14,7 +14,6 @@
 using namespace v8;
 
 Local<Context> Create_Context(Isolate* isolate);
-void replace_string(char* str, char old_char, char new_char);
 const char* ToCString(const String::Utf8Value& value);
 MaybeLocal<String> ReadFile(Isolate* isolate, const char* file_path);
 void ReportException(Isolate* isolate, TryCatch* handler);

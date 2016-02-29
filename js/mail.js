@@ -18,10 +18,10 @@ function Mail() {
 	this.save_data = function(buffer) {
 		this.mail_info.serialize(buffer);
 	}
-	
+
 	this.fetch_mail_info = function() {
 		print('fetch_mail_info, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " msec:", msec());
-	
+		
 		var buf = pop_buffer();
 		buf.write_uint16(this.mail_info.mail_map.size());
 		this.mail_info.mail_map.each(function(key,value,index) {
@@ -124,6 +124,20 @@ function Mail() {
 
 		var result = send_mail_inner(receiver_id, mail_detail);
 		this.player.cplayer.respond_error_result(msg_res.RES_SEND_MAIL, result);
+	}
+	
+	//读取json配置文件
+	this.read_mail = function() {
+		var content = read('config/mail/mail.json');
+  		try {
+    		var mail_obj = JSON.parse(content);
+    		if (mail_obj != null) {
+    			print("sender_name:", mail_obj.answer_mail.sender_name, " mail_title:", mail_obj.answer_mail.mail_title, " mail_context:", mail_obj.answer_mail.mail_content);
+    		}
+  		} catch (err) {
+  			print(err.message);
+  		}
+		
 	}
 }
 

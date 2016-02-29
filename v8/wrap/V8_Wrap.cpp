@@ -49,18 +49,6 @@ Local<Context> Create_Context(Isolate* isolate) {
 	return Context::New(isolate, NULL, global);
 }
 
-void replace_string(char* str, char old_char, char new_char) {
-	if (str == nullptr) {
-		return;
-	}
-	int len = strlen(str);
-	for (int i = 0; i < len; ++i) {
-		if (str[i] == old_char) {
-			str[i] = new_char;
-		}
-	}
-}
-
 const char* ToCString(const v8::String::Utf8Value& value) {
   return *value ? *value : "<string conversion failed>";
 }
@@ -145,7 +133,6 @@ void read(const FunctionCallbackInfo<Value>& args) {
     return;
   	}
 
-  //replace_string(*file, '\\', '/');
   Local<String> source;
   if (!ReadFile(args.GetIsolate(), *file).ToLocal(&source)) {
 	  MSG_USER("read_file:%s loading error\n", *file);

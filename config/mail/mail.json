@@ -1,3 +1,7 @@
 {
-   "mail_type" : 1
+	"answer_mail" : {
+		"sender_name" : "系统邮件",
+		"mail_title" : "答题奖励邮件",
+		"mail_content" : "恭喜你在答题活动中获得第一名"
+	}
 }
