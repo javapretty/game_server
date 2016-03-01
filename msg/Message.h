@@ -21,8 +21,7 @@
 150000-159999  Game<--->DB
 160000-169999		Game<--->Master
 170000-179999		Master<--->DB
-180000-184999		Game--->Log			程序日志
-185000-189999		Game--->Stream		操作流水日志
+180000-189999		Game--->LogStream		操作流水日志
 190000-199999
 300000-309999		ActiveMessage			服务器发到客户端主动消息
 400000-499999		InnerMessage			服务器内部消息
@@ -124,14 +123,9 @@ enum Game_Master_Message {
 	SYNC_GAME_MASTER_PLAYER_SIGNOUT		=	160002,	//同步玩家离线消息到master
 };
 
-enum Log_Message {
-	SYNC_LOG_FILE_RECORD 							= 180000,	//记录日志文件
-	SYNC_LOG_BUFFER_RECORD 						= 180001,	//记录buffer日志
-};
-
-enum Back_Message {
-	SYNC_BACK_TEST_STREAM 						= 185000,	//后台MySQL数据库插入测试
-	SYNC_BACK_LOGINOUT_STREAM 					= 185001,	//后台登录退出流水
+enum LOG_Message {
+	SYNC_LOG_TEST_STREAM 							= 180000,	//后台MySQL数据库插入测试
+	SYNC_LOG_LOGINOUT_STREAM 					= 180001,	//后台登录退出流水
 };
 
 enum Active_Message{

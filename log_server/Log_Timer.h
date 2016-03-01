@@ -1,7 +1,7 @@
 /*
  * Log_Timer.h
  *
- *  Created on: Nov 20, 2012
+ *  Created on: 2016年3月1日
  *      Author: zhangyalei
  */
 

@@ -1,11 +1,11 @@
 /*
  * My_DB_Fields.h
  *
- *  Created on: Nov 19, 2012
+ *  Created on: 2016年3月1日
  *      Author: zhangyalei
  */
 
-#include "My_DB_Fields.h"
+#include <DB_Fields.h>
 #include "DB_Record.h"
 
 void Test_Table::append_insert_handler(Data_Collector &collector) {

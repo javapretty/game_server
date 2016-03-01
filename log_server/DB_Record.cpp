@@ -1,7 +1,7 @@
 /*
  * DB_Record.cpp
  *
- *  Created on: Aug 29, 2012
+ *  Created on: 2016年3月1日
  *      Author: zhangyalei
  */
 
@@ -157,8 +157,8 @@ void DB_Record::init_loginout_stream_collector(void) {
 	loginout_stream_collector_.set(insert_head, collector_max_num, collector_timeout);
 }
 
-int DB_Record::process_185000(int msg_id, int status, Block_Buffer &buf) {
-	MSG_185000 msg;
+int DB_Record::process_180000(int msg_id, int status, Block_Buffer &buf) {
+	MSG_180000 msg;
 	msg.deserialize(buf);
 
 	Test_Table table;
@@ -170,8 +170,8 @@ int DB_Record::process_185000(int msg_id, int status, Block_Buffer &buf) {
 	return 0;
 }
 
-int DB_Record::process_185001(int msg_id, int status, Block_Buffer &buf) {
-	MSG_185001 msg;
+int DB_Record::process_180001(int msg_id, int status, Block_Buffer &buf) {
+	MSG_180001 msg;
 	msg.deserialize(buf);
 
 	Loginout_Stream table;

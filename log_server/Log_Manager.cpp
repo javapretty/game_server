@@ -1,15 +1,16 @@
 /*
  * Log_Manager.cpp
  *
- *  Created on: Aug 28, 2012
+ *  Created on: 2016年3月1日
  *      Author: zhangyalei
  */
 
+#include "Log.h"
 #include "Log_Timer.h"
 #include "Log_Manager.h"
 #include "Log_Server.h"
-#include "Log.h"
 #include "Server_Config.h"
+#include "Msg_Define.h"
 #include <sys/stat.h>
 
 Log_Manager::Log_Manager(void) { }
@@ -94,19 +95,15 @@ int Log_Manager::process_block(Block_Buffer &buf) {
 	int32_t status = buf.read_int32();
 
 	switch (msg_id) {
-	case SYNC_LOG_FILE_RECORD: {
+	case 999999: {
 		file_record_.process_log_file_block(buf);
 		break;
 	}
-	case SYNC_LOG_BUFFER_RECORD: {
-		file_record_.process_buf_file_block(buf);
+	case SYNC_LOG_TEST_STREAM: {
+		db_record_.process_180000(msg_id, status, buf);
 		break;
-	}
-	case SYNC_BACK_TEST_STREAM: {
-		db_record_.process_185000(msg_id, status, buf);
-		break;
-	case SYNC_BACK_LOGINOUT_STREAM: {
-		db_record_.process_185001(msg_id, status, buf);
+	case SYNC_LOG_LOGINOUT_STREAM: {
+		db_record_.process_180001(msg_id, status, buf);
 		break;
 	}
 	}

@@ -1,8 +1,7 @@
-// -*- C++ -*-
 /*
- * My_DB_Fields.h
+ * DB_Fields.h
  *
- *  Created on: Nov 19, 2012
+ *  Created on: 2016年3月1日
  *      Author: zhangyalei
  */
 

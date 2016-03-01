@@ -1,15 +1,14 @@
-// -*- C++ -*-
 /*
  * DB_Record.h
  *
- *  Created on: Aug 29, 2012
+ *  Created on: 2016年3月1日
  *      Author: zhangyalei
  */
 
 #ifndef DB_RECORD_H_
 #define DB_RECORD_H_
 
-#include "My_DB_Fields.h"
+#include <DB_Fields.h>
 #include "Mysql_Conn.h"
 #include <string>
 
@@ -35,8 +34,8 @@ public:
 	void mysql_err_handler(void);
 	void generate_mysql_err_file(void);
 
-	int process_185000(int msg_id, int status, Block_Buffer &buf);
-	int process_185001(int msg_id, int status, Block_Buffer &buf);
+	int process_180000(int msg_id, int status, Block_Buffer &buf);
+	int process_180001(int msg_id, int status, Block_Buffer &buf);
 
 private:
 	int process_mysql_errcode(int err_code);
