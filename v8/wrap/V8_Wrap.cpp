@@ -122,20 +122,20 @@ void ReportException(Isolate* isolate, TryCatch* try_catch) {
 
 void read(const FunctionCallbackInfo<Value>& args) {
   if (args.Length() != 1) {
-	  MSG_ABORT("read_file args error, length: %d\n", args.Length());
+	  LOG_FATAL("read_file args error, length: %d\n", args.Length());
 	  args.GetReturnValue().SetNull();
     return;
   	}
   String::Utf8Value file(args[0]);
   if (*file == NULL) {
-	  MSG_ABORT("read_file:%s loading error\n");
+	  LOG_FATAL("read_file:%s loading error\n");
 	  	args.GetReturnValue().SetNull();
     return;
   	}
 
   Local<String> source;
   if (!ReadFile(args.GetIsolate(), *file).ToLocal(&source)) {
-	  MSG_USER("read_file:%s loading error\n", *file);
+	  LOG_INFO("read_file:%s loading error\n", *file);
 	  	args.GetReturnValue().SetNull();
     return;
   	}
@@ -144,7 +144,7 @@ void read(const FunctionCallbackInfo<Value>& args) {
 
 void require(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 1) {
-		MSG_USER("require args error, length: %d\n", args.Length());
+		LOG_INFO("require args error, length: %d\n", args.Length());
 		return ;
 	}
 
@@ -158,7 +158,7 @@ void run_script(Isolate* isolate, const char* file_path) {
 	HandleScope handle_scope(isolate);
 	Local<String> source;
 	if (!ReadFile(isolate, file_path).ToLocal(&source)) {
-		MSG_USER("script:%s not exist\n", file_path);
+		LOG_INFO("script:%s not exist\n", file_path);
 		return;
 	}
   Local<Script> script = Script::Compile(isolate->GetCurrentContext(), source).ToLocalChecked();

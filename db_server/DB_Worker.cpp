@@ -49,7 +49,7 @@ void DB_Worker::process_list(void) {
 
 int DB_Worker::process_data_block(Block_Buffer *buf) {
 	if (! buf || !buf->is_legal()) {
-		MSG_USER("buf error, buf.read_index = %ld, buf.write_index = %ld",
+		LOG_INFO("buf error, buf.read_index = %ld, buf.write_index = %ld",
 						buf->get_read_idx(), buf->get_write_idx());
 		return -1;
 	}
@@ -89,7 +89,7 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 		break;
 	}
 	default: {
-		MSG_USER("unknown msg_id = %d.", msg_id);
+		LOG_INFO("unknown msg_id = %d.", msg_id);
 		break;
 	}
 	}

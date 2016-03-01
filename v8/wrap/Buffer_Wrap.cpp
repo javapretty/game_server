@@ -132,7 +132,7 @@ void pop_buffer(const FunctionCallbackInfo<Value>& args) {
 
 void push_buffer(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() < 1) {
-		MSG_USER("process_login_block args error, length: %d\n", args.Length());
+		LOG_INFO("process_login_block args error, length: %d\n", args.Length());
 		return;
 	}
 
@@ -157,7 +157,7 @@ void buffer_reset(const FunctionCallbackInfo<Value>& args)
 void make_inner_message(const FunctionCallbackInfo<Value>& args)
 {
 	if (args.Length() != 1) {
-		MSG_USER("make_inner_message args error, length: %d\n", args.Length());
+		LOG_INFO("make_inner_message args error, length: %d\n", args.Length());
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
@@ -170,7 +170,7 @@ void make_inner_message(const FunctionCallbackInfo<Value>& args)
 void make_player_message(const FunctionCallbackInfo<Value>& args)
 {
 	if (args.Length() != 3) {
-		MSG_USER("make_player_message args error, length: %d\n", args.Length());
+		LOG_INFO("make_player_message args error, length: %d\n", args.Length());
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
@@ -309,7 +309,7 @@ void read_string(const FunctionCallbackInfo<Value>& args)
 void write_int8(const FunctionCallbackInfo<Value>& args)
 {
 	if (args.Length() != 1) {
-		MSG_USER("write_int8 args error, length: %d\n", args.Length());
+		LOG_INFO("write_int8 args error, length: %d\n", args.Length());
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
@@ -322,7 +322,7 @@ void write_int8(const FunctionCallbackInfo<Value>& args)
 void write_int16(const FunctionCallbackInfo<Value>& args)
 {
 	if (args.Length() != 1) {
-		MSG_USER("write_int16 args error, length: %d\n", args.Length());
+		LOG_INFO("write_int16 args error, length: %d\n", args.Length());
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
@@ -335,7 +335,7 @@ void write_int16(const FunctionCallbackInfo<Value>& args)
 void write_int32(const FunctionCallbackInfo<Value>& args)
 {
 	if (args.Length() != 1) {
-		MSG_USER("write_int32 args error, length: %d\n", args.Length());
+		LOG_INFO("write_int32 args error, length: %d\n", args.Length());
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
@@ -348,7 +348,7 @@ void write_int32(const FunctionCallbackInfo<Value>& args)
 void write_int64(const FunctionCallbackInfo<Value>& args)
 {
 	if (args.Length() != 1) {
-		MSG_USER("write_int64 args error, length: %d\n", args.Length());
+		LOG_INFO("write_int64 args error, length: %d\n", args.Length());
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
@@ -361,7 +361,7 @@ void write_int64(const FunctionCallbackInfo<Value>& args)
 void write_uint8(const FunctionCallbackInfo<Value>& args)
 {
 	if (args.Length() != 1) {
-		MSG_USER("write_int8 args error, length: %d\n", args.Length());
+		LOG_INFO("write_int8 args error, length: %d\n", args.Length());
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
@@ -374,7 +374,7 @@ void write_uint8(const FunctionCallbackInfo<Value>& args)
 void write_uint16(const FunctionCallbackInfo<Value>& args)
 {
 	if (args.Length() != 1) {
-		MSG_USER("write_int16 args error, length: %d\n", args.Length());
+		LOG_INFO("write_int16 args error, length: %d\n", args.Length());
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
@@ -387,7 +387,7 @@ void write_uint16(const FunctionCallbackInfo<Value>& args)
 void write_uint32(const FunctionCallbackInfo<Value>& args)
 {
 	if (args.Length() != 1) {
-		MSG_USER("write_int32 args error, length: %d\n", args.Length());
+		LOG_INFO("write_int32 args error, length: %d\n", args.Length());
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
@@ -400,7 +400,7 @@ void write_uint32(const FunctionCallbackInfo<Value>& args)
 void write_uint64(const FunctionCallbackInfo<Value>& args)
 {
 	if (args.Length() != 1) {
-		MSG_USER("write_int64 args error, length: %d\n", args.Length());
+		LOG_INFO("write_int64 args error, length: %d\n", args.Length());
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
@@ -413,7 +413,7 @@ void write_uint64(const FunctionCallbackInfo<Value>& args)
 void write_double(const FunctionCallbackInfo<Value>& args)
 {
 	if (args.Length() != 1) {
-		MSG_USER("write_double args error, length: %d\n", args.Length());
+		LOG_INFO("write_double args error, length: %d\n", args.Length());
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
@@ -426,7 +426,7 @@ void write_double(const FunctionCallbackInfo<Value>& args)
 void write_bool(const FunctionCallbackInfo<Value>& args)
 {
 	if (args.Length() != 1) {
-		MSG_USER("write_double args error, length: %d\n", args.Length());
+		LOG_INFO("write_double args error, length: %d\n", args.Length());
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
@@ -439,7 +439,7 @@ void write_bool(const FunctionCallbackInfo<Value>& args)
 void write_string(const FunctionCallbackInfo<Value>& args)
 {
 	if (args.Length() != 1) {
-		MSG_USER("write_string args error, length: %d\n", args.Length());
+		LOG_INFO("write_string args error, length: %d\n", args.Length());
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());

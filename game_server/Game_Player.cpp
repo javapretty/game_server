@@ -28,7 +28,7 @@ int Game_Player::respond_error_result(int msg_id, int err, Block_Buffer *buf) {
 	} else {
 		size_t head_len = sizeof(int16_t) + 3 * sizeof(int32_t); ///len(int16_t), msg_id(int32_t), status(int32_t), player_cid(int32_t)
 		if ((size_t)buf->get_read_idx() < head_len) {
-			MSG_USER("Block_Buffer space error !");
+			LOG_INFO("Block_Buffer space error !");
 			return 0;
 		}
 
@@ -83,7 +83,7 @@ int Game_Player::save_player(bool is_logout) {
 }
 
 int Game_Player::sign_in(std::string account) {
-	MSG_DEBUG("player sign in game_server. account=[%s], gate_cid = %d, player_cid = %d, role_id=%ld, name=%s",
+	LOG_DEBUG("player sign in game_server. account=[%s], gate_cid = %d, player_cid = %d, role_id=%ld, name=%s",
 			account.c_str(), cid_info_.gate_cid, cid_info_.player_cid, player_data_.game_player_info.role_id, player_data_.game_player_info.role_name.c_str());
 
 	player_data_buffer_ = GAME_MANAGER->pop_block_buffer();
@@ -222,7 +222,7 @@ int Game_Player::recycle_tick(const Time_Value &now) {
 	if (now - recycle_tick_.last_tick_ts_ > Recycle_Tick::tick_interval_) {
 		recycle_tick_.last_tick_ts_ = now;
 		if (recycle_tick_.status_ == Recycle_Tick::RECYCLE && now - recycle_tick_.last_change_status_ts_ > Recycle_Tick::recycle_time_) {
-			MSG_DEBUG("game_player recyle, role_id = %ld, role_name = %s", player_data_.game_player_info.role_id, player_data_.game_player_info.role_name.c_str());
+			LOG_DEBUG("game_player recyle, role_id = %ld, role_name = %s", player_data_.game_player_info.role_id, player_data_.game_player_info.role_name.c_str());
 			ret = 1;
 			GAME_MANAGER->unbind_game_player(*this);
 			sign_out();

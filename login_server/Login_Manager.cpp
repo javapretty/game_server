@@ -53,7 +53,7 @@ void Login_Manager::run_handler(void) {
 int Login_Manager::init_gate_ip(void) {
 	const Json::Value &server_maintainer = CONFIG_INSTANCE->server_maintainer();
 	if (server_maintainer == Json::Value::null) {
-		MSG_ABORT("configure file error.");
+		LOG_FATAL("configure file error.");
 		return -1;
 	}
 
@@ -77,7 +77,7 @@ void Login_Manager::get_gate_ip(std::string &account, std::string &ip, int &port
 
 int Login_Manager::bind_account_login_player(std::string& account, Login_Player *player) {
 	if (! player_account_map_.insert(std::make_pair(account, player)).second) {
-		MSG_USER("insert failure");
+		LOG_INFO("insert failure");
 	}
 	return 0;
 }
@@ -97,7 +97,7 @@ Login_Player *Login_Manager::find_account_login_player(std::string& account) {
 
 int Login_Manager::bind_cid_login_player(int cid, Login_Player *player) {
 	if (! player_cid_map_.insert(std::make_pair(cid, player)).second) {
-		MSG_USER_TRACE("insert failure");
+		LOG_TRACE("insert failure");
 	}
 	return 0;
 }
@@ -133,7 +133,7 @@ int Login_Manager::unregister_timer(void) {
 
 int Login_Manager::send_to_client(int cid, Block_Buffer &buf) {
 	if (cid < 2) {
-		MSG_USER("cid = %d", cid);
+		LOG_INFO("cid = %d", cid);
 		return -1;
 	}
 	return LOGIN_CLIENT_SERVER->send_block(cid, buf);
@@ -141,7 +141,7 @@ int Login_Manager::send_to_client(int cid, Block_Buffer &buf) {
 
 int Login_Manager::send_to_gate(int cid, Block_Buffer &buf){
 	if (cid < 2) {
-			MSG_USER("cid = %d", cid);
+			LOG_INFO("cid = %d", cid);
 			return -1;
 	}
 
@@ -153,7 +153,7 @@ int Login_Manager::close_client(int cid) {
 		Close_Info info(cid, tick_time());
 		close_list_.push_back(info);
 	} else {
-		MSG_USER_TRACE("cid < 2");
+		LOG_TRACE("cid < 2");
 	}
 	return 0;
 }
@@ -172,7 +172,7 @@ int Login_Manager::process_list(void) {
 				cid = buf->peek_int32();
 				LOGIN_CLIENT_MESSAGER->process_block(*buf);
 			} else {
-				MSG_USER("buf.read_index = %ld, buf.write_index = %ld",
+				LOG_INFO("buf.read_index = %ld, buf.write_index = %ld",
 						buf->get_read_idx(), buf->get_write_idx());
 				buf->reset();
 			}
@@ -185,7 +185,7 @@ int Login_Manager::process_list(void) {
 				cid = buf->peek_int32();
 				LOGIN_INNER_MESSAGER->process_gate_block(*buf);
 			} else {
-				MSG_USER("buf.read_index = %ld, buf.write_index = %ld",
+				LOG_INFO("buf.read_index = %ld, buf.write_index = %ld",
 						buf->get_read_idx(), buf->get_write_idx());
 				buf->reset();
 			}
@@ -308,12 +308,12 @@ void Login_Manager::get_server_info(Block_Buffer &buf) {
 }
 
 void Login_Manager::object_pool_size(void) {
-	MSG_DEBUG("Login_Mangager Object_Pool Size ==============================================================");
-	MSG_DEBUG("block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
+	LOG_DEBUG("Login_Mangager Object_Pool Size ==============================================================");
+	LOG_DEBUG("block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
 }
 
 void Login_Manager::free_cache(void) {
-	MSG_DEBUG("REQ_FREE_CACHE");
+	LOG_DEBUG("REQ_FREE_CACHE");
 
 	LOGIN_CLIENT_SERVER->free_cache();
 	LOGIN_GATE_SERVER->free_cache();
@@ -326,6 +326,6 @@ void Login_Manager::print_msg_count(void) {
 	for (Msg_Count_Map::iterator it = inner_msg_count_map_.begin(); it != inner_msg_count_map_.end(); ++it) {
 		stream << (it->first) << "\t" << (it->second) << std::endl;
 	}
-	MSG_USER("inner_msg_count_map_.size = %d\n%s\n", inner_msg_count_map_.size(), stream.str().c_str());
+	LOG_INFO("inner_msg_count_map_.size = %d\n%s\n", inner_msg_count_map_.size(), stream.str().c_str());
 }
 

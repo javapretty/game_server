@@ -17,7 +17,6 @@
 #include "Game_DB_Message.h"
 #include "Game_Master_Message.h"
 #include "Gate_Message.h"
-#include "Inner_Message.h"
 #include "Log_Message.h"
 #include "Message.h"
 

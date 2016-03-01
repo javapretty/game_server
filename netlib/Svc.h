@@ -155,7 +155,7 @@ inline int Svc::push_recv_block(Block_Buffer *buf) {
 		return -1;
 
 	if (recv_block_list_.size() >= max_list_size_) {
-		LOG_USER("recv_block_list_ has full.");
+		LIB_LOG_INFO("recv_block_list_ has full.");
 		return -1;
 	}
 	recv_block_list_.push_back(buf);
@@ -167,7 +167,7 @@ inline int Svc::push_send_block(Block_Buffer *buf) {
 		return -1;
 
 	if (send_block_list_.size() >= max_list_size_) {
-		LOG_USER("role_id:%ld send_block_list_ has full send_block_list_.size() = %d, max_list_size_ = %d", role_id_, send_block_list_.size(), max_list_size_);
+		LIB_LOG_INFO("role_id:%ld send_block_list_ has full send_block_list_.size() = %d, max_list_size_ = %d", role_id_, send_block_list_.size(), max_list_size_);
 		handle_close();
 		return -1;
 	}

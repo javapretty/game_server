@@ -76,7 +76,7 @@ int Login_Inner_Messager::process_112000(int gate_cid, int32_t player_cid, MSG_1
 	//session check error
 	else
 	{
-		MSG_DEBUG("login check session wrong, gate_cid:%d, player_cid:%d",gate_cid, player_cid);
+		LOG_DEBUG("login check session wrong, gate_cid:%d, player_cid:%d",gate_cid, player_cid);
 		gate_buf.make_player_message(SYNC_LOGIN_GATE_PLAYER_ACCOUNT, ERROR_CLIENT_SESSION, player_cid);
 	}
 	MSG_112001 gate_msg;

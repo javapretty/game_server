@@ -35,7 +35,7 @@ public:
 		Block_Pool *pool = 0;
 		for (size_t i = 0; i < group_size_; ++i) {
 			if ((pool = new Block_Pool) == 0) {
-				LOG_SYS_ABORT("new return 0");
+				LIB_LOG_FATAL("new return 0");
 			}
 			pool_group_.push_back(pool);
 		}
@@ -51,18 +51,12 @@ public:
 	}
 
 	Block_Buffer *pop_block(int cid) {
-		/*
-		if (++x_ > 500) {
-			dump_size();
-			x_ = 0;
-		}
-		*/
 		return pool_group_[cid % group_size_]->pop();
 	}
 
 	int push_block(int cid, Block_Buffer *buf) {
 		if (! buf) {
-			LOG_USER_TRACE("buf == 0");
+			LIB_LOG_TRACE("buf == 0");
 			return -1;
 		}
 		buf->recycle_space();
@@ -77,7 +71,7 @@ public:
 
 	void dump_info(void) {
 		for (size_t i = 0; i < group_size_; ++i) {
-			LOG_DEBUG("***pool_group_[%u]: ", i);
+			LIB_LOG_DEBUG("***pool_group_[%u]: ", i);
 			pool_group_[i]->debug_info();
 		}
 	}
@@ -87,7 +81,6 @@ public:
 		for (Pool_Group::iterator group_it = pool_group_.begin(); group_it != pool_group_.end(); ++group_it) {
 			sum_size += (* group_it)->sum_size();
 		}
-		//std::cout << "******* " << (sum_size/(1024*1024)) << "MB" << std::endl;
 	}
 
 	void block_group_info(std::vector<Block_Group_Info> &group_info) {

@@ -75,7 +75,7 @@ int Gate_Manager::time_up(const Time_Value &now) {
 
 int Gate_Manager::send_to_client(int cid, Block_Buffer &buf) {
 	if (cid < 2) {
-		MSG_USER("cid = %d", cid);
+		LOG_INFO("cid = %d", cid);
 		return -1;
 	}
 	return GATE_CLIENT_SERVER->send_block(cid, buf);
@@ -84,7 +84,7 @@ int Gate_Manager::send_to_client(int cid, Block_Buffer &buf) {
 int Gate_Manager::send_to_game(Block_Buffer &buf) {
 	int cid = GATE_GAME_CONNECTOR->get_cid();
 	if (cid < 2) {
-		MSG_USER("cid = %d", cid);
+		LOG_INFO("cid = %d", cid);
 		return -1;
 	}
 	return GATE_GAME_CONNECTOR->send_block(cid, buf);
@@ -93,7 +93,7 @@ int Gate_Manager::send_to_game(Block_Buffer &buf) {
 int Gate_Manager::send_to_login(Block_Buffer &buf) {
 	int cid = GATE_LOGIN_CONNECTOR->get_cid();
 	if (cid < 2) {
-		MSG_USER("cid = %d", cid);
+		LOG_INFO("cid = %d", cid);
 		return -1;
 	}
 	return GATE_LOGIN_CONNECTOR->send_block(cid, buf);
@@ -102,7 +102,7 @@ int Gate_Manager::send_to_login(Block_Buffer &buf) {
 int Gate_Manager::send_to_master(Block_Buffer &buf) {
 	int cid = GATE_MASTER_CONNECTOR->get_cid();
 	if (cid < 2) {
-		MSG_USER("cid = %d", cid);
+		LOG_INFO("cid = %d", cid);
 		return -1;
 	}
 	return GATE_MASTER_CONNECTOR->send_block(cid, buf);
@@ -113,7 +113,7 @@ int Gate_Manager::close_client(int cid) {
 		Close_Info info(cid, tick_time());
 		close_list_.push_back(info);
 	} else {
-		MSG_USER_TRACE("cid < 2");
+		LOG_TRACE("cid < 2");
 	}
 	return 0;
 }
@@ -138,7 +138,7 @@ int Gate_Manager::process_list(void) {
 				cid = buf->peek_int32();
 				GATE_CLIENT_MESSAGER->process_block(*buf);
 			} else {
-				MSG_USER("buf.read_index = %ld, buf.write_index = %ld",
+				LOG_INFO("buf.read_index = %ld, buf.write_index = %ld",
 						buf->get_read_idx(), buf->get_write_idx());
 				buf->reset();
 			}
@@ -159,7 +159,7 @@ int Gate_Manager::process_list(void) {
 				cid = buf->peek_int32();
 				GATE_INNER_MESSAGER->process_login_block(*buf);
 			} else {
-				MSG_USER("buf.read_index = %ld, buf.write_index = %ld",
+				LOG_INFO("buf.read_index = %ld, buf.write_index = %ld",
 						buf->get_read_idx(), buf->get_write_idx());
 				buf->reset();
 			}
@@ -172,7 +172,7 @@ int Gate_Manager::process_list(void) {
 				cid = buf->peek_int32();
 				GATE_INNER_MESSAGER->process_game_block(*buf);
 			} else {
-				MSG_USER("buf.read_index = %ld, buf.write_index = %ld",
+				LOG_INFO("buf.read_index = %ld, buf.write_index = %ld",
 						buf->get_read_idx(), buf->get_write_idx());
 				buf->reset();
 			}
@@ -185,7 +185,7 @@ int Gate_Manager::process_list(void) {
 				cid = buf->peek_int32();
 				GATE_INNER_MESSAGER->process_master_block(*buf);
 			} else {
-				MSG_USER("buf.read_index = %ld, buf.write_index = %ld",
+				LOG_INFO("buf.read_index = %ld, buf.write_index = %ld",
 						buf->get_read_idx(), buf->get_write_idx());
 				buf->reset();
 			}
@@ -229,7 +229,7 @@ int Gate_Manager::self_close_process(void) {
 	int i = 0;
 	while (++i < 30) {
 		sleep(1);
-		MSG_DEBUG("has user:%d", player_cid_map_.size());
+		LOG_DEBUG("has user:%d", player_cid_map_.size());
 		if (player_cid_map_.size() == 0)
 			break;
 	}
@@ -239,18 +239,18 @@ int Gate_Manager::self_close_process(void) {
 
 int Gate_Manager::bind_cid_gate_player(int cid, Gate_Player &player) {
 	if (! player_cid_map_.insert(std::make_pair(cid, &player)).second) {
-		MSG_USER_TRACE("insert failure");
+		LOG_TRACE("insert failure");
 	}
 	return 0;
 }
 
 int Gate_Manager::unbind_cid_gate_player(int cid) {
 	if (cid < 2) {
-		MSG_USER_TRACE("cid = %d", cid);
+		LOG_TRACE("cid = %d", cid);
 		return -1;
 	}
 	if (player_cid_map_.erase(cid) == 0) {
-		MSG_USER_TRACE("erase cid = %d return 0", cid);
+		LOG_TRACE("erase cid = %d return 0", cid);
 		return -1;
 	}
 	return 0;
@@ -271,14 +271,14 @@ int Gate_Manager::unbind_gate_player(Gate_Player &player) {
 
 int Gate_Manager::bind_account_gate_player(std::string& account, Gate_Player &player){
 	if (! player_account_map_.insert(std::make_pair(account, &player)).second) {
-			MSG_USER_TRACE("insert failure");
+			LOG_TRACE("insert failure");
 	}
 	return 0;
 }
 
 int Gate_Manager::unbind_account_gate_player(std::string& account){
 	if (player_account_map_.erase(account) == 0) {
-				MSG_USER_TRACE("erase account = %s return 0", account.c_str());
+				LOG_TRACE("erase account = %s return 0", account.c_str());
 				return -1;
 	}
 	return 0;
@@ -366,20 +366,20 @@ void Gate_Manager::get_server_info(Block_Buffer &buf) {
 void Gate_Manager::get_server_ip_port(int player_cid, std::string &ip, int &port) {
 	Svc* svc = GATE_CLIENT_SERVER->find_svc(player_cid);
 	if (!svc) {
-		MSG_DEBUG("get_server_ip_port wrong, cid:%d", player_cid);
+		LOG_DEBUG("get_server_ip_port wrong, cid:%d", player_cid);
 		return;
 	}
 	svc->get_local_addr(ip, port);
 }
 
 void Gate_Manager::object_pool_size(void) {
-	MSG_DEBUG("Gate_Manager Object_Pool Size ==============================================================");
-	MSG_DEBUG("block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
-	MSG_DEBUG("gate_player_pool_ free = %d, used = %d", gate_player_pool_.free_obj_list_size(), gate_player_pool_.used_obj_list_size());
+	LOG_DEBUG("Gate_Manager Object_Pool Size ==============================================================");
+	LOG_DEBUG("block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
+	LOG_DEBUG("gate_player_pool_ free = %d, used = %d", gate_player_pool_.free_obj_list_size(), gate_player_pool_.used_obj_list_size());
 }
 
 void Gate_Manager::free_cache(void) {
-	MSG_DEBUG("REQ_FREE_CACHE");
+	LOG_DEBUG("REQ_FREE_CACHE");
 
 	GATE_CLIENT_SERVER->free_cache();
 	GATE_LOGIN_CONNECTOR->free_cache();
@@ -399,5 +399,5 @@ void Gate_Manager::print_msg_count(void) {
 	for (Msg_Count_Map::iterator it = inner_msg_count_map_.begin(); it != inner_msg_count_map_.end(); ++it) {
 		stream << (it->first) << "\t" << (it->second) << std::endl;
 	}
-	MSG_USER("inner_msg_count_map_.size = %d\n%s\n", inner_msg_count_map_.size(), stream.str().c_str());
+	LOG_INFO("inner_msg_count_map_.size = %d\n%s\n", inner_msg_count_map_.size(), stream.str().c_str());
 }

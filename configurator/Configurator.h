@@ -79,8 +79,6 @@ public:
 	inline const Json::Value &get_json_value_with_rlock(Config_Lock &lock, Config_Entry &config);
 	inline const Json::Value &get_json_value_with_rlock_in_map(Config_Lock &lock, const int id, Config_Entry &config);
 
-	int hot_update_conf(std::string &module, int server = 0);
-
 	/// server
 	void load_server_config(void);
 	const Json::Value &server_conf(void);

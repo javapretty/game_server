@@ -182,21 +182,21 @@ void Object_Pool<Obj, LOCK>::dump_info(void) {
 template <typename Obj, typename LOCK>
 void Object_Pool<Obj, LOCK>::dump_info_i(void) {
 	if (++dump_log_ > dump_log_interval_) {
-		LOG_DEBUG("free_obj_list_siz = %u, used_obj_list_size = %u", free_obj_list_size_, used_obj_list_.size());
+		LIB_LOG_DEBUG("free_obj_list_siz = %u, used_obj_list_size = %u", free_obj_list_size_, used_obj_list_.size());
 		dump_log_ = 0;
 	}
 }
 
 template <typename Obj, typename LOCK>
 void Object_Pool<Obj, LOCK>::debug_info(void) {
-	LOG_DEBUG("free_obj_list_size_ = %u, free_obj_list_size_ = %u, used_size = %u, shrink_level_ = %u, shrink_delay_level_ = %u, shrink_delay_ = %u",
+	LIB_LOG_DEBUG("free_obj_list_size_ = %u, free_obj_list_size_ = %u, used_size = %u, shrink_level_ = %u, shrink_delay_level_ = %u, shrink_delay_ = %u",
 			free_obj_list_size_, free_obj_list_.size(), used_obj_list_.size(), shrink_level_, shrink_delay_level_, shrink_delay_);
 }
 
 template <typename Obj, typename LOCK>
 void Object_Pool<Obj, LOCK>::xxx_info(void) {
 	if (++shrink_delay_ > 500) {
-		LOG_DEBUG("free_obj_list_size_ = %u, used_size = %u, SUM = %u", free_obj_list_size_, used_obj_list_.size(), free_obj_list_size_ + used_obj_list_.size());
+		LIB_LOG_DEBUG("free_obj_list_size_ = %u, used_size = %u, SUM = %u", free_obj_list_size_, used_obj_list_.size(), free_obj_list_size_ + used_obj_list_.size());
 		shrink_delay_ = 0;
 	}
 }
@@ -221,17 +221,17 @@ Obj * Object_Pool<Obj, LOCK>::pop(void) {
 		obj = this->free_obj_list_.front();
 		this->free_obj_list_.pop_front();
 		if (! this->used_obj_list_.insert(obj).second) {
-			LOG_USER_TRACE("insert failure !");
+			LIB_LOG_TRACE("insert failure !");
 		}
 		--(this->free_obj_list_size_);
 	} else {
 		while (1) {
 			if ((obj = new Obj) == 0) {
-				LOG_USER_TRACE("new return 0");
+				LIB_LOG_TRACE("new return 0");
 				continue;
 			} else {
 				if (! this->used_obj_list_.insert(obj).second) {
-					LOG_USER_TRACE("insert failure !");
+					LIB_LOG_TRACE("insert failure !");
 				}
 				break;
 			}
@@ -253,8 +253,8 @@ int Object_Pool<Obj, LOCK>::push(Obj *obj) {
 
 	typename Obj_Set::iterator used_obj_it = this->used_obj_list_.find(obj);
 	if (used_obj_it == this->used_obj_list_.end()) {
-		LOG_USER_TRACE("***** Object_Pool<Obj, LOCK>::push(Obj *obj) can't find this Object Block !!!");
-		//LOG_ABORT();
+		LIB_LOG_TRACE("***** Object_Pool<Obj, LOCK>::push(Obj *obj) can't find this Object Block !!!");
+		//LIB_LOG_FATAL();
 		return -1;
 	}
 

@@ -54,10 +54,6 @@ int Master_Inner_Messager::process_self_loop_block(Block_Buffer &buf) {
 		MASTER_MANAGER->tick();
 		break;
 	}
-	case SYNC_INNER_CONFIG_HOTUPDATE: {
-		process_400001(buf);
-		break;
-	}
 	default:
 		break;
 	}
@@ -70,7 +66,7 @@ int Master_Inner_Messager::process_160001(int game_cid, int player_cid, Block_Bu
 	msg.deserialize(buf);
 	Master_Player *player = MASTER_MANAGER->pop_master_player();
 	if (! player) {
-		MSG_USER("master_player_pool_.pop() return 0.");
+		LOG_INFO("master_player_pool_.pop() return 0.");
 		return -1;
 	}
 
@@ -87,19 +83,12 @@ int Master_Inner_Messager::process_160002(Block_Buffer &buf) {
 	msg.deserialize(buf);
 	Master_Player *player = MASTER_MANAGER->find_role_id_master_player(msg.role_id);
 	if (!player) {
-		MSG_USER("process_160002 can't find role_id = %ld", msg.role_id);
+		LOG_INFO("process_160002 can't find role_id = %ld", msg.role_id);
 	}
 	MASTER_MANAGER->unbind_master_player(*player);
 	player->sign_out();
 	MASTER_MANAGER->push_master_player(player);
 
-	MSG_USER("process_160002 role sign out role_id = %ld", msg.role_id);
-	return 0;
-}
-
-int Master_Inner_Messager::process_400001(Block_Buffer &buf) {
-	MSG_400001 msg;
-	msg.deserialize(buf);
-	CONFIG_INSTANCE->hot_update_conf(msg.module, 1);
+	LOG_INFO("process_160002 role sign out role_id = %ld", msg.role_id);
 	return 0;
 }

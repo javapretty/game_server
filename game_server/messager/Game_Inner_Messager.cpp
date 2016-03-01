@@ -73,10 +73,6 @@ int Game_Inner_Messager::process_self_loop_block(Block_Buffer &buf) {
 		GAME_MANAGER->tick();
 		break;
 	}
-	case SYNC_INNER_CONFIG_HOTUPDATE: {
-		process_400001(buf);
-		break;
-	}
 	default:
 		break;
 	}
@@ -91,7 +87,7 @@ int Game_Inner_Messager::process_load_db_cache(Block_Buffer &buf) {
 		GAME_MANAGER->db_cache()->id_player_cache_map.insert(std::make_pair(iter->role_id, *iter));
 		GAME_MANAGER->db_cache()->account_player_cache_map.insert(std::make_pair(iter->account, *iter));
 	}
-	MSG_DEBUG("load_db_cache success, role count:%d", msg.db_cache_vec.size());
+	LOG_DEBUG("load_db_cache success, role count:%d", msg.db_cache_vec.size());
 	return 0;
 }
 int Game_Inner_Messager::process_loaded_player_data(Block_Buffer &buf) {
@@ -99,14 +95,14 @@ int Game_Inner_Messager::process_loaded_player_data(Block_Buffer &buf) {
 	msg.deserialize(buf);
 	Game_Manager::Logining_Map::iterator logining_it = GAME_MANAGER->logining_map().find(msg.player_data.game_player_info.account);
 	if (logining_it == GAME_MANAGER->logining_map().end()) {
-		MSG_USER("account not exist in logining map, account = %s.", msg.player_data.game_player_info.account.c_str());
+		LOG_INFO("account not exist in logining map, account = %s.", msg.player_data.game_player_info.account.c_str());
 		return -1;
 	}
 
 	int gate_cid = logining_it->second.gate_cid;
 	int player_cid = logining_it->second.player_cid;
 	if (gate_cid < 2 || player_cid < 2) {
-		MSG_USER("gate_cid = %d, player_cid = %d", gate_cid, player_cid);
+		LOG_INFO("gate_cid = %d, player_cid = %d", gate_cid, player_cid);
 		return -1;
 	}
 
@@ -153,7 +149,7 @@ int Game_Inner_Messager::process_loaded_player_data(Block_Buffer &buf) {
 		break;
 	}
 	default: {
-		MSG_USER("unknow status = %d.", msg.player_data.status);
+		LOG_INFO("unknow status = %d.", msg.player_data.status);
 	}
 	}
 
@@ -163,7 +159,7 @@ int Game_Inner_Messager::process_loaded_player_data(Block_Buffer &buf) {
 int Game_Inner_Messager::process_success_login(int gate_cid, int player_cid, Player_Data &data) {
 	Game_Player *player = GAME_MANAGER->pop_game_player();
 	if (! player) {
-		MSG_USER("game_player_pool_.pop() return 0.");
+		LOG_INFO("game_player_pool_.pop() return 0.");
 		return -1;
 	}
 
@@ -196,12 +192,5 @@ int Game_Inner_Messager::process_save_player_complete(Block_Buffer &buf) {
 	if (GAME_MANAGER->saving_map().find(msg.role_id) != GAME_MANAGER->saving_map().end()) {
 		GAME_MANAGER->saving_map().erase(msg.role_id);
 	}
-	return 0;
-}
-
-int Game_Inner_Messager::process_400001(Block_Buffer &buf) {
-	MSG_400001 msg;
-	msg.deserialize(buf);
-	CONFIG_INSTANCE->hot_update_conf(msg.module, 1);
 	return 0;
 }

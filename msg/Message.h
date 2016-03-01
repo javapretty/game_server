@@ -146,7 +146,6 @@ enum Active_Message{
 
 enum Inner_Message{
 	SYNC_INNER_TIMER_TICK 						= 	400000,	//定时器tick
-	SYNC_INNER_CONFIG_HOTUPDATE 				= 	400001,	//配制文件热更消息
 };
 
 #endif /* MSG_MESSAGE_H_ */

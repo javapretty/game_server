@@ -212,7 +212,7 @@ int Block_Buffer::get_read_idx(void) {
 
 void Block_Buffer::set_read_idx(int ridx) {
 	if ((size_t)ridx > buffer_.size() || (size_t)ridx > write_index_) {
-		LOG_ABORT("set_read_idx error ridx = %d.", ridx);
+		LIB_LOG_FATAL("set_read_idx error ridx = %d.", ridx);
 		debug();
 	}
 
@@ -225,7 +225,7 @@ int Block_Buffer::get_write_idx(void) {
 
 void Block_Buffer::set_write_idx(int widx) {
 	if ((size_t)widx > buffer_.size() || (size_t)widx < read_index_) {
-		LOG_ABORT("set_write_idx error widx = %d.", widx);
+		LIB_LOG_FATAL("set_write_idx error widx = %d.", widx);
 		debug();
 	}
 
@@ -244,7 +244,7 @@ void Block_Buffer::make_space(size_t len) {
 	if (cond_pos < 0) {
 		read_begin = init_offset_ = read_index_;
 		head_size = 0;
-		LOG_USER_TRACE("read_index_ = %u, init_offset_ = %u", read_index_, init_offset_);
+		LIB_LOG_TRACE("read_index_ = %u, init_offset_ = %u", read_index_, init_offset_);
 	} else {
 		read_begin = init_offset_;
 		head_size = cond_pos;
@@ -304,14 +304,11 @@ void Block_Buffer::dump_inner(void) {
 }
 
 void Block_Buffer::dump(void) {
-	if (write(STDOUT_FILENO, this->get_read_ptr(), this->readable_bytes()) == -1) {
-		//std::cerr << "write return -1\n";
-	}
-	//printf("\n");
+	write(STDOUT_FILENO, this->get_read_ptr(), this->readable_bytes());
 }
 
 void Block_Buffer::debug(void) {
-	LOG_DEBUG("  read_index = %ul, write_index = %ul, buffer_.size = %ul.", read_index_, write_index_, buffer_.size());;
+	LIB_LOG_DEBUG("read_index = %ul, write_index = %ul, buffer_.size = %ul.", read_index_, write_index_, buffer_.size());;
 }
 
 int8_t Block_Buffer::peek_int8() {
@@ -319,7 +316,7 @@ int8_t Block_Buffer::peek_int8() {
 	if (verify_read(sizeof(v))) {
 		memcpy(&v, &(buffer_[read_index_]), sizeof(v));
 	} else {
-		LOG_USER_TRACE("out of range");
+		LIB_LOG_TRACE("out of range");
 		return -1;
 	}
 	return v;
@@ -338,7 +335,7 @@ int16_t Block_Buffer::peek_int16() {
 		memcpy(&v, &(buffer_[read_index_]), sizeof(v));
 #endif
 	} else {
-		LOG_USER_TRACE("out of range");
+		LIB_LOG_TRACE("out of range");
 		return -1;
 	}
 	return v;
@@ -357,7 +354,7 @@ int32_t Block_Buffer::peek_int32() {
 		memcpy(&v, &(buffer_[read_index_]), sizeof(v));
 #endif
 	} else {
-		LOG_USER_TRACE("out of range");
+		LIB_LOG_TRACE("out of range");
 		return -1;
 	}
 	return v;
@@ -376,7 +373,7 @@ int64_t Block_Buffer::peek_int64() {
 		memcpy(&v, &(buffer_[read_index_]), sizeof(v));
 #endif
 	} else {
-		LOG_USER_TRACE("out of range");
+		LIB_LOG_TRACE("out of range");
 		return -1;
 	}
 	return v;
@@ -387,7 +384,7 @@ uint8_t Block_Buffer::peek_uint8() {
 	if (verify_read(sizeof(v))) {
 		memcpy(&v, &(buffer_[read_index_]), sizeof(v));
 	} else {
-		LOG_USER_TRACE("out of range");
+		LIB_LOG_TRACE("out of range");
 		return -1;
 	}
 	return v;
@@ -405,7 +402,7 @@ uint16_t Block_Buffer::peek_uint16() {
 		memcpy(&v, &(buffer_[read_index_]), sizeof(v));
 #endif
 	} else {
-		LOG_USER_TRACE("out of range");
+		LIB_LOG_TRACE("out of range");
 		return -1;
 	}
 	return v;
@@ -423,7 +420,7 @@ uint32_t Block_Buffer::peek_uint32() {
 		memcpy(&v, &(buffer_[read_index_]), sizeof(v));
 #endif
 	} else {
-		LOG_USER_TRACE("out of range");
+		LIB_LOG_TRACE("out of range");
 		return -1;
 	}
 	return v;
@@ -442,7 +439,7 @@ uint64_t Block_Buffer::peek_uint64() {
 		memcpy(&v, &(buffer_[read_index_]), sizeof(v));
 #endif
 	} else {
-		LOG_USER_TRACE("out of range");
+		LIB_LOG_TRACE("out of range");
 		return -1;
 	}
 	return v;
@@ -467,7 +464,7 @@ bool Block_Buffer::peek_bool() {
 	if (verify_read(sizeof(v))) {
 		memcpy(&v, &(buffer_[read_index_]), sizeof(v));
 	} else {
-		LOG_USER_TRACE("out of range");
+		LIB_LOG_TRACE("out of range");
 		return -1;
 	}
 	return v;
@@ -487,7 +484,7 @@ int8_t Block_Buffer::read_int8() {
 		memcpy(&v, &(buffer_[read_index_]), sizeof(v));
 		read_index_ += sizeof(v);
 	} else {
-		LOG_USER_TRACE("out of range");
+		LIB_LOG_TRACE("out of range");
 		return -1;
 	}
 	return v;
@@ -508,7 +505,7 @@ int16_t Block_Buffer::read_int16() {
 		read_index_ += sizeof(v);
 #endif
 	} else {
-		LOG_USER_TRACE("out of range");
+		LIB_LOG_TRACE("out of range");
 		return -1;
 	}
 	return v;
@@ -529,7 +526,7 @@ int32_t Block_Buffer::read_int32() {
 		read_index_ += sizeof(v);
 #endif
 	} else {
-		LOG_USER_TRACE("out of range");
+		LIB_LOG_TRACE("out of range");
 		return -1;
 	}
 	return v;
@@ -550,7 +547,7 @@ int64_t Block_Buffer::read_int64() {
 		read_index_ += sizeof(v);
 #endif
 	} else {
-		LOG_USER_TRACE("out of range");
+		LIB_LOG_TRACE("out of range");
 		return -1;
 	}
 	return v;
@@ -562,7 +559,7 @@ uint8_t Block_Buffer::read_uint8() {
 		memcpy(&v, &(buffer_[read_index_]), sizeof(v));
 		read_index_ += sizeof(v);
 	} else {
-		LOG_USER_TRACE("out of range");
+		LIB_LOG_TRACE("out of range");
 		return -1;
 	}
 	return v;
@@ -582,7 +579,7 @@ uint16_t Block_Buffer::read_uint16() {
 		read_index_ += sizeof(v);
 #endif
 	} else {
-		LOG_USER_TRACE("out of range");
+		LIB_LOG_TRACE("out of range");
 		return -1;
 	}
 	return v;
@@ -602,7 +599,7 @@ uint32_t Block_Buffer::read_uint32() {
 		read_index_ += sizeof(v);
 #endif
 	} else {
-		LOG_USER_TRACE("out of range");
+		LIB_LOG_TRACE("out of range");
 		return -1;
 	}
 	return v;
@@ -622,7 +619,7 @@ uint64_t Block_Buffer::read_uint64() {
 		read_index_ += sizeof(v);
 #endif
 	} else {
-		LOG_USER_TRACE("out of range");
+		LIB_LOG_TRACE("out of range");
 		return -1;
 	}
 	return v;
@@ -643,7 +640,7 @@ double Block_Buffer::read_double() {
 		read_index_ += sizeof(v);
 #endif
 	} else {
-		LOG_USER_TRACE("out of range");
+		LIB_LOG_TRACE("out of range");
 		return -1;
 	}
 	return v;
@@ -655,7 +652,7 @@ bool Block_Buffer::read_bool() {
 		memcpy(&v, &(buffer_[read_index_]), sizeof(v));
 		read_index_ += sizeof(v);
 	} else {
-		LOG_USER_TRACE("out of range");
+		LIB_LOG_TRACE("out of range");
 		return -1;
 	}
 	return v;
@@ -814,7 +811,7 @@ void Block_Buffer::finish_message(void) {
 
 int Block_Buffer::move_data(size_t dest, size_t begin, size_t end) {
 	if (begin >= end) {
-		LOG_USER_TRACE("begin = %ul, end = %ul, dest = %ul.", begin, end, dest);
+		LIB_LOG_TRACE("begin = %ul, end = %ul, dest = %ul.", begin, end, dest);
 		return -1;
 	}
 	size_t len = end - begin;
@@ -825,7 +822,7 @@ int Block_Buffer::move_data(size_t dest, size_t begin, size_t end) {
 
 int Block_Buffer::insert_head(Block_Buffer *buf) {
 	if (! buf) {
-		LOG_USER_TRACE("buf == 0");
+		LIB_LOG_TRACE("buf == 0");
 		return -1;
 	}
 
@@ -835,12 +832,10 @@ int Block_Buffer::insert_head(Block_Buffer *buf) {
 	}
 
 	size_t dest = read_index_ + len;
-
 	move_data(dest, read_index_, write_index_);
 	std::memcpy(this->get_read_ptr(),  buf->get_read_ptr(), len);
 
 	this->set_write_idx(this->get_write_idx() + len);
-
 	return 0;
 }
 
@@ -878,7 +873,7 @@ void Block_Buffer::log_binary_data(size_t len) {
 		snprintf(str_buf, sizeof(str_buf), "0x%02x", (uint8_t)buffer_[i]);
 		str_stream << str_buf << " ";
 	}
-	LOG_DEBUG("[%s]", str_stream.str().c_str());
+	LIB_LOG_DEBUG("log_binary_data:[%s]", str_stream.str().c_str());
 }
 
 #endif /* BLOCK_BUFFER_H_ */

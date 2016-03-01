@@ -124,14 +124,14 @@ public:
 		GUARD(LOCK, mon, lock_);
 
 		if (! validate_cid(idx)) {
-			LOG_USER_TRACE("cid = %d", idx);
+			LIB_LOG_TRACE("cid = %d", idx);
 			return -1;
 		}
 
 		Node &node = data_list_[idx];
 
 		if (! node.is_used_) {
-			LOG_USER_TRACE("idx = %d is a free node", idx);
+			LIB_LOG_TRACE("idx = %d is a free node", idx);
 			return -1;
 		}
 
@@ -157,13 +157,12 @@ public:
 		GUARD(LOCK, mon, lock_);
 
 		if (! validate_cid(idx)) {
-			LOG_USER_TRACE("cid = %d", idx);
+			LIB_LOG_TRACE("cid = %d", idx);
 			return false;
 		}
 
 		Node &node = data_list_[idx];
 		if (! node.is_used_) {
-			//LOG_USER("idx = %d is a free node", idx);
 			return false;
 		}
 

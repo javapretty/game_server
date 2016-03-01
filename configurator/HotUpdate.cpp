@@ -57,14 +57,6 @@ void Hot_Update::run_handler(void) {
 }
 
 int Hot_Update::notice_update(const std::string module) {
-	MSG_400001 inner_msg;
-	inner_msg.module = module;
-	Block_Buffer inner_buf;
-	inner_buf.make_inner_message(SYNC_INNER_CONFIG_HOTUPDATE);
-	inner_msg.serialize(inner_buf);
-	inner_buf.finish_message();
-	GAME_MANAGER->push_self_loop_message(inner_buf);
-
 	return 0;
 }
 
@@ -127,7 +119,7 @@ void Hot_Update::init_all_module(void) {
 	std::string module_path = "config/";
 	pDir = opendir(module_path.c_str());
 	if (pDir == NULL) {
-		MSG_USER("hot update open file error:%s", module_path.c_str());
+		LOG_INFO("hot update open file error:%s", module_path.c_str());
 		//被当作目录，但是执行opendir后发现又不是目录，比如软链接就会发生这样的情况。
 		return;
 	}
@@ -137,7 +129,7 @@ void Hot_Update::init_all_module(void) {
 			if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0 || strcmp(ent->d_name, ".svn") == 0) {
 				continue;
 			}
-			//MSG_USER("hot update module :%s", ent->d_name);
+			//LOG_INFO("hot update module :%s", ent->d_name);
 			//init_md5_str(ent->d_name);
 			get_md5_str(ent->d_name, md5_str_set);
 			md5_str_map_.insert(std::make_pair(ent->d_name, md5_str_set));

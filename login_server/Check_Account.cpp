@@ -19,7 +19,7 @@ Check_Account::~Check_Account() { }
 int Check_Account::connect_mysql_db() {
 	const Json::Value &server_maintainer = CONFIG_INSTANCE->server_maintainer();
 	if (server_maintainer == Json::Value::null) {
-		MSG_ABORT("server_maintainer == Json::Value::null");
+		LOG_FATAL("server_maintainer == Json::Value::null");
 	}
 	std::string mysql_ip(server_maintainer["mysql_server"]["ip"].asString());
 	int mysql_port = server_maintainer["mysql_server"]["port"].asInt();
@@ -45,7 +45,7 @@ int Check_Account::client_register(std::string& account, std::string& password){
 		ret = mysql_db_conn_->Execute(sql_query.c_str());
 	}catch(sql::SQLException &e){
 		int err_code = e.getErrorCode();
-		MSG_DEBUG("SQLException, MySQL Error Code = %d, SQLState = [%s], [%s]", err_code, e.getSQLState().c_str(), e.what());
+		LOG_DEBUG("SQLException, MySQL Error Code = %d, SQLState = [%s], [%s]", err_code, e.getSQLState().c_str(), e.what());
 		ret = -1;
 	}
 

@@ -33,7 +33,7 @@ public:
 	}
 
 	virtual void run_handler(void) {
-		LOG_USER_TRACE("SHOULD NOT HERE");
+		LIB_LOG_TRACE("SHOULD NOT HERE");
 	}
 
 	virtual void exit_handler(void) { }
@@ -55,7 +55,7 @@ public:
 		if ((ret = thr_cancel()) == 0) {
 			ret = thr_join();
 		} else {
-			LOG_USER_TRACE("thr_cancel return ret = ", ret);
+			LIB_LOG_TRACE("thr_cancel return ret = ", ret);
 		}
 		return ret;
 	}

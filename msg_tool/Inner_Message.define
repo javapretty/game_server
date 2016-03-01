@@ -1,6 +1,0 @@
-/*
-配制文件热更消息
-*/
-struct MSG_400001 {
-	std::string module;
-};

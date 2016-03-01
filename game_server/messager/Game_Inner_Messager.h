@@ -34,10 +34,6 @@ public:
 	/// 保存玩家信息完成
 	int process_save_player_complete(Block_Buffer &buf);
 
-	////////////////////////////inner message/////////////////////
-	/// 配制文件热更消息
-	int process_400001(Block_Buffer &buf);
-
 private:
 	Game_Inner_Messager(void);
 	virtual ~Game_Inner_Messager(void);

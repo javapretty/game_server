@@ -61,7 +61,7 @@ inline int DB_Manager::set(int num) {
 }
 
 inline void DB_Manager::object_pool_size(void) {
-	MSG_DEBUG("db_worker_pool_ free = %d, used = %d", db_worker_pool_.free_obj_list_size(), db_worker_pool_.used_obj_list_size());
+	LOG_DEBUG("db_worker_pool_ free = %d, used = %d", db_worker_pool_.free_obj_list_size(), db_worker_pool_.used_obj_list_size());
 }
 
 inline void DB_Manager::free_pool_cache(void) {

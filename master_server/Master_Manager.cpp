@@ -68,7 +68,7 @@ int Master_Manager::time_up(const Time_Value &now) {
 
 int Master_Manager::send_to_gate(int cid, Block_Buffer &buf) {
 	if (cid < 2) {
-		MSG_USER("cid = %d", cid);
+		LOG_INFO("cid = %d", cid);
 		return -1;
 	}
 	return MASTER_GATE_SERVER->send_block(cid, buf);
@@ -76,7 +76,7 @@ int Master_Manager::send_to_gate(int cid, Block_Buffer &buf) {
 
 int Master_Manager::send_to_game(int cid, Block_Buffer &buf) {
 	if (cid < 2) {
-		MSG_USER("cid = %d", cid);
+		LOG_INFO("cid = %d", cid);
 		return -1;
 	}
 	return MASTER_GAME_SERVER->send_block(cid, buf);
@@ -97,7 +97,7 @@ int Master_Manager::process_list(void) {
 				cid = buf->peek_int32();
 				MASTER_CLIENT_MESSAGER->process_block(*buf);
 			} else {
-				MSG_USER("buf.read_index = %ld, buf.write_index = %ld",
+				LOG_INFO("buf.read_index = %ld, buf.write_index = %ld",
 						buf->get_read_idx(), buf->get_write_idx());
 				buf->reset();
 			}
@@ -110,7 +110,7 @@ int Master_Manager::process_list(void) {
 				cid = buf->peek_int32();
 				MASTER_INNER_MESSAGER->process_game_block(*buf);
 			} else {
-				MSG_USER("buf.read_index = %ld, buf.write_index = %ld",
+				LOG_INFO("buf.read_index = %ld, buf.write_index = %ld",
 						buf->get_read_idx(), buf->get_write_idx());
 				buf->reset();
 			}
@@ -137,7 +137,7 @@ int Master_Manager::server_status(void) {
 
 int Master_Manager::bind_role_id_master_player(int64_t role_id, Master_Player &player) {
 	if (! player_role_id_map_.insert(std::make_pair(role_id, &player)).second) {
-		MSG_USER_TRACE("insert failure");
+		LOG_TRACE("insert failure");
 	}
 	return 0;
 }
@@ -219,13 +219,13 @@ void Master_Manager::get_server_info(Block_Buffer &buf) {
 }
 
 void Master_Manager::object_pool_size(void) {
-	MSG_DEBUG("Master_Manager Object_Pool Size ==============================================================");
-	MSG_DEBUG("block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
-	MSG_DEBUG("master_player_pool_ free = %d, used = %d", master_player_pool_.free_obj_list_size(), master_player_pool_.used_obj_list_size());
+	LOG_DEBUG("Master_Manager Object_Pool Size ==============================================================");
+	LOG_DEBUG("block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
+	LOG_DEBUG("master_player_pool_ free = %d, used = %d", master_player_pool_.free_obj_list_size(), master_player_pool_.used_obj_list_size());
 }
 
 void Master_Manager::free_cache(void) {
-	MSG_DEBUG("REQ_FREE_CACHE");
+	LOG_DEBUG("REQ_FREE_CACHE");
 
 	LOG->free_cache();
 	MASTER_GATE_SERVER->free_cache();
@@ -240,5 +240,5 @@ void Master_Manager::print_msg_count(void) {
 	for (Msg_Count_Map::iterator it = inner_msg_count_map_.begin(); it != inner_msg_count_map_.end(); ++it) {
 		stream << (it->first) << "\t" << (it->second) << std::endl;
 	}
-	MSG_USER("inner_msg_count_map_.size = %d\n%s\n", inner_msg_count_map_.size(), stream.str().c_str());
+	LOG_INFO("inner_msg_count_map_.size = %d\n%s\n", inner_msg_count_map_.size(), stream.str().c_str());
 }

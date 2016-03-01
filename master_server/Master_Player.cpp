@@ -12,7 +12,7 @@ Master_Player::~Master_Player(void) { }
 int Master_Player::sign_in(Master_Player_Info &player_info) {
 	player_info_ = player_info;
 
-	MSG_DEBUG("player sign in master_server. account=[%s], game_cid = %d, player_cid = %d, role_id=%ld, name=%s",
+	LOG_DEBUG("player sign in master_server. account=[%s], game_cid = %d, player_cid = %d, role_id=%ld, name=%s",
 			player_info_.account.c_str(), cid_info_.game_cid, cid_info_.player_cid, player_info_.role_id, player_info_.role_name.c_str());
 	return 0;
 }

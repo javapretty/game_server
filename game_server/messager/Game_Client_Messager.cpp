@@ -21,14 +21,14 @@ Game_Client_Messager *Game_Client_Messager::instance(void) {
 
 int Game_Client_Messager::process_120001(int gate_cid, int player_cid, MSG_120001 &msg) {
 	if (GAME_MANAGER->server_status() != Game_Manager::STATUS_NORMAL) {
-		MSG_USER("server closing");
+		LOG_INFO("server closing");
 		return -1;
 	}
 
 	/// 超时验证
 	bool validate = false;
 	if (validate && abs(atoi(msg.timestamp.c_str()) - GAME_MANAGER->tick_time().sec()) > 120) {
-		MSG_USER("login validate timeout account:%s  time:%s", msg.account.c_str(), msg.timestamp.c_str());
+		LOG_INFO("login validate timeout account:%s  time:%s", msg.account.c_str(), msg.timestamp.c_str());
 		Block_Buffer msg_buf;
 		msg_buf.make_player_message(ACTIVE_DISCONNECT, ERROR_LOGIN_VERIFY_FAIL, player_cid);
 		msg_buf.finish_message();
@@ -37,7 +37,7 @@ int Game_Client_Messager::process_120001(int gate_cid, int player_cid, MSG_12000
 
 	/// 帐号还在登录/登出流程中判断
 	if (GAME_MANAGER->logining_map().count(msg.account) || GAME_MANAGER->saving_map().count(msg.role_id)) {
-		MSG_DEBUG("account has in logining status, account = %s.", msg.account.c_str());
+		LOG_DEBUG("account has in logining status, account = %s.", msg.account.c_str());
 		Block_Buffer msg_buf;
 		msg_buf.make_player_message(ACTIVE_DISCONNECT, ERROR_DISCONNECT_RELOGIN, player_cid);
 		msg_buf.finish_message();
@@ -49,9 +49,9 @@ int Game_Client_Messager::process_120001(int gate_cid, int player_cid, MSG_12000
 	if (! player) {
 		if (GAME_MANAGER->db_cache()->account_player_cache_map.count(msg.account)) {
 			//登录加载玩家信息，玩家存在，直接从数据库取数据
-			MSG_DEBUG("push_load_account_info, role exist, account=%s",msg.account.c_str());
+			LOG_DEBUG("push_load_account_info, role exist, account=%s",msg.account.c_str());
 			if (! GAME_MANAGER->logining_map().insert(std::make_pair(msg.account, Cid_Info(gate_cid, 0, player_cid))).second) {
-				MSG_USER("insert logining_map failure");
+				LOG_INFO("insert logining_map failure");
 				return -1;
 			}
 			Block_Buffer msg_buf;
@@ -65,7 +65,7 @@ int Game_Client_Messager::process_120001(int gate_cid, int player_cid, MSG_12000
 			GAME_MANAGER->send_to_db(msg_buf);
 		} else {
 			//登录加载玩家信息，玩家不存在，返回客户端创建玩家
-			MSG_DEBUG("push_load_account_info, role not exist, create role, account=%s",msg.account.c_str());
+			LOG_DEBUG("push_load_account_info, role not exist, create role, account=%s",msg.account.c_str());
 			Block_Buffer res_buf;
 			res_buf.make_player_message(RES_FETCH_ROLE_INFO, ERROR_ROLE_NOT_EXIST, player_cid);
 			MSG_520001 res_msg;
@@ -88,7 +88,7 @@ int Game_Client_Messager::process_120001(int gate_cid, int player_cid, MSG_12000
 			Cid_Info cid_info(gate_cid, 0, player_cid);
 			player->set_cid_info(cid_info);
 		} else {
-			MSG_USER("same cid resigin");
+			LOG_INFO("same cid resigin");
 		}
 	}
 	return 0;
@@ -96,13 +96,13 @@ int Game_Client_Messager::process_120001(int gate_cid, int player_cid, MSG_12000
 
 int Game_Client_Messager::process_120002(int gate_cid, int player_cid, MSG_120002 &msg) {
 	if (msg.account.empty() || msg.role_name.empty() || msg.gender > 1) {
-		MSG_USER("invalid parameter account = [%s], role_name = [%s], gender = %d",
+		LOG_INFO("invalid parameter account = [%s], role_name = [%s], gender = %d",
 				msg.account.c_str(), msg.role_name.c_str(), msg.gender);
 		return -1;
 	}
 
 	if (GAME_MANAGER->logining_map().count(msg.account)) {
-		MSG_DEBUG("account has in logining status, account = %s.", msg.account.c_str());
+		LOG_DEBUG("account has in logining status, account = %s.", msg.account.c_str());
 		Block_Buffer msg_buf;
 		msg_buf.make_player_message(ACTIVE_DISCONNECT, ERROR_DISCONNECT_RELOGIN, player_cid);
 		msg_buf.finish_message();
@@ -110,10 +110,10 @@ int Game_Client_Messager::process_120002(int gate_cid, int player_cid, MSG_12000
 	}
 
 	if (! GAME_MANAGER->logining_map().insert(std::make_pair(msg.account, Cid_Info(gate_cid, 0, player_cid))).second) {
-		MSG_USER("insert failure");
+		LOG_INFO("insert failure");
 	}
 
-	MSG_DEBUG("process_120002, push_create_player_data,account=%s, role_name=%s",msg.account.c_str(), msg.role_name.c_str());
+	LOG_DEBUG("process_120002, push_create_player_data,account=%s, role_name=%s",msg.account.c_str(), msg.role_name.c_str());
 	Block_Buffer msg_buf;
 	msg_buf.make_inner_message(SYNC_GAME_DB_CREATE_PLAYER);
 	MSG_150002 db_msg;

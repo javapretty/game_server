@@ -30,7 +30,7 @@ public:
 	int push_back(Block_Buffer *buf) {
 		int ret = -1;
 		if (! buf) {
-			LOG_USER_TRACE("buf == 0");
+			LIB_LOG_TRACE("buf == 0");
 			ret = -1;
 		}
 
@@ -92,7 +92,6 @@ public:
 		GUARD(LOCK, mon, this->lock_);
 
 		int iovcnt = size_ > IOV_MAX ? IOV_MAX : size_; 	/// IOV_MAX为XPG宏, 需要包含limits.h, 一般为1024, C中需加-D_XOPEN_SOURCE参数
-
 		if (iovcnt == 0)
 			return 0;
 
@@ -113,7 +112,7 @@ public:
 		GUARD(LOCK, mon, this->lock_);
 
 		if (num > size_) {
-			LOG_USER_TRACE("num = %u, size_ = %u", num, size_);
+			LIB_LOG_TRACE("num = %u, size_ = %u", num, size_);
 			return;
 		}
 
@@ -126,7 +125,7 @@ public:
 		if (offset > 0) {
 			Block_Buffer *head = list_.front();
 			if ((int)offset > head->get_write_idx()) {
-				LOG_USER_TRACE("offset = %ul, read_index = %ul, write_index = %ul.", offset, head->get_read_idx(), head->get_write_idx());
+				LIB_LOG_TRACE("offset = %ul, read_index = %ul, write_index = %ul.", offset, head->get_read_idx(), head->get_write_idx());
 				return;
 			}
 			head->set_read_idx(head->get_read_idx() + offset);
@@ -141,7 +140,6 @@ public:
 			return 0;
 
 		Block_Buffer *front_buf = list_.front();
-
 		BList::iterator second_it = ++(list_.begin());
 		Block_Buffer *second_buf = *second_it;
 		list_.erase(second_it);
@@ -150,7 +148,7 @@ public:
 		second_buf->set_read_idx(second_buf->get_read_idx() + sizeof(int32_t)); /// 丢弃cid头
 
 		if (second_buf->readable_bytes() <= 0) {
-			LOG_USER_TRACE("second_buf->readable_bytes() <= 0");
+			LIB_LOG_TRACE("second_buf->readable_bytes() <= 0");
 			second_buf->reset();
 		} else {
 			front_buf->copy(second_buf);

@@ -38,7 +38,7 @@ DBClientConnection &DB_Operator::connection(void) {
 		std::stringstream host_stream;
 		const Json::Value &mongodb_server = CONFIG_INSTANCE->server_maintainer()["mongodb_server"];
 		if (mongodb_server == Json::Value::null) {
-			MSG_ABORT("cannot find mongodb_server");
+			LOG_FATAL("cannot find mongodb_server");
 		}
 		host_stream << (mongodb_server["ip"].asString());
 		if (mongodb_server.isMember("port")) {
@@ -61,7 +61,7 @@ int DB_Operator::init(void) {
 	server_map_.clear();
 	const Json::Value &servers_config = CONFIG_INSTANCE->server_list();
 	if (servers_config == Json::Value::null || servers_config["server_list"].size() == 0) {
-		MSG_ABORT("configure file error");
+		LOG_FATAL("configure file error");
 	}
 
 	int agent = 0;
@@ -94,11 +94,11 @@ int DB_Operator::init(void) {
 		server_amount += it->second.size();
 	}
 	if (server_amount != servers_config["server_list"].size()) {
-		MSG_ABORT("server_list is error.");
+		LOG_FATAL("server_list is error.");
 	}
 
 	if (agent_num_ < 100 || agent_num_ > 999 || server_num_ < 1000 || server_num_ > 9999) {
-		MSG_ABORT("agent_num_ = %d, server_num_ = %d", agent_num_, server_num_);
+		LOG_FATAL("agent_num_ = %d, server_num_ = %d", agent_num_, server_num_);
 	}
 	int64_t agent_l = agent_num_ * 10000000000000L;
 	int64_t server_l = server_num_ * 1000000000L;
@@ -190,11 +190,11 @@ int64_t DB_Operator::create_init_player(Game_Player_Info &player_info) {
 #else
 	Int_IntSet_Map::const_iterator it = server_map_.find(player_info.agent_num);
 	if (it == server_map_.end()) {
-		MSG_USER("player_info.agent_num = [%d] is not find.", player_info.agent_num);
+		LOG_INFO("player_info.agent_num = [%d] is not find.", player_info.agent_num);
 		return -1;
 	}
 	if (it->second.count(player_info.server_num) == 0) {
-		MSG_USER("player_info.server_num = [%d] is not find.", player_info.server_num);
+		LOG_INFO("player_info.server_num = [%d] is not find.", player_info.server_num);
 		return -1;
 	}
 #endif
@@ -204,13 +204,13 @@ int64_t DB_Operator::create_init_player(Game_Player_Info &player_info) {
 			MONGO_QUERY("role_name" << player_info.role_name), &fields);
 
 	if (res.isEmpty() == false) {
-		MSG_USER("role_name = [%s] has already existed.", player_info.role_name.c_str());
+		LOG_INFO("role_name = [%s] has already existed.", player_info.role_name.c_str());
 		return -1;
 	}
 
 	BSONObj cmd = fromjson("{findandmodify:'global', query:{key:'role'}, update:{$inc:{id:1}}}");
 	if (CACHED_CONNECTION.runCommand("mmo", cmd, res) == false) {
-		MSG_USER("increase role key failed.");
+		LOG_INFO("increase role key failed.");
 		return -1;
 	}
 

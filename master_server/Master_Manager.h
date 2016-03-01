@@ -144,7 +144,7 @@ inline int Master_Manager::push_master_game_data(Block_Buffer *buf) {
 inline int Master_Manager::push_self_loop_message(Block_Buffer &msg_buf) {
 	Block_Buffer *buf = block_pool_.pop();
 	if (! buf) {
-		MSG_USER("block_pool_.pop return 0");
+		LOG_INFO("block_pool_.pop return 0");
 		return -1;
 	}
 	buf->reset();
@@ -161,7 +161,7 @@ inline void Master_Manager::set_msg_count_onoff(int v) {
 	if (v == 0 || v == 1) {
 		msg_count_onoff_ = v;
 	} else {
-		MSG_USER("error value v = %d", v);
+		LOG_INFO("error value v = %d", v);
 	}
 }
 

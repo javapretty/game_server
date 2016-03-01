@@ -22,9 +22,6 @@ public:
 	int process_160001(int game_cid, int player_cid, Block_Buffer &buf);
 	int process_160002(Block_Buffer &buf);
 
-	/// 配制文件热更消息
-	int process_400001(Block_Buffer &buf);
-
 private:
 	Master_Inner_Messager(void);
 	virtual ~Master_Inner_Messager(void);

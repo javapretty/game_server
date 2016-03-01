@@ -50,7 +50,7 @@ int Game_Manager::init(void) {
 	HOT_UPDATE->thr_create();			/// 配制动态更新
 
 	if ((db_cache_ = new DB_Cache) == 0) {
-		MSG_ABORT("new DB_Cache return 0.");
+		LOG_FATAL("new DB_Cache return 0.");
 	}
 	return 0;
 }
@@ -69,7 +69,7 @@ int Game_Manager::load_db_cache(void) {
 
 int Game_Manager::send_to_gate(int cid, Block_Buffer &buf) {
 	if (cid < 2) {
-		MSG_USER("cid = %d", cid);
+		LOG_INFO("cid = %d", cid);
 		return -1;
 	}
 	return GAME_GATE_SERVER->send_block(cid, buf);
@@ -78,7 +78,7 @@ int Game_Manager::send_to_gate(int cid, Block_Buffer &buf) {
 int Game_Manager::send_to_master(Block_Buffer &buf) {
 	int cid = GAME_MASTER_CONNECTOR->get_cid();
 	if (cid < 2) {
-		MSG_USER("cid = %d", cid);
+		LOG_INFO("cid = %d", cid);
 		return -1;
 	}
 	return GAME_MASTER_CONNECTOR->send_block(cid, buf);
@@ -87,7 +87,7 @@ int Game_Manager::send_to_master(Block_Buffer &buf) {
 int Game_Manager::send_to_db(Block_Buffer &buf) {
 	int cid = GAME_DB_CONNECTOR->get_cid();
 	if (cid < 2) {
-		MSG_USER("cid = %d", cid);
+		LOG_INFO("cid = %d", cid);
 		return -1;
 	}
 	return GAME_DB_CONNECTOR->send_block(cid, buf);
@@ -107,7 +107,7 @@ int Game_Manager::process_list(void) {
 				cid = buf->peek_int32();
 				GAME_INNER_MESSAGER->process_db_block(*buf);
 			} else {
-				MSG_USER("buf.read_index = %ld, buf.write_index = %ld",
+				LOG_INFO("buf.read_index = %ld, buf.write_index = %ld",
 						buf->get_read_idx(), buf->get_write_idx());
 				buf->reset();
 			}
@@ -126,7 +126,7 @@ int Game_Manager::process_list(void) {
 				cid = buf->peek_int32();
 				GAME_INNER_MESSAGER->process_db_block(*buf);
 			} else {
-				MSG_USER("buf.read_index = %ld, buf.write_index = %ld",
+				LOG_INFO("buf.read_index = %ld, buf.write_index = %ld",
 						buf->get_read_idx(), buf->get_write_idx());
 				buf->reset();
 			}
@@ -139,7 +139,7 @@ int Game_Manager::process_list(void) {
 				cid = buf->peek_int32();
 				GAME_INNER_MESSAGER->process_master_block(*buf);
 			} else {
-				MSG_USER("buf.read_index = %ld, buf.write_index = %ld",
+				LOG_INFO("buf.read_index = %ld, buf.write_index = %ld",
 						buf->get_read_idx(), buf->get_write_idx());
 				buf->reset();
 			}
@@ -175,7 +175,7 @@ int Game_Manager::server_status(void) {
 
 int Game_Manager::bind_cid_game_player(Cid_Info &cid_info, Game_Player &player) {
 	if (! player_cid_map_.insert(std::make_pair(cid_info, &player)).second) {
-		MSG_USER("insert failure");
+		LOG_INFO("insert failure");
 	}
 	return 0;
 }
@@ -195,7 +195,7 @@ Game_Player* Game_Manager::find_cid_game_player(Cid_Info &cid_info) {
 
 int Game_Manager::bind_role_id_game_player(int64_t role_id, Game_Player &player) {
 	if (! player_role_id_map_.insert(std::make_pair(role_id, &player)).second) {
-		MSG_USER("insert failure");
+		LOG_INFO("insert failure");
 	}
 	return 0;
 }
@@ -215,7 +215,7 @@ Game_Player *Game_Manager::find_role_id_game_player(int64_t role_id) {
 
 int Game_Manager::bind_role_name_game_player(std::string &role_name, Game_Player &player) {
 	if (! player_role_name_map_.insert(std::make_pair(role_name, &player)).second) {
-		MSG_USER("insert failure");
+		LOG_INFO("insert failure");
 	}
 	return 0;
 }
@@ -333,13 +333,13 @@ void Game_Manager::get_server_info(Block_Buffer &buf) {
 }
 
 void Game_Manager::object_pool_size(void) {
-	MSG_DEBUG("Game_Manager Object_Pool Size ==============================================================");
-	MSG_DEBUG("block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
-	MSG_DEBUG("game_player_pool_ free = %d, used = %d", game_player_pool_.free_obj_list_size(), game_player_pool_.used_obj_list_size());
+	LOG_DEBUG("Game_Manager Object_Pool Size ==============================================================");
+	LOG_DEBUG("block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
+	LOG_DEBUG("game_player_pool_ free = %d, used = %d", game_player_pool_.free_obj_list_size(), game_player_pool_.used_obj_list_size());
 }
 
 void Game_Manager::free_cache(void) {
-	MSG_DEBUG("REQ_FREE_CACHE");
+	LOG_DEBUG("REQ_FREE_CACHE");
 
 	GAME_GATE_SERVER->free_cache();
 	GAME_DB_CONNECTOR->free_cache();
@@ -354,5 +354,5 @@ void Game_Manager::print_msg_count(void) {
 	for (Msg_Count_Map::iterator it = inner_msg_count_map_.begin(); it != inner_msg_count_map_.end(); ++it) {
 		stream << (it->first) << "\t" << (it->second) << std::endl;
 	}
-	MSG_USER("inner_msg_count_map_.size = %d\n%s\n", inner_msg_count_map_.size(), stream.str().c_str());
+	LOG_INFO("inner_msg_count_map_.size = %d\n%s\n", inner_msg_count_map_.size(), stream.str().c_str());
 }

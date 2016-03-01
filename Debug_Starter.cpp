@@ -93,7 +93,7 @@ int Debug_Starter::start(int argc, char *argv[]) {
 	LOG_SERVER->init();
 	LOG_SERVER->start();
 	LOG_SERVER->thr_create();
-	MSG_DEBUG("log_server listen at port:%d", log_port);
+	LOG_DEBUG("log_server listen at port:%d", log_port);
 
 	LOG_MANAGER->init();
 	LOG_MANAGER->thr_create();
@@ -103,7 +103,7 @@ int Debug_Starter::start(int argc, char *argv[]) {
 	DB_SERVER->init();
 	DB_SERVER->start();
 	DB_SERVER->thr_create();
-	MSG_DEBUG("db_server listen at port:%d", db_port);
+	LOG_DEBUG("db_server listen at port:%d", db_port);
 
 	DB_MANAGER->init();
 	DB_MANAGER->start();
@@ -113,14 +113,14 @@ int Debug_Starter::start(int argc, char *argv[]) {
 	LOGIN_CLIENT_SERVER->init();
 	LOGIN_CLIENT_SERVER->start();
 	LOGIN_CLIENT_SERVER->thr_create();
-	MSG_DEBUG("login_client_server listen at port:%d", login_client_port);
+	LOG_DEBUG("login_client_server listen at port:%d", login_client_port);
 
 	/// Login Gate Server
 	LOGIN_GATE_SERVER->set(login_gate_port, recv_timeout, server_send_interval);
 	LOGIN_GATE_SERVER->init();
 	LOGIN_GATE_SERVER->start();
 	LOGIN_GATE_SERVER->thr_create();
-	MSG_DEBUG("login_gate_server listen at port:%d", login_gate_port);
+	LOG_DEBUG("login_gate_server listen at port:%d", login_gate_port);
 
 	LOGIN_MANAGER->init();
 	LOGIN_MANAGER->thr_create();
@@ -130,14 +130,14 @@ int Debug_Starter::start(int argc, char *argv[]) {
 	MASTER_GATE_SERVER->init();
 	MASTER_GATE_SERVER->start();
 	MASTER_GATE_SERVER->thr_create();
-	MSG_DEBUG("master_gate_server listen at port:%d", master_gate_port);
+	LOG_DEBUG("master_gate_server listen at port:%d", master_gate_port);
 
 	/// Master Game Server
 	MASTER_GAME_SERVER->set(master_game_port, recv_timeout, server_send_interval);
 	MASTER_GAME_SERVER->init();
 	MASTER_GAME_SERVER->start();
 	MASTER_GAME_SERVER->thr_create();
-	MSG_DEBUG("master_game_server listen at port:%d", master_game_port);
+	LOG_DEBUG("master_game_server listen at port:%d", master_game_port);
 
 	MASTER_MANAGER->init();
 	MASTER_MANAGER->thr_create();
@@ -147,7 +147,7 @@ int Debug_Starter::start(int argc, char *argv[]) {
 	GAME_GATE_SERVER->init();
 	GAME_GATE_SERVER->start();
 	GAME_GATE_SERVER->thr_create();
-	MSG_DEBUG("game_gate_server listen at port:%d", game_gate_port);
+	LOG_DEBUG("game_gate_server listen at port:%d", game_gate_port);
 
 	GAME_MANAGER->init();
 	GAME_MANAGER->thr_create();
@@ -157,7 +157,7 @@ int Debug_Starter::start(int argc, char *argv[]) {
 	GATE_CLIENT_SERVER->init();
 	GATE_CLIENT_SERVER->start();
 	GATE_CLIENT_SERVER->thr_create();
-	MSG_DEBUG("gate_client_server listen at port:%d", gate_client_port);
+	LOG_DEBUG("gate_client_server listen at port:%d", gate_client_port);
 
 	GATE_MANAGER->init();
 	GATE_MANAGER->thr_create();
@@ -172,7 +172,7 @@ int Debug_Starter::start(int argc, char *argv[]) {
 	LOG_CONNECTOR->init();
 	LOG_CONNECTOR->start();
 	if ((cid = LOG_CONNECTOR->connect_server())< 2) {
-		MSG_ABORT("log_connector fail cid:%d,port:%d", cid, log_port);
+		LOG_FATAL("log_connector fail cid:%d,port:%d", cid, log_port);
 	}
 	LOG_CONNECTOR->thr_create();
 
@@ -181,7 +181,7 @@ int Debug_Starter::start(int argc, char *argv[]) {
 	GAME_DB_CONNECTOR->init();
 	GAME_DB_CONNECTOR->start();
 	if ((cid = GAME_DB_CONNECTOR->connect_server()) < 2) {
-		MSG_ABORT("game_db_connector fail cid:%d,port:%d", cid, db_port);
+		LOG_FATAL("game_db_connector fail cid:%d,port:%d", cid, db_port);
 	}
 	GAME_DB_CONNECTOR->thr_create();
 	//加载DB缓存数据
@@ -192,7 +192,7 @@ int Debug_Starter::start(int argc, char *argv[]) {
 	GAME_MASTER_CONNECTOR->init();
 	GAME_MASTER_CONNECTOR->start();
 	if ((cid = GAME_MASTER_CONNECTOR->connect_server()) < 2) {
-		MSG_ABORT("game_master_connector fail cid:%d,port:%d", cid, master_game_port);
+		LOG_FATAL("game_master_connector fail cid:%d,port:%d", cid, master_game_port);
 	}
 	GAME_MASTER_CONNECTOR->thr_create();
 
@@ -201,7 +201,7 @@ int Debug_Starter::start(int argc, char *argv[]) {
 	GATE_LOGIN_CONNECTOR->init();
 	GATE_LOGIN_CONNECTOR->start();
 	if ((cid = GATE_LOGIN_CONNECTOR->connect_server()) < 2) {
-		MSG_ABORT("gate_login_connector fail cid:%d,port:%d", cid, login_gate_port);
+		LOG_FATAL("gate_login_connector fail cid:%d,port:%d", cid, login_gate_port);
 	}
 	GATE_LOGIN_CONNECTOR->thr_create();
 
@@ -210,7 +210,7 @@ int Debug_Starter::start(int argc, char *argv[]) {
 	GATE_GAME_CONNECTOR->init();
 	GATE_GAME_CONNECTOR->start();
 	if ((cid = GATE_GAME_CONNECTOR->connect_server()) < 2) {
-		MSG_ABORT("gate_game_connector fail cid:%d,port:%d", cid, game_gate_port);
+		LOG_FATAL("gate_game_connector fail cid:%d,port:%d", cid, game_gate_port);
 	}
 	GATE_GAME_CONNECTOR->thr_create();
 
@@ -219,7 +219,7 @@ int Debug_Starter::start(int argc, char *argv[]) {
 	GATE_MASTER_CONNECTOR->init();
 	GATE_MASTER_CONNECTOR->start();
 	if ((cid = GATE_MASTER_CONNECTOR->connect_server()) < 2) {
-		MSG_ABORT("gate_master_connector fail cid:%d,port:%d", cid, master_gate_port);
+		LOG_FATAL("gate_master_connector fail cid:%d,port:%d", cid, master_gate_port);
 	}
 	GATE_MASTER_CONNECTOR->thr_create();
 

@@ -29,7 +29,7 @@ int Master_Client_Messager::process_block(Block_Buffer &buf) {
 	Perf_Mon perf_mon(msg_id);
 	int ret = 0;
 	if (ret) {
-		MSG_USER("error msg buf:%d", msg_id);
+		LOG_INFO("error msg buf:%d", msg_id);
 	}
 
 	return 0;

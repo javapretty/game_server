@@ -27,7 +27,7 @@ Log_Manager *Log_Manager::instance(void) {
 int Log_Manager::init(void) {
 	const Json::Value &server_maintainer = CONFIG_INSTANCE->server_maintainer();
 	if (server_maintainer == Json::Value::null) {
-		MSG_ABORT("server_maintainer == Json::Value::null");
+		LOG_FATAL("server_maintainer == Json::Value::null");
 	}
 	std::string mysql_ip(server_maintainer["mysql_server"]["ip"].asString());
 	int mysql_port = server_maintainer["mysql_server"]["port"].asInt();

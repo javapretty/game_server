@@ -45,7 +45,7 @@ int DB_Manager::init(void) {
 	DB_Worker *worker = 0;
 	for (int i = 0; i < work_num_; ++i) {
 		if ((worker = db_worker_pool_.pop()) == 0) {
-			MSG_USER("db_worker_pool_.pop() return 0.");
+			LOG_INFO("db_worker_pool_.pop() return 0.");
 			continue;
 		}
 		db_worker_vec_.push_back(worker);
@@ -86,7 +86,7 @@ int DB_Manager::push_data_block(Block_Buffer *buf) {
 	}
 	}
 
-	MSG_DEBUG("push db message load_player_num_=%d, create_player_num_=%d, save_player_num_=%d",
+	LOG_DEBUG("push db message load_player_num_=%d, create_player_num_=%d, save_player_num_=%d",
 			load_player_num_, create_player_num_, save_player_num_);
 
 	return 0;
@@ -94,7 +94,7 @@ int DB_Manager::push_data_block(Block_Buffer *buf) {
 
 int DB_Manager::send_data_block(int cid, Block_Buffer &buf) {
 	if (cid < 2) {
-		MSG_USER("cid = %d", cid);
+		LOG_INFO("cid = %d", cid);
 		return -1;
 	}
 	return DB_SERVER->send_block(cid, buf);

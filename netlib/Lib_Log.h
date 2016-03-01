@@ -28,24 +28,13 @@ class Lib_Log {
 public:
 	typedef Thread_Mutex Lib_Log_File_Lock;
 	enum {
-		F_SYS_ABORT 	= 0x40,
-		F_ABORT 		= 0x20,
-		F_EXIT 			= 0x10,
-		F_SYS 			= 0x8,
-		F_USER			= 0x4,
-		F_USER_TRACE	= 0x2,
-		F_DEBUG			= 0x1,
-
-		M_SYS_ABORT 	= 0,
-		M_ABORT 		= 1,
-		M_EXIT 			= 2,
-		M_SYS 			= 3,
-		M_USER			= 4,
-		M_USER_TRACE	= 5,
-		M_DEBUG			= 6,
-
-
-		NULL_STUB		= 9,
+		LOG_TRACE = 0,		//打印程序运行堆栈，跟踪记录数据信息，与DEBUG相比更细致化的记录信息
+		LIB_LOG_DEBUG = 1,		//细粒度信息事件对调试应用程序是非常有帮助的
+		LOG_INFO = 2,			//消息在粗粒度级别上突出强调应用程序的运行过程
+		LOG_WARN = 3,			//会出现潜在错误的情形
+		LOG_ERROR = 4,		//虽然发生错误事件，但仍然不影响系统的继续运行
+		LOG_FATAL = 5,		//严重的错误事件，将会导致应用程序的退出
+		NULL_STUB = 6,
 	};
 	static int msg_buf_size;
 	static int backtrace_size;
@@ -55,34 +44,25 @@ public:
 	static Lib_Log *instance(void);
 	static void destroy(void);
 
-	void on_flag(int v);
-	void off_flag(int v);
-
-	void msg_sys_abort(const char *fmt, ...);
-	void msg_abort(const char *fmt, ...);
-	void msg_exit(const char *fmt, ...);
-	void msg_sys(const char *fmt, ...);
-	void msg_user(const char *fmt, ...);
-	void msg_debug(const char *fmt, ...);
-
-	void msg_user_trace(const char *fmt, ...);
-
-	void set_switcher(int switcher);
+	void log_trace(const char *fmt, ...);
+	void log_debug(const char *fmt, ...);
+	void log_info(const char *fmt, ...);
+	void log_warn(const char *fmt, ...);
+	void log_error(const char *fmt, ...);
+	void log_fatal(const char *fmt, ...);
 
 private:
 	Lib_Log(void);
 	virtual ~Lib_Log(void);
 
 	void assembly_msg(int log_flag, const char *fmt, va_list ap);
-	void logging(std::ostringstream &msg_stream);
+	void logging_file(std::ostringstream &msg_stream);
 
 	void make_lib_log_dir(void);
 	void make_lib_log_filepath(std::string &path);
 
-
 private:
 	static Lib_Log *instance_;
-	int switcher_;
 
 	Lib_Log_File_Lock log_lock_;
 	Lib_Log_File log_file_;
@@ -90,45 +70,34 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-inline void Lib_Log::set_switcher(int switcher) {
-	switcher_ = switcher;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-/// 调用abort产生core文件, 结束程序
-#define LOG_ABORT(FMT, ...) do {					\
-		Lib_Log::instance()->msg_abort("in %s:%d %s: "#FMT, __FILE__, __LINE__, __func__, ##__VA_ARGS__); \
+//打印程序运行堆栈,跟踪记录数据信息
+#define LIB_LOG_TRACE(FMT, ...) do {						\
+		Lib_Log::instance()->log_trace("in %s:%d function %s: "#FMT, __FILE__, __LINE__, __func__, ##__VA_ARGS__); \
 	} while (0)
 
-/// 消息内包含errno和对应的错误描述, 调用abort产生core文件结束程序
-#define LOG_SYS_ABORT(FMT, ...) do {					\
-		Lib_Log::instance()->msg_sys_abort("in %s:%d %s: "#FMT, __FILE__, __LINE__, __func__, ##__VA_ARGS__); \
+//调试信息
+#define LIB_LOG_DEBUG(FMT, ...) do {					\
+		Lib_Log::instance()->log_debug("in %s:%d function %s: "#FMT, __FILE__, __LINE__, __func__, ##__VA_ARGS__); \
 	} while (0)
 
-/// 调用exit结束程序
-#define LOG_EXIT(FMT, ...) do {						\
-		Lib_Log::instance()->msg_exit("in %s:%d %s: "#FMT, __FILE__, __LINE__, __func__, ##__VA_ARGS__); \
+//突出强调应用程序的运行过程
+#define LIB_LOG_INFO(FMT, ...) do {						\
+		Lib_Log::instance()->log_info("in %s:%d function %s: "#FMT, __FILE__, __LINE__, __func__, ##__VA_ARGS__); \
 	} while (0)
 
-/// 消息内包含errno和对应的错误描述
-#define LOG_SYS(FMT, ...) do {						\
-		Lib_Log::instance()->msg_sys("in %s:%d %s: "#FMT, __FILE__, __LINE__, __func__, ##__VA_ARGS__); \
+//出现潜在错误的情形
+#define LIB_LOG_WRAN(FMT, ...) do {						\
+		Lib_Log::instance()->log_warn("in %s:%d function %s: "#FMT, __FILE__, __LINE__, __func__, ##__VA_ARGS__); \
 	} while (0)
 
-/// 用户层代码错误信息
-#define LOG_USER(FMT, ...) do {						\
-		Lib_Log::instance()->msg_user("in %s:%d %s: "#FMT, __FILE__, __LINE__, __func__, ##__VA_ARGS__); \
+//虽然发生错误事件，但仍然不影响系统的继续运行
+#define LIB_LOG_ERROR(FMT, ...) do {						\
+		Lib_Log::instance()->log_error("in %s:%d function %s: "#FMT, __FILE__, __LINE__, __func__, ##__VA_ARGS__); \
 	} while (0)
 
-/// 用户层代码错误跟踪信息
-#define LOG_USER_TRACE(FMT, ...) do {						\
-		Lib_Log::instance()->msg_user_trace("in %s:%d %s: "#FMT, __FILE__, __LINE__, __func__, ##__VA_ARGS__); \
-	} while (0)
-
-/// 调试信息
-#define LOG_DEBUG(FMT, ...) do {					\
-		Lib_Log::instance()->msg_debug("in %s:%d %s: "#FMT, __FILE__, __LINE__, __func__, ##__VA_ARGS__); \
+//严重的错误事件，将会导致应用程序的退出
+#define LIB_LOG_FATAL(FMT, ...) do {					\
+		Lib_Log::instance()->log_fatal("in %s:%d function %s: "#FMT, __FILE__, __LINE__, __func__, ##__VA_ARGS__); \
 	} while (0)
 
 #endif /* LIB_LOG_H_ */

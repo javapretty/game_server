@@ -24,7 +24,7 @@
 inline void set_nonblock(int fd) {
 	int flags = ::fcntl(fd, F_GETFL, 0);
 	if (flags == -1) {
-		LOG_SYS("fcntl return -1, fd = %d", fd);
+		LIB_LOG_INFO("fcntl erro, fd = %d", fd);
 		return;
 	}
 	::fcntl(fd, F_SETFL, flags | O_NONBLOCK);
@@ -35,7 +35,7 @@ inline int max_fd(void) {
 	int ret = 0;
 
 	if ((ret = getrlimit(RLIMIT_NOFILE, &rl)) == -1)
-		LOG_SYS_ABORT("getrlimit");
+		LIB_LOG_FATAL("getrlimit");
 	else
 		return rl.rlim_cur;
 

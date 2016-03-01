@@ -17,8 +17,7 @@
 #include "Block_Buffer.h"
 #include "Msg_Define.h"
 
-Log::Log(void)
-: switcher_(F_SYS_ABORT | F_ABORT | F_EXIT | F_SYS | F_USER | F_USER_TRACE | F_DEBUG),
+Log::Log(void):
   log_type_(LOG_MISC),
   log_sub_type_(0),
   msg_time_(2000)
@@ -30,100 +29,71 @@ Log::Log(void)
 
 Log::~Log(void) { }
 
-Log *Log::instance_;
-
 int Log::msg_buf_size = 4096;
+int Log::backtrace_size = 512;
 
 std::string Log::msg_head[] = {
-		"[MSG_SYS_ABORT] ",			/// M_SYS_ABORT 	= 0,
-		"[MSG_ABORT] ",					/// M_ABORT 			= 1,
-		"[MSG_EXIT] ",					/// M_EXIT 			= 2,
-		"[MSG_SYS] ",						/// M_SYS 				= 3,
-		"[MSG_USER] ",					/// M_USER				= 4,
-		"[MSG_USER_TRACE] ",		/// M_USER_TRACE	= 5,
-		"[MSG_DEBUG] ",					/// M_DEBUG			= 6,
-		"[LOGIN] ",						/// LOG_LOGIN			= 7,
-		"[GATE] ",							/// LOG_GATE			= 8,
-		"[GAME]",							/// LOG_GAME			= 9,
-		"[MASTER]",						/// LOG_MASTER		= 10,
-		"[DB]"									/// LOG_DB				= 11,
-		"[MISC]"								/// LOG_MISC			= 12
+		"[LOG_TRACE] ",
+		"[LOG_DEBUG] ",
+		"[LOG_INFO] ",
+		"[LOG_WARN] ",
+		"[LOG_ERROR] ",
+		"[LOG_FATAL] ",
+		"[LOG_LOGIN] ",
+		"[LOG_GATE] ",
+		"[LOG_GAME]",
+		"[LOG_MASTER]",
+		"[LOG_DB]",
+		"[LOG_MISC]"
 };
 
+Log *Log::instance_ = 0;
 Log *Log::instance(void) {
-	if (! instance_)
+	if (!instance_)
 		instance_ = new Log;
 	return instance_;
 }
 
-int Log::backtrace_size = 512;
-
-void Log::msg_abort(const char *fmt, ...) {
+void Log::log_trace(const char *fmt, ...) {
 	va_list	ap;
-
 	va_start(ap, fmt);
-	assembly_msg(M_ABORT, fmt, ap);
+	assembly_msg(LOG_TRACE, fmt, ap);
 	va_end(ap);
 }
 
-void Log::msg_sys_abort(const char *fmt, ...) {
-	if (switcher_ & F_SYS_ABORT) {
-		va_list	ap;
-
-		va_start(ap, fmt);
-		assembly_msg(M_SYS_ABORT, fmt, ap);
-		va_end(ap);
-	}
+void Log::log_debug(const char *fmt, ...) {
+	va_list	ap;
+	va_start(ap, fmt);
+	assembly_msg(LOG_DEBUG, fmt, ap);
+	va_end(ap);
 }
 
-void Log::msg_exit(const char *fmt, ...) {
-	if (switcher_ & F_EXIT) {
-		va_list	ap;
-
-		va_start(ap, fmt);
-		assembly_msg(M_EXIT, fmt, ap);
-		va_end(ap);
-	}
+void Log::log_info(const char *fmt, ...) {
+	va_list	ap;
+	va_start(ap, fmt);
+	assembly_msg(LOG_INFO, fmt, ap);
+	va_end(ap);
 }
 
-void Log::msg_sys(const char *fmt, ...) {
-	if (switcher_ & F_SYS) {
-		va_list	ap;
-
-		va_start(ap, fmt);
-		assembly_msg(M_SYS, fmt, ap);
-		va_end(ap);
-	}
+void Log::log_warn(const char *fmt, ...) {
+	va_list	ap;
+	va_start(ap, fmt);
+	assembly_msg(LOG_WARN, fmt, ap);
+	va_end(ap);
 }
 
-void Log::msg_user(const char *fmt, ...) {
-	if (switcher_ & F_USER) {
-		va_list	ap;
-
-		va_start(ap, fmt);
-		assembly_msg(M_USER, fmt, ap);
-		va_end(ap);
-	}
+void Log::log_error(const char *fmt, ...) {
+	va_list	ap;
+	va_start(ap, fmt);
+	assembly_msg(LOG_ERROR, fmt, ap);
+	va_end(ap);
 }
 
-void Log::msg_user_trace(const char *fmt, ...) {
-	if (switcher_ & F_USER_TRACE) {
-		va_list	ap;
-
-		va_start(ap, fmt);
-		assembly_msg(M_USER_TRACE, fmt, ap);
-		va_end(ap);
-	}
-}
-
-void Log::msg_debug(const char *fmt, ...) {
-	if (switcher_ & F_DEBUG) {
-		va_list	ap;
-
-		va_start(ap, fmt);
-		assembly_msg(M_DEBUG, fmt, ap);
-		va_end(ap);
-	}
+void Log::log_fatal(const char *fmt, ...) {
+	va_list	ap;
+	va_start(ap, fmt);
+	assembly_msg(LOG_FATAL, fmt, ap);
+	va_end(ap);
 }
 
 void Log::assembly_msg(int log_flag, const char *fmt, va_list ap) {
@@ -131,66 +101,18 @@ void Log::assembly_msg(int log_flag, const char *fmt, va_list ap) {
 
 	struct tm tm_v;
 	time_t time_v = time(NULL);
-
 	localtime_r(&time_v, &tm_v);
-
-#ifndef LOCAL_DEBUG
-	msg_stream << "<pid=" << (int)getpid() << "|tid=" << pthread_self()
-			<< ">(" << (tm_v.tm_hour) << ":" << (tm_v.tm_min) << ":" << (tm_v.tm_sec) << ")";
-#endif
+	msg_stream << "(" << (tm_v.tm_hour) << ":" << (tm_v.tm_min) << ":" << (tm_v.tm_sec) << ")";
 
 	msg_stream << msg_head[log_flag];
 
 	char line_buf[msg_buf_size];
 	memset(line_buf, 0, sizeof(line_buf));
 	vsnprintf(line_buf, sizeof(line_buf), fmt, ap);
-
 	msg_stream << line_buf;
 
 	switch (log_flag) {
-	case M_SYS_ABORT: {
-		msg_stream << "errno = " << errno;
-
-		memset(line_buf, 0, sizeof(line_buf));
-		strerror_r(errno, line_buf, sizeof(line_buf));
-		msg_stream << ", errstr=[" << line_buf << "]" << std::endl;
-		logging_file(msg_stream);
-		abort();
-
-		break;
-	}
-	case M_ABORT: {
-		msg_stream << std::endl;
-		logging_file(msg_stream);
-		abort();
-
-		break;
-	}
-	case M_EXIT: {
-		msg_stream << std::endl;
-		logging_file(msg_stream);
-		exit(1);
-
-		break;
-	}
-	case M_SYS: {
-		msg_stream << ", errno = " << errno;
-
-		memset(line_buf, 0, sizeof(line_buf));
-		strerror_r(errno, line_buf, sizeof(line_buf));
-		msg_stream << ", errstr=[" << line_buf << "]" << std::endl;
-
-		logging_file(msg_stream);
-
-		break;
-	}
-	case M_USER: {
-		msg_stream << std::endl;
-		logging_file(msg_stream);
-
-		break;
-	}
-	case M_USER_TRACE: {
+	case LOG_TRACE: {
 		int nptrs;
 		void *buffer[backtrace_size];
 		char **strings;
@@ -201,21 +123,36 @@ void Log::assembly_msg(int log_flag, const char *fmt, va_list ap) {
 			return ;
 
 		msg_stream << std::endl;
-
 		for (int i = 0; i < nptrs; ++i) {
 			msg_stream << (strings[i]) << std::endl;
 		}
-
 		free(strings);
-
 		logging_file(msg_stream);
-
 		break;
 	}
-	case M_DEBUG: {
+	case LOG_DEBUG:
+	case LOG_INFO:
+	case LOG_WARN: {
 		msg_stream << std::endl;
 		logging_file(msg_stream);
+		break;
+	}
+	case LOG_ERROR: {
+		msg_stream << ", errno = " << errno;
+		memset(line_buf, 0, sizeof(line_buf));
+		strerror_r(errno, line_buf, sizeof(line_buf));
+		msg_stream << ", errstr=[" << line_buf << "]" << std::endl;
 
+		logging_file(msg_stream);
+		break;
+	}
+	case LOG_FATAL: {
+		msg_stream << "errno = " << errno;
+		memset(line_buf, 0, sizeof(line_buf));
+		strerror_r(errno, line_buf, sizeof(line_buf));
+		msg_stream << ", errstr=[" << line_buf << "]" << std::endl;
+		logging_file(msg_stream);
+		abort();
 		break;
 	}
 	default: {
@@ -283,10 +220,10 @@ void Log::show_msg_time(void) {
 
 	std::sort(msg_time_vec.begin(), msg_time_vec.end(), Msg_Time_Sort_Struct());
 
-	MSG_DEBUG("msg process time start --------------------------------------");
+	LOG_DEBUG("msg process time start --------------------------------------");
 	for (Msg_Process_Time_Vec::iterator it = msg_time_vec.begin(); it != msg_time_vec.end(); ++it) {
 		double avg = (*it).times ? (*it).tv.sec()/(*it).times : 0.0;
-		MSG_DEBUG("msg process time msg_id = %d, times = %d sec = %ld usec = %ld avg:%ld", (*it).msg_id, (*it).times, (*it).tv.sec(), (*it).tv.usec(), avg);
+		LOG_DEBUG("msg process time msg_id = %d, times = %d sec = %ld usec = %ld avg:%ld", (*it).msg_id, (*it).times, (*it).tv.sec(), (*it).tv.usec(), avg);
 	}
-	MSG_DEBUG("msg process time end --------------------------------------");
+	LOG_DEBUG("msg process time end --------------------------------------");
 }

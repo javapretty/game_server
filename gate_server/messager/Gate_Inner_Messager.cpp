@@ -123,7 +123,7 @@ int Gate_Inner_Messager::process_self_loop_block(Block_Buffer &buf) {
 int Gate_Inner_Messager::process_success_login(int player_cid, std::string &account) {
 	Gate_Player *player = GATE_MANAGER->pop_gate_player();
 	if (! player) {
-		MSG_USER("game_player_pool_.pop() return 0.");
+		LOG_INFO("game_player_pool_.pop() return 0.");
 		return -1;
 	}
 
