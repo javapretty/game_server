@@ -5,7 +5,7 @@
 
 #include "Game_Inner_Messager.h"
 #include "Game_Manager.h"
-#include "Configurator.h"
+#include "Server_Config.h"
 
 Game_Inner_Messager::Game_Inner_Messager(void) { }
 

@@ -7,7 +7,7 @@
 
 #include "Msg_Define.h"
 #include "Check_Account.h"
-#include "Configurator.h"
+#include "Server_Config.h"
 #include "Log.h"
 
 Check_Account::Check_Account():
@@ -17,7 +17,7 @@ mysql_db_conn_(NULL)
 Check_Account::~Check_Account() { }
 
 int Check_Account::connect_mysql_db() {
-	const Json::Value &server_maintainer = CONFIG_INSTANCE->server_maintainer();
+	const Json::Value &server_maintainer = SERVER_CONFIG->server_maintainer();
 	if (server_maintainer == Json::Value::null) {
 		LOG_FATAL("server_maintainer == Json::Value::null");
 	}

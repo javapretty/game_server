@@ -6,7 +6,7 @@
  */
 
 #include "DB_Record.h"
-#include "Configurator.h"
+#include "Server_Config.h"
 #include "Block_Buffer.h"
 #include "Log.h"
 #include <mysql_connection.h>
@@ -55,7 +55,7 @@ int DB_Record::init(void) {
 #ifdef LOCAL_DEBUG
 	mysql_on_off_ = 1;
 #else
-	const Json::Value &server_solution = CONFIG_INSTANCE->server_solution();
+	const Json::Value &server_solution = SERVER_CONFIG->server_solution();
 	if (server_solution == Json::Value::null) {
 		MSG_ABORT("server_json == Json::Value::null");
 	}

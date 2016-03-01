@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include "Debug_Starter.h"
 #include "Epoll_Watcher.h"
-#include "Configurator.h"
+#include "Server_Config.h"
 #include "DB_Server.h"
 #include "DB_Manager.h"
 #include "Log_Connector.h"
@@ -73,7 +73,8 @@ int Debug_Starter::fini(void) {
 }
 
 int Debug_Starter::start(int argc, char *argv[]) {
-	const Json::Value &server_conf = CONFIG_INSTANCE->server_conf();
+	SERVER_CONFIG->load_server_config();
+	const Json::Value &server_conf = SERVER_CONFIG->server_conf();
 	Time_Value recv_timeout(server_conf["recv_timeout"].asInt(), 0);
 	Time_Value server_send_interval(0, 100);
 	Time_Value connector_send_interval(0, 100);

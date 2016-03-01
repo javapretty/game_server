@@ -4,7 +4,7 @@
  */
 
 #include "Public_Struct.h"
-#include "Configurator.h"
+#include "Server_Config.h"
 #include "DB_Operator.h"
 
 const Time_Value Recycle_Tick::recycle_time_ = Time_Value(2, 0);

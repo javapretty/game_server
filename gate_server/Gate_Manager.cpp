@@ -4,7 +4,7 @@
  */
 
 #include "Common_Func.h"
-#include "Configurator.h"
+#include "Server_Config.h"
 #include "Gate_Client_Messager.h"
 #include "Gate_Inner_Messager.h"
 #include "Gate_Server.h"
@@ -35,16 +35,16 @@ Gate_Manager *Gate_Manager::instance(void) {
 int Gate_Manager::init(void) {
 	tick_time_ = Time_Value::gettimeofday();
 
-	CONFIG_INSTANCE;
+	SERVER_CONFIG;
 	status_ = STATUS_NORMAL;
-	md5_key_ = CONFIG_INSTANCE->server_maintainer()["gate_md5_key"].asString();
+	md5_key_ = SERVER_CONFIG->server_maintainer()["gate_md5_key"].asString();
 
 	GATE_INNER_MESSAGER;					/// 内部消息处理
 	GATE_CLIENT_MESSAGER;					/// 外部消息处理
 	GATE_TIMER->thr_create();
 
 	{ /// 包验证开关
-		const Json::Value &server_misc = CONFIG_INSTANCE->server_misc();
+		const Json::Value &server_misc = SERVER_CONFIG->server_misc();
 		if (server_misc["verify_pack"].asInt()) {
 			set_verify_pack_onoff(1);
 		}

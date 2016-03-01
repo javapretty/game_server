@@ -4,7 +4,7 @@
  */
 
 #include "HotUpdate.h"
-#include "Configurator.h"
+#include "Server_Config.h"
 #include "Common_Func.h"
 #include "Master_Manager.h"
 #include "Master_Timer.h"
@@ -34,7 +34,7 @@ Master_Manager *Master_Manager::instance(void) {
 int Master_Manager::init(void) {
 	tick_time_ = Time_Value::gettimeofday();
 
-	CONFIG_INSTANCE;
+	SERVER_CONFIG;
 	status_ = STATUS_NORMAL;
 
 	MASTER_INNER_MESSAGER;					/// 内部消息处理

@@ -4,7 +4,7 @@
  */
 
 #include "Common_Func.h"
-#include "Configurator.h"
+#include "Server_Config.h"
 #include "Login_Manager.h"
 #include "Login_Server.h"
 #include "Login_Timer.h"
@@ -36,7 +36,7 @@ int Login_Manager::init(void) {
 	tick_time_ = Time_Value::gettimeofday();
 	status_ = STATUS_NORMAL;
 
-	CONFIG_INSTANCE;
+	SERVER_CONFIG;
 	LOGIN_INNER_MESSAGER;					/// 内部消息处理
 	LOGIN_CLIENT_MESSAGER;					/// 外部消息处理
 	LOGIN_TIMER->thr_create();
@@ -51,7 +51,7 @@ void Login_Manager::run_handler(void) {
 }
 
 int Login_Manager::init_gate_ip(void) {
-	const Json::Value &server_maintainer = CONFIG_INSTANCE->server_maintainer();
+	const Json::Value &server_maintainer = SERVER_CONFIG->server_maintainer();
 	if (server_maintainer == Json::Value::null) {
 		LOG_FATAL("configure file error.");
 		return -1;

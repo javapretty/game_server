@@ -21,12 +21,15 @@ main();
 function main() {
 	while (true) {
 		var all_empty = true;
+		
+		//获得客户端消息
 		var buffer = pop_buffer(true);
 		if (buffer != null) {
 			all_empty = false;
 			process_client_buffer(buffer);
 		}
 	
+		//获得上线玩家的信息
 		buffer = get_player_data();
 		if (buffer != null) {
 			all_empty = false;
@@ -34,6 +37,7 @@ function main() {
 			player.load_player_data(buffer);
 		}
 	
+		//获得下线玩家的cid
 		var cid = get_drop_player_cid();
 		if (cid > 0) {
 			all_empty = false;

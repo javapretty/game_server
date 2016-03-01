@@ -7,7 +7,7 @@
 
 #include "Msg_Define.h"
 #include "DB_Operator.h"
-#include "Configurator.h"
+#include "Server_Config.h"
 #include "DB_Manager.h"
 #include "mongo/client/dbclient.h"
 
@@ -36,7 +36,7 @@ DBClientConnection &DB_Operator::connection(void) {
 
 		std::string err_msg;
 		std::stringstream host_stream;
-		const Json::Value &mongodb_server = CONFIG_INSTANCE->server_maintainer()["mongodb_server"];
+		const Json::Value &mongodb_server = SERVER_CONFIG->server_maintainer()["mongodb_server"];
 		if (mongodb_server == Json::Value::null) {
 			LOG_FATAL("cannot find mongodb_server");
 		}
@@ -59,7 +59,7 @@ int DB_Operator::init(void) {
 
 	/// 初始化agent_num_,server_num_和server_map_
 	server_map_.clear();
-	const Json::Value &servers_config = CONFIG_INSTANCE->server_list();
+	const Json::Value &servers_config = SERVER_CONFIG->server_list();
 	if (servers_config == Json::Value::null || servers_config["server_list"].size() == 0) {
 		LOG_FATAL("configure file error");
 	}

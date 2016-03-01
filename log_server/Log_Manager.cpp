@@ -9,7 +9,7 @@
 #include "Log_Manager.h"
 #include "Log_Server.h"
 #include "Log.h"
-#include "Configurator.h"
+#include "Server_Config.h"
 #include <sys/stat.h>
 
 Log_Manager::Log_Manager(void) { }
@@ -25,7 +25,7 @@ Log_Manager *Log_Manager::instance(void) {
 }
 
 int Log_Manager::init(void) {
-	const Json::Value &server_maintainer = CONFIG_INSTANCE->server_maintainer();
+	const Json::Value &server_maintainer = SERVER_CONFIG->server_maintainer();
 	if (server_maintainer == Json::Value::null) {
 		LOG_FATAL("server_maintainer == Json::Value::null");
 	}

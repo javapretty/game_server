@@ -5,7 +5,7 @@
 
 #include "Master_Inner_Messager.h"
 #include "Master_Manager.h"
-#include "Configurator.h"
+#include "Server_Config.h"
 
 Master_Inner_Messager::Master_Inner_Messager(void) { }
 
