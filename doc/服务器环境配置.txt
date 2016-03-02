@@ -33,12 +33,13 @@ ln -s /usr/local/ssl/bin/openssl  /usr/bin/openssl
 ln -s /usr/local/ssl/include/openssl  /usr/include/openssl
 修改系统自带的openssl库文件，如/usr/local/lib64/libssl.so(根据机器环境而定) 软链到升级后的libssl.so
 ln -s /usr/local/ssl/lib/libssl.so /usr/local/lib64/libssl.so
-执行命令查看openssl依赖库版本是否为1.0.1g：
-openssl version
+ln -s /usr/local/ssl/lib/libcrypto.so /usr/local/lib64/libcrypto.so
 在/etc/ld.so.conf文件中写入openssl库文件的搜索路径
 echo "/usr/local/ssl/lib" >> /etc/ld.so.conf
 使修改后的/etc/ld.so.conf生效 
 ldconfig
+执行命令查看openssl依赖库版本是否为1.0.1g：
+openssl version
 
 五、安装jsoncpp
 	1、解压jsoncpp-bin-0.5.0.tar.bz2文件。
