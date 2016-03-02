@@ -343,6 +343,7 @@ int Player_Data::serialize(Block_Buffer &buffer) const {
 	buffer.write_int8(status);
 
 	game_player_info.serialize(buffer);
+	hero_info.serialize(buffer);
 	bag_info.serialize(buffer);
 	mail_info.serialize(buffer);
 	return 0;
@@ -353,6 +354,7 @@ int Player_Data::deserialize(Block_Buffer &buffer) {
 	status = buffer.read_int8();
 
 	game_player_info.deserialize(buffer);
+	hero_info.deserialize(buffer);
 	bag_info.deserialize(buffer);
 	mail_info.deserialize(buffer);
 	return 0;
@@ -361,6 +363,7 @@ int Player_Data::deserialize(Block_Buffer &buffer) {
 int Player_Data::load() {
 	game_player_info.role_id = role_id;
 	game_player_info.load();
+	hero_info.load();
 	bag_info.load();
 	mail_info.load();
 	return 0;
@@ -368,6 +371,7 @@ int Player_Data::load() {
 
 int Player_Data::save(void) {
 	game_player_info.save();
+	hero_info.save();
 	bag_info.save();
 	mail_info.save();
 	return 0;
@@ -378,6 +382,7 @@ void Player_Data::reset(void) {
 	status =	NULL_STATUS;
 
 	game_player_info.reset();
+	hero_info.reset();
 	bag_info.reset();
 	mail_info.reset();
 }

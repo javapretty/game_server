@@ -51,15 +51,15 @@ void Login_Manager::run_handler(void) {
 }
 
 int Login_Manager::init_gate_ip(void) {
-	const Json::Value &server_maintainer = SERVER_CONFIG->server_maintainer();
-	if (server_maintainer == Json::Value::null) {
+	const Json::Value &server_misc = SERVER_CONFIG->server_misc();
+	if (server_misc == Json::Value::null) {
 		LOG_FATAL("configure file error.");
 		return -1;
 	}
 
 	Ip_Info ip_info;
-	for (Json::Value::iterator iter = server_maintainer["gate_server_list"].begin();
-			iter != server_maintainer["gate_server_list"].end(); ++iter) {
+	for (Json::Value::iterator iter = server_misc["gate_server_list"].begin();
+			iter != server_misc["gate_server_list"].end(); ++iter) {
 		ip_info.ip = (*iter)["ip"].asString();
 		ip_info.port = (*iter)["port"].asInt();
 	}

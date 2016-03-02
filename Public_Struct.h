@@ -271,11 +271,13 @@ struct Player_Data {
 	int8_t status;
 
 	Game_Player_Info game_player_info;
+	Hero_Info hero_info;
 	Bag_Info bag_info;
 	Mail_Info mail_info;
 
 	void set_all_change(bool is_change) {
 		game_player_info.is_change = is_change;
+		hero_info.is_change = is_change;
 		bag_info.is_change = is_change;
 		mail_info.is_change = is_change;
 	}
@@ -284,6 +286,7 @@ struct Player_Data {
 		role_id = p_role_id;
 
 		game_player_info.role_id = p_role_id;
+		hero_info.is_change = p_role_id;
 		bag_info.role_id = p_role_id;
 		mail_info.role_id = p_role_id;
 	}

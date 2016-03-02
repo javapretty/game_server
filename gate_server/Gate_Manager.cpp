@@ -37,15 +37,15 @@ int Gate_Manager::init(void) {
 
 	SERVER_CONFIG;
 	status_ = STATUS_NORMAL;
-	md5_key_ = SERVER_CONFIG->server_maintainer()["gate_md5_key"].asString();
+	md5_key_ = SERVER_CONFIG->server_misc()["gate_md5_key"].asString();
 
 	GATE_INNER_MESSAGER;					/// 内部消息处理
 	GATE_CLIENT_MESSAGER;					/// 外部消息处理
 	GATE_TIMER->thr_create();
 
 	{ /// 包验证开关
-		const Json::Value &server_misc = SERVER_CONFIG->server_misc();
-		if (server_misc["verify_pack"].asInt()) {
+		const Json::Value &server_conf = SERVER_CONFIG->server_conf();
+		if (server_conf["verify_pack"].asInt()) {
 			set_verify_pack_onoff(1);
 		}
 	}

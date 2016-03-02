@@ -36,7 +36,7 @@ DBClientConnection &DB_Operator::connection(void) {
 
 		std::string err_msg;
 		std::stringstream host_stream;
-		const Json::Value &mongodb_server = SERVER_CONFIG->server_maintainer()["mongodb_server"];
+		const Json::Value &mongodb_server = SERVER_CONFIG->server_misc()["mongodb_server"];
 		if (mongodb_server == Json::Value::null) {
 			LOG_FATAL("cannot find mongodb_server");
 		}

@@ -17,14 +17,14 @@ mysql_db_conn_(NULL)
 Check_Account::~Check_Account() { }
 
 int Check_Account::connect_mysql_db() {
-	const Json::Value &server_maintainer = SERVER_CONFIG->server_maintainer();
-	if (server_maintainer == Json::Value::null) {
-		LOG_FATAL("server_maintainer == Json::Value::null");
+	const Json::Value &server_misc = SERVER_CONFIG->server_misc();
+	if (server_misc == Json::Value::null) {
+		LOG_FATAL("server_misc is null");
 	}
-	std::string mysql_ip(server_maintainer["mysql_server"]["ip"].asString());
-	int mysql_port = server_maintainer["mysql_server"]["port"].asInt();
-	std::string mysql_user(server_maintainer["mysql_server"]["user"].asString());
-	std::string mysql_pw(server_maintainer["mysql_server"]["password"].asString());
+	std::string mysql_ip(server_misc["mysql_server"]["ip"].asString());
+	int mysql_port = server_misc["mysql_server"]["port"].asInt();
+	std::string mysql_user(server_misc["mysql_server"]["user"].asString());
+	std::string mysql_pw(server_misc["mysql_server"]["password"].asString());
 	std::string db_name("account");
 	std::string pool_name("account_pool");
 

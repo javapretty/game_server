@@ -1,4 +1,7 @@
 {
+	"lib_log_switcher" : 0,			//网络库日志开关,是否写入磁盘文件
+  "server_log_switcher" : 0,		//服务器日志开关,是否写入磁盘文件
+	"verify_pack" : 1,					//是否开启包验证
 	"recv_timeout" : 900,
    "log_server" : {
     	"port" : 7500

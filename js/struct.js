@@ -85,6 +85,7 @@ function Hero_Detail() {
 		buffer.write_int32(this.level);
 		buffer.write_int32(this.exp);
 		buffer.write_int32(this.star);
+		buffer.write_int32(this.quality);
 		buffer.write_int32(this.power);
 		buffer.write_int32(this.brains);
 		buffer.write_int32(this.agile);

@@ -15,7 +15,6 @@ public:
 	struct Server_Config_Entry {
 		Config_Entry server_conf;
 		Config_Entry server_list;
-		Config_Entry server_maintainer;
 		Config_Entry server_misc;
 
 		Config_Lock lock;
@@ -27,7 +26,6 @@ public:
 	void load_server_config(void);
 	const Json::Value &server_conf(void);
 	const Json::Value &server_list(void);
-	const Json::Value &server_maintainer(void);
 	const Json::Value &server_misc(void);
 
 private:

@@ -52,18 +52,9 @@ int DB_Record::set(std::string ip, int port, std::string &user, std::string &pas
 }
 
 int DB_Record::init(void) {
-#ifdef LOCAL_DEBUG
-	mysql_on_off_ = 1;
-#else
-	const Json::Value &server_solution = SERVER_CONFIG->server_solution();
-	if (server_solution == Json::Value::null) {
-		MSG_ABORT("server_json == Json::Value::null");
-	}
-	mysql_on_off_ = server_solution["log_server"]["mysql_onoff"].asInt();
-#endif
+	mysql_on_off_ = true;
 	MYSQL_DB_MANAGER->Init(mysql_ip_, mysql_port_, mysql_user_, mysql_pw_, mysql_dbname_, mysql_poolname_, 16);
 	mysql_db_conn_ = MYSQL_DB_MANAGER->GetDBConn(mysql_poolname_);
-
 	init_collector();
 
 	return 0;

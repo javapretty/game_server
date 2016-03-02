@@ -62,7 +62,7 @@ function Mail() {
 			buffer.write_int32(mail_array[i]);
 		}
 		this.player.cplayer.respond_success_result(msg_res.RES_PICKUP_MAIL, buf);
-		push_buffer(buffer);
+		push_buffer(buf);
 		this.mail_info.save_change();
 	}
 
@@ -99,7 +99,7 @@ function Mail() {
 			buffer.write_int32(mail_array[i]);
 		}
 		this.player.cplayer.respond_success_result(msg_res.RES_DEL_MAIL, buf);
-		push_buffer(buffer);
+		push_buffer(buf);
 		this.mail_info.save_change();
 	}
 

@@ -26,14 +26,14 @@ Log_Manager *Log_Manager::instance(void) {
 }
 
 int Log_Manager::init(void) {
-	const Json::Value &server_maintainer = SERVER_CONFIG->server_maintainer();
-	if (server_maintainer == Json::Value::null) {
+	const Json::Value &server_misc = SERVER_CONFIG->server_misc();
+	if (server_misc == Json::Value::null) {
 		LOG_FATAL("server_maintainer == Json::Value::null");
 	}
-	std::string mysql_ip(server_maintainer["mysql_server"]["ip"].asString());
-	int mysql_port = server_maintainer["mysql_server"]["port"].asInt();
-	std::string mysql_user(server_maintainer["mysql_server"]["user"].asString());
-	std::string mysql_pw(server_maintainer["mysql_server"]["password"].asString());
+	std::string mysql_ip(server_misc["mysql_server"]["ip"].asString());
+	int mysql_port = server_misc["mysql_server"]["port"].asInt();
+	std::string mysql_user(server_misc["mysql_server"]["user"].asString());
+	std::string mysql_pw(server_misc["mysql_server"]["password"].asString());
 
 	db_record_.set(mysql_ip.c_str(), mysql_port, mysql_user, mysql_pw);
 	db_record_.init();

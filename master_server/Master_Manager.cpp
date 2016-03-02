@@ -227,7 +227,7 @@ void Master_Manager::object_pool_size(void) {
 void Master_Manager::free_cache(void) {
 	LOG_DEBUG("REQ_FREE_CACHE");
 
-	LOG->free_cache();
+	Log::instance()->free_cache();
 	MASTER_GATE_SERVER->free_cache();
 	MASTER_GAME_SERVER->free_cache();
 
