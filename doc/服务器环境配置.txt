@@ -36,18 +36,21 @@ ln -s /usr/local/ssl/lib/libssl.so /usr/local/lib64/libssl.so
 ln -s /usr/local/ssl/lib/libcrypto.so /usr/local/lib64/libcrypto.so
 在/etc/ld.so.conf文件中写入openssl库文件的搜索路径
 echo "/usr/local/ssl/lib" >> /etc/ld.so.conf
+echo "/usr/local/lib64" >> /etc/ld.so.conf
 使修改后的/etc/ld.so.conf生效 
 ldconfig
 执行命令查看openssl依赖库版本是否为1.0.1g：
 openssl version
 
 五、安装jsoncpp
-	1、解压jsoncpp-bin-0.5.0.tar.bz2文件。
-	2、将其中include/json目录拷贝到/usr/local/include。
-	3、将其中libs/linux-gcc-4.4.6/libjson_linux-gcc-4.4.6_libmt.so文件拷贝到/usr/local/lib64。
-	4、建立软连接
+	1、tar -jxvf jsoncpp-bin-0.5.0.tar.bz2
+	2、cd jsoncpp-bin-0.5.0/
+	3、cp -rf include/json /usr/local/include
+	4、cp libs/linux-gcc-4.4.6/libjson_linux-gcc-4.4.6_libmt.so /usr/local/lib64。
+	5、建立软连接
 	cd /usr/local/lib64
 	ln -s libjson_linux-gcc-4.4.6_libmt.so libjsoncpp.so
+	ldconfig
 	
 	//源码编译安装jsoncpp
    tar -zxvf scons-2.1.0.tar.gz 
@@ -92,33 +95,43 @@ systemctl restart firewalld.service
 
 七、拷贝mysql-connector库和netlib库
 进入server/doc目录下面
+
+tar -zxvf libnetlib.tar.gz
+cd netlib/
 cp libnetlib.so /usr/local/lib64
+cp ./* /usr/local/include
+
 tar -zxvf mysql-connector-c++-1.1.1-linux-el6-x86-64bit.tar.gz
-将include目录下文件拷贝到/usr/local/include
-将lib目录下的libmysqlcppconn.so,libmysqlcppconn.so.6,libmysqlcppconn.so.6.1.1.1拷贝到/usr/local/1ib64
+cd mysql-connector-c++-1.1.1-linux-el6-x86-64bit/
+cp -rf include/* /usr/local/include
+cp lib/libmysqlcppconn.so lib/libmysqlcppconn.so.6 lib/libmysqlcppconn.so.6.1.1.1 /usr/loca/lib64
 cp lib/libmysqlcppconn-static.a /usr/local/lib
-编辑/etc/ld.so.conf
-添加/usr/local/lib64
 执行命令ldconfig
 
 八、安装mongodb（安装到/root/mongodb）
-tar zxvf mongodb-linux-x86_64-2.4.9.tgz
-mv mongodb-linux-x86_64-2.4.9 mongodb
+tar zxvf mongodb-linux-x86_64-3.0.8.tgz
+mv mongodb-linux-x86_64-3.0.8 mongodb
 mkdir /data
 cd data
 mkdir db
 mkdir log
 
-1、编译使用
-将libmongoclient.so拷贝到/usr/local/lib64,执行ldconfig
-2、运行
 开启mongodb服务器  /root/mongodb/bin/mongod --dbpath /data/db --port 27017 &
 启动mongodb客户端  /root/mongdb/bin/mongo
 
+搭建mongodb编译环境
+tar -jxvf mongodb-bin-r2.0.4.tar.bz2
+cd mongodb-bin-r2.0.4/
+cp -rf include/mongo /usr/local/include
+cp lib64/libmongoclient.so /usr/local/lib64
+ldconfig
+
 九、拷贝v8运行环境
 tar -zxvf v8.tar.gz
-将所有.so .a文件拷贝到/usr/local/lib下面
-将include文件夹拷贝到/usr/local/include下面
+将所有so文件拷贝到/usr/local/lib64
+ldconfig
+将所有a文件拷贝到/usr/local/lib
+将include文件夹拷贝到/usr/local/include
 将natives_blob.bin snapshot_blob.bin拷贝到编译后的Debug目录下面
 
 十、编译运行程序
