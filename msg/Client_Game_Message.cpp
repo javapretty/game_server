@@ -435,15 +435,18 @@ MSG_520301::MSG_520301(void){
 }
 
 void MSG_520301::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(hero_id);
 	buffer.write_int32(star);
 }
 
 int MSG_520301::deserialize(Block_Buffer &buffer) {
+	hero_id = buffer.read_int32();
 	star = buffer.read_int32();
 	return 0;
 }
 
 void MSG_520301::reset(){
+	hero_id = 0;
 	star = 0;
 }
 
@@ -469,14 +472,17 @@ MSG_520302::MSG_520302(void){
 }
 
 void MSG_520302::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(hero_id);
 	buffer.write_int32(quality);
 }
 
 int MSG_520302::deserialize(Block_Buffer &buffer) {
+	hero_id = buffer.read_int32();
 	quality = buffer.read_int32();
 	return 0;
 }
 
 void MSG_520302::reset(){
+	hero_id = 0;
 	quality = 0;
 }

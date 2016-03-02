@@ -259,6 +259,8 @@ struct MSG_120301 {
 };
 struct MSG_520301 {
 
+	int32_t hero_id;
+
 	int32_t star; //英雄星级
 
 	MSG_520301(void);
@@ -280,6 +282,8 @@ struct MSG_120302 {
 	void reset(void);
 };
 struct MSG_520302 {
+
+	int32_t hero_id;
 
 	int32_t quality; //英雄品质等级
 

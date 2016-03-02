@@ -137,7 +137,6 @@ function Mail() {
   		} catch (err) {
   			print(err.message);
   		}
-		
 	}
 }
 

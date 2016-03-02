@@ -34,8 +34,32 @@ function Hero() {
 	this.add_hero_star = function(buffer) {
 		print('add_hero_star, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " msec:", msec());
 		
+		var hero_id = buffer.read_int32();
+		var hero_detail = this.hero_info.hero_map.get(hero_id);
+		if (hero_detail == null) {
+			return this.player.cplayer.respond_error_result(msg_res.RES_ADD_HERO_STAR, error.ERROR_CLIENT_PARAM);
+		}
+		
+		var hero_id_string = hero_id.toString();
+		var json_str = read('config/hero/hero.json');
+  		var hero_obj = JSON.parse(json_str).hero_id_string;
+    	if (hero_obj == null) {
+    		return this.player.cplayer.respond_error_result(msg_res.RES_ADD_HERO_STAR, error.ERROR_CONFIG_NOT_EXIST);
+    	}
+    	
+    	var star_item = new Item_Info();
+    	star_item.id = hero_obj.star_item_id;
+    	star_item.amount = hero_obj.star_item_amount[hero_detail.level - 1];
+    	var result = player.bag.bag_erase_item(star_item);
+    	if (result != 0) {
+    		return this.player.cplayer.respond_error_result(msg_res.RES_ADD_HERO_STAR, result);
+    	}
+    	hero_detail.star++;
+    	this.hero_info.save_change();
+    	
 		var buf = pop_buffer();
-		buf.write_int32(1);
+		buf.write_int32(hero_id);
+		buf.write_int32(hero_detail.star);
 		this.player.cplayer.respond_success_result(msg_res.RES_ADD_HERO_STAR, buf);
 		push_buffer(buf);
 	}
@@ -43,7 +67,10 @@ function Hero() {
 	this.add_hero_quality = function(buffer) {
 		print('add_hero_quality, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " msec:", msec());
 		
+		var hero_id = buffer.read_int32();
+
 		var buf = pop_buffer();
+		buf.write_int32(hero_id);
 		buf.write_int32(1);
 		this.player.cplayer.respond_success_result(msg_res.RES_ADD_HERO_QUALITY, buf);
 		push_buffer(buf);
