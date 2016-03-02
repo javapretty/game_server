@@ -31,11 +31,11 @@ int Login_Client_Messager::process_block(Block_Buffer &buf) {
 	Perf_Mon perf_mon(msg_id);
 	switch (msg_id) {
 	case REQ_CLIENT_REGISTER:{
-			process_110000(cid, msg_id, buf);
+			client_register(cid, msg_id, buf);
 			break;
 	}
 	case REQ_CLIENT_LOGIN: {
-			process_110001(cid, msg_id, buf);
+			client_login(cid, msg_id, buf);
 			break;
 	}
 	default:	{
@@ -48,15 +48,15 @@ int Login_Client_Messager::process_block(Block_Buffer &buf) {
 }
 
 //注册
-int Login_Client_Messager::process_110000(int cid, int msg_id, Block_Buffer &buf){
+int Login_Client_Messager::client_register(int cid, int msg_id, Block_Buffer &buf){
 	int ret = 0;
 
-	MSG_110000 msg;
+	MSG_100000 msg;
 	msg.deserialize(buf);
 	int status = LOGIN_MANAGER->check_account().client_register(msg.account, msg.password);
 	if (status == 0){
 		//success
-		MSG_510000 res_msg;
+		MSG_500000 res_msg;
 		res_msg.reset();
 		LOGIN_MANAGER->get_gate_ip(msg.account, res_msg.ip, res_msg.port);
 		make_session(msg.account, res_msg.session);
@@ -90,7 +90,7 @@ int Login_Client_Messager::process_110000(int cid, int msg_id, Block_Buffer &buf
 	}
 	else
 	{//fail
-		LOG_DEBUG("cant not found the user status:%d", status);
+		LOG_DEBUG("client_register fail status:%d", status);
 		Block_Buffer res_buf;
 		res_buf.make_inner_message(RES_CLIENT_REGISTER, ERROR_REGISTER_VERIFY_FAIL);
 		res_buf.finish_message();
@@ -102,18 +102,16 @@ int Login_Client_Messager::process_110000(int cid, int msg_id, Block_Buffer &buf
 }
 
 //登录
-int Login_Client_Messager::process_110001(int cid, int msg_id, Block_Buffer &buf) {
+int Login_Client_Messager::client_login(int cid, int msg_id, Block_Buffer &buf) {
 	int ret = 0;
 
-	MSG_110001 msg;
+	MSG_100001 msg;
 	msg.deserialize(buf);
 	Login_Player *player = 0;
 	int status = 0;
-	LOG_DEBUG("account:%s, password:%s", msg.account.c_str(), msg.password.c_str());
 	if ((player = LOGIN_MANAGER->find_account_login_player(msg.account)) == 0 && (status = LOGIN_MANAGER->check_account().client_login(msg.account, msg.password) == 0))
 	{
-		LOG_DEBUG("login server check sussess");
-		MSG_510000 res_msg;
+		MSG_500001 res_msg;
 		res_msg.reset();
 
 		LOGIN_MANAGER->get_gate_ip(msg.account, res_msg.ip, res_msg.port);
@@ -145,7 +143,7 @@ int Login_Client_Messager::process_110001(int cid, int msg_id, Block_Buffer &buf
 	}
 	else
 	{
-		LOG_DEBUG("login server check fail");
+		LOG_DEBUG("client_login fail, account:%s, password:%s", msg.account.c_str(), msg.password.c_str());
 		Block_Buffer res_buf;
 		res_buf.make_inner_message(RES_CLIENT_LOGIN, ERROR_LOGIN_VERIFY_FAIL);
 		res_buf.finish_message();

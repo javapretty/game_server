@@ -20,7 +20,7 @@ public:
 	/// 创建角色
 	int process_120002(int gate_cid, int player_cid, MSG_120002 &msg);
 	/// 玩家与gate断开连接通知game
-	int process_113000(int gate_cid, int player_cid);
+	int process_140002(int gate_cid, int player_cid);
 
 private:
 	Game_Client_Messager(void);

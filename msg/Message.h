@@ -9,15 +9,11 @@
 #define MSG_MESSAGE_H_
 
 /*消息ID说明
-110000-110999		Client--->Login
-111000-111999		Client--->Gate
-112000-112999		Login<--->Gate
-113000-113999		Game<---->Gate
-114000-114999		Master<--->Gate
-115000-115999		Chat<--->Gate
+100000-109999		Client--->Login,Gate
+110000-119999  	Client--->Chat
 120000-129999		Client--->Game
 130000-139999		Client--->Master
-140000-149999  	Client--->Chat
+140000-149999		Login,Game,Master,Chat<--->Gate
 150000-159999  Game<--->DB
 160000-169999		Game<--->Master
 170000-179999		Master<--->DB
@@ -26,8 +22,7 @@
 300000-309999		ActiveMessage			服务器发到客户端主动消息
 400000-499999		InnerMessage			服务器内部消息
 
-510000-510999		Login->Client
-511000-511999		Gate->Client
+500000-500999		Login,Gate->Client
 520000-529999		Game->Client
 530000-539999		Master->Client
 540000-549999		Chat->Client
@@ -35,37 +30,24 @@
 */
 
 enum {
-	CLIENT_LOGIN_MESSAGE_START 				= 110000,
-	CLIENT_LOGIN_MESSAGE_END 					= 110999,
-	CLIENT_GATE_MESSAGE_START 					= 111000,
-	CLIENT_GATE_MESSAGE_END 					= 111999,
+	CLIENT_GATE_MESSAGE_START 					= 100000,
+	CLIENT_GATE_MESSAGE_END 					= 109999,
 	CLIENT_GAME_MESSAGE_START 					= 120000,
 	CLIENT_GAME_MESSAGE_END 					= 129999,
-
-	CLIENT_BAG_MESSAGE_START					= 120100,
-	CLIENT_BAG_MESSAGE_END						= 120199,
-	CLIENT_MAIL_MESSAGE_START					= 120200,
-	CLIENT_MAIL_MESSAGE_END						= 120299,
 };
 
 enum Client_Login_Message {
-	REQ_CLIENT_REGISTER 							= 	110000,  //注册请求
-	REQ_CLIENT_LOGIN 									= 	110001,  //登录请求
+	REQ_CLIENT_REGISTER 							= 	100000,  //注册
+	REQ_CLIENT_LOGIN 									= 	100001,  //登录
+	REQ_CONNECT_GATE									=	100002,	//客户端登录gate
+	REQ_HEARTBEAT 										=	100003,	//心跳
 };
 
-enum Login_Client_MessageId{
-	RES_CLIENT_REGISTER                = 510000,  //注册回复
-	RES_CLIENT_LOGIN                 	= 510001,  //登录回复
-};
-
-enum Client_Gate_Message {
-	REQ_HEARTBEAT 										=	111000,	//心跳
-	REQ_CONNECT_GATE									=	111001,	//客户端登录连接gate
-};
-
-enum Gate_Client_Message{
-	RES_HEARTBEAT 										= 	511000,	//心跳(返回)
-	RES_CONNECT_GATE									= 511001,	//客户端登录连接gate(返回)
+enum Login_Client_Message {
+	RES_CLIENT_REGISTER                = 500000,  //注册(返回)
+	RES_CLIENT_LOGIN                 	= 500001,  //登录(返回)
+	RES_CONNECT_GATE									= 500002,	//客户端登录gate(返回)
+	RES_HEARTBEAT 										= 	500003,	//心跳(返回)
 };
 
 enum Client_Game_Message {
@@ -106,9 +88,9 @@ enum Game_Client_Message {
 
 //此次包含login,game,chat,master与gate通信的消息
 enum Gate_Message {
-	SYNC_GATE_LOGIN_PLAYER_ACCOUNT     = 112000,  //gate校验玩家账户、session
-	SYNC_LOGIN_GATE_PLAYER_ACCOUNT     = 112001,  //login返回session校验结果
-	SYNC_GATE_GAME_PLAYER_SIGNOUT 			= 	113000,	//gate同步玩家掉线到game
+	SYNC_GATE_LOGIN_PLAYER_ACCOUNT     = 140000,  //gate校验玩家账户、session
+	SYNC_LOGIN_GATE_PLAYER_ACCOUNT     = 140001,  //login返回session校验结果
+	SYNC_GATE_GAME_PLAYER_SIGNOUT 			= 	140002,	//gate同步玩家掉线到game
 };
 
 enum Game_DB_Message {

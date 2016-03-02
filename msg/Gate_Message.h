@@ -19,7 +19,7 @@
 
 	gate-->login校验玩家accout session数据
 */
-struct MSG_112000 {
+struct MSG_140000 {
 
 	std::string account;
 
@@ -29,7 +29,7 @@ struct MSG_112000 {
 
 	int32_t gate_port;
 
-	MSG_112000(void);
+	MSG_140000(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
@@ -38,11 +38,11 @@ struct MSG_112000 {
 
 	login-->gate校验玩家结果
 */
-struct MSG_112001 {
+struct MSG_140001 {
 
 	std::string account;
 
-	MSG_112001(void);
+	MSG_140001(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

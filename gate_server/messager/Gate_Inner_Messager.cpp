@@ -3,6 +3,7 @@
  *      Author: zhangyalei
  */
 
+#include "Msg_Define.h"
 #include "Gate_Inner_Messager.h"
 #include "Gate_Manager.h"
 
@@ -29,11 +30,11 @@ int Gate_Inner_Messager::process_login_block(Block_Buffer &buf) {
 	GATE_MANAGER->inner_msg_count(msg_id);
 
 	if (msg_id == SYNC_LOGIN_GATE_PLAYER_ACCOUNT) {
-		MSG_112001 msg;
+		MSG_140001 msg;
 		msg.deserialize(buf);
 		Block_Buffer player_buf;
 		player_buf.make_inner_message(RES_CONNECT_GATE, status);
-		MSG_511001 player_msg;
+		MSG_500002 player_msg;
 		player_msg.account = msg.account;
 		player_msg.serialize(player_buf);
 		player_buf.finish_message();

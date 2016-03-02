@@ -6,6 +6,7 @@
 
 #include "Gate_Client_Messager.h"
 #include "Gate_Manager.h"
+#include "Msg_Define.h"
 #include "Common_Func.h"
 
 Gate_Client_Messager::Gate_Client_Messager(void) { }
@@ -65,18 +66,12 @@ int Gate_Client_Messager::process_gate_block(int cid, int msg_id, Block_Buffer &
 	Perf_Mon perf_mon(msg_id);
 	int ret = 0;
 	switch (msg_id) {
-	case REQ_HEARTBEAT: {
-		MSG_111000 msg;
-		if ((ret = msg.deserialize(buf)) == 0) {
-			refresh_heartbeat(cid, msg);
-		}
+	case REQ_CONNECT_GATE: {
+		connect_gate(cid, buf);
 		break;
 	}
-	case REQ_CONNECT_GATE: {
-		MSG_111001 msg;
-		if ((ret = msg.deserialize(buf)) == 0) {
-			connect_gate(cid, msg);
-		}
+	case REQ_HEARTBEAT: {
+		refresh_heartbeat(cid, buf);
 		break;
 	}
 	default:
@@ -90,25 +85,14 @@ int Gate_Client_Messager::process_game_block(int msg_id, Block_Buffer &buf) {
 	return GATE_MANAGER->send_to_game(buf);
 }
 
-int Gate_Client_Messager::refresh_heartbeat(int cid, MSG_111000 &msg) {
-	MSG_511000 res_msg;
-	res_msg.client_time = msg.client_time;
-	res_msg.server_time = GATE_MANAGER->tick_time().sec();
-	Block_Buffer res_buf;
-	res_buf.make_inner_message(RES_HEARTBEAT);
-	res_msg.serialize(res_buf);
-	res_buf.finish_message();
-	GATE_MANAGER->send_to_client(cid, res_buf);
-	return 0;
-}
-
-int Gate_Client_Messager::connect_gate(int cid, MSG_111001 &msg) {
-	LOG_INFO("client connect gate cid = %d, account:%s, session:%s", cid, msg.account.c_str(), msg.session.c_str());
+int Gate_Client_Messager::connect_gate(int cid, Block_Buffer &buf) {
+	MSG_100002 msg;
+	msg.deserialize(buf);
 
 	Gate_Player *player = 0;
 	//校验是否重复登录
 	if((player = GATE_MANAGER->find_account_gate_player(msg.account) )== 0) {
-		MSG_112000 login_msg;
+		MSG_140000 login_msg;
 		login_msg.account = msg.account;
 		login_msg.session = msg.session;
 		GATE_MANAGER->get_server_ip_port(cid, login_msg.gate_ip, login_msg.gate_port);
@@ -129,5 +113,19 @@ int Gate_Client_Messager::connect_gate(int cid, MSG_111001 &msg) {
 		GATE_MANAGER->close_client(cid);
 	}
 
+	return 0;
+}
+
+int Gate_Client_Messager::refresh_heartbeat(int cid, Block_Buffer &buf) {
+	MSG_100003 msg;
+	msg.deserialize(buf);
+	MSG_500003 res_msg;
+	res_msg.client_time = msg.client_time;
+	res_msg.server_time = GATE_MANAGER->tick_time().sec();
+	Block_Buffer res_buf;
+	res_buf.make_inner_message(RES_HEARTBEAT);
+	res_msg.serialize(res_buf);
+	res_buf.finish_message();
+	GATE_MANAGER->send_to_client(cid, res_buf);
 	return 0;
 }

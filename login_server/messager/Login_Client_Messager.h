@@ -16,9 +16,9 @@ public:
 	int process_block(Block_Buffer &buf);
 
 	//注册
-	int process_110000(int cid, int msg_id, Block_Buffer &buf);
+	int client_register(int cid, int msg_id, Block_Buffer &buf);
 	//登录
-	int process_110001(int cid, int msg_id, Block_Buffer &buf);
+	int client_login(int cid, int msg_id, Block_Buffer &buf);
 
 private:
 	Login_Client_Messager(void);

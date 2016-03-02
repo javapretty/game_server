@@ -30,9 +30,9 @@ int Login_Inner_Messager::process_gate_block(Block_Buffer &buf) {
 
 	switch (msg_id) {
 	case SYNC_GATE_LOGIN_PLAYER_ACCOUNT:{
-		MSG_112000 msg;
+		MSG_140000 msg;
 		if (msg.deserialize(buf) ==0){
-			process_112000(gate_cid, player_cid, msg);
+			process_140000(gate_cid, player_cid, msg);
 		}
 		break;
 	}
@@ -61,7 +61,7 @@ int Login_Inner_Messager::process_self_loop_block(Block_Buffer &buf) {
 	return 0;
 }
 
-int Login_Inner_Messager::process_112000(int gate_cid, int32_t player_cid, MSG_112000& msg) {
+int Login_Inner_Messager::process_140000(int gate_cid, int32_t player_cid, MSG_140000& msg) {
 	Block_Buffer gate_buf;
 
 	Login_Player *player = 0;
@@ -79,7 +79,7 @@ int Login_Inner_Messager::process_112000(int gate_cid, int32_t player_cid, MSG_1
 		LOG_DEBUG("login check session wrong, gate_cid:%d, player_cid:%d",gate_cid, player_cid);
 		gate_buf.make_player_message(SYNC_LOGIN_GATE_PLAYER_ACCOUNT, ERROR_CLIENT_SESSION, player_cid);
 	}
-	MSG_112001 gate_msg;
+	MSG_140001 gate_msg;
 	gate_msg.account = msg.account;
 	gate_msg.serialize(gate_buf);
 	gate_buf.finish_message();

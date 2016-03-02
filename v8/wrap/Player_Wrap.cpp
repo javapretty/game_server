@@ -27,9 +27,6 @@ Local<Object> wrap_player(Isolate* isolate, Game_Player *player) {
 	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "player_data_buffer", NewStringType::kNormal).ToLocalChecked(),
 		                    FunctionTemplate::New(isolate, player_data_buffer)->GetFunction()) ;
 
-	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "role_id", NewStringType::kNormal).ToLocalChecked(),
-			                    FunctionTemplate::New(isolate, role_id)->GetFunction()) ;
-
 	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "respond_success_result", NewStringType::kNormal).ToLocalChecked(),
 	                    FunctionTemplate::New(isolate, respond_success_result)->GetFunction()) ;
 
@@ -90,7 +87,7 @@ void process_login_buffer(const FunctionCallbackInfo<Value>& args) {
 		break;
 	}
 	case SYNC_GATE_GAME_PLAYER_SIGNOUT: {
-		ret = GAME_CLIENT_MESSAGER->process_113000(gate_cid, player_cid);
+		ret = GAME_CLIENT_MESSAGER->process_140002(gate_cid, player_cid);
 		break;
 	}
 	default:
@@ -169,16 +166,6 @@ void player_data_buffer(const FunctionCallbackInfo<Value>& args) {
 	} else {
 		//设置对象为空
 		args.GetReturnValue().SetNull();
-	}
-}
-
-void role_id(const FunctionCallbackInfo<Value>& args) {
-	Game_Player *player = unwrap_player(args.Holder());
-	if (!player) {
-		args.GetReturnValue().Set(0);
-	} else {
-		double role_id = player->player_data().player_info.role_id;
-		args.GetReturnValue().Set(role_id);
 	}
 }
 

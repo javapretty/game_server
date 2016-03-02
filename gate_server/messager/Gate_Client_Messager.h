@@ -7,8 +7,6 @@
 #ifndef GATE_CLIENT_MESSAGER_H_
 #define GATE_CLIENT_MESSAGER_H_
 
-#include "Msg_Define.h"
-
 class Block_Buffer;
 class Gate_Client_Messager {
 public:
@@ -18,8 +16,8 @@ public:
 	int process_gate_block(int cid, int msg_id, Block_Buffer &buf);
 	int process_game_block(int msg_id, Block_Buffer &buf);
 
-	int refresh_heartbeat(int cid, MSG_111000 &msg);
-	int connect_gate(int cid, MSG_111001 &msg);
+	int connect_gate(int cid, Block_Buffer &buf);
+	int refresh_heartbeat(int cid, Block_Buffer &buf);
 
 private:
 	Gate_Client_Messager(void);

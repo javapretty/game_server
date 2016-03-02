@@ -25,7 +25,6 @@ void get_drop_player_cid(const FunctionCallbackInfo<Value>& args);
 void get_player_by_cid(const FunctionCallbackInfo<Value>& args);
 void get_player_by_name(const FunctionCallbackInfo<Value>& args);
 void player_data_buffer(const FunctionCallbackInfo<Value>& args);
-void role_id(const FunctionCallbackInfo<Value>& args);
 void respond_success_result(const FunctionCallbackInfo<Value>& args);
 void respond_error_result(const FunctionCallbackInfo<Value>& args);
 

@@ -14,64 +14,104 @@
 
 /*
 
-	注册请求
+	注册
 */
-struct MSG_110000 {
+struct MSG_100000 {
 
 	std::string account;/*账号*/
 
 	std::string password;/*密码*/
 
-	MSG_110000(void);
+	MSG_100000(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
-/*
+struct MSG_500000 {
 
-	注册回复
-*/
-struct MSG_510000 {
+	std::string ip; /*gate ip*/
 
-	std::string ip;/*gate ip*/
-
-	int32_t port;/*gate port*/
+	int32_t port; /*gate port*/
 
 	std::string session;
 
-	MSG_510000(void);
+	MSG_500000(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
 
-	登录请求
+	登录
 */
-struct MSG_110001 {
+struct MSG_100001 {
 
 	std::string account;/*账号*/
 
 	std::string password;/*密码*/
 
-	MSG_110001(void);
+	MSG_100001(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+struct MSG_500001 {
+
+	std::string ip; /*gate ip*/
+
+	int32_t port; /*gate port*/
+
+	std::string session;
+
+	MSG_500001(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 /*
 
-	登录回复
+	客户端登录gate
 */
-struct MSG_510001 {
+struct MSG_100002 {
 
-	std::string ip;/*gate ip*/
+	std::string account;
 
-	int32_t port;/*gate port*/
+	std::string session; //登录验证的seesion
 
-	std::string session;
+	MSG_100002(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+struct MSG_500002 {
 
-	MSG_510001(void);
+	std::string account;
+
+	MSG_500002(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+/*
+
+	心跳
+*/
+struct MSG_100003 {
+
+	int32_t client_time;
+
+	MSG_100003(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+struct MSG_500003 {
+
+	int32_t client_time;
+
+	int32_t server_time;
+
+	MSG_500003(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

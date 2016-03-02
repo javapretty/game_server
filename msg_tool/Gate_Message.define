@@ -1,7 +1,7 @@
 /*
 gate-->login校验玩家accout session数据
 */
-struct MSG_112000 {
+struct MSG_140000 {
 	std::string account;
 	std::string session;
 	std::string gate_ip;
@@ -11,6 +11,6 @@ struct MSG_112000 {
 /*
 login-->gate校验玩家结果
 */
-struct MSG_112001 {
+struct MSG_140001 {
 	std::string account;
 };

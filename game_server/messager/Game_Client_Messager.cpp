@@ -130,7 +130,7 @@ int Game_Client_Messager::process_120002(int gate_cid, int player_cid, MSG_12000
 	return 0;
 }
 
-int Game_Client_Messager::process_113000(int gate_cid, int player_cid) {
+int Game_Client_Messager::process_140002(int gate_cid, int player_cid) {
 	Cid_Info cid_info(gate_cid, 0, player_cid);
 	Game_Player *player = GAME_MANAGER->find_cid_game_player(cid_info);
 	if (player) {
