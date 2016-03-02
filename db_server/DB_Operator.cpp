@@ -130,6 +130,9 @@ int DB_Operator::create_index(void) {
 		CACHED_CONNECTION.createIndex("mmo.role", BSON("account" << 1 << "agent_num" << 1 << "server_num" << 1));
 		CACHED_CONNECTION.createIndex("mmo.role", BSON("account" << 1 << "level" << -1));
 	}
+	{ // hero index
+		CACHED_CONNECTION.createIndex("mmo.hero", BSON("role_id" << 1));
+	}
 	{ // bag index
 		CACHED_CONNECTION.createIndex("mmo.bag", BSON("role_id" << 1));
 	}
@@ -257,8 +260,8 @@ int64_t DB_Operator::get_role_id(const std::string &account, const int agent_num
 }
 
 /////////////////// Base Info DB Operator ///////////////////
-int DB_Operator::load_player_info(Game_Player_Info &player_info) {
-	BSONObj res = CACHED_CONNECTION.findOne("mmo.role", MONGO_QUERY("role_id" << (long long int)player_info.role_id));
+int DB_Operator::load_player_info(int64_t role_id, Game_Player_Info &player_info) {
+	BSONObj res = CACHED_CONNECTION.findOne("mmo.role", MONGO_QUERY("role_id" << (long long int)role_id));
 	if (! res.isEmpty()) {
 		player_info.role_id = res["role_id"].numberLong();
 		player_info.account = res["account"].valuestrsafe();
@@ -288,7 +291,7 @@ int DB_Operator::load_player_info(Game_Player_Info &player_info) {
 	}
 }
 
-int DB_Operator::save_player_info(Game_Player_Info &player_info) {
+int DB_Operator::save_player_info(int64_t role_id, Game_Player_Info &player_info) {
 	BSONObjBuilder builder;
 	builder << "role_id" << (long long int)player_info.role_id
 			<< "account" << player_info.account
@@ -307,15 +310,15 @@ int DB_Operator::save_player_info(Game_Player_Info &player_info) {
 			<< "vip" << player_info.vip
 			<< "charge_gold" << player_info.charge_gold;
 
-	CACHED_CONNECTION.update("mmo.role", MONGO_QUERY("role_id" << (long long int)player_info.role_id),
+	CACHED_CONNECTION.update("mmo.role", MONGO_QUERY("role_id" << (long long int)role_id),
 			BSON("$set" << builder.obj()), true);
 
 	return 0;
 }
 
-int DB_Operator::load_hero_info(Hero_Info &hero_info) {
+int DB_Operator::load_hero_info(int64_t role_id, Hero_Info &hero_info) {
 	BSONObj res = CACHED_CONNECTION.findOne("mmo.hero",
-			MONGO_QUERY("role_id" << (long long int)hero_info.role_id));
+			MONGO_QUERY("role_id" << (long long int)role_id));
 	if (res.isEmpty()) {
 		return -1;
 	}
@@ -339,7 +342,7 @@ int DB_Operator::load_hero_info(Hero_Info &hero_info) {
 	return 0;
 }
 
-int DB_Operator::save_hero_info(Hero_Info &hero_info) {
+int DB_Operator::save_hero_info(int64_t role_id, Hero_Info &hero_info) {
 	std::vector<BSONObj> hero_vec;
 	BSONObj obj;
 	for (Hero_Info::Hero_Map::const_iterator iter = hero_info.hero_map.begin(); iter != hero_info.hero_map.end(); ++iter) {
@@ -357,15 +360,15 @@ int DB_Operator::save_hero_info(Hero_Info &hero_info) {
 	BSONObjBuilder tmp_builder;
 	tmp_builder << "hero_detail" << hero_vec;
 
-	CACHED_CONNECTION.update("mmo.hero", MONGO_QUERY("role_id" << (long long int)hero_info.role_id),
+	CACHED_CONNECTION.update("mmo.hero", MONGO_QUERY("role_id" << (long long int)role_id),
 			BSON("$set" << tmp_builder.obj()), true);
 
 	return 0;
 }
 
-int DB_Operator::load_bag_info(Bag_Info &bag_info) {
+int DB_Operator::load_bag_info(int64_t role_id, Bag_Info &bag_info) {
 	BSONObj res = CACHED_CONNECTION.findOne("mmo.bag",
-			MONGO_QUERY("role_id" << (long long int)bag_info.role_id));
+			MONGO_QUERY("role_id" << (long long int)role_id));
 	if (res.isEmpty()) {
 		return -1;
 	}
@@ -385,7 +388,7 @@ int DB_Operator::load_bag_info(Bag_Info &bag_info) {
 	return 0;
 }
 
-int DB_Operator::save_bag_info(Bag_Info &bag_info) {
+int DB_Operator::save_bag_info(int64_t role_id, Bag_Info &bag_info) {
 	std::vector<BSONObj> item_vec;
 	BSONObj obj;
 	for (Bag_Info::Item_Map::const_iterator iter = bag_info.item_map.begin(); iter != bag_info.item_map.end(); ++iter) {
@@ -398,7 +401,7 @@ int DB_Operator::save_bag_info(Bag_Info &bag_info) {
 		<< "gold" << bag_info.gold
 		<< "item" << item_vec;
 
-	CACHED_CONNECTION.update("mmo.bag", MONGO_QUERY("role_id" << (long long int)bag_info.role_id),
+	CACHED_CONNECTION.update("mmo.bag", MONGO_QUERY("role_id" << (long long int)role_id),
 			BSON("$set" << tmp_builder.obj()), true);
 
 	return 0;
@@ -419,8 +422,8 @@ int DB_Operator::save_item_detail(const Item_Info &item, mongo::BSONObj &obj) {
 	return 0;
 }
 
-int DB_Operator::load_mail_info(Mail_Info &mail_info) {
-	BSONObj res = CACHED_CONNECTION.findOne("mmo.mail", MONGO_QUERY("role_id" << (long long int)mail_info.role_id));
+int DB_Operator::load_mail_info(int64_t role_id, Mail_Info &mail_info) {
+	BSONObj res = CACHED_CONNECTION.findOne("mmo.mail", MONGO_QUERY("role_id" << (long long int)role_id));
 	if (res.isEmpty()) {
 		return -1;
 	}
@@ -448,7 +451,7 @@ int DB_Operator::load_mail_info(Mail_Info &mail_info) {
 	return 0;
 }
 
-int DB_Operator::save_mail_info(Mail_Info &mail_info) {
+int DB_Operator::save_mail_info(int64_t role_id, Mail_Info &mail_info) {
 	std::vector<BSONObj> mail_vec;
 	for (Mail_Info::Mail_Map::const_iterator iter = mail_info.mail_map.begin();
 			iter != mail_info.mail_map.end(); iter++) {
@@ -468,7 +471,7 @@ int DB_Operator::save_mail_info(Mail_Info &mail_info) {
 	set_builder << "total_count" << mail_info.total_count
 			<< "mail_detail" << mail_vec;
 
-	CACHED_CONNECTION.update("mmo.mail", MONGO_QUERY("role_id" << (long long int)mail_info.role_id),
+	CACHED_CONNECTION.update("mmo.mail", MONGO_QUERY("role_id" << (long long int)role_id),
 			BSON("$set" << set_builder.obj() ), true);
 
 	return 0;

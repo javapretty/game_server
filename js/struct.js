@@ -104,12 +104,10 @@ function Hero_Detail() {
 }
 
 function Hero_Info() {
-	this.role_id = 0;							//角色ID
 	this.hero_map = new Map();			//英雄信息
 	this.is_change = false;				//数据是否改变
 	
 	this.serialize = function(buffer) {
-		buffer.write_int64(this.role_id);
 		buffer.write_uint16(this.hero_map.size());
 		this.hero_map.each(function(key,value,index) {
 			value.serialize(buffer);
@@ -118,7 +116,6 @@ function Hero_Info() {
 	}
 	
 	this.deserialize = function(buffer) {
-		this.role_id = buffer.read_int64();
 		var len = buffer.read_uint16();
 		for (var i = 0; i < len; ++i) {
 			var hero_detail = new Hero_Detail();
@@ -149,14 +146,12 @@ function Item_Info() {
 }
 
 function Bag_Info() {
-	this.role_id = 0;						//角色ID
 	this.copper = 0; 						//铜钱
 	this.gold = 0;							//元宝
 	this.item_map = new Map();		//物品信息
 	this.is_change = false;			//数据是否改变
 	
 	this.serialize = function(buffer) {
-		buffer.write_int64(this.role_id);
 		buffer.write_int32(this.copper);
 		buffer.write_int32(this.gold);
 		buffer.write_uint16(this.item_map.size());
@@ -167,7 +162,6 @@ function Bag_Info() {
 	}
 	
 	this.deserialize = function(buffer) {
-		this.role_id = buffer.read_int64();
 		this.copper = buffer.read_int32();
 		this.gold = buffer.read_int32();
 		var len = buffer.read_uint16();
@@ -224,13 +218,11 @@ function Mail_Detail() {
 }
 
 function Mail_Info() {
-	this.role_id = 0;						//角色ID
 	this.total_count = 0; 			//邮件的总数量，即目前为止收到的所有邮件数
 	this.mail_map = new Map();		//邮件信息
 	this.is_change = false;			//数据是否改变
 	
 	this.serialize = function(buffer) {
-		buffer.write_int64(this.role_id);
 		buffer.write_int32(this.total_count);
 		buffer.write_uint16(this.mail_map.size());
 		this.mail_map.each(function(key,value,index) {
@@ -240,7 +232,6 @@ function Mail_Info() {
 	}
 	
 	this.deserialize = function(buffer) {
-		this.role_id = buffer.read_int64();
 		this.total_count = buffer.read_int32();
 		var len = buffer.read_uint16();
 		for (var i = 0; i < len; ++i) {

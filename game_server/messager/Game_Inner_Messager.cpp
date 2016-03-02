@@ -93,9 +93,9 @@ int Game_Inner_Messager::process_load_db_cache(Block_Buffer &buf) {
 int Game_Inner_Messager::process_loaded_player_data(Block_Buffer &buf) {
 	MSG_550001 msg;
 	msg.deserialize(buf);
-	Game_Manager::Logining_Map::iterator logining_it = GAME_MANAGER->logining_map().find(msg.player_data.game_player_info.account);
+	Game_Manager::Logining_Map::iterator logining_it = GAME_MANAGER->logining_map().find(msg.player_data.player_info.account);
 	if (logining_it == GAME_MANAGER->logining_map().end()) {
-		LOG_INFO("account not exist in logining map, account = %s.", msg.player_data.game_player_info.account.c_str());
+		LOG_INFO("account not exist in logining map, account = %s.", msg.player_data.player_info.account.c_str());
 		return -1;
 	}
 
@@ -135,7 +135,7 @@ int Game_Inner_Messager::process_loaded_player_data(Block_Buffer &buf) {
 		Block_Buffer res_buf;
 		res_buf.make_player_message(RES_CREATE_ROLE, 0, player_cid);
 		MSG_520002 res_msg;
-		res_msg.role_id = msg.player_data.role_id;
+		res_msg.role_id = msg.player_data.player_info.role_id;
 		res_msg.serialize(res_buf);
 		res_buf.finish_message();
 		GAME_MANAGER->send_to_gate(gate_cid, res_buf);
@@ -168,18 +168,18 @@ int Game_Inner_Messager::process_success_login(int gate_cid, int player_cid, Pla
 	player->set_cid_info(cid_info);
 	player->load_player(data);
 	GAME_MANAGER->bind_cid_game_player(cid_info, *player);
-	GAME_MANAGER->bind_role_id_game_player(player->game_player_info().role_id, *player);
-	player->sign_in(data.game_player_info.account);
+	GAME_MANAGER->bind_role_id_game_player(player->player_data().player_info.role_id, *player);
+	player->sign_in(data.player_info.account);
 
 	Player_DB_Cache db_cache;
-	db_cache.role_id = data.game_player_info.role_id;
-	db_cache.account = data.game_player_info.account;
-	db_cache.role_name = data.game_player_info.role_name;
-	db_cache.agent_num = data.game_player_info.agent_num;
-	db_cache.server_num = data.game_player_info.server_num;
-	db_cache.gender = data.game_player_info.gender;
-	db_cache.career = data.game_player_info.career;
-	db_cache.level = data.game_player_info.level;
+	db_cache.role_id = data.player_info.role_id;
+	db_cache.account = data.player_info.account;
+	db_cache.role_name = data.player_info.role_name;
+	db_cache.agent_num = data.player_info.agent_num;
+	db_cache.server_num = data.player_info.server_num;
+	db_cache.gender = data.player_info.gender;
+	db_cache.career = data.player_info.career;
+	db_cache.level = data.player_info.level;
 	GAME_MANAGER->db_cache()->id_player_cache_map.insert(std::make_pair(db_cache.role_id, db_cache));
 	GAME_MANAGER->db_cache()->account_player_cache_map.insert(std::make_pair(db_cache.account, db_cache));
 

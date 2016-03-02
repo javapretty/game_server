@@ -191,8 +191,6 @@ struct Game_Player_Info {
 	Game_Player_Info(void);
 	int serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
-	int load(void);
-	int save(void);
 	void reset(void);
 	inline void save_change(void) { is_change = true; };
 };
@@ -203,12 +201,9 @@ struct Hero_Info {
 	Hero_Info();
 	int serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
-	int load(void);
-	int save(void);
 	void reset(void);
 	inline void save_change(void) { is_change = true; };
 
-	int64_t role_id;
 	Hero_Map hero_map;
 	bool is_change;
 };
@@ -228,12 +223,9 @@ struct Bag_Info {
 	Bag_Info();
 	int serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
-	int load(void);
-	int save(void);
 	void reset(void);
 	inline void save_change(void) { is_change = true; };
 
-	int64_t role_id;
 	int32_t copper;
 	int32_t gold;
 	Item_Map item_map;
@@ -244,14 +236,11 @@ struct Mail_Info {
 	Mail_Info(void);
 	int serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
-	int load(void);
-	int save(void);
 	void reset(void);
 	void save_change(void) { is_change = true; };
 
 	typedef std::map<int, Mail_Detail> Mail_Map;	//邮件map要按照邮件id排序，不能改成unordered_map
 
-	int64_t role_id;		//角色ID
 	int total_count; 			//邮件的总数量，即目前为止收到的所有邮件数
 	Mail_Map mail_map;
 	bool is_change;
@@ -267,34 +256,24 @@ struct Player_Data {
 		ROLE_SAVE_OFFLINE,	/// 角色下线保存
 	};
 
-	int64_t role_id;
 	int8_t status;
 
-	Game_Player_Info game_player_info;
+	Game_Player_Info player_info;
 	Hero_Info hero_info;
 	Bag_Info bag_info;
 	Mail_Info mail_info;
 
 	void set_all_change(bool is_change) {
-		game_player_info.is_change = is_change;
+		player_info.is_change = is_change;
 		hero_info.is_change = is_change;
 		bag_info.is_change = is_change;
 		mail_info.is_change = is_change;
 	}
 
-	void set_all_role_id(int64_t p_role_id) {
-		role_id = p_role_id;
-
-		game_player_info.role_id = p_role_id;
-		hero_info.is_change = p_role_id;
-		bag_info.role_id = p_role_id;
-		mail_info.role_id = p_role_id;
-	}
-
 	Player_Data(void);
 	int serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
-	int load(void);
+	int load(int64_t role_id);
 	int save(void);
 	void reset(void);
 	bool can_save(void);

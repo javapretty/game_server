@@ -177,7 +177,7 @@ void role_id(const FunctionCallbackInfo<Value>& args) {
 	if (!player) {
 		args.GetReturnValue().Set(0);
 	} else {
-		double role_id = player->game_player_info().role_id;
+		double role_id = player->player_data().player_info.role_id;
 		args.GetReturnValue().Set(role_id);
 	}
 }

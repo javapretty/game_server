@@ -232,8 +232,8 @@ Game_Player *Game_Manager::find_role_name_game_player(std::string &role_name) {
 
 int Game_Manager::unbind_game_player(Game_Player &player) {
 	player_cid_map_.erase(player.cid_info());
-	player_role_id_map_.erase(player.game_player_info().role_id);
-	player_role_name_map_.erase(player.game_player_info().role_name);
+	player_role_id_map_.erase(player.player_data().player_info.role_id);
+	player_role_name_map_.erase(player.player_data().player_info.role_name);
 	return 0;
 }
 

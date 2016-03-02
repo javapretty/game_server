@@ -21,13 +21,15 @@ function Player() {
 	
 		var gate_cid = buffer.read_int32();
 		var player_cid = buffer.read_int32();
-		this.cid = gate_cid * 10000 + player_cid;
-		this.cplayer = get_player_by_cid(gate_cid, player_cid);
+		var status = buffer.read_int8();
 		this.player_info.deserialize(buffer);
 		this.hero.load_data(this, buffer);
 		this.bag.load_data(this, buffer);
 		this.mail.load_data(this, buffer);
-		print('------load_data,role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name);
+		
+		print('------load_data,status:', status, ' role_id:', this.player_info.role_id, ' role_name:', this.player_info.role_name);
+		this.cid = gate_cid * 10000 + player_cid;
+		this.cplayer = get_player_by_cid(gate_cid, player_cid);
 		
 		player_cid_map.put(this.cid, this);
 		player_role_id_map.put(this.player_info.role_id, this);
@@ -39,6 +41,7 @@ function Player() {
 			return;
 		}
 		
+		buffer.write_int8(0);
 		this.player_info.serialize(buffer);
 		this.hero.save_data(buffer);
 		this.bag.save_data(buffer);

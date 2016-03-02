@@ -24,7 +24,6 @@ public:
 
 	Player_Data &player_data(void) { return player_data_; }
 	Block_Buffer *player_data_buffer(void) { return player_data_buffer_; }
-	Game_Player_Info const &game_player_info(void) const { return player_data_.game_player_info; }
 
 	int load_player(Player_Data &player_data);
 	int save_player(bool is_logout = false);

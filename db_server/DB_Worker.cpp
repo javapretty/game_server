@@ -109,13 +109,13 @@ int DB_Worker::process_load_player(int cid, Account_Info &account_info) {
 	int has_role = CACHED_INSTANCE->has_role_by_account(account_info.account, account_info.agent_num, account_info.server_num);
 	if (! has_role) {
 		msg.player_data.status = Player_Data::ROLE_NOT_EXIST;
-		msg.player_data.game_player_info.account = account_info.account;
-		msg.player_data.game_player_info.agent_num = account_info.agent_num;
-		msg.player_data.game_player_info.server_num = account_info.server_num;
+		msg.player_data.player_info.account = account_info.account;
+		msg.player_data.player_info.agent_num = account_info.agent_num;
+		msg.player_data.player_info.server_num = account_info.server_num;
 	}	else {
 		msg.player_data.status = Player_Data::SUCCESS_LOADED;
-		msg.player_data.role_id = CACHED_INSTANCE->get_role_id(account_info.account, account_info.agent_num, account_info.server_num);
-		msg.player_data.load();
+		int64_t role_id = CACHED_INSTANCE->get_role_id(account_info.account, account_info.agent_num, account_info.server_num);
+		msg.player_data.load(role_id);
 	}
 	Block_Buffer buf;
 	buf.make_inner_message(SYNC_DB_GAME_LOAD_PLAYER_INFO);
@@ -132,12 +132,11 @@ int DB_Worker::process_create_player(int cid, Game_Player_Info &player_info) {
 	} else {
 		msg.player_data.status = Player_Data::SUCCESS_CREATED;
 		//此处保存所有数据是为了创建所有玩家表
-		msg.player_data.set_all_role_id(player_info.role_id);
 		msg.player_data.set_all_change(true);
 		msg.player_data.save();
 		msg.player_data.set_all_change(false);
 	}
-	msg.player_data.game_player_info = player_info;
+	msg.player_data.player_info = player_info;
 	Block_Buffer buf;
 	buf.make_inner_message(SYNC_DB_GAME_CREATE_PLAYER);
 	msg.serialize(buf);
@@ -154,7 +153,7 @@ int DB_Worker::process_save_player(int cid, Player_Data &player_data) {
 		Block_Buffer buf;
 		buf.make_inner_message(SYNC_DB_GAME_SAVE_PLAYER_INFO);
 		MSG_550003 msg;
-		msg.role_id = player_data.game_player_info.role_id;
+		msg.role_id = player_data.player_info.role_id;
 		msg.serialize(buf);
 		buf.finish_message();
 		DB_MANAGER->send_data_block(cid, buf);
@@ -166,8 +165,7 @@ int DB_Worker::process_save_player(int cid, Player_Data &player_data) {
 
 int DB_Worker::process_save_mail(MSG_150004 &msg) {
 	Mail_Info mail_info;
-	mail_info.role_id = msg.role_id;
-	mail_info.load();
+	CACHED_INSTANCE->load_mail_info(msg.role_id, mail_info);
 	mail_info.total_count++;
 	msg.mail_detail.mail_id = 1000000 + mail_info.total_count;
 	msg.mail_detail.send_time = Time_Value::gettimeofday().sec();
@@ -180,6 +178,6 @@ int DB_Worker::process_save_mail(MSG_150004 &msg) {
 			break;
 		}
 	}
-	mail_info.save();
+	CACHED_INSTANCE->save_mail_info(msg.role_id, mail_info);
 	return 0;
 }
