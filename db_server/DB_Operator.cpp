@@ -273,7 +273,7 @@ int DB_Operator::load_player_info(Game_Player_Info &player_info) {
 			player_info.server_num = player_info.role_id / 1000000000L % 10000L;
 		}
 		player_info.level = res["level"].numberInt();
-		player_info.experience = res["experience"].numberInt();
+		player_info.exp = res["exp"].numberInt();
 		player_info.gender = res["gender"].numberInt();
 		player_info.career = res["career"].numberInt();
 		player_info.create_time = res["create_time"].numberInt();
@@ -297,7 +297,7 @@ int DB_Operator::save_player_info(Game_Player_Info &player_info) {
 			<< "agent_num" << player_info.agent_num
 			<< "server_num" << player_info.server_num
 			<< "level" << player_info.level
-			<< "experience" << player_info.experience
+			<< "exp" << player_info.exp
 			<< "gender" << player_info.gender
 			<< "career" << player_info.career
 			<< "create_time" << player_info.create_time
@@ -309,6 +309,56 @@ int DB_Operator::save_player_info(Game_Player_Info &player_info) {
 
 	CACHED_CONNECTION.update("mmo.role", MONGO_QUERY("role_id" << (long long int)player_info.role_id),
 			BSON("$set" << builder.obj()), true);
+
+	return 0;
+}
+
+int DB_Operator::load_hero_info(Hero_Info &hero_info) {
+	BSONObj res = CACHED_CONNECTION.findOne("mmo.hero",
+			MONGO_QUERY("role_id" << (long long int)hero_info.role_id));
+	if (res.isEmpty()) {
+		return -1;
+	}
+
+	BSONObjIterator iter(res.getObjectField("hero_detail"));
+	BSONObj obj;
+	while (iter.more()){
+		obj = iter.next().embeddedObject();
+		Hero_Detail hero_detail;
+		hero_detail.hero_id = obj["hero_id"].numberInt();
+		hero_detail.level = obj["level"].numberInt();
+		hero_detail.exp = obj["exp"].numberInt();
+		hero_detail.star = obj["star"].numberInt();
+		hero_detail.quality = obj["quality"].numberInt();
+		hero_detail.power = obj["power"].numberInt();
+		hero_detail.brains = obj["brains"].numberInt();
+		hero_detail.agile = obj["agile"].numberInt();
+
+		hero_info.hero_map.insert(std::make_pair(hero_detail.hero_id, hero_detail));
+	}
+	return 0;
+}
+
+int DB_Operator::save_hero_info(Hero_Info &hero_info) {
+	std::vector<BSONObj> hero_vec;
+	BSONObj obj;
+	for (Hero_Info::Hero_Map::const_iterator iter = hero_info.hero_map.begin(); iter != hero_info.hero_map.end(); ++iter) {
+		hero_vec.push_back(BSON("hero_id" << iter->second.hero_id
+				<< "level" << iter->second.level
+				<< "exp" << iter->second.exp
+				<< "star" << iter->second.star
+				<< "quality" << iter->second.quality
+				<< "power" << iter->second.power
+				<< "brains" << iter->second.brains
+				<< "agile" << iter->second.agile));
+		hero_vec.push_back(obj);
+	}
+
+	BSONObjBuilder tmp_builder;
+	tmp_builder << "hero_detail" << hero_vec;
+
+	CACHED_CONNECTION.update("mmo.hero", MONGO_QUERY("role_id" << (long long int)hero_info.role_id),
+			BSON("$set" << tmp_builder.obj()), true);
 
 	return 0;
 }
@@ -399,10 +449,10 @@ int DB_Operator::load_mail_info(Mail_Info &mail_info) {
 }
 
 int DB_Operator::save_mail_info(Mail_Info &mail_info) {
-	std::vector<BSONObj> mail_vector;
+	std::vector<BSONObj> mail_vec;
 	for (Mail_Info::Mail_Map::const_iterator iter = mail_info.mail_map.begin();
 			iter != mail_info.mail_map.end(); iter++) {
-		mail_vector.push_back(BSON("mail_id" << iter->second.mail_id
+		mail_vec.push_back(BSON("mail_id" << iter->second.mail_id
 				<< "pickup" << iter->second.pickup
 				<< "send_time" << iter->second.send_time
 				<< "sender_type" << iter->second.sender_type
@@ -416,7 +466,7 @@ int DB_Operator::save_mail_info(Mail_Info &mail_info) {
 
 	BSONObjBuilder set_builder;
 	set_builder << "total_count" << mail_info.total_count
-			<< "mail_detail" << mail_vector;
+			<< "mail_detail" << mail_vec;
 
 	CACHED_CONNECTION.update("mmo.mail", MONGO_QUERY("role_id" << (long long int)mail_info.role_id),
 			BSON("$set" << set_builder.obj() ), true);

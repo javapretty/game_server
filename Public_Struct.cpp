@@ -115,7 +115,7 @@ int Game_Player_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(agent_num);
 	buffer.write_int32(server_num);
 	buffer.write_int32(level);
-	buffer.write_int32(experience);
+	buffer.write_int32(exp);
 	buffer.write_int32(gender);
 	buffer.write_int32(career);
 	buffer.write_int32(create_time);
@@ -136,7 +136,7 @@ int Game_Player_Info::deserialize(Block_Buffer &buffer) {
 	agent_num = buffer.read_int32();
 	server_num = buffer.read_int32();
 	level = buffer.read_int32();
-	experience = buffer.read_int32();
+	exp = buffer.read_int32();
 	gender = buffer.read_int32();
 	career = buffer.read_int32();
 	create_time = buffer.read_int32();
@@ -165,7 +165,7 @@ void Game_Player_Info::reset(void) {
 	agent_num = 0;
 	server_num = 0;
 	level = 0;
-	experience = 0;
+	exp = 0;
 	gender = 0;
 	career = 0;
 	create_time = 0;
@@ -177,16 +177,52 @@ void Game_Player_Info::reset(void) {
 	is_change = false;
 }
 
+Hero_Info::Hero_Info(void) { reset(); }
+
+int Hero_Info::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(role_id);
+
+	buffer.write_uint16(hero_map.size());
+	for (Hero_Map::const_iterator it = hero_map.begin(); it != hero_map.end(); ++it) {
+		it->second.serialize(buffer);
+	}
+	buffer.write_bool(is_change);
+	return 0;
+}
+
+int Hero_Info::deserialize(Block_Buffer &buffer) {
+	role_id = buffer.read_int64();
+
+	uint16_t size = buffer.read_uint16();
+	Hero_Detail hero_detail;
+	for (int i = 0; i < size; ++i) {
+		hero_detail.deserialize(buffer);
+		hero_map[hero_detail.hero_id] = hero_detail;
+	}
+	is_change = buffer.read_bool();
+	return 0;
+}
+
+int Hero_Info::load(void) {
+	return CACHED_INSTANCE->load_hero_info(*this);
+}
+
+int Hero_Info::save(void) {
+	if (is_change)
+		return CACHED_INSTANCE->save_hero_info(*this);
+	else
+		return 0;
+}
+
+void Hero_Info::reset(void) {
+	role_id = 0;
+	hero_map.clear();
+	is_change = false;
+}
+
 Item_Info::Item_Info(void) {
 	reset();
 }
-
-Item_Info::Item_Info(const Item_Basic_Info &item) {
-	reset();
-	item_basic = item;
-}
-
-Item_Info::~Item_Info() {}
 
 int Item_Info::serialize(Block_Buffer &buffer) const {
 	item_basic.serialize(buffer);
@@ -209,8 +245,7 @@ int Bag_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(copper);
 	buffer.write_int32(gold);
 
-	uint16_t item_size = item_map.size();
-	buffer.write_uint16(item_size);
+	buffer.write_uint16(item_map.size());
 	for (Item_Map::const_iterator it = item_map.begin(); it != item_map.end(); ++it) {
 		it->second.serialize(buffer);
 	}
@@ -223,11 +258,11 @@ int Bag_Info::deserialize(Block_Buffer &buffer) {
 	copper = buffer.read_int32();
 	gold = buffer.read_int32();
 
-	uint16_t item_size = buffer.read_uint16();
-	for (int i = 0; i < item_size; ++i) {
-		Item_Info item;
-		item.deserialize(buffer);
-		item_map[item.item_basic.id] = item;
+	uint16_t size = buffer.read_uint16();
+	Item_Info item_info;
+	for (int i = 0; i < size; ++i) {
+		item_info.deserialize(buffer);
+		item_map[item_info.item_basic.id] = item_info;
 	}
 	is_change = buffer.read_bool();
 	return 0;
@@ -272,9 +307,9 @@ int Mail_Info::deserialize(Block_Buffer &buffer) {
 	role_id = buffer.read_int64();
 	total_count = buffer.read_int32();
 
-	uint16_t n = buffer.read_uint16();
+	uint16_t size = buffer.read_uint16();
 	Mail_Detail mail_detail;
-	for (int16_t i = 0; i < n; ++i) {
+	for (int16_t i = 0; i < size; ++i) {
 		mail_detail.deserialize(buffer);
 		mail_map.insert(std::make_pair(mail_detail.mail_id, mail_detail));
 	}

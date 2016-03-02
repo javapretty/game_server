@@ -22,6 +22,10 @@ if (typeof msg_req == "undefined") {
 	msg_req.REQ_PICKUP_MAIL 									= 	120201;	//收取附件和金钱
 	msg_req.REQ_DEL_MAIL 											= 	120202;	//删除邮件
 	msg_req.REQ_SEND_MAIL 										= 	120203;	//发送邮件
+	
+	msg_req.REQ_FETCH_HERO_INFO								=	120300;	//获取英雄信息
+	msg_req.REQ_ADD_HERO_STAR									=	120301;	//提高英雄星级
+	msg_req.REQ_ADD_HERO_QUALITY								= 120302;	//提高英雄品质
 }
 
 if (typeof msg_res == "undefined") {
@@ -37,6 +41,10 @@ if (typeof msg_res == "undefined") {
 	msg_res.RES_PICKUP_MAIL 									=	520201;	//收取附件(返回)
 	msg_res.RES_DEL_MAIL 											= 	520202;	//删除邮件(返回)
 	msg_res.RES_SEND_MAIL 										= 	520203;	//发送邮件(返回)
+	
+	msg_res.RES_FETCH_HERO_INFO								=	520300;	//获取英雄信息(返回)
+	msg_res.RES_ADD_HERO_STAR									=	520301;	//提高英雄星级(返回)
+	msg_res.RES_ADD_HERO_QUALITY								= 520302;	//提高英雄品质(返回)
 }
 
 if (typeof msg_active == "undefined") {

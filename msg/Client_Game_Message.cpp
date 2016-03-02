@@ -110,46 +110,6 @@ int MSG_120100::deserialize(Block_Buffer &buffer) {
 void MSG_120100::reset(){
 }
 
-MSG_120101::MSG_120101(void){
-	reset();
-}
-
-void MSG_120101::serialize(Block_Buffer &buffer) const {
-	buffer.write_int32(item_id);
-	buffer.write_int32(item_amount);
-}
-
-int MSG_120101::deserialize(Block_Buffer &buffer) {
-	item_id = buffer.read_int32();
-	item_amount = buffer.read_int32();
-	return 0;
-}
-
-void MSG_120101::reset(){
-	item_id = 0;
-	item_amount = 0;
-}
-
-MSG_120102::MSG_120102(void){
-	reset();
-}
-
-void MSG_120102::serialize(Block_Buffer &buffer) const {
-	buffer.write_int32(item_id);
-	buffer.write_int32(item_amount);
-}
-
-int MSG_120102::deserialize(Block_Buffer &buffer) {
-	item_id = buffer.read_int32();
-	item_amount = buffer.read_int32();
-	return 0;
-}
-
-void MSG_120102::reset(){
-	item_id = 0;
-	item_amount = 0;
-}
-
 MSG_520100::MSG_520100(void){
 	reset();
 }
@@ -179,6 +139,26 @@ void MSG_520100::reset(){
 	item_info_vec.clear();
 }
 
+MSG_120101::MSG_120101(void){
+	reset();
+}
+
+void MSG_120101::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(item_id);
+	buffer.write_int32(item_amount);
+}
+
+int MSG_120101::deserialize(Block_Buffer &buffer) {
+	item_id = buffer.read_int32();
+	item_amount = buffer.read_int32();
+	return 0;
+}
+
+void MSG_120101::reset(){
+	item_id = 0;
+	item_amount = 0;
+}
+
 MSG_520101::MSG_520101(void){
 	reset();
 }
@@ -191,6 +171,26 @@ int MSG_520101::deserialize(Block_Buffer &buffer) {
 }
 
 void MSG_520101::reset(){
+}
+
+MSG_120102::MSG_120102(void){
+	reset();
+}
+
+void MSG_120102::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(item_id);
+	buffer.write_int32(item_amount);
+}
+
+int MSG_120102::deserialize(Block_Buffer &buffer) {
+	item_id = buffer.read_int32();
+	item_amount = buffer.read_int32();
+	return 0;
+}
+
+void MSG_120102::reset(){
+	item_id = 0;
+	item_amount = 0;
 }
 
 MSG_520102::MSG_520102(void){
@@ -219,60 +219,6 @@ int MSG_120200::deserialize(Block_Buffer &buffer) {
 }
 
 void MSG_120200::reset(){
-}
-
-MSG_120201::MSG_120201(void){
-	reset();
-}
-
-void MSG_120201::serialize(Block_Buffer &buffer) const {
-	buffer.write_int32(mail_id);
-}
-
-int MSG_120201::deserialize(Block_Buffer &buffer) {
-	mail_id = buffer.read_int32();
-	return 0;
-}
-
-void MSG_120201::reset(){
-	mail_id = 0;
-}
-
-MSG_120202::MSG_120202(void){
-	reset();
-}
-
-void MSG_120202::serialize(Block_Buffer &buffer) const {
-	buffer.write_int32(mail_id);
-}
-
-int MSG_120202::deserialize(Block_Buffer &buffer) {
-	mail_id = buffer.read_int32();
-	return 0;
-}
-
-void MSG_120202::reset(){
-	mail_id = 0;
-}
-
-MSG_120203::MSG_120203(void){
-	reset();
-}
-
-void MSG_120203::serialize(Block_Buffer &buffer) const {
-	buffer.write_string(receiver_name);
-	mail_detail.serialize(buffer);
-}
-
-int MSG_120203::deserialize(Block_Buffer &buffer) {
-	receiver_name = buffer.read_string();
-	mail_detail.deserialize(buffer);
-	return 0;
-}
-
-void MSG_120203::reset(){
-	receiver_name.clear();
-	mail_detail.reset();
 }
 
 MSG_520200::MSG_520200(void){
@@ -304,6 +250,23 @@ void MSG_520200::reset(){
 	mail_detail_vec.clear();
 }
 
+MSG_120201::MSG_120201(void){
+	reset();
+}
+
+void MSG_120201::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(mail_id);
+}
+
+int MSG_120201::deserialize(Block_Buffer &buffer) {
+	mail_id = buffer.read_int32();
+	return 0;
+}
+
+void MSG_120201::reset(){
+	mail_id = 0;
+}
+
 MSG_520201::MSG_520201(void){
 	reset();
 }
@@ -328,6 +291,23 @@ int MSG_520201::deserialize(Block_Buffer &buffer) {
 
 void MSG_520201::reset(){
 	mail_id_vec.clear();
+}
+
+MSG_120202::MSG_120202(void){
+	reset();
+}
+
+void MSG_120202::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(mail_id);
+}
+
+int MSG_120202::deserialize(Block_Buffer &buffer) {
+	mail_id = buffer.read_int32();
+	return 0;
+}
+
+void MSG_120202::reset(){
+	mail_id = 0;
 }
 
 MSG_520202::MSG_520202(void){
@@ -356,6 +336,26 @@ void MSG_520202::reset(){
 	mail_id_vec.clear();
 }
 
+MSG_120203::MSG_120203(void){
+	reset();
+}
+
+void MSG_120203::serialize(Block_Buffer &buffer) const {
+	buffer.write_string(receiver_name);
+	mail_detail.serialize(buffer);
+}
+
+int MSG_120203::deserialize(Block_Buffer &buffer) {
+	receiver_name = buffer.read_string();
+	mail_detail.deserialize(buffer);
+	return 0;
+}
+
+void MSG_120203::reset(){
+	receiver_name.clear();
+	mail_detail.reset();
+}
+
 MSG_520203::MSG_520203(void){
 	reset();
 }
@@ -368,4 +368,115 @@ int MSG_520203::deserialize(Block_Buffer &buffer) {
 }
 
 void MSG_520203::reset(){
+}
+
+MSG_120300::MSG_120300(void){
+	reset();
+}
+
+void MSG_120300::serialize(Block_Buffer &buffer) const {
+}
+
+int MSG_120300::deserialize(Block_Buffer &buffer) {
+	return 0;
+}
+
+void MSG_120300::reset(){
+}
+
+MSG_520300::MSG_520300(void){
+	reset();
+}
+
+void MSG_520300::serialize(Block_Buffer &buffer) const {
+	uint16_t __hero_detail_vec_vec_size = hero_detail_vec.size();
+	buffer.write_uint16(__hero_detail_vec_vec_size);
+	for(uint16_t i = 0; i < __hero_detail_vec_vec_size; ++i) {
+		hero_detail_vec[i].serialize(buffer);
+	}
+
+}
+
+int MSG_520300::deserialize(Block_Buffer &buffer) {
+	uint16_t __hero_detail_vec_vec_size = buffer.read_uint16();
+	Hero_Detail v;
+	for(uint16_t i = 0; i < __hero_detail_vec_vec_size; ++i) {
+		if(v.deserialize(buffer))
+			return -1;
+		hero_detail_vec.push_back(v);
+	}
+
+	return 0;
+}
+
+void MSG_520300::reset(){
+	hero_detail_vec.clear();
+}
+
+MSG_120301::MSG_120301(void){
+	reset();
+}
+
+void MSG_120301::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(hero_id);
+}
+
+int MSG_120301::deserialize(Block_Buffer &buffer) {
+	hero_id = buffer.read_int32();
+	return 0;
+}
+
+void MSG_120301::reset(){
+	hero_id = 0;
+}
+
+MSG_520301::MSG_520301(void){
+	reset();
+}
+
+void MSG_520301::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(star);
+}
+
+int MSG_520301::deserialize(Block_Buffer &buffer) {
+	star = buffer.read_int32();
+	return 0;
+}
+
+void MSG_520301::reset(){
+	star = 0;
+}
+
+MSG_120302::MSG_120302(void){
+	reset();
+}
+
+void MSG_120302::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(hero_id);
+}
+
+int MSG_120302::deserialize(Block_Buffer &buffer) {
+	hero_id = buffer.read_int32();
+	return 0;
+}
+
+void MSG_120302::reset(){
+	hero_id = 0;
+}
+
+MSG_520302::MSG_520302(void){
+	reset();
+}
+
+void MSG_520302::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(quality);
+}
+
+int MSG_520302::deserialize(Block_Buffer &buffer) {
+	quality = buffer.read_int32();
+	return 0;
+}
+
+void MSG_520302::reset(){
+	quality = 0;
 }

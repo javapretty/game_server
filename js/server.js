@@ -11,6 +11,7 @@ require('message.js');
 require('map.js');
 require('struct.js');
 require('player.js');
+require('hero.js');
 require('bag.js');
 require('mail.js');
 
@@ -88,6 +89,15 @@ function process_client_buffer(buffer) {
 				break;
 			case msg_req.REQ_SEND_MAIL:
 				player.mail.send_mail(buffer);
+				break;
+			case msg_req.REQ_FETCH_HERO_INFO:
+				player.hero.fetch_hero_info(buffer);
+				break;
+			case msg_req.REQ_ADD_HERO_STAR:
+				player.hero.add_hero_star(buffer);
+				break;
+			case msg_req.REQ_ADD_HERO_QUALITY:
+				player.hero.add_hero_quality(buffer);
 				break;
 			default:
 				break;

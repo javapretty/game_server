@@ -10,11 +10,6 @@ struct MSG_120001 {
 	int32_t server_num;
 };
 
-/*
-获取角色信息(返回)
-备注：
-状态：0：有角色，1：无角色
-*/
 struct MSG_520001 {
 	Role_Info role_info;
 };
@@ -23,16 +18,13 @@ struct MSG_520001 {
 创建角色
 */
 struct MSG_120002 {
-	std::string account;/**/
-	std::string role_name;/**/
-	uint8_t gender;/*0 女，1 男*/
-	int32_t agent_num;/*平台*/
-	int32_t server_num;/*服*/
+	std::string account;
+	std::string role_name;
+	uint8_t gender;			/*0 女，1 男*/
+	int32_t agent_num;	/*平台*/
+	int32_t server_num;	/*服*/
 };
 
-/*
-创建角色(返回)
-*/
 struct MSG_520002 {
 	int64_t role_id;
 };
@@ -43,12 +35,19 @@ struct MSG_520002 {
 struct MSG_120100 {
 };
 
+struct MSG_520100 {
+	std::vector<Item_Basic_Info> item_info_vec;
+};
+
 /*
 使用物品
 */
 struct MSG_120101 {
 	int32_t item_id;			//物品id
 	int32_t item_amount;	//物品数量
+};
+
+struct MSG_520101 {
 };
 
 /*
@@ -59,22 +58,6 @@ struct MSG_120102 {
 	int32_t item_amount;	//物品数量
 };
 
-/*
-获取背包信息(返回)
-*/
-struct MSG_520100 {
-	std::vector<Item_Basic_Info> item_info_vec;
-};
-
-/*
-使用物品容量(返回)
-*/
-struct MSG_520101 {
-};
-
-/*
-出售物品(返回)
-*/
 struct MSG_520102 {
 };
 
@@ -84,6 +67,10 @@ struct MSG_520102 {
 struct MSG_120200 {
 };
 
+struct MSG_520200 {
+	std::vector<Mail_Detail> mail_detail_vec;
+};
+
 /*
 收取附件
 */
@@ -91,11 +78,19 @@ struct MSG_120201 {
 	int32_t mail_id;	/*邮件ID,收取所有邮件附件时候id为0*/
 };
 
+struct MSG_520201 {
+	std::vector<int32_t> mail_id_vec;/*成功收取附件的邮件id*/
+};
+
 /*
 删除邮件
 */
 struct MSG_120202 {
 	int32_t mail_id;/*邮件ID,删除所有邮件时候id为0*/
+};
+
+struct MSG_520202 {
+	std::vector<int32_t> mail_id_vec;/*删除的邮件ID数组*/
 };
 
 /*
@@ -106,30 +101,38 @@ struct MSG_120203 {
 	Mail_Detail mail_detail;
 };
 
-/*
-获取邮件列表(返回)
-*/
-struct MSG_520200 {
-	std::vector<Mail_Detail> mail_detail_vec;
-};
-
-/*
-收取附件(返回)
-*/
-struct MSG_520201 {
-	std::vector<int32_t> mail_id_vec;/*成功收取附件的邮件id*/
-};
-
-
-/*
-删除邮件(返回)
-*/
-struct MSG_520202 {
-	std::vector<int32_t> mail_id_vec;/*删除的邮件ID数组*/
-};
-
-/*
-发送邮件(返回)
-*/
 struct MSG_520203 {
 };
+
+/*
+获取英雄信息
+*/
+struct MSG_120300 {
+};
+
+struct MSG_520300 {
+	std::vector<Hero_Detail> hero_detail_vec;
+};
+
+/*
+提高英雄星级
+*/
+struct MSG_120301 {
+	int32_t hero_id;
+};
+
+struct MSG_520301 {	
+	int32_t star;			//英雄星级
+};
+
+/*
+提高英雄品质
+*/
+struct MSG_120302 {
+	int32_t hero_id;
+};
+
+struct MSG_520302 {
+	int32_t quality;		//英雄品质等级
+};
+

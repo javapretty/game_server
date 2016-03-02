@@ -80,6 +80,10 @@ enum Client_Game_Message {
 	REQ_PICKUP_MAIL 									= 120201,	//收取附件和金钱
 	REQ_DEL_MAIL 											= 120202,	//删除邮件
 	REQ_SEND_MAIL 										= 120203,	//发送邮件
+
+	REQ_FETCH_HERO_INFO								=	120300,	//获取英雄信息
+	REQ_ADD_HERO_STAR									=	120301,	//提高英雄星级
+	REQ_ADD_HERO_QUALITY							= 120302,	//提高英雄品质
 };
 
 enum Game_Client_Message {
@@ -94,6 +98,10 @@ enum Game_Client_Message {
 	RES_PICKUP_MAIL 									=	520201,	//收取附件(返回)
 	RES_DEL_MAIL 											= 520202,	//删除邮件(返回)
 	RES_SEND_MAIL 										= 520203,	//发送邮件(返回)
+
+	RES_FETCH_HERO_INFO								=	520300,	//获取英雄信息(返回)
+	RES_ADD_HERO_STAR									=	520301,	//提高英雄星级(返回)
+	RES_ADD_HERO_QUALITY							= 520302,	//提高英雄品质(返回)
 };
 
 //此次包含login,game,chat,master与gate通信的消息

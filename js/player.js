@@ -10,6 +10,7 @@ function Player() {
 	this.cid = 0;
 	this.cplayer = null;
 	this.player_info = new Player_Info();
+	this.hero = new Hero();
 	this.bag = new Bag();
 	this.mail = new Mail();
 
@@ -23,6 +24,7 @@ function Player() {
 		this.cid = gate_cid * 10000 + player_cid;
 		this.cplayer = get_player_by_cid(gate_cid, player_cid);
 		this.player_info.deserialize(buffer);
+		this.hero.load_data(this, buffer);
 		this.bag.load_data(this, buffer);
 		this.mail.load_data(this, buffer);
 		print('------load_data,role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name);
@@ -38,6 +40,7 @@ function Player() {
 		}
 		
 		this.player_info.serialize(buffer);
+		this.hero.save_data(buffer);
 		this.bag.save_data(buffer);
 		this.mail.save_data(buffer);
 		print('------save_data,role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name);

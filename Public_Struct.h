@@ -177,7 +177,7 @@ struct Game_Player_Info {
 	int agent_num;						//平台编号
 	int server_num;						//服务器编号
 	int level;     			   		//玩家等级
-	int experience;						//玩家经验
+	int exp;									//玩家经验
 	int gender; 							//0(女),1(男)
 	int career; 							//职业1-3
 	int create_time;					//创建角色时刻
@@ -197,11 +197,24 @@ struct Game_Player_Info {
 	inline void save_change(void) { is_change = true; };
 };
 
+struct Hero_Info {
+	typedef boost::unordered_map<int32_t, Hero_Detail> Hero_Map;
+
+	Hero_Info();
+	int serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	int load(void);
+	int save(void);
+	void reset(void);
+	inline void save_change(void) { is_change = true; };
+
+	int64_t role_id;
+	Hero_Map hero_map;
+	bool is_change;
+};
+
 struct Item_Info {
 	Item_Info(void);
-	explicit Item_Info(const Item_Basic_Info &item);
-	virtual ~Item_Info();
-
 	int serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

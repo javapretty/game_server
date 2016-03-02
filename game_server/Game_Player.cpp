@@ -185,12 +185,15 @@ int Game_Player::respond_role_login(void) {
 	msg.role_info.role_id = player_data_.game_player_info.role_id;
 	msg.role_info.account = player_data_.game_player_info.account;
 	msg.role_info.role_name = player_data_.game_player_info.role_name;
+	msg.role_info.level = player_data_.game_player_info.level;
+	msg.role_info.exp = player_data_.game_player_info.exp;
 	msg.role_info.career = player_data_.game_player_info.career;
 	msg.role_info.gender = player_data_.game_player_info.gender;
-	msg.role_info.level = player_data_.game_player_info.level;
+	msg.role_info.vitality = player_data_.game_player_info.vitality;
+	msg.role_info.vip = player_data_.game_player_info.vip;
+	msg.role_info.charge_gold = player_data_.game_player_info.charge_gold;
 
 	Block_Buffer buf;
-	buf.reset();
 	buf.make_player_message(RES_FETCH_ROLE_INFO, 0, cid_info_.player_cid);
 	msg.serialize(buf);
 	buf.finish_message();

@@ -14,7 +14,7 @@ function Player_Info() {
 	this.agent_num = 0;						//平台编号
 	this.server_num = 0;					//服务器编号
 	this.level = 0;     			  		//玩家等级
-	this.experience = 0;					//玩家经验
+	this.exp = 0;									//玩家经验
 	this.gender = 0; 							//0(女),1(男)
 	this.career = 0; 							//职业1-3
 	this.create_time = 0;					//创建角色时刻
@@ -33,7 +33,7 @@ function Player_Info() {
 		buffer.write_int32(this.agent_num);
 		buffer.write_int32(this.server_num);
 		buffer.write_int32(this.level);
-		buffer.write_int32(this.experience);
+		buffer.write_int32(this.exp);
 		buffer.write_uint32(this.gender);
 		buffer.write_uint32(this.career);
 		buffer.write_int32(this.create_time);
@@ -53,7 +53,7 @@ function Player_Info() {
 		this.agent_num = buffer.read_int32();
 		this.server_num = buffer.read_int32();
 		this.level = buffer.read_int32();
-		this.experience = buffer.read_int32();
+		this.exp = buffer.read_int32();
 		this.gender = buffer.read_int32();
 		this.career = buffer.read_int32();
 		this.create_time = buffer.read_int32();
@@ -62,6 +62,68 @@ function Player_Info() {
 		this.vitality = buffer.read_int32();
 		this.vip = buffer.read_int32();
 		this.charge_gold = buffer.read_int32();
+		this.is_change = buffer.read_bool();
+	}
+	
+	this.save_change = function() {
+		this.is_change = true;
+	}
+}
+
+function Hero_Detail() {
+	this.hero_id = 0;				//	英雄id
+	this.level = 0;					//英雄等级
+	this.exp = 0;						//英雄经验
+	this.star = 0;					//英雄星级
+	this.quality = 0;				//英雄品质级别
+	this.power = 0;					//力量
+	this.brains = 0;				//智力
+	this.agile = 0;					//敏捷
+	
+	this.serialize = function(buffer) {
+		buffer.write_int32(this.hero_id);
+		buffer.write_int32(this.level);
+		buffer.write_int32(this.exp);
+		buffer.write_int32(this.star);
+		buffer.write_int32(this.power);
+		buffer.write_int32(this.brains);
+		buffer.write_int32(this.agile);
+	}
+	
+	this.deserialize = function(buffer) {
+		this.hero_id = buffer.read_int32();
+		this.level = buffer.read_int32();
+		this.exp = buffer.read_int32();
+		this.star = buffer.read_int32();
+		this.quality = buffer.read_int32();
+		this.power = buffer.read_int32();
+		this.brains = buffer.read_int32();
+		this.agile = buffer.read_int32();
+	}
+}
+
+function Hero_Info() {
+	this.role_id = 0;							//角色ID
+	this.hero_map = new Map();			//英雄信息
+	this.is_change = false;				//数据是否改变
+	
+	this.serialize = function(buffer) {
+		buffer.write_int64(this.role_id);
+		buffer.write_uint16(this.hero_map.size());
+		this.hero_map.each(function(key,value,index) {
+			value.serialize(buffer);
+     	});
+		buffer.write_bool(this.is_change);
+	}
+	
+	this.deserialize = function(buffer) {
+		this.role_id = buffer.read_int64();
+		var len = buffer.read_uint16();
+		for (var i = 0; i < len; ++i) {
+			var hero_detail = new Hero_Detail();
+			hero_detail.deserialize(buffer);
+			this.hero_map.put(hero_detail.hero_id, hero_detail);
+		}
 		this.is_change = buffer.read_bool();
 	}
 	
