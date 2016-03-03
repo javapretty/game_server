@@ -59,14 +59,16 @@ int Game_Player::load_player(Player_Data &player_data) {
 }
 
 int Game_Player::save_player(bool is_logout) {
+	if (is_logout) {
+		player_data_.status = Player_Data::ROLE_SAVE_OFFLINE;
+	} else {
+		if (player_data_.change_set.size() <= 0) {
+			return -1;
+		}
+	}
+
 	MSG_150003 msg;
 	msg.player_data = player_data_;
-	if (!is_logout && !msg.player_data.can_save()) {
-		return -1;
-	}
-	if (is_logout) {
-		msg.player_data.status = Player_Data::ROLE_SAVE_OFFLINE;
-	}
 	Block_Buffer buf;
 	buf.make_inner_message(SYNC_GAME_DB_SAVE_PLAYER_INFO);
 	msg.serialize(buf);
@@ -77,7 +79,6 @@ int Game_Player::save_player(bool is_logout) {
 	if (is_logout) {
 		GAME_MANAGER->saving_map().insert(std::make_pair(player_data_.player_info.role_id, Saving_Info(player_data_.player_info.role_id, Time_Value::gettimeofday())));
 	}
-
 	return 0;
 }
 

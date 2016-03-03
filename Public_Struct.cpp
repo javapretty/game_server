@@ -124,7 +124,6 @@ int Game_Player_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(vitality);
 	buffer.write_int32(vip);
 	buffer.write_int32(charge_gold);
-	buffer.write_bool(is_change);
 	return 0;
 }
 
@@ -145,7 +144,6 @@ int Game_Player_Info::deserialize(Block_Buffer &buffer) {
 	vitality = buffer.read_int32();
 	vip = buffer.read_int32();
 	charge_gold = buffer.read_int32();
-	is_change = buffer.read_bool();
 	return 0;
 }
 
@@ -166,7 +164,6 @@ void Game_Player_Info::reset(void) {
 	vitality = 0;
 	vip = 0;
 	charge_gold = 0;
-	is_change = false;
 }
 
 Hero_Info::Hero_Info(void) { reset(); }
@@ -176,7 +173,6 @@ int Hero_Info::serialize(Block_Buffer &buffer) const {
 	for (Hero_Map::const_iterator it = hero_map.begin(); it != hero_map.end(); ++it) {
 		it->second.serialize(buffer);
 	}
-	buffer.write_bool(is_change);
 	return 0;
 }
 
@@ -187,13 +183,11 @@ int Hero_Info::deserialize(Block_Buffer &buffer) {
 		hero_detail.deserialize(buffer);
 		hero_map[hero_detail.hero_id] = hero_detail;
 	}
-	is_change = buffer.read_bool();
 	return 0;
 }
 
 void Hero_Info::reset(void) {
 	hero_map.clear();
-	is_change = false;
 }
 
 Item_Info::Item_Info(void) {
@@ -224,7 +218,6 @@ int Bag_Info::serialize(Block_Buffer &buffer) const {
 	for (Item_Map::const_iterator it = item_map.begin(); it != item_map.end(); ++it) {
 		it->second.serialize(buffer);
 	}
-	buffer.write_bool(is_change);
 	return 0;
 }
 
@@ -238,7 +231,6 @@ int Bag_Info::deserialize(Block_Buffer &buffer) {
 		item_info.deserialize(buffer);
 		item_map[item_info.item_basic.id] = item_info;
 	}
-	is_change = buffer.read_bool();
 	return 0;
 }
 
@@ -246,7 +238,6 @@ void Bag_Info::reset(void) {
 	copper = 0;
 	gold = 0;
 	item_map.clear();
-	is_change = false;
 }
 
 Mail_Info::Mail_Info() { reset(); }
@@ -259,8 +250,6 @@ int Mail_Info::serialize(Block_Buffer &buffer) const {
 			it != mail_map.end(); ++it) {
 		it->second.serialize(buffer);
 	}
-
-	buffer.write_bool(is_change);
 	return 0;
 }
 
@@ -273,15 +262,12 @@ int Mail_Info::deserialize(Block_Buffer &buffer) {
 		mail_detail.deserialize(buffer);
 		mail_map.insert(std::make_pair(mail_detail.mail_id, mail_detail));
 	}
-
-	is_change = buffer.read_bool();
 	return 0;
 }
 
 void Mail_Info::reset(void) {
 	total_count = 0;
 	mail_map.clear();
-	is_change = false;
 }
 
 Player_Data::Player_Data(void) { reset(); }
@@ -289,6 +275,11 @@ Player_Data::Player_Data(void) { reset(); }
 int Player_Data::serialize(Block_Buffer &buffer) const {
 	buffer.write_int8(status);
 
+	buffer.write_uint16(change_set.size());
+	for(Change_Set::const_iterator it = change_set.begin();
+			it != change_set.end(); ++it) {
+		buffer.write_int32(*it);
+	}
 	player_info.serialize(buffer);
 	hero_info.serialize(buffer);
 	bag_info.serialize(buffer);
@@ -299,6 +290,12 @@ int Player_Data::serialize(Block_Buffer &buffer) const {
 int Player_Data::deserialize(Block_Buffer &buffer) {
 	status = buffer.read_int8();
 
+	uint16_t size = buffer.read_uint16();
+	int change_id = 0;
+	for (int16_t i = 0; i < size; ++i) {
+		change_id = buffer.read_int32();
+		change_set.insert(change_id);
+	}
 	player_info.deserialize(buffer);
 	hero_info.deserialize(buffer);
 	bag_info.deserialize(buffer);
@@ -315,15 +312,28 @@ int Player_Data::load(int64_t role_id) {
 }
 
 int Player_Data::save(void) {
-	CACHED_INSTANCE->save_player_info(player_info.role_id, player_info);
-	CACHED_INSTANCE->save_hero_info(player_info.role_id, hero_info);
-	CACHED_INSTANCE->save_bag_info(player_info.role_id, bag_info);
-	CACHED_INSTANCE->save_mail_info(player_info.role_id, mail_info);
+	for (Change_Set::iterator it = change_set.begin(); it != change_set.end(); ++it) {
+		switch(*it) {
+		case PLAYER_CHANGE:
+			CACHED_INSTANCE->save_player_info(player_info.role_id, player_info);
+			break;
+		case HERO_CHANGE:
+			CACHED_INSTANCE->save_hero_info(player_info.role_id, hero_info);
+			break;
+		case BAG_CHANGE:
+			CACHED_INSTANCE->save_bag_info(player_info.role_id, bag_info);
+			break;
+		case MAIL_CHANGE:
+			CACHED_INSTANCE->save_mail_info(player_info.role_id, mail_info);
+			break;
+		}
+	}
 	return 0;
 }
 
 void Player_Data::reset(void) {
 	status =	NULL_STATUS;
+	change_set.clear();
 
 	player_info.reset();
 	hero_info.reset();
@@ -331,8 +341,18 @@ void Player_Data::reset(void) {
 	mail_info.reset();
 }
 
-bool Player_Data::can_save(void) {
-	return player_info.is_change || hero_info.is_change || bag_info.is_change || mail_info.is_change;
+void Player_Data::set_all_change(bool is_change) {
+	if (is_change) {
+		for (int i = CHANGE_FIRST + 1; i < CHANGE_END; ++i) {
+			change_set.insert(i);
+		}
+	} else {
+		change_set.clear();
+	}
+}
+
+void Player_Data::set_change(int change_id) {
+	change_set.insert(change_id);
 }
 
 int Player_DB_Cache::serialize(Block_Buffer &buffer) const {

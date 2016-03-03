@@ -7,6 +7,7 @@
 #ifndef PUBLIC_STURCT_H_
 #define PUBLIC_STURCT_H_
 
+#include "boost/unordered_set.hpp"
 #include "boost/unordered_map.hpp"
 #include "Time_Value.h"
 #include "Misc.h"
@@ -186,13 +187,11 @@ struct Game_Player_Info {
 	int vitality;							//玩家体力
 	int vip;									//vip等级
 	int charge_gold;					//总共充值的元宝数
-	bool is_change;
 
 	Game_Player_Info(void);
 	int serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
-	inline void save_change(void) { is_change = true; };
 };
 
 struct Hero_Info {
@@ -202,10 +201,8 @@ struct Hero_Info {
 	int serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
-	inline void save_change(void) { is_change = true; };
 
 	Hero_Map hero_map;
-	bool is_change;
 };
 
 struct Item_Info {
@@ -224,12 +221,10 @@ struct Bag_Info {
 	int serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
-	inline void save_change(void) { is_change = true; };
 
 	int32_t copper;
 	int32_t gold;
 	Item_Map item_map;
-	bool is_change;
 };
 
 struct Mail_Info {
@@ -237,17 +232,15 @@ struct Mail_Info {
 	int serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
-	void save_change(void) { is_change = true; };
 
 	typedef std::map<int, Mail_Detail> Mail_Map;	//邮件map要按照邮件id排序，不能改成unordered_map
 
 	int total_count; 			//邮件的总数量，即目前为止收到的所有邮件数
 	Mail_Map mail_map;
-	bool is_change;
 };
 
 struct Player_Data {
-	enum{
+	enum	{
 		NULL_STATUS,
 		SUCCESS_LOADED,			/// 加载成功
 		SUCCESS_CREATED,		/// 创建成功
@@ -256,19 +249,24 @@ struct Player_Data {
 		ROLE_SAVE_OFFLINE,	/// 角色下线保存
 	};
 
+	enum {
+		CHANGE_FIRST = 0,
+		PLAYER_CHANGE,
+		HERO_CHANGE,
+		BAG_CHANGE,
+		MAIL_CHANGE,
+		CHANGE_END
+	};
+
+	typedef boost::unordered_set<int> Change_Set;
+
 	int8_t status;
+	Change_Set change_set;
 
 	Game_Player_Info player_info;
 	Hero_Info hero_info;
 	Bag_Info bag_info;
 	Mail_Info mail_info;
-
-	void set_all_change(bool is_change) {
-		player_info.is_change = is_change;
-		hero_info.is_change = is_change;
-		bag_info.is_change = is_change;
-		mail_info.is_change = is_change;
-	}
 
 	Player_Data(void);
 	int serialize(Block_Buffer &buffer) const;
@@ -276,7 +274,8 @@ struct Player_Data {
 	int load(int64_t role_id);
 	int save(void);
 	void reset(void);
-	bool can_save(void);
+	void set_all_change(bool is_change);
+	void set_change(int change_id);
 };
 
 struct Player_DB_Cache {

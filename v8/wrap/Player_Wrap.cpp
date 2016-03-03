@@ -27,6 +27,9 @@ Local<Object> wrap_player(Isolate* isolate, Game_Player *player) {
 	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "player_data_buffer", NewStringType::kNormal).ToLocalChecked(),
 		                    FunctionTemplate::New(isolate, player_data_buffer)->GetFunction()) ;
 
+	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "set_player_data_change", NewStringType::kNormal).ToLocalChecked(),
+		                    FunctionTemplate::New(isolate, set_player_data_change)->GetFunction()) ;
+
 	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "respond_success_result", NewStringType::kNormal).ToLocalChecked(),
 	                    FunctionTemplate::New(isolate, respond_success_result)->GetFunction()) ;
 
@@ -167,6 +170,21 @@ void player_data_buffer(const FunctionCallbackInfo<Value>& args) {
 		//设置对象为空
 		args.GetReturnValue().SetNull();
 	}
+}
+
+void set_player_data_change(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 1) {
+		LOG_INFO("set_player_data_change args error, length: %d\n", args.Length());
+		return;
+	}
+
+	Game_Player *player = unwrap_player(args.Holder());
+	if (!player) {
+		return;
+	}
+
+	int change_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	player->player_data().set_change(change_id);
 }
 
 void respond_success_result(const FunctionCallbackInfo<Value>& args) {

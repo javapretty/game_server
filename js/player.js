@@ -23,6 +23,7 @@ function Player() {
 		var gate_cid = buffer.read_int32();
 		var player_cid = buffer.read_int32();
 		var status = buffer.read_int8();
+		var size = buffer.read_uint16();
 		this.player_info.deserialize(buffer);
 		this.hero.load_data(this, buffer);
 		this.bag.load_data(this, buffer);
@@ -43,7 +44,8 @@ function Player() {
 			return;
 		}
 		
-		buffer.write_int8(0);
+		buffer.write_int8(0);				//status
+		buffer.write_uint16(0);			//change_set size
 		this.player_info.serialize(buffer);
 		this.hero.save_data(buffer);
 		this.bag.save_data(buffer);

@@ -19,6 +19,10 @@ function Hero() {
 		this.hero_info.serialize(buffer);
 	}
 	
+	this.set_data_change = function() {
+		this.player.cplayer.set_player_data_change(data_change.HERO_CHANGE);
+	}
+	
 	this.fetch_hero_info = function() {
 		print('fetch_hero_info, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " msec:", msec());
 		
@@ -59,7 +63,7 @@ function Hero() {
     		return this.player.cplayer.respond_error_result(msg_res.RES_ADD_HERO_STAR, result);
     	}
     	hero_detail.star++;
-    	this.hero_info.save_change();
+    	this.set_data_change();
     	
 		var buf = pop_buffer();
 		buf.write_int32(hero_id);
@@ -72,6 +76,7 @@ function Hero() {
 		print('add_hero_quality, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " msec:", msec());
 		
 		var hero_id = buffer.read_int32();
+		this.set_data_change();
 
 		var buf = pop_buffer();
 		buf.write_int32(hero_id);

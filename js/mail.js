@@ -18,6 +18,10 @@ function Mail() {
 	this.save_data = function(buffer) {
 		this.mail_info.serialize(buffer);
 	}
+	
+	this.set_data_change = function() {
+		this.player.cplayer.set_player_data_change(data_change.MAIL_CHANGE);
+	}
 
 	this.fetch_mail_info = function() {
 		print('fetch_mail_info, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " msec:", msec());
@@ -63,7 +67,8 @@ function Mail() {
 		}
 		this.player.cplayer.respond_success_result(msg_res.RES_PICKUP_MAIL, buf);
 		push_buffer(buf);
-		this.mail_info.save_change();
+		
+		this.set_data_change();
 	}
 
 	this.delete_mail = function(buffer) {
@@ -100,7 +105,8 @@ function Mail() {
 		}
 		this.player.cplayer.respond_success_result(msg_res.RES_DEL_MAIL, buf);
 		push_buffer(buf);
-		this.mail_info.save_change();
+		
+		this.set_data_change();
 	}
 
 	this.send_mail = function(buffer) {
@@ -164,6 +170,8 @@ function send_mail_inner(receiver_id, mail_detail) {
 			mail_detail.serialize(buf);
 			receiver.cplayer.respond_success_result(msg_active.ACTIVE_RECEIVE_MAIL, buf);
 			push_buffer(buf);
+			
+			receiver.mail.set_data_change();
 		} else {
 			var buf = pop_buffer();
 			buf.make_inner_message(msg_db.SYNC_GAME_DB_SAVE_MAIL_INFO);

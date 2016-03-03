@@ -19,6 +19,10 @@ function Bag() {
 		this.bag_info.serialize(buffer);
 	}
 	
+	this.set_data_change = function() {
+		this.player.cplayer.set_player_data_change(data_change.BAG_CHANGE);
+	}
+	
 	this.fetch_bag_info = function() {
 		print('fetch_bag_info, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " msec:", msec());
 	
@@ -98,7 +102,7 @@ function Bag() {
 		buf.write_int32(this.bag_info.gold);
 		this.player.cplayer.respond_success_result(msg_active.ACTIVE_MONEY_INFO, buf);
 		push_buffer(buf);
-		this.bag_info.save_change();
+		this.set_data_change();
 	}
 	
 	this.bag_active_item = function() {
@@ -109,6 +113,6 @@ function Bag() {
     	});
 		this.player.cplayer.respond_success_result(msg_active.ACTIVE_ITEM_INFO, buf);
 		push_buffer(buf);
-		this.bag_info.save_change();
+		this.set_data_change();
 	}
 }

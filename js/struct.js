@@ -6,6 +6,14 @@
 *	tel:18268193219
 */
 
+if (typeof data_change == "undefined") {
+	var data_change = {};
+	data_change.PLAYER_CHANGE = 1;
+	data_change.HERO_CHANGE = 2;
+	data_change.BAG_CHANGE = 3;
+	data_change.MAIL_CHANGE = 4;
+}
+
 function Player_Info() {
 	this.role_id = 0;							//玩家id
 	this.account = "";						//玩家账号名
@@ -23,7 +31,6 @@ function Player_Info() {
 	this.vitality = 0;						//玩家体力
 	this.vip = 0;									//vip等级
 	this.charge_gold = 0;					//总共充值的元宝数
-	this.is_change = false;				//数据是否改变
 	
 	this.serialize = function(buffer) {
 		buffer.write_int64(this.role_id);
@@ -42,7 +49,6 @@ function Player_Info() {
 		buffer.write_int32(this.vitality);
 		buffer.write_int32(this.vip);
 		buffer.write_int32(this.charge_gold);
-		buffer.write_bool(this.is_change);
 	}
 	
 	this.deserialize = function(buffer) {
@@ -62,11 +68,6 @@ function Player_Info() {
 		this.vitality = buffer.read_int32();
 		this.vip = buffer.read_int32();
 		this.charge_gold = buffer.read_int32();
-		this.is_change = buffer.read_bool();
-	}
-	
-	this.save_change = function() {
-		this.is_change = true;
 	}
 }
 
@@ -105,14 +106,12 @@ function Hero_Detail() {
 
 function Hero_Info() {
 	this.hero_map = new Map();			//英雄信息
-	this.is_change = false;				//数据是否改变
 	
 	this.serialize = function(buffer) {
 		buffer.write_uint16(this.hero_map.size());
 		this.hero_map.each(function(key,value,index) {
 			value.serialize(buffer);
      	});
-		buffer.write_bool(this.is_change);
 	}
 	
 	this.deserialize = function(buffer) {
@@ -122,11 +121,6 @@ function Hero_Info() {
 			hero_detail.deserialize(buffer);
 			this.hero_map.put(hero_detail.hero_id, hero_detail);
 		}
-		this.is_change = buffer.read_bool();
-	}
-	
-	this.save_change = function() {
-		this.is_change = true;
 	}
 }
 
@@ -149,7 +143,6 @@ function Bag_Info() {
 	this.copper = 0; 						//铜钱
 	this.gold = 0;							//元宝
 	this.item_map = new Map();		//物品信息
-	this.is_change = false;			//数据是否改变
 	
 	this.serialize = function(buffer) {
 		buffer.write_int32(this.copper);
@@ -158,7 +151,6 @@ function Bag_Info() {
 		this.item_map.each(function(key,value,index) {
 			value.serialize(buffer);
      	});
-		buffer.write_bool(this.is_change);
 	}
 	
 	this.deserialize = function(buffer) {
@@ -170,11 +162,6 @@ function Bag_Info() {
 			item_info.deserialize(buffer);
 			this.mail_map.put(item_info.id, item_info);
 		}
-		this.is_change = buffer.read_bool();
-	}
-	
-	this.save_change = function() {
-		this.is_change = true;
 	}
 }
 
@@ -220,7 +207,6 @@ function Mail_Detail() {
 function Mail_Info() {
 	this.total_count = 0; 			//邮件的总数量，即目前为止收到的所有邮件数
 	this.mail_map = new Map();		//邮件信息
-	this.is_change = false;			//数据是否改变
 	
 	this.serialize = function(buffer) {
 		buffer.write_int32(this.total_count);
@@ -228,7 +214,6 @@ function Mail_Info() {
 		this.mail_map.each(function(key,value,index) {
 			value.serialize(buffer);
      	});
-		buffer.write_bool(this.is_change);
 	}
 	
 	this.deserialize = function(buffer) {
@@ -239,10 +224,5 @@ function Mail_Info() {
 			mail_detail.deserialize(buffer);
 			this.mail_map.put(mail_detail.mail_id, mail_detail);
 		}
-		this.is_change = buffer.read_bool();
-	}
-	
-	this.save_change = function() {
-		this.is_change = true;
 	}
 }
