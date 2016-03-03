@@ -9,7 +9,7 @@
 if (typeof msg_req == "undefined") {
 	var msg_req = {};
 	
-	msg_req.SYNC_GATE_GAME_PLAYER_SIGNOUT 					= 	113000;	//gate同步玩家掉线到game
+	msg_req.SYNC_GATE_GAME_PLAYER_SIGNOUT 			= 	140002;	//gate同步玩家掉线到game
 	
 	msg_req.REQ_FETCH_ROLE_INFO								=	120001;	//获取角色信息
 	msg_req.REQ_CREATE_ROLE 									= 	120002;	//创建角色

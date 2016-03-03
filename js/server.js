@@ -15,8 +15,11 @@ require('hero.js');
 require('bag.js');
 require('mail.js');
 
+//cid----player  全局玩家对象
 var player_cid_map = new Map();
+//role_id---player 全局玩家对象
 var player_role_id_map = new Map();
+//执行脚本主循环函数
 main();
 
 function main() {

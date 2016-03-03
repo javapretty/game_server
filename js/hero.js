@@ -40,17 +40,21 @@ function Hero() {
 			return this.player.cplayer.respond_error_result(msg_res.RES_ADD_HERO_STAR, error.ERROR_CLIENT_PARAM);
 		}
 		
-		var hero_id_string = hero_id.toString();
 		var json_str = read('config/hero/hero.json');
-  		var hero_obj = JSON.parse(json_str).hero_id_string;
+  		var hero_obj = JSON.parse(json_str)[hero_id];
     	if (hero_obj == null) {
     		return this.player.cplayer.respond_error_result(msg_res.RES_ADD_HERO_STAR, error.ERROR_CONFIG_NOT_EXIST);
     	}
     	
-    	var star_item = new Item_Info();
-    	star_item.id = hero_obj.star_item_id;
-    	star_item.amount = hero_obj.star_item_amount[hero_detail.level - 1];
-    	var result = player.bag.bag_erase_item(star_item);
+    	if (hero_detail.level == hero_obj.star_item_amount.length) {
+    		return this.player.cplayer.respond_error_result(msg_res.RES_ADD_HERO_STAR, error.ERROR_CLIENT_OPERATE);
+    	}
+    		
+    	var item = new Item_Info();
+    	item.id = hero_obj.star_item_id;
+    	item.amount = hero_obj.star_item_amount[hero_detail.level];
+    	print(item.id, item.amount);
+    	var result = this.player.bag.bag_erase_item(item);
     	if (result != 0) {
     		return this.player.cplayer.respond_error_result(msg_res.RES_ADD_HERO_STAR, result);
     	}

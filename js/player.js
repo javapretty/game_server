@@ -14,6 +14,7 @@ function Player() {
 	this.bag = new Bag();
 	this.mail = new Mail();
 
+	//玩家上线，加载数据
 	this.load_player_data = function(buffer) {
 		if (buffer == null) {
 			return;
@@ -35,6 +36,7 @@ function Player() {
 		player_role_id_map.put(this.player_info.role_id, this);
 	}
 	
+	//玩家离线，保存数据
 	this.save_player_data = function() {
 		var buffer = this.cplayer.player_data_buffer();
 		if (buffer == null) {
