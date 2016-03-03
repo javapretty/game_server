@@ -25,7 +25,7 @@ cd openssl-1.0.1g
 make && make install
 重命名原来的openssl命令
 mv /usr/bin/openssl  /usr/bin/openssl.old
-重命名原来的openssl目录
+重命名原来的openssl目录(如果存在，不存在跳过)
 mv /usr/include/openssl  /usr/include/openssl.old
 将安装好的openssl 的openssl命令软连到/usr/bin/openssl
 ln -s /usr/local/ssl/bin/openssl  /usr/bin/openssl
@@ -119,11 +119,25 @@ mkdir log
 开启mongodb服务器  /root/mongodb/bin/mongod --dbpath /data/db --port 27017 &
 启动mongodb客户端  /root/mongdb/bin/mongo
 
+mongodb源码编译安装
+1、从yum安装boost, pcre, pcre-devel等依赖库。
+执行命令 yum install boost
+	 yum install pcre
+	 yum install pcre-devel
+2、安装scons
+解压scons  tar -zxvf scons-2.1.0.tar.gz  cd scons-2.1.0          
+安装scons  python setup.py install                                                
+3、编译mongodb-client
+解压mongodb  tar -zxvf mongodb-src-r2.0.4.tar.gz  cd mongodb-src-r2.0.4
+编译mongodb  scons --prefix=/usr/mongo --sharedclient install
+将在usr/mongo下生成bin, include, lib目录，lib下包括动态、静态mongoclient库。
+
 搭建mongodb编译环境
-tar -jxvf mongodb-bin-r2.0.4.tar.bz2
-cd mongodb-bin-r2.0.4/
+tar -jxvf mongodb-lib-3.0.8.tar.gz
+cd mongodb-lib-3.0.8/
 cp -rf include/mongo /usr/local/include
 cp lib64/libmongoclient.so /usr/local/lib64
+cp lib64/libmongoclient.a /usr/local/lib
 ldconfig
 
 九、拷贝v8运行环境
