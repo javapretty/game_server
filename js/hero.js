@@ -44,7 +44,7 @@ function Hero() {
 			return this.player.cplayer.respond_error_result(msg_res.RES_ADD_HERO_STAR, error.ERROR_CLIENT_PARAM);
 		}
 		
-		var json_str = read('config/hero/hero.json');
+		var json_str = read_json('config/hero/hero.json');
   		var hero_obj = JSON.parse(json_str)[hero_id];
     	if (hero_obj == null) {
     		return this.player.cplayer.respond_error_result(msg_res.RES_ADD_HERO_STAR, error.ERROR_CONFIG_NOT_EXIST);

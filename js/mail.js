@@ -134,7 +134,7 @@ function Mail() {
 	
 	//读取json配置文件
 	this.read_mail = function() {
-		var content = read('config/mail/mail.json');
+		var content = read_json('config/mail/mail.json');
   		try {
     		var mail_obj = JSON.parse(content);
     		if (mail_obj != null) {
@@ -178,7 +178,7 @@ function send_mail_inner(receiver_id, mail_detail) {
 			buf.write_int64(receiver_id);
 			mail_detail.serialize(buf);
 			buf.finish_message();
-			send_buffer_to_db(buf);
+			send_msg_to_db(buf);
 			push_buffer(buf);
 		}
 	}

@@ -45,7 +45,7 @@ int V8_Manager::init(void) {
 	context_.Reset(isolate_, context);
 	//进入V8执行环境内部
 	Context::Scope context_scope(context);
-	run_script(isolate_, "js/server.js");
+	Run_Script(isolate_, "js/server.js");
 
 	return 0;
 }

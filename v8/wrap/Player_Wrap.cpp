@@ -8,9 +8,7 @@
 #include "V8_Wrap.h"
 #include "Buffer_Wrap.h"
 #include "Player_Wrap.h"
-#include "Block_Buffer.h"
 #include "Game_Manager.h"
-#include "Game_Client_Messager.h"
 
 
 Local<Object> wrap_player(Isolate* isolate, Game_Player *player) {
@@ -43,74 +41,6 @@ Game_Player *unwrap_player(Local<Object> obj) {
 	Local<External> field = Local<External>::Cast(obj->GetInternalField(0));
 	void* ptr = field->Value();
 	return static_cast<Game_Player*>(ptr);
-}
-
-void send_buffer_to_db(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 1) {
-		LOG_INFO("process_login_block args error, length: %d\n", args.Length());
-		return;
-	}
-
-	Block_Buffer *buf = unwrap_buffer(args[0]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
-	if (!buf) {
-		return;
-	}
-
-	GAME_MANAGER->send_to_db(*buf);
-}
-
-void process_login_buffer(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 4) {
-		LOG_INFO("process_login_block args error, length: %d\n", args.Length());
-		return;
-	}
-
-	Block_Buffer *buf = unwrap_buffer(args[0]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
-	if (!buf) {
-		return;
-	}
-
-	int gate_cid = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	int player_cid = args[2]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	int msg_id = args[3]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-
-	Perf_Mon perf_mon(msg_id);
-	int ret = 0;
-	switch (msg_id) {
-	case REQ_FETCH_ROLE_INFO: {
-		MSG_120001 msg;
-		if ((ret = msg.deserialize(*buf)) == 0)
-			GAME_CLIENT_MESSAGER->process_120001(gate_cid, player_cid, msg);
-		break;
-	}
-	case REQ_CREATE_ROLE: {
-		MSG_120002 msg;
-		if ((ret = msg.deserialize(*buf)) == 0)
-			GAME_CLIENT_MESSAGER->process_120002(gate_cid, player_cid, msg);
-		break;
-	}
-	case SYNC_GATE_GAME_PLAYER_SIGNOUT: {
-		ret = GAME_CLIENT_MESSAGER->process_140002(gate_cid, player_cid);
-		break;
-	}
-	default:
-		break;
-	}
-}
-
-void get_player_data(const FunctionCallbackInfo<Value>& args) {
-	Block_Buffer *buf = GAME_MANAGER->pop_player_data();
-	if (buf) {
-		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
-	} else {
-		//设置对象为空
-		args.GetReturnValue().SetNull();
-	}
-}
-
-void get_drop_player_cid(const FunctionCallbackInfo<Value>& args) {
-	int cid = GAME_MANAGER->pop_drop_player_cid();
-	args.GetReturnValue().Set(cid);
 }
 
 void get_player_by_cid(const FunctionCallbackInfo<Value>& args) {

@@ -27,14 +27,14 @@ function main() {
 		var all_empty = true;
 		
 		//获得客户端消息
-		var buffer = pop_buffer(true);
+		var buffer = get_client_buffer();
 		if (buffer != null) {
 			all_empty = false;
 			process_client_buffer(buffer);
 		}
 	
 		//获得上线玩家的信息
-		buffer = get_player_data();
+		buffer = get_load_player_data();
 		if (buffer != null) {
 			all_empty = false;
 			var player = new Player();
@@ -109,5 +109,5 @@ function process_client_buffer(buffer) {
 			print('find game player wrong, gate_cid:', gate_cid, " player_cid:", player_cid, " msg_id:", msg_id);
 		}
 	}
-	push_buffer(buffer, gate_cid);
+	push_client_buffer(gate_cid, buffer);
 }

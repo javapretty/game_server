@@ -1,0 +1,80 @@
+1、全局系统函数
+//函数说明：引用js文件		参数：1,文件路径	返回值：无
+void require();
+//函数说明：读取json配置文件	参数：1,文件路径	返回值：文件内容字符串对象
+void read_json();
+//函数说明：打印参数到控制台 	参数：可变参数列表	返回值：无
+void print();
+//函数说明：程序睡眠Time_Value(0,100)	参数：无	返回值：无
+void sleep();
+//函数说明：返回当前时间的秒值 	参数：无	返回值：时间秒值
+void sec();
+//函数说明：返回当前时间的毫秒值	参数：无	返回值：时间毫秒值
+void msec();
+
+//函数说明：发送消息到db_server 	参数：1,buffer对象	返回值：无
+void send_msg_to_db();
+//函数说明：处理登录消息 	参数：1,buffer对象 2,gate_cid 3,player_cid 4,msg_id	返回值：无
+void process_login_buffer();
+//函数说明：获取客户端消息buffer	参数：无	返回值：buffer对象
+void get_client_buffer();
+//函数说明：回收客户端消息buffer	参数：buffer对象	返回值：无
+void push_client_buffer();
+//函数说明：获取登录玩家的数据buffer	参数：无	返回值：buffer对象
+void get_load_player_data();
+//函数说明：获取下线玩家的cid		参数：无	返回值：cid值
+void get_drop_player_cid();
+
+2、buffer函数
+//函数说明：新建buffer	参数：无	返回值：buffer对象
+void pop_buffer();
+//函数说明：回收buffer	参数：1,buffer	返回值：无
+void push_buffer();
+//函数说明：重置buffer	参数：无	返回值：无
+void buffer_reset();
+//函数说明：生成服务器内部消息buffer	参数：1,msg_id	返回值：无
+void make_inner_message();
+//函数说明：生成玩家消息buffer	参数：1,msg_id 2,status 3, player_cid	返回值：无
+void make_player_message();
+//函数说明：完成消息buffer的生成	参数：无	返回值：无
+void finish_message();
+
+//函数说明：从buffer读取数据 	参数：无	返回值：读到的数据
+void read_int8();
+void read_int16();
+void read_int32();
+void read_int64();
+void read_uint8();
+void read_uint16();
+void read_uint32();
+void read_uint64();
+void read_double();
+void read_bool();
+void read_string();
+
+//函数说明：将数据写到buffer 	参数：1,数据值	返回值：无
+void write_int8();
+void write_int16();
+void write_int32();
+void write_int64();
+void write_uint8();
+void write_uint16();
+void write_uint32();
+void write_uint64();
+void write_double();
+void write_bool();
+void write_string();
+
+3、player函数
+//函数说明：通过cid获取player对象  	参数：1,gate_cid 2,player_cid	返回值：player对象
+void get_player_by_cid();
+//函数说明：通过role_name获取player对象  	参数：1,role_name	返回值：player对象
+void get_player_by_name();
+//函数说明：获取player_data buffer对象 	参数：无	返回值：buffer对象
+void player_data_buffer();
+//函数说明：设置玩家数据改变 	参数：1,改变的模块id	返回值：无
+void set_player_data_change();
+//函数说明：发送成功的消息buffer到client 	参数：1,msg_id 2,buffer对象	返回值：无
+void respond_success_result();
+//函数说明：发送错误消息号到client 	参数：1,msg_id 2,错误号	返回值：无
+void respond_error_result();

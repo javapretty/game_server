@@ -9,18 +9,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
-#include "Log.h"
 #include "V8_Wrap.h"
 #include "Buffer_Wrap.h"
 #include "Player_Wrap.h"
 #include "Time_Value.h"
+#include "Game_Server.h"
+#include "Game_Manager.h"
+#include "Game_Client_Messager.h"
 
 Local<Context> Create_Context(Isolate* isolate) {
 	Local<ObjectTemplate> global = ObjectTemplate::New(isolate);
-	global->Set(String::NewFromUtf8(isolate, "read", NewStringType::kNormal).ToLocalChecked(),
-		FunctionTemplate::New(isolate, read));
 	global->Set(String::NewFromUtf8(isolate, "require", NewStringType::kNormal).ToLocalChecked(),
 		FunctionTemplate::New(isolate, require));
+	global->Set(String::NewFromUtf8(isolate, "read_json", NewStringType::kNormal).ToLocalChecked(),
+		FunctionTemplate::New(isolate, read_json));
 	global->Set(String::NewFromUtf8(isolate, "print", NewStringType::kNormal).ToLocalChecked(),
 		FunctionTemplate::New(isolate, print));
 	global->Set(String::NewFromUtf8(isolate, "sleep", NewStringType::kNormal).ToLocalChecked(),
@@ -33,12 +35,16 @@ Local<Context> Create_Context(Isolate* isolate) {
 			FunctionTemplate::New(isolate, pop_buffer));
 	global->Set(String::NewFromUtf8(isolate, "push_buffer", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, push_buffer));
-	global->Set(String::NewFromUtf8(isolate, "send_buffer_to_db", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, send_buffer_to_db));
+	global->Set(String::NewFromUtf8(isolate, "send_msg_to_db", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, send_msg_to_db));
 	global->Set(String::NewFromUtf8(isolate, "process_login_buffer", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, process_login_buffer));
-	global->Set(String::NewFromUtf8(isolate, "get_player_data", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, get_player_data));
+	global->Set(String::NewFromUtf8(isolate, "get_client_buffer", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, get_client_buffer));
+	global->Set(String::NewFromUtf8(isolate, "push_client_buffer", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, push_client_buffer));
+	global->Set(String::NewFromUtf8(isolate, "get_load_player_data", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, get_load_player_data));
 	global->Set(String::NewFromUtf8(isolate, "get_drop_player_cid", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, get_drop_player_cid));
 	global->Set(String::NewFromUtf8(isolate, "get_player_by_cid", NewStringType::kNormal).ToLocalChecked(),
@@ -53,8 +59,19 @@ const char* ToCString(const v8::String::Utf8Value& value) {
   return *value ? *value : "<string conversion failed>";
 }
 
+void Run_Script(Isolate* isolate, const char* file_path) {
+	HandleScope handle_scope(isolate);
+	Local<String> source;
+	if (!Read_File(isolate, file_path).ToLocal(&source)) {
+		LOG_INFO("script:%s not exist\n", file_path);
+		return;
+	}
+  Local<Script> script = Script::Compile(isolate->GetCurrentContext(), source).ToLocalChecked();
+  script->Run(isolate->GetCurrentContext()).ToLocalChecked();
+}
+
 // Reads a file into a v8 string.
-MaybeLocal<String> ReadFile(Isolate* isolate, const char* file_path) {
+MaybeLocal<String> Read_File(Isolate* isolate, const char* file_path) {
   FILE* file = fopen(file_path, "rb");
   if (file == NULL) return MaybeLocal<String>();
 
@@ -78,7 +95,7 @@ MaybeLocal<String> ReadFile(Isolate* isolate, const char* file_path) {
   return result;
 }
 
-void ReportException(Isolate* isolate, TryCatch* try_catch) {
+void Report_Exception(Isolate* isolate, TryCatch* try_catch) {
   HandleScope handle_scope(isolate);
   String::Utf8Value exception(try_catch->Exception());
   const char* exception_string = ToCString(exception);
@@ -120,7 +137,7 @@ void ReportException(Isolate* isolate, TryCatch* try_catch) {
   }
 }
 
-void read(const FunctionCallbackInfo<Value>& args) {
+void read_json(const FunctionCallbackInfo<Value>& args) {
   if (args.Length() != 1) {
 	  LOG_FATAL("read_file args error, length: %d\n", args.Length());
 	  args.GetReturnValue().SetNull();
@@ -134,7 +151,7 @@ void read(const FunctionCallbackInfo<Value>& args) {
   	}
 
   Local<String> source;
-  if (!ReadFile(args.GetIsolate(), *file).ToLocal(&source)) {
+  if (!Read_File(args.GetIsolate(), *file).ToLocal(&source)) {
 	  LOG_INFO("read_file:%s loading error\n", *file);
 	  	args.GetReturnValue().SetNull();
     return;
@@ -151,18 +168,7 @@ void require(const FunctionCallbackInfo<Value>& args) {
 	String::Utf8Value str(args[0]);
 	char file_path[128];
 	sprintf(file_path, "js/%s", *str);
-	run_script(args.GetIsolate(), file_path);
-}
-
-void run_script(Isolate* isolate, const char* file_path) {
-	HandleScope handle_scope(isolate);
-	Local<String> source;
-	if (!ReadFile(isolate, file_path).ToLocal(&source)) {
-		LOG_INFO("script:%s not exist\n", file_path);
-		return;
-	}
-  Local<Script> script = Script::Compile(isolate->GetCurrentContext(), source).ToLocalChecked();
-  script->Run(isolate->GetCurrentContext()).ToLocalChecked();
+	Run_Script(args.GetIsolate(), file_path);
 }
 
 void print(const FunctionCallbackInfo<Value>& args) {
@@ -194,4 +200,96 @@ void sec(const FunctionCallbackInfo<Value>& args) {
 void msec(const FunctionCallbackInfo<Value>& args) {
 	double msec = Time_Value::gettimeofday().msec();
 	args.GetReturnValue().Set(msec);
+}
+
+
+void send_msg_to_db(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 1) {
+		LOG_INFO("process_login_block args error, length: %d\n", args.Length());
+		return;
+	}
+
+	Block_Buffer *buf = unwrap_buffer(args[0]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
+	if (!buf) {
+		return;
+	}
+
+	GAME_MANAGER->send_to_db(*buf);
+}
+
+void process_login_buffer(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 4) {
+		LOG_INFO("process_login_block args error, length: %d\n", args.Length());
+		return;
+	}
+
+	Block_Buffer *buf = unwrap_buffer(args[0]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
+	if (!buf) {
+		return;
+	}
+
+	int gate_cid = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int player_cid = args[2]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int msg_id = args[3]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+
+	Perf_Mon perf_mon(msg_id);
+	int ret = 0;
+	switch (msg_id) {
+	case REQ_FETCH_ROLE_INFO: {
+		MSG_120001 msg;
+		if ((ret = msg.deserialize(*buf)) == 0)
+			GAME_CLIENT_MESSAGER->process_120001(gate_cid, player_cid, msg);
+		break;
+	}
+	case REQ_CREATE_ROLE: {
+		MSG_120002 msg;
+		if ((ret = msg.deserialize(*buf)) == 0)
+			GAME_CLIENT_MESSAGER->process_120002(gate_cid, player_cid, msg);
+		break;
+	}
+	case SYNC_GATE_GAME_PLAYER_SIGNOUT: {
+		ret = GAME_CLIENT_MESSAGER->process_140002(gate_cid, player_cid);
+		break;
+	}
+	default:
+		break;
+	}
+}
+
+void get_client_buffer(const FunctionCallbackInfo<Value>& args) {
+	Block_Buffer *buf = GAME_MANAGER->pop_game_gate_data();
+	if (buf) {
+		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
+	} else {
+		//设置对象为空
+		args.GetReturnValue().SetNull();
+	}
+}
+
+void push_client_buffer(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 2) {
+		LOG_INFO("push_buffer args error, length: %d\n", args.Length());
+		return;
+	}
+
+	int cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	Block_Buffer *buf= unwrap_buffer(args[1]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
+	if (buf) {
+		GAME_GATE_SERVER->push_block(cid, buf);
+	}
+}
+
+void get_load_player_data(const FunctionCallbackInfo<Value>& args) {
+	Block_Buffer *buf = GAME_MANAGER->pop_player_data();
+	if (buf) {
+		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
+	} else {
+		//设置对象为空
+		args.GetReturnValue().SetNull();
+	}
+}
+
+void get_drop_player_cid(const FunctionCallbackInfo<Value>& args) {
+	int cid = GAME_MANAGER->pop_drop_player_cid();
+	args.GetReturnValue().Set(cid);
 }

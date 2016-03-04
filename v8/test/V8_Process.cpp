@@ -480,7 +480,7 @@ int process(int argc, char* argv[]) {
   Isolate::Scope isolate_scope(isolate);
   HandleScope scope(isolate);
   Local<String> source;
-  if (!ReadFile(isolate, file.c_str()).ToLocal(&source)) {
+  if (!Read_File(isolate, file.c_str()).ToLocal(&source)) {
     fprintf(stderr, "Error reading '%s'.\n", file.c_str());
     return 1;
   }

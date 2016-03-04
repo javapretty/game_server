@@ -7,7 +7,6 @@
 
 #include "V8_Wrap.h"
 #include "Buffer_Wrap.h"
-#include "Game_Server.h"
 #include "Game_Manager.h"
 
 
@@ -110,19 +109,9 @@ Block_Buffer *unwrap_buffer(Local<Object> obj) {
 }
 
 void pop_buffer(const FunctionCallbackInfo<Value>& args) {
-	Block_Buffer *buf = nullptr;
-	if (args.Length() == 1) {
-		//buf from client
-		buf = GAME_MANAGER->pop_game_gate_data();
-	} else {
-		// new buf for write data
-		buf = GAME_MANAGER->pop_block_buffer();
-		if (buf) {
-			buf->reset();
-		}
-	}
-
+	Block_Buffer *buf = GAME_MANAGER->pop_block_buffer();
 	if (buf) {
+		buf->reset();
 		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
 	} else {
 		//设置对象为空
@@ -131,18 +120,14 @@ void pop_buffer(const FunctionCallbackInfo<Value>& args) {
 }
 
 void push_buffer(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() < 1) {
-		LOG_INFO("process_login_block args error, length: %d\n", args.Length());
+	if (args.Length() != 1) {
+		LOG_INFO("push_buffer args error, length: %d\n", args.Length());
 		return;
 	}
 
 	Block_Buffer *buf= unwrap_buffer(args[0]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
 	if (buf) {
-		if (args.Length() == 2) {
-			GAME_GATE_SERVER->push_block(args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0), buf);
-		} else {
-			GAME_MANAGER->push_block_buffer(buf);
-		}
+		GAME_MANAGER->push_block_buffer(buf);
 	}
 }
 
