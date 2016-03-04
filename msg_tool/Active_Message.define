@@ -1,31 +1,24 @@
+//服务器主动断开连接
 struct MSG_300000 {
 };
 
-/*
-背包物品更新
-*/
+//物品信息更新
 struct MSG_300100 {
-	std::vector<Item_Basic_Info> item_info_vec;
+	std::vector<Item_Basic_Info> item_info;
 };
 
-/*
-物品附加信息更新
-*/
+//物品附加信息更新
 struct MSG_300101 {
 	
 }
 
-/*
-金钱更新
-*/
+//金钱更新
 struct MSG_300102 {
 	int32_t copper;
 	int32_t gold;
 };
 
-/*
-收到邮件通知
-*/
+//邮件信息更新
 struct MSG_300200 {
-	std::vector<Mail_Detail> mail_detail_vec;
+	std::vector<Mail_Detail> mail_info;
 };

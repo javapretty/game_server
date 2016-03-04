@@ -115,28 +115,28 @@ MSG_520100::MSG_520100(void){
 }
 
 void MSG_520100::serialize(Block_Buffer &buffer) const {
-	uint16_t __item_info_vec_vec_size = item_info_vec.size();
-	buffer.write_uint16(__item_info_vec_vec_size);
-	for(uint16_t i = 0; i < __item_info_vec_vec_size; ++i) {
-		item_info_vec[i].serialize(buffer);
+	uint16_t __item_info_vec_size = item_info.size();
+	buffer.write_uint16(__item_info_vec_size);
+	for(uint16_t i = 0; i < __item_info_vec_size; ++i) {
+		item_info[i].serialize(buffer);
 	}
 
 }
 
 int MSG_520100::deserialize(Block_Buffer &buffer) {
-	uint16_t __item_info_vec_vec_size = buffer.read_uint16();
+	uint16_t __item_info_vec_size = buffer.read_uint16();
 	Item_Basic_Info v;
-	for(uint16_t i = 0; i < __item_info_vec_vec_size; ++i) {
+	for(uint16_t i = 0; i < __item_info_vec_size; ++i) {
 		if(v.deserialize(buffer))
 			return -1;
-		item_info_vec.push_back(v);
+		item_info.push_back(v);
 	}
 
 	return 0;
 }
 
 void MSG_520100::reset(){
-	item_info_vec.clear();
+	item_info.clear();
 }
 
 MSG_120101::MSG_120101(void){
@@ -144,19 +144,16 @@ MSG_120101::MSG_120101(void){
 }
 
 void MSG_120101::serialize(Block_Buffer &buffer) const {
-	buffer.write_int32(item_id);
-	buffer.write_int32(item_amount);
+	item.serialize(buffer);
 }
 
 int MSG_120101::deserialize(Block_Buffer &buffer) {
-	item_id = buffer.read_int32();
-	item_amount = buffer.read_int32();
+	item.deserialize(buffer);
 	return 0;
 }
 
 void MSG_120101::reset(){
-	item_id = 0;
-	item_amount = 0;
+	item.reset();
 }
 
 MSG_520101::MSG_520101(void){
@@ -178,19 +175,16 @@ MSG_120102::MSG_120102(void){
 }
 
 void MSG_120102::serialize(Block_Buffer &buffer) const {
-	buffer.write_int32(item_id);
-	buffer.write_int32(item_amount);
+	item.serialize(buffer);
 }
 
 int MSG_120102::deserialize(Block_Buffer &buffer) {
-	item_id = buffer.read_int32();
-	item_amount = buffer.read_int32();
+	item.deserialize(buffer);
 	return 0;
 }
 
 void MSG_120102::reset(){
-	item_id = 0;
-	item_amount = 0;
+	item.reset();
 }
 
 MSG_520102::MSG_520102(void){
@@ -226,28 +220,28 @@ MSG_520200::MSG_520200(void){
 }
 
 void MSG_520200::serialize(Block_Buffer &buffer) const {
-	uint16_t __mail_detail_vec_vec_size = mail_detail_vec.size();
-	buffer.write_uint16(__mail_detail_vec_vec_size);
-	for(uint16_t i = 0; i < __mail_detail_vec_vec_size; ++i) {
-		mail_detail_vec[i].serialize(buffer);
+	uint16_t __mail_info_vec_size = mail_info.size();
+	buffer.write_uint16(__mail_info_vec_size);
+	for(uint16_t i = 0; i < __mail_info_vec_size; ++i) {
+		mail_info[i].serialize(buffer);
 	}
 
 }
 
 int MSG_520200::deserialize(Block_Buffer &buffer) {
-	uint16_t __mail_detail_vec_vec_size = buffer.read_uint16();
+	uint16_t __mail_info_vec_size = buffer.read_uint16();
 	Mail_Detail v;
-	for(uint16_t i = 0; i < __mail_detail_vec_vec_size; ++i) {
+	for(uint16_t i = 0; i < __mail_info_vec_size; ++i) {
 		if(v.deserialize(buffer))
 			return -1;
-		mail_detail_vec.push_back(v);
+		mail_info.push_back(v);
 	}
 
 	return 0;
 }
 
 void MSG_520200::reset(){
-	mail_detail_vec.clear();
+	mail_info.clear();
 }
 
 MSG_120201::MSG_120201(void){
@@ -272,25 +266,25 @@ MSG_520201::MSG_520201(void){
 }
 
 void MSG_520201::serialize(Block_Buffer &buffer) const {
-	uint16_t mail_id_vec_size = mail_id_vec.size();
-	buffer.write_uint16(mail_id_vec_size);
-	for(uint16_t i = 0; i < mail_id_vec_size; ++i) {
-		buffer.write_int32(mail_id_vec[i]);
+	uint16_t mail_id_info_size = mail_id_info.size();
+	buffer.write_uint16(mail_id_info_size);
+	for(uint16_t i = 0; i < mail_id_info_size; ++i) {
+		buffer.write_int32(mail_id_info[i]);
 	}
 
 }
 
 int MSG_520201::deserialize(Block_Buffer &buffer) {
-	uint16_t mail_id_vec_size = buffer.read_uint16();
-	for(uint16_t i = 0; i < mail_id_vec_size; ++i) {
+	uint16_t mail_id_info_size = buffer.read_uint16();
+	for(uint16_t i = 0; i < mail_id_info_size; ++i) {
 		int32_t v = buffer.read_int32();
-		mail_id_vec.push_back(v);
+		mail_id_info.push_back(v);
 	}
 	return 0;
 }
 
 void MSG_520201::reset(){
-	mail_id_vec.clear();
+	mail_id_info.clear();
 }
 
 MSG_120202::MSG_120202(void){
@@ -315,25 +309,25 @@ MSG_520202::MSG_520202(void){
 }
 
 void MSG_520202::serialize(Block_Buffer &buffer) const {
-	uint16_t mail_id_vec_size = mail_id_vec.size();
-	buffer.write_uint16(mail_id_vec_size);
-	for(uint16_t i = 0; i < mail_id_vec_size; ++i) {
-		buffer.write_int32(mail_id_vec[i]);
+	uint16_t mail_id_info_size = mail_id_info.size();
+	buffer.write_uint16(mail_id_info_size);
+	for(uint16_t i = 0; i < mail_id_info_size; ++i) {
+		buffer.write_int32(mail_id_info[i]);
 	}
 
 }
 
 int MSG_520202::deserialize(Block_Buffer &buffer) {
-	uint16_t mail_id_vec_size = buffer.read_uint16();
-	for(uint16_t i = 0; i < mail_id_vec_size; ++i) {
+	uint16_t mail_id_info_size = buffer.read_uint16();
+	for(uint16_t i = 0; i < mail_id_info_size; ++i) {
 		int32_t v = buffer.read_int32();
-		mail_id_vec.push_back(v);
+		mail_id_info.push_back(v);
 	}
 	return 0;
 }
 
 void MSG_520202::reset(){
-	mail_id_vec.clear();
+	mail_id_info.clear();
 }
 
 MSG_120203::MSG_120203(void){
@@ -389,28 +383,28 @@ MSG_520300::MSG_520300(void){
 }
 
 void MSG_520300::serialize(Block_Buffer &buffer) const {
-	uint16_t __hero_detail_vec_vec_size = hero_detail_vec.size();
-	buffer.write_uint16(__hero_detail_vec_vec_size);
-	for(uint16_t i = 0; i < __hero_detail_vec_vec_size; ++i) {
-		hero_detail_vec[i].serialize(buffer);
+	uint16_t __hero_info_vec_size = hero_info.size();
+	buffer.write_uint16(__hero_info_vec_size);
+	for(uint16_t i = 0; i < __hero_info_vec_size; ++i) {
+		hero_info[i].serialize(buffer);
 	}
 
 }
 
 int MSG_520300::deserialize(Block_Buffer &buffer) {
-	uint16_t __hero_detail_vec_vec_size = buffer.read_uint16();
+	uint16_t __hero_info_vec_size = buffer.read_uint16();
 	Hero_Detail v;
-	for(uint16_t i = 0; i < __hero_detail_vec_vec_size; ++i) {
+	for(uint16_t i = 0; i < __hero_info_vec_size; ++i) {
 		if(v.deserialize(buffer))
 			return -1;
-		hero_detail_vec.push_back(v);
+		hero_info.push_back(v);
 	}
 
 	return 0;
 }
 
 void MSG_520300::reset(){
-	hero_detail_vec.clear();
+	hero_info.clear();
 }
 
 MSG_120301::MSG_120301(void){

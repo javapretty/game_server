@@ -20,28 +20,28 @@ MSG_300100::MSG_300100(void){
 }
 
 void MSG_300100::serialize(Block_Buffer &buffer) const {
-	uint16_t __item_info_vec_vec_size = item_info_vec.size();
-	buffer.write_uint16(__item_info_vec_vec_size);
-	for(uint16_t i = 0; i < __item_info_vec_vec_size; ++i) {
-		item_info_vec[i].serialize(buffer);
+	uint16_t __item_info_vec_size = item_info.size();
+	buffer.write_uint16(__item_info_vec_size);
+	for(uint16_t i = 0; i < __item_info_vec_size; ++i) {
+		item_info[i].serialize(buffer);
 	}
 
 }
 
 int MSG_300100::deserialize(Block_Buffer &buffer) {
-	uint16_t __item_info_vec_vec_size = buffer.read_uint16();
+	uint16_t __item_info_vec_size = buffer.read_uint16();
 	Item_Basic_Info v;
-	for(uint16_t i = 0; i < __item_info_vec_vec_size; ++i) {
+	for(uint16_t i = 0; i < __item_info_vec_size; ++i) {
 		if(v.deserialize(buffer))
 			return -1;
-		item_info_vec.push_back(v);
+		item_info.push_back(v);
 	}
 
 	return 0;
 }
 
 void MSG_300100::reset(){
-	item_info_vec.clear();
+	item_info.clear();
 }
 
 MSG_300101::MSG_300101(void){
@@ -83,26 +83,26 @@ MSG_300200::MSG_300200(void){
 }
 
 void MSG_300200::serialize(Block_Buffer &buffer) const {
-	uint16_t __mail_detail_vec_vec_size = mail_detail_vec.size();
-	buffer.write_uint16(__mail_detail_vec_vec_size);
-	for(uint16_t i = 0; i < __mail_detail_vec_vec_size; ++i) {
-		mail_detail_vec[i].serialize(buffer);
+	uint16_t __mail_info_vec_size = mail_info.size();
+	buffer.write_uint16(__mail_info_vec_size);
+	for(uint16_t i = 0; i < __mail_info_vec_size; ++i) {
+		mail_info[i].serialize(buffer);
 	}
 
 }
 
 int MSG_300200::deserialize(Block_Buffer &buffer) {
-	uint16_t __mail_detail_vec_vec_size = buffer.read_uint16();
+	uint16_t __mail_info_vec_size = buffer.read_uint16();
 	Mail_Detail v;
-	for(uint16_t i = 0; i < __mail_detail_vec_vec_size; ++i) {
+	for(uint16_t i = 0; i < __mail_info_vec_size; ++i) {
 		if(v.deserialize(buffer))
 			return -1;
-		mail_detail_vec.push_back(v);
+		mail_info.push_back(v);
 	}
 
 	return 0;
 }
 
 void MSG_300200::reset(){
-	mail_detail_vec.clear();
+	mail_info.clear();
 }

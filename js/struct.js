@@ -6,12 +6,12 @@
 *	tel:18268193219
 */
 
-if (typeof data_change == "undefined") {
-	var data_change = {};
-	data_change.PLAYER_CHANGE = 1;
-	data_change.HERO_CHANGE = 2;
-	data_change.BAG_CHANGE = 3;
-	data_change.MAIL_CHANGE = 4;
+if (typeof DATA_CHANGE == "undefined") {
+	var DATA_CHANGE = {};
+	DATA_CHANGE.PLAYER_CHANGE = 1;
+	DATA_CHANGE.HERO_CHANGE = 2;
+	DATA_CHANGE.BAG_CHANGE = 3;
+	DATA_CHANGE.MAIL_CHANGE = 4;
 }
 
 function Player_Info() {

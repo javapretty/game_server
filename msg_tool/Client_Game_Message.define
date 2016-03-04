@@ -1,6 +1,4 @@
-/*
-获取角色信息
-*/
+//获取角色信息
 struct MSG_120001 {
 	std::string account;
 	int64_t role_id;
@@ -14,9 +12,7 @@ struct MSG_520001 {
 	Role_Info role_info;
 };
 
-/*
-创建角色
-*/
+//创建角色
 struct MSG_120002 {
 	std::string account;
 	std::string role_name;
@@ -29,73 +25,57 @@ struct MSG_520002 {
 	int64_t role_id;
 };
 
-/*
-获取背包信息
-*/
+//获取背包信息
 struct MSG_120100 {
 };
 
 struct MSG_520100 {
-	std::vector<Item_Basic_Info> item_info_vec;
+	std::vector<Item_Basic_Info> item_info;
 };
 
-/*
-使用物品
-*/
+//使用物品
 struct MSG_120101 {
-	int32_t item_id;			//物品id
-	int32_t item_amount;	//物品数量
+	Item_Basic_Info item;
 };
 
 struct MSG_520101 {
 };
 
-/*
-出售物品
-*/
+//出售物品
 struct MSG_120102 {
-	int32_t item_id;			//物品id
-	int32_t item_amount;	//物品数量
+	Item_Basic_Info item;
 };
 
 struct MSG_520102 {
 };
 
-/*
-获取邮件信息
-*/
+//获取邮件信息
 struct MSG_120200 {
 };
 
 struct MSG_520200 {
-	std::vector<Mail_Detail> mail_detail_vec;
+	std::vector<Mail_Detail> mail_info;
 };
 
-/*
-收取附件
-*/
+//收取附件
 struct MSG_120201 {
-	int32_t mail_id;	/*邮件ID,收取所有邮件附件时候id为0*/
+	int32_t mail_id;		//邮件ID,收取所有邮件附件时候id为0
 };
 
 struct MSG_520201 {
-	std::vector<int32_t> mail_id_vec;/*成功收取附件的邮件id*/
+	std::vector<int32_t> mail_id_info;	//成功收取附件的邮件id
 };
 
-/*
-删除邮件
-*/
+//删除邮件
 struct MSG_120202 {
-	int32_t mail_id;/*邮件ID,删除所有邮件时候id为0*/
+	int32_t mail_id;		//邮件ID,删除所有邮件时候id为0
 };
 
 struct MSG_520202 {
-	std::vector<int32_t> mail_id_vec;/*删除的邮件ID数组*/
+	std::vector<int32_t> mail_id_info;	//删除的邮件ID数组
 };
 
-/*
-发送邮件
-*/
+//发送邮件
 struct MSG_120203 {
 	std::string receiver_name;
 	Mail_Detail mail_detail;
@@ -104,19 +84,15 @@ struct MSG_120203 {
 struct MSG_520203 {
 };
 
-/*
-获取英雄信息
-*/
+//获取英雄信息
 struct MSG_120300 {
 };
 
 struct MSG_520300 {
-	std::vector<Hero_Detail> hero_detail_vec;
+	std::vector<Hero_Detail> hero_info;
 };
 
-/*
-提高英雄星级
-*/
+//提高英雄星级
 struct MSG_120301 {
 	int32_t hero_id;
 };
@@ -126,9 +102,7 @@ struct MSG_520301 {
 	int32_t star;			//英雄星级
 };
 
-/*
-提高英雄品质
-*/
+//提高英雄品质
 struct MSG_120302 {
 	int32_t hero_id;
 };
@@ -137,4 +111,3 @@ struct MSG_520302 {
 	int32_t hero_id;
 	int32_t quality;		//英雄品质等级
 };
-

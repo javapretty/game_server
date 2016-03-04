@@ -12,6 +12,8 @@
 #include "Msg_Struct.h"
 
 
+
+	//服务器主动断开连接
 struct MSG_300000 {
 
 	MSG_300000(void);
@@ -19,23 +21,19 @@ struct MSG_300000 {
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
-/*
 
-	背包物品更新
-*/
+	//物品信息更新
 struct MSG_300100 {
 
-	std::vector<Item_Basic_Info> item_info_vec;
+	std::vector<Item_Basic_Info> item_info;
 
 	MSG_300100(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
-/*
 
-	物品附加信息更新
-*/
+	//物品附加信息更新
 struct MSG_300101 {
 
 	
@@ -45,10 +43,8 @@ struct MSG_300101 {
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
-/*
 
-	金钱更新
-*/
+	//金钱更新
 struct MSG_300102 {
 
 	int32_t copper;
@@ -60,13 +56,11 @@ struct MSG_300102 {
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
-/*
 
-	收到邮件通知
-*/
+	//邮件信息更新
 struct MSG_300200 {
 
-	std::vector<Mail_Detail> mail_detail_vec;
+	std::vector<Mail_Detail> mail_info;
 
 	MSG_300200(void);
 	void serialize(Block_Buffer &buffer) const;
