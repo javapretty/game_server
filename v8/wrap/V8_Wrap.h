@@ -15,9 +15,9 @@ using namespace v8;
 
 Local<Context> Create_Context(Isolate* isolate);
 const char* ToCString(const String::Utf8Value& value);
-void Run_Script(Isolate* isolate, const char* file_path);
+int Run_Script(Isolate* isolate, const char* file_path);
 MaybeLocal<String> Read_File(Isolate* isolate, const char* file_path);
-void Report_Exception(Isolate* isolate, TryCatch* handler);
+void Report_Exception(Isolate* isolate, TryCatch* handler, const char* file_path = NULL);
 
 //函数说明：引用js文件		参数：1,文件路径	返回值：无
 void require(const FunctionCallbackInfo<Value>& args);

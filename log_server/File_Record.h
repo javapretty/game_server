@@ -23,15 +23,6 @@ class File_Record {
 public:
 	typedef boost::unordered_map<int, File_Info> File_Info_Map;
 
-	enum {
-		LOG_LOGIN	= 1,
-		LOG_GATE		= 2,
-		LOG_GAME		= 3,
-		LOG_MASTER	= 4,
-		LOG_DB 		= 5,
-		LOG_MISC 	= 6,
-	};
-
 	File_Record(void);
 	virtual ~File_Record(void);
 

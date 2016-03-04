@@ -12,6 +12,7 @@
 #include <cstdio>
 #include <string>
 #include <sstream>
+#include "Log.h"
 #include "Block_Buffer.h"
 #include "File_Record.h"
 #include "Time_Value.h"
@@ -35,23 +36,23 @@ int File_Record::make_log_filepath(File_Info &file_info) {
 	file_info.file_path.clear();
 
 	switch (file_info.type) {
-	case LOG_LOGIN: {
+	case Log::LOG_LOGIN: {
 		file_info.file_path.append("./log/login-");
 		break;
 	}
-	case LOG_GATE: {
+	case Log::LOG_GATE: {
 		file_info.file_path.append("./log/gate-");
 		break;
 	}
-	case LOG_GAME: {
+	case Log::LOG_GAME: {
 		file_info.file_path.append("./log/game");
 		break;
 	}
-	case LOG_MASTER: {
+	case Log::LOG_MASTER: {
 		file_info.file_path.append("./log/master-");
 		break;
 	}
-	case LOG_DB: {
+	case Log::LOG_DB: {
 		file_info.file_path.append("./log/db-");
 		break;
 	}

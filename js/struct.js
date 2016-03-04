@@ -6,14 +6,6 @@
 *	tel:18268193219
 */
 
-if (typeof DATA_CHANGE == "undefined") {
-	var DATA_CHANGE = {};
-	DATA_CHANGE.PLAYER_CHANGE = 1;
-	DATA_CHANGE.HERO_CHANGE = 2;
-	DATA_CHANGE.BAG_CHANGE = 3;
-	DATA_CHANGE.MAIL_CHANGE = 4;
-}
-
 function Player_Info() {
 	this.role_id = 0;							//玩家id
 	this.account = "";						//玩家账号名

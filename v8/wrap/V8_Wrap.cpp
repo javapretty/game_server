@@ -56,18 +56,34 @@ Local<Context> Create_Context(Isolate* isolate) {
 }
 
 const char* ToCString(const v8::String::Utf8Value& value) {
-  return *value ? *value : "<string conversion failed>";
+  return *value ? *value : "<string is null>";
 }
 
-void Run_Script(Isolate* isolate, const char* file_path) {
+int Run_Script(Isolate* isolate, const char* file_path) {
 	HandleScope handle_scope(isolate);
 	Local<String> source;
 	if (!Read_File(isolate, file_path).ToLocal(&source)) {
-		LOG_INFO("script:%s not exist\n", file_path);
-		return;
+		LOG_INFO("read script:%s error\n", file_path);
+		return -1;
 	}
-  Local<Script> script = Script::Compile(isolate->GetCurrentContext(), source).ToLocalChecked();
-  script->Run(isolate->GetCurrentContext()).ToLocalChecked();
+
+	Local<Context> context(isolate->GetCurrentContext());
+	TryCatch try_catch(isolate);
+
+	// Compile the script and check for errors.
+	Local<Script> compiled_script;
+	if (!Script::Compile(context, source).ToLocal(&compiled_script)) {
+		Report_Exception(isolate, &try_catch, file_path);
+		return -1;
+	 }
+
+	// Run the script!
+	Local<Value> result;
+	if (!compiled_script->Run(context).ToLocal(&result)) {
+		Report_Exception(isolate, &try_catch, file_path);
+		return -1;
+	  }
+  	return 0;
 }
 
 // Reads a file into a v8 string.
@@ -95,7 +111,7 @@ MaybeLocal<String> Read_File(Isolate* isolate, const char* file_path) {
   return result;
 }
 
-void Report_Exception(Isolate* isolate, TryCatch* try_catch) {
+void Report_Exception(Isolate* isolate, TryCatch* try_catch,  const char* file_path) {
   HandleScope handle_scope(isolate);
   String::Utf8Value exception(try_catch->Exception());
   const char* exception_string = ToCString(exception);
@@ -103,56 +119,51 @@ void Report_Exception(Isolate* isolate, TryCatch* try_catch) {
   if (message.IsEmpty()) {
     // V8 didn't provide any extra information about this error; just
     // print the exception.
-    fprintf(stderr, "%s\n", exception_string);
+	  	LOG_ERROR("%s\n", exception_string);
   } else {
     // Print (filename):(line number): (message).
-    String::Utf8Value filename(message->GetScriptOrigin().ResourceName());
-    Local<Context> context(isolate->GetCurrentContext());
-    const char* filename_string = ToCString(filename);
+	  Local<Context> context(isolate->GetCurrentContext());
+
     int linenum = message->GetLineNumber(context).FromJust();
-    fprintf(stderr, "%s:%i: %s\n", filename_string, linenum, exception_string);
+    if (file_path == NULL) {
+    		String::Utf8Value filename(message->GetScriptResourceName());
+    		const char* filename_string = ToCString(filename);
+    		LOG_ERROR("%s: %i: %s\n", filename_string, linenum, exception_string);
+    	} else {
+    		LOG_ERROR("%s: %i: %s\n", file_path, linenum, exception_string);
+    	}
+
     // Print line of source code.
-    String::Utf8Value sourceline(
-        message->GetSourceLine(context).ToLocalChecked());
+    String::Utf8Value sourceline(message->GetSourceLine(context).ToLocalChecked());
     const char* sourceline_string = ToCString(sourceline);
-    fprintf(stderr, "%s\n", sourceline_string);
-    // Print wavy underline (GetUnderline is deprecated).
-    int start = message->GetStartColumn(context).FromJust();
-    for (int i = 0; i < start; i++) {
-      fprintf(stderr, " ");
-    }
-    int end = message->GetEndColumn(context).FromJust();
-    for (int i = start; i < end; i++) {
-      fprintf(stderr, "^");
-    }
-    fprintf(stderr, "\n");
+    LOG_ERROR("%s\n", sourceline_string);
     Local<Value> stack_trace_string;
     if (try_catch->StackTrace(context).ToLocal(&stack_trace_string) &&
         stack_trace_string->IsString() &&
         Local<String>::Cast(stack_trace_string)->Length() > 0) {
       String::Utf8Value stack_trace(stack_trace_string);
       const char* stack_trace_string = ToCString(stack_trace);
-      fprintf(stderr, "%s\n", stack_trace_string);
+      LOG_ERROR("%s\n", stack_trace_string);
     }
   }
 }
 
 void read_json(const FunctionCallbackInfo<Value>& args) {
   if (args.Length() != 1) {
-	  LOG_FATAL("read_file args error, length: %d\n", args.Length());
+	  LOG_FATAL("read_json args error, length: %d\n", args.Length());
 	  args.GetReturnValue().SetNull();
     return;
   	}
   String::Utf8Value file(args[0]);
   if (*file == NULL) {
-	  LOG_FATAL("read_file:%s loading error\n");
+	  LOG_FATAL("read_json, file is null\n");
 	  	args.GetReturnValue().SetNull();
     return;
   	}
 
   Local<String> source;
   if (!Read_File(args.GetIsolate(), *file).ToLocal(&source)) {
-	  LOG_INFO("read_file:%s loading error\n", *file);
+	  LOG_INFO("read_file:%s error\n", *file);
 	  	args.GetReturnValue().SetNull();
     return;
   	}
