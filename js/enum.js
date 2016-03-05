@@ -55,7 +55,7 @@ if (typeof MSG_REQ == "undefined") {
 	
 	MSG_REQ.REQ_FETCH_ROLE_INFO								=	120001;	//获取角色信息
 	MSG_REQ.REQ_CREATE_ROLE 									= 	120002;	//创建角色
-
+	MSG_REQ.REQ_BUY_VITALITY								= 120003;	//提高玩家体力
 	MSG_REQ.REQ_FETCH_BAG_INFO 								= 	120100;	//获取背包信息
 	MSG_REQ.REQ_USE_ITEM											= 120101;	//使用道具
 	MSG_REQ.REQ_SELL_ITEM 										= 	120102;	//出售道具
@@ -75,7 +75,8 @@ if (typeof MSG_RES == "undefined") {
 	var MSG_RES = {};
 	MSG_RES.RES_FETCH_ROLE_INFO								=	520001;	//获取角色信息(返回)
 	MSG_RES.RES_CREATE_ROLE 									= 	520002;	//创建角色(返回)
-
+	MSG_RES.RES_BUY_VITALITY_INFO                           =  520003; //玩家购买体力(返回)
+	
 	MSG_RES.RES_FETCH_BAG_INFO 								= 	520100;	//获取背包信息(返回)
 	MSG_RES.RES_USE_ITEM 											= 	520101;	//使用道具(返回)
 	MSG_RES.RES_SELL_ITEM 										= 	520102;	//出售道具(返回)

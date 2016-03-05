@@ -102,15 +102,12 @@ function process_client_buffer(buffer) {
 			case MSG_REQ.REQ_ADD_HERO_QUALITY:
 				player.hero.add_hero_quality(buffer);
 				break;
-<<<<<<< HEAD
-			case msg_req.REQ_BUY_VITALITY:
+			case MSG_REQ.REQ_BUY_VITALITY:
 				player.buy_vitality();
 				break;	
-=======
 			case MSG_REQ.REQ_ADD_EQUIP_LEVEL:
 				player.hero.add_equip_level(buffer);
 				break;
->>>>>>> e48f695fb98ebfd87508a1f49f3f4295de15820e
 			default:
 				break;
 			}

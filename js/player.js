@@ -74,17 +74,16 @@ function Player() {
 		todyBuyArry.push((this.player_info.today_buy + 1).toString());
 		var costGold = util.lookupDataTable("config/vitality/GradientPrice.json", "Vitality", todyBuyArry);
 		var curGold = this.bag.bag_info.gold;
-		//暂时注释
-		if (curGold < costGold){
-			return this.cplayer.respond_error_result(msg_res.RES_BUY_VITALITY_INFO, error.ERROR_GOLD_NOT_ENOUGH);
-		}
+		// if (curGold < costGold){
+			// return this.cplayer.respond_error_result(MSG_RES.RES_BUY_VITALITY_INFO, ERROR_CODE.ERROR_GOLD_NOT_ENOUGH);
+		// }
 		
 		//2.检查可以购买体力次数
 		var vipArry = new Array();
 		vipArry.push(this.player_info.vip.toString());
 		var canBuyTimes = util.lookupDataTable("config/vip/vip.json", "Buy Vit Max", vipArry);
 		if (this.player_info.today_buy >= canBuyTimes){
-			return this.cplayer.respond_error_result(msg_res.RES_BUY_VITALITY_INFO, error.ERROR_VITALITY_TIMES_NOT_ENOUGH);
+			return this.cplayer.respond_error_result(MSG_RES.RES_BUY_VITALITY_INFO, ERROR_CODE.ERROR_VITALITY_TIMES_NOT_ENOUGH);
 		}
 		
 		//3.更新元宝
@@ -101,7 +100,7 @@ function Player() {
 		//6.返回消息给客户端
 		var buf = pop_buffer();
 		buf.write_int32(this.player_info.vitality);
-		this.cplayer.respond_success_result(msg_res.RES_BUY_VITALITY_INFO, buf);
+		this.cplayer.respond_success_result(MSG_RES.RES_BUY_VITALITY_INFO, buf);
 		push_buffer(buf);
 		this.set_data_change();
 	}
