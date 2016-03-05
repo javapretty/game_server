@@ -20,7 +20,7 @@ function Mail() {
 	}
 	
 	this.set_data_change = function() {
-		this.player.cplayer.set_player_data_change(DATA_CHANGE.MAIL_CHANGE);
+		this.player.cplayer.set_player_data_change(Data_Change.MAIL_CHANGE);
 	}
 
 	this.fetch_mail_info = function() {
@@ -33,7 +33,7 @@ function Mail() {
     	
 		var buf = pop_buffer();
 		msg_res.serialize(buf);
-		this.player.cplayer.respond_success_result(MSG_RES.RES_FETCH_MAIL_INFO, buf);
+		this.player.cplayer.respond_success_result(Msg_Res.RES_FETCH_MAIL_INFO, buf);
 		push_buffer(buf);
 }
 
@@ -55,7 +55,7 @@ function Mail() {
 		} else {
 			var mail_detail = this.mail_info.mail_map.get(msg_req.mail_id);
 			if (mail_detail == null) {
-				return this.player.cplayer.respond_error_result(MSG_RES.RES_PICKUP_MAIL, ERROR_CODE.ERROR_CLIENT_PARAM);
+				return this.player.cplayer.respond_error_result(Msg_Res.RES_PICKUP_MAIL, Error_Code.ERROR_CLIENT_PARAM);
 			}
 			var result = this.player.bag.bag_add_money(mail_detail.copper, mail_detail.gold);
 			if (result == 0) {
@@ -66,7 +66,7 @@ function Mail() {
 	
 		var buf = pop_buffer();
 		msg_res.serialize(buf);
-		this.player.cplayer.respond_success_result(MSG_RES.RES_PICKUP_MAIL, buf);
+		this.player.cplayer.respond_success_result(Msg_Res.RES_PICKUP_MAIL, buf);
 		push_buffer(buf);
 		
 		this.set_data_change();
@@ -91,7 +91,7 @@ function Mail() {
 		} else {
 			var mail_detail = this.mail_info.mail_map.get(msg_req.mail_id);
 			if (mail_detail == null) {
-				return this.player.cplayer.respond_error_result(MSG_RES.RES_DEL_MAIL, ERROR_CODE.ERROR_CLIENT_PARAM);
+				return this.player.cplayer.respond_error_result(Msg_Res.RES_DEL_MAIL, Error_Code.ERROR_CLIENT_PARAM);
 			}
 			var result = this.player.bag.bag_add_money(mail_detail.copper, mail_detail.gold);
 			if (result == 0) {
@@ -103,7 +103,7 @@ function Mail() {
 	
 		var buf = pop_buffer();
 		msg_res.serialize(buf);
-		this.player.cplayer.respond_success_result(MSG_RES.RES_DEL_MAIL, buf);
+		this.player.cplayer.respond_success_result(Msg_Res.RES_DEL_MAIL, buf);
 		push_buffer(buf);
 		
 		this.set_data_change();
@@ -116,19 +116,19 @@ function Mail() {
 		msg_req.deserialize(buffer);	
 		var receiver = get_player_by_name(msg_req.receiver_name);
 		if (receiver == null) {
-			return this.player.cplayer.respond_error_result(MSG_RES.RES_SEND_MAIL, ERROR_CODE.ERROR_ROLE_NOT_EXIST);
+			return this.player.cplayer.respond_error_result(Msg_Res.RES_SEND_MAIL, Error_Code.ERROR_ROLE_NOT_EXIST);
 		}
 		var receiver_id = receiver.role_id();
 		if (receiver_id == this.player.player_info.role_id || msg_req.mail_detail.mail_title.length > 64 || msg_req.mail_detail.mail_content.length > 512)
-			return this.player.cplayer.respond_error_result(MSG_RES.RES_SEND_MAIL, ERROR_CODE.ERROR_CLIENT_PARAM);
+			return this.player.cplayer.respond_error_result(Msg_Res.RES_SEND_MAIL, Error_Code.ERROR_CLIENT_PARAM);
 	
 		var result = this.player.bag.bag_add_money(msg_req.mail_detail.copper, msg_req.mail_detail.gold);
 		if (result != 0) {
-			return this.player.cplayer.respond_error_result(MSG_RES.RES_SEND_MAIL, result);
+			return this.player.cplayer.respond_error_result(Msg_Res.RES_SEND_MAIL, result);
 		}
 
 		var result = send_mail_inner(receiver_id, msg_req.mail_detail);
-		this.player.cplayer.respond_error_result(MSG_RES.RES_SEND_MAIL, result);
+		this.player.cplayer.respond_error_result(Msg_Res.RES_SEND_MAIL, result);
 	}
 	
 	//读取json配置文件
@@ -148,7 +148,7 @@ function Mail() {
 function send_mail_inner(receiver_id, mail_detail) {
 		if (receiver_id <= 0 || mail_detail.sender_type <= 0 || mail_detail.sender_id <= 0 || mail_detail.sender_name.empty()
 			|| mail_detail.mail_title.empty() || mail_detail.gold < 0 || mail_detail.copper < 0) {
-			return ERROR_CODE.ERROR_CLIENT_PARAM;
+			return Error_Code.ERROR_CLIENT_PARAM;
 		}
 
 		var receiver = player_role_id_map.get(receiver_id);
@@ -168,13 +168,13 @@ function send_mail_inner(receiver_id, mail_detail) {
 			msg_active.mail_info.push(mail_detail);
 			var buf = pop_buffer();
 			msg_active.serialize(buf);
-			receiver.cplayer.respond_success_result(MSG_ACTIVE.ACTIVE_RECEIVE_MAIL, buf);
+			receiver.cplayer.respond_success_result(Msg_Active.ACTIVE_RECEIVE_MAIL, buf);
 			push_buffer(buf);
 			
 			receiver.mail.set_data_change();
 		} else {
 			var buf = pop_buffer();
-			buf.make_inner_message(MSG_DB.SYNC_GAME_DB_SAVE_MAIL_INFO);
+			buf.make_inner_message(Msg_Db.SYNC_GAME_DB_SAVE_MAIL_INFO);
 			buf.write_int64(receiver_id);
 			mail_detail.serialize(buf);
 			buf.finish_message();

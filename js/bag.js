@@ -20,7 +20,7 @@ function Bag() {
 	}
 	
 	this.set_data_change = function() {
-		this.player.cplayer.set_player_data_change(DATA_CHANGE.BAG_CHANGE);
+		this.player.cplayer.set_player_data_change(Data_Change.BAG_CHANGE);
 	}
 	
 	this.fetch_bag_info = function() {
@@ -33,7 +33,7 @@ function Bag() {
     	
 		var buf = pop_buffer();
 		msg_res.serialize(buf);
-		this.player.cplayer.respond_success_result(MSG_RES.RES_FETCH_BAG_INFO, buf);
+		this.player.cplayer.respond_success_result(Msg_Res.RES_FETCH_BAG_INFO, buf);
 		push_buffer(buf);
 	}
 	
@@ -44,7 +44,7 @@ function Bag() {
 		msg_req.deserialize(buffer);
 		var result = this.bag_erase_item(msg_req.item);
 		
-		this.player.cplayer.respond_error_result(MSG_RES.RES_USE_ITEM, result);
+		this.player.cplayer.respond_error_result(Msg_Res.RES_USE_ITEM, result);
 	}
 	
 	this.sell_item = function(buffer) {
@@ -54,7 +54,7 @@ function Bag() {
 		msg_req.deserialize(buffer);
 		var result = this.bag_erase_item(msg_req.item);
 		
-		this.player.cplayer.respond_error_result(MSG_RES.RES_SELL_ITEM, result);
+		this.player.cplayer.respond_error_result(Msg_Res.RES_SELL_ITEM, result);
 	}
 	
 	this.bag_add_money = function(copper, gold) {
@@ -73,7 +73,7 @@ function Bag() {
 		var item_info = this.bag_info.item_map.get(item.id);
 		if (item_info == null) {
 			if (this.bag_info.item_map.size() >= 2000)
-				return ERROR_CODE.ERROR_BAG_FULL;
+				return Error_Code.ERROR_BAG_FULL;
 			this.bag_info.item_map = put(item.id, item);	
 		} else {
 			item_info.amount += item.amount;
@@ -94,7 +94,7 @@ function Bag() {
 			return 0;		
 		} else {
 			print('item_info is null');
-			return ERROR_CODE.ERROR_ITEM_NOT_ENOUGH;
+			return Error_Code.ERROR_ITEM_NOT_ENOUGH;
 		}
 	}
 	
@@ -105,7 +105,7 @@ function Bag() {
 		
 		var buf = pop_buffer();
 		msg_active.serialize(buf);
-		this.player.cplayer.respond_success_result(MSG_ACTIVE.ACTIVE_MONEY_INFO, buf);
+		this.player.cplayer.respond_success_result(Msg_Active.ACTIVE_MONEY_INFO, buf);
 		push_buffer(buf);
 		this.set_data_change();
 	}
@@ -118,7 +118,7 @@ function Bag() {
     	
 		var buf = pop_buffer();
 		msg_active.serialize(buf);
-		this.player.cplayer.respond_success_result(MSG_ACTIVE.ACTIVE_ITEM_INFO, buf);
+		this.player.cplayer.respond_success_result(Msg_Active.ACTIVE_ITEM_INFO, buf);
 		push_buffer(buf);
 		this.set_data_change();
 	}

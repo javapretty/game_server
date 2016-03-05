@@ -20,7 +20,7 @@ function Hero() {
 	}
 	
 	this.set_data_change = function() {
-		this.player.cplayer.set_player_data_change(DATA_CHANGE.HERO_CHANGE);
+		this.player.cplayer.set_player_data_change(Data_Change.HERO_CHANGE);
 	}
 	
 	this.fetch_hero_info = function() {
@@ -32,7 +32,7 @@ function Hero() {
     	});
     	var buf = pop_buffer();
     	msg_res.serialize(buf);
-		this.player.cplayer.respond_success_result(MSG_RES.RES_FETCH_HERO_INFO, buf);
+		this.player.cplayer.respond_success_result(Msg_Res.RES_FETCH_HERO_INFO, buf);
 		push_buffer(buf);
 	}
 	
@@ -43,17 +43,17 @@ function Hero() {
 		msg_req.deserialize(buffer); 
 		var hero_detail = this.hero_info.hero_map.get(msg_req.hero_id);
 		if (hero_detail == null) {
-			return this.player.cplayer.respond_error_result(MSG_RES.RES_ADD_HERO_STAR, ERROR_CODE.ERROR_CLIENT_PARAM);
+			return this.player.cplayer.respond_error_result(Msg_Res.RES_ADD_HERO_STAR, Error_Code.ERROR_CLIENT_PARAM);
 		}
 		
 		var json_str = read_json('config/hero/hero.json');
   		var hero_obj = JSON.parse(json_str)[msg_req.hero_id];
     	if (hero_obj == null) {
-    		return this.player.cplayer.respond_error_result(MSG_RES.RES_ADD_HERO_STAR, ERROR_CODE.ERROR_CONFIG_NOT_EXIST);
+    		return this.player.cplayer.respond_error_result(Msg_Res.RES_ADD_HERO_STAR, Error_Code.ERROR_CONFIG_NOT_EXIST);
     	}
     	
     	if (hero_detail.level == hero_obj.star_item_amount.length) {
-    		return this.player.cplayer.respond_error_result(MSG_RES.RES_ADD_HERO_STAR, ERROR_CODE.ERROR_CLIENT_OPERATE);
+    		return this.player.cplayer.respond_error_result(Msg_Res.RES_ADD_HERO_STAR, Error_Code.ERROR_CLIENT_OPERATE);
     	}
     		
     	var item = new Item_Info();
@@ -62,7 +62,7 @@ function Hero() {
     	print(item.id, item.amount);
     	var result = this.player.bag.bag_erase_item(item);
     	if (result != 0) {
-    		return this.player.cplayer.respond_error_result(MSG_RES.RES_ADD_HERO_STAR, result);
+    		return this.player.cplayer.respond_error_result(Msg_Res.RES_ADD_HERO_STAR, result);
     	}
     	hero_detail.star++;
     	this.set_data_change();
@@ -72,7 +72,7 @@ function Hero() {
     	msg_res.star = hero_detail.star;
 		var buf = pop_buffer();
 		msg_res.serialize(buf);
-		this.player.cplayer.respond_success_result(MSG_RES.RES_ADD_HERO_STAR, buf);
+		this.player.cplayer.respond_success_result(Msg_Res.RES_ADD_HERO_STAR, buf);
 		push_buffer(buf);
 	}
 	
@@ -88,7 +88,7 @@ function Hero() {
 		msg_res.quality = 1;
 		var buf = pop_buffer();
 		msg_res.serialize(buf);
-		this.player.cplayer.respond_success_result(MSG_RES.RES_ADD_HERO_QUALITY, buf);
+		this.player.cplayer.respond_success_result(Msg_Res.RES_ADD_HERO_QUALITY, buf);
 		push_buffer(buf);
 	}
 	
@@ -105,7 +105,7 @@ function Hero() {
 		msg_res.equip_level = 1;
 		var buf = pop_buffer();
 		msg_res.serialize(buf);
-		this.player.cplayer.respond_success_result(MSG_RES.RES_ADD_EQUIP_LEVEL, buf);
+		this.player.cplayer.respond_success_result(Msg_Res.RES_ADD_EQUIP_LEVEL, buf);
 		push_buffer(buf);
 	}
 }

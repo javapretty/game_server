@@ -65,47 +65,47 @@ function process_client_buffer(buffer) {
 	var status = buffer.read_int32();
 	var player_cid = buffer.read_int32();
 	
-	if (msg_id == MSG_REQ.REQ_FETCH_ROLE_INFO || msg_id == MSG_REQ.REQ_CREATE_ROLE || msg_id == MSG_REQ.SYNC_GATE_GAME_PLAYER_SIGNOUT) {
+	if (msg_id == Msg_Req.REQ_FETCH_ROLE_INFO || msg_id == Msg_Req.REQ_CREATE_ROLE || msg_id == Msg_Req.SYNC_GATE_GAME_PLAYER_SIGNOUT) {
 		process_login_buffer(buffer, gate_cid, player_cid, msg_id);
 	} else {
 		var cid = gate_cid * 10000 + player_cid;
 		var player = player_cid_map.get(cid);
 		if (player) {
 			switch(msg_id) {
-			case MSG_REQ.REQ_FETCH_BAG_INFO:
+			case Msg_Req.REQ_FETCH_BAG_INFO:
 				player.bag.fetch_bag_info();
 				break;
-			case MSG_REQ.REQ_USE_ITEM:
+			case Msg_Req.REQ_USE_ITEM:
 				player.bag.use_item(buffer);
 				break;
-			case MSG_REQ.REQ_SELL_ITEM:
+			case Msg_Req.REQ_SELL_ITEM:
 				player.bag.sell_item(buffer);
 				break
-			case MSG_REQ.REQ_FETCH_MAIL_INFO:
+			case Msg_Req.REQ_FETCH_MAIL_INFO:
 				player.mail.fetch_mail_info();
 				break;
-			case MSG_REQ.REQ_PICKUP_MAIL:
+			case Msg_Req.REQ_PICKUP_MAIL:
 				player.mail.pickup_mail(buffer);
 				break;
-			case MSG_REQ.REQ_DEL_MAIL:
+			case Msg_Req.REQ_DEL_MAIL:
 				player.mail.delete_mail(buffer);
 				break;
-			case MSG_REQ.REQ_SEND_MAIL:
+			case Msg_Req.REQ_SEND_MAIL:
 				player.mail.send_mail(buffer);
 				break;
-			case MSG_REQ.REQ_FETCH_HERO_INFO:
+			case Msg_Req.REQ_FETCH_HERO_INFO:
 				player.hero.fetch_hero_info(buffer);
 				break;
-			case MSG_REQ.REQ_ADD_HERO_STAR:
+			case Msg_Req.REQ_ADD_HERO_STAR:
 				player.hero.add_hero_star(buffer);
 				break;
-			case MSG_REQ.REQ_ADD_HERO_QUALITY:
+			case Msg_Req.REQ_ADD_HERO_QUALITY:
 				player.hero.add_hero_quality(buffer);
 				break;
-			case MSG_REQ.REQ_BUY_VITALITY:
+			case Msg_Req.REQ_BUY_VITALITY:
 				player.buy_vitality();
 				break;	
-			case MSG_REQ.REQ_ADD_EQUIP_LEVEL:
+			case Msg_Req.REQ_ADD_EQUIP_LEVEL:
 				player.hero.add_equip_level(buffer);
 				break;
 			default:
