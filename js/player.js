@@ -57,7 +57,7 @@ function Player() {
 	}
 	
 	this.set_data_change = function() {
-		this.cplayer.set_player_data_change(data_change.PLAYER_CHANGE);
+		this.cplayer.set_player_data_change(DATA_CHANGE.PLAYER_CHANGE);
 	}
 	
 	this.getMaxVitality = function() {
@@ -72,7 +72,7 @@ function Player() {
 		//1.检查元宝是否充足
 		var todyBuyArry = new Array();
 		todyBuyArry.push((this.player_info.today_buy + 1).toString());
-		var costGold = util.lookupDataTable("config/vitality/GradientPrice.json", "Vitality", todyBuyArry);
+		var costGold = util.lookupDataTable("config/vitality/gradientPrice.json", "Vitality", todyBuyArry);
 		var curGold = this.bag.bag_info.gold;
 		if (curGold < costGold){
 			return this.cplayer.respond_error_result(MSG_RES.RES_BUY_VITALITY_INFO, ERROR_CODE.ERROR_GOLD_NOT_ENOUGH);
@@ -85,7 +85,7 @@ function Player() {
 		if (this.player_info.today_buy >= canBuyTimes){
 			return this.cplayer.respond_error_result(MSG_RES.RES_BUY_VITALITY_INFO, ERROR_CODE.ERROR_VITALITY_TIMES_NOT_ENOUGH);
 		}
-		
+
 		//3.更新元宝
 		var result = this.bag.bag_sub_money(0, costGold);
 		
@@ -96,12 +96,32 @@ function Player() {
 		//5.更新体力(120应该为配置)
 		var maxVit = this.getMaxVitality();
 		this.player_info.vitality = Math.min(Math.max(0, (this.player_info.vitality + 120)), maxVit);
-		
 		//6.返回消息给客户端
 		var buf = pop_buffer();
 		buf.write_int32(this.player_info.vitality);
 		this.cplayer.respond_success_result(MSG_RES.RES_BUY_VITALITY_INFO, buf);
 		push_buffer(buf);
 		this.set_data_change();
+	}
+	
+	this.update_vip = function(transactionType){
+		print('update_vip, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " msec:", msec());
+		
+		var vipArry = new Array();
+		vipArry.push(transactionType);
+		var newVipExp = this.player_info.vip_exp + util.lookupDataTable("config/vip/recharge.json", "VIP Exp", vipArry);
+		
+		var vipModule = util.lookupDataTable("config/vip/vip.json", null, null);
+		var vipMaxLevle = util.lookupDataTable("config/parameter/parameterTable.josn", "max_vip_level", null);
+		for (var i = 0; i < vipMaxLevle; i++)
+		{
+			if (newVipExp < vipModule[i.toString()]["Recharge"]){
+				continue;
+			}
+			
+			this.player_info.vip = i;
+		}
+		
+		print('after update vip:', this.player_info.vip);
 	}
 }

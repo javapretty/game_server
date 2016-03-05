@@ -7,7 +7,7 @@
 */
 
 function Player_Info() {
-	this.role_id = 0;							//玩家id
+	this.role_id = 0;						//玩家id
 	this.account = "";						//玩家账号名
 	this.role_name = "";					//玩家名字
 	this.client_ip = "";					//客户端ip
@@ -24,6 +24,7 @@ function Player_Info() {
 	this.last_change_time = 0;				//上次更改体力时间
 	this.today_buy = 0;						//当前购买次数
 	this.vip = 0;									//vip等级
+	this.vip_exp = 0;								//vip对应的经验值
 	this.charge_gold = 0;					//总共充值的元宝数
 	
 	this.serialize = function(buffer) {
@@ -44,6 +45,7 @@ function Player_Info() {
 		buffer.write_int64(this.last_change_time);
 		buffer.write_int32(this.today_buy);
 		buffer.write_int32(this.vip);
+		buffer.write_int32(this.vip_exp);
 		buffer.write_int32(this.charge_gold);
 	}
 	
@@ -65,6 +67,7 @@ function Player_Info() {
 		this.last_change_time = buffer.read_int64();
 		this.today_buy = buffer.read_int32();
 		this.vip = buffer.read_int32();
+		this.vip_exp = buffer.read_int32();
 		this.charge_gold = buffer.read_int32();
 	}
 }
