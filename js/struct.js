@@ -63,15 +63,45 @@ function Player_Info() {
 	}
 }
 
+//英雄属性信息
+function Property_Detail() {
+	this.type = 0;				//属性类型
+	this.value = 0;				//属性值
+	
+	this.serialize = function(buffer) {
+		buffer.write_int32(type);
+		buffer.write_int32(value);
+	}
+	
+	this.deserialize = function(buffer) {
+		this.type = buffer.read_int32();
+		this.value = buffer.read_int32();
+	}
+}
+
+function Equip_Detail() {
+	this.equip_id = 0;		//装备id
+	this.level = 0;				//装备等级
+	
+	this.serialize = function(buffer) {
+		buffer.write_int32(this.equip_id);
+		buffer.write_int32(this.level);
+	}
+	
+	this.deserialize = function(buffer) {
+		this.equip_id = buffer.read_int32();
+		this.level = buffer.read_int32();
+	}
+}
+
 function Hero_Detail() {
 	this.hero_id = 0;				//	英雄id
 	this.level = 0;					//英雄等级
 	this.exp = 0;						//英雄经验
 	this.star = 0;					//英雄星级
 	this.quality = 0;				//英雄品质级别
-	this.power = 0;					//力量
-	this.brains = 0;				//智力
-	this.agile = 0;					//敏捷
+	this.equip_info = new Array();			//英雄装备信息
+	this.property_info = new Array();	//英雄属性信息
 	
 	this.serialize = function(buffer) {
 		buffer.write_int32(this.hero_id);
@@ -79,9 +109,16 @@ function Hero_Detail() {
 		buffer.write_int32(this.exp);
 		buffer.write_int32(this.star);
 		buffer.write_int32(this.quality);
-		buffer.write_int32(this.power);
-		buffer.write_int32(this.brains);
-		buffer.write_int32(this.agile);
+		var equip_len = this.equip_info.length;
+		buffer.write_uint16(equip_len);
+		for (var i = 0; i < equip_len; ++i) {
+			this.equip_info[i].serialize(buffer);
+		}
+		var property_len = this.property_info.length;
+		buffer.write_uint16(property_len);
+		for (var i = 0; i < property_len; ++i) {
+			this.property_info[i].serialize(buffer);
+		}
 	}
 	
 	this.deserialize = function(buffer) {
@@ -90,9 +127,18 @@ function Hero_Detail() {
 		this.exp = buffer.read_int32();
 		this.star = buffer.read_int32();
 		this.quality = buffer.read_int32();
-		this.power = buffer.read_int32();
-		this.brains = buffer.read_int32();
-		this.agile = buffer.read_int32();
+		var equip_len = buffer.read_uint16();
+		for (var i = 0; i < equip_len; ++i) {
+			var equip_detail = new Equip_Detail();
+			equip_detail.deserialize(buffer);
+			this.equip_info.push(equip_detail);
+		}
+		var property_len = buffer.read_uint16();
+		for (var i = 0; i < property_len; ++i) {
+			var property_detail = new Property_Detail();
+			property_detail.deserialize(buffer);
+			this.property_info.push(property_detail);
+		}
 	}
 }
 
@@ -121,13 +167,13 @@ function Item_Info() {
 	this.amount = 0;		//物品数量
 	
 	this.serialize = function(buffer) {
-		buffer.write_int32(id);
-		buffer.write_int32(amount);
+		buffer.write_int32(this.id);
+		buffer.write_int32(this.amount);
 	}
 	
 	this.deserialize = function(buffer) {
-		id = buffer.read_int32();
-		amount = buffer.read_int32();
+		this.id = buffer.read_int32();
+		this.amount = buffer.read_int32();
 	}
 }
 

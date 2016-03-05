@@ -91,4 +91,21 @@ function Hero() {
 		this.player.cplayer.respond_success_result(MSG_RES.RES_ADD_HERO_QUALITY, buf);
 		push_buffer(buf);
 	}
+	
+	this.add_equip_level = function(buffer) {
+		print('add_equip_level, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " msec:", msec());
+		
+		var msg_req = new MSG_120303();
+		msg_req.deserialize(buffer); 
+		this.set_data_change();
+
+		var msg_res = new MSG_520303();
+		msg_res.hero_id = msg_req.hero_id;
+		msg_res.equip_index = msg_req.equip_index;
+		msg_res.equip_level = 1;
+		var buf = pop_buffer();
+		msg_res.serialize(buf);
+		this.player.cplayer.respond_success_result(MSG_RES.RES_ADD_EQUIP_LEVEL, buf);
+		push_buffer(buf);
+	}
 }

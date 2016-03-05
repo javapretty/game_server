@@ -333,9 +333,26 @@ int DB_Operator::load_hero_info(int64_t role_id, Hero_Info &hero_info) {
 		hero_detail.exp = obj["exp"].numberInt();
 		hero_detail.star = obj["star"].numberInt();
 		hero_detail.quality = obj["quality"].numberInt();
-		hero_detail.power = obj["power"].numberInt();
-		hero_detail.brains = obj["brains"].numberInt();
-		hero_detail.agile = obj["agile"].numberInt();
+
+		BSONObjIterator iter_equip(obj.getObjectField("equip"));
+		BSONObj obj_equip;
+		while (iter_equip.more()){
+			obj_equip = iter_equip.next().embeddedObject();
+			Equip_Detail equip_detail;
+			equip_detail.equip_id = obj_equip["equip_id"].numberInt();
+			equip_detail.level = obj_equip["level"].numberInt();
+			hero_detail.equip_info.push_back(equip_detail);
+		}
+
+		BSONObjIterator iter_property(obj.getObjectField("property"));
+		BSONObj obj_property;
+		while (iter_property.more()){
+			obj_property = iter_property.next().embeddedObject();
+			Property_Detail property_detail;
+			property_detail.type = obj_property["type"].numberInt();
+			property_detail.value = obj_property["value"].numberInt();
+			hero_detail.property_info.push_back(property_detail);
+		}
 
 		hero_info.hero_map.insert(std::make_pair(hero_detail.hero_id, hero_detail));
 	}
@@ -344,17 +361,24 @@ int DB_Operator::load_hero_info(int64_t role_id, Hero_Info &hero_info) {
 
 int DB_Operator::save_hero_info(int64_t role_id, Hero_Info &hero_info) {
 	std::vector<BSONObj> hero_vec;
-	BSONObj obj;
 	for (Hero_Info::Hero_Map::const_iterator iter = hero_info.hero_map.begin(); iter != hero_info.hero_map.end(); ++iter) {
+		std::vector<BSONObj> equip_vec;
+		for (std::vector<Equip_Detail>::const_iterator it = iter->second.equip_info.begin(); it != iter->second.equip_info.end(); ++it) {
+			equip_vec.push_back(BSON("equip_id" << it->equip_id << "level" << it->level));
+		}
+
+		std::vector<BSONObj> property_vec;
+		for (std::vector<Property_Detail>::const_iterator it = iter->second.property_info.begin(); it != iter->second.property_info.end(); ++it) {
+			property_vec.push_back(BSON("type" << it->type << "value" << it->value));
+		}
+
 		hero_vec.push_back(BSON("hero_id" << iter->second.hero_id
 				<< "level" << iter->second.level
 				<< "exp" << iter->second.exp
 				<< "star" << iter->second.star
 				<< "quality" << iter->second.quality
-				<< "power" << iter->second.power
-				<< "brains" << iter->second.brains
-				<< "agile" << iter->second.agile));
-		hero_vec.push_back(obj);
+				<< "equip" << equip_vec
+				<< "property" << property_vec));
 	}
 
 	BSONObjBuilder tmp_builder;

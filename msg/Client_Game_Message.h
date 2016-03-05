@@ -265,5 +265,31 @@ struct MSG_520302 {
 	void reset(void);
 };
 
+	//提高英雄装备等级
+struct MSG_120303 {
+
+	int32_t hero_id;
+
+	int32_t equip_index; // 装备位置索引
+
+	MSG_120303(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+struct MSG_520303 {
+
+	int32_t hero_id;
+
+	int32_t equip_index;
+
+	int32_t equip_level;
+
+	MSG_520303(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+
 
 #endif

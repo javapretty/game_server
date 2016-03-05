@@ -102,6 +102,9 @@ function process_client_buffer(buffer) {
 			case MSG_REQ.REQ_ADD_HERO_QUALITY:
 				player.hero.add_hero_quality(buffer);
 				break;
+			case MSG_REQ.REQ_ADD_EQUIP_LEVEL:
+				player.hero.add_equip_level(buffer);
+				break;
 			default:
 				break;
 			}

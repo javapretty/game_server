@@ -480,3 +480,46 @@ void MSG_520302::reset(){
 	hero_id = 0;
 	quality = 0;
 }
+
+MSG_120303::MSG_120303(void){
+	reset();
+}
+
+void MSG_120303::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(hero_id);
+	buffer.write_int32(equip_index);
+}
+
+int MSG_120303::deserialize(Block_Buffer &buffer) {
+	hero_id = buffer.read_int32();
+	equip_index = buffer.read_int32();
+	return 0;
+}
+
+void MSG_120303::reset(){
+	hero_id = 0;
+	equip_index = 0;
+}
+
+MSG_520303::MSG_520303(void){
+	reset();
+}
+
+void MSG_520303::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(hero_id);
+	buffer.write_int32(equip_index);
+	buffer.write_int32(equip_level);
+}
+
+int MSG_520303::deserialize(Block_Buffer &buffer) {
+	hero_id = buffer.read_int32();
+	equip_index = buffer.read_int32();
+	equip_level = buffer.read_int32();
+	return 0;
+}
+
+void MSG_520303::reset(){
+	hero_id = 0;
+	equip_index = 0;
+	equip_level = 0;
+}

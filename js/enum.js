@@ -68,6 +68,7 @@ if (typeof MSG_REQ == "undefined") {
 	MSG_REQ.REQ_FETCH_HERO_INFO								=	120300;	//获取英雄信息
 	MSG_REQ.REQ_ADD_HERO_STAR									=	120301;	//提高英雄星级
 	MSG_REQ.REQ_ADD_HERO_QUALITY								= 120302;	//提高英雄品质
+	MSG_REQ.REQ_ADD_EQUIP_LEVEL								= 120303;	//提高英雄装备等级
 }
 
 if (typeof MSG_RES == "undefined") {
@@ -87,6 +88,7 @@ if (typeof MSG_RES == "undefined") {
 	MSG_RES.RES_FETCH_HERO_INFO								=	520300;	//获取英雄信息(返回)
 	MSG_RES.RES_ADD_HERO_STAR									=	520301;	//提高英雄星级(返回)
 	MSG_RES.RES_ADD_HERO_QUALITY								= 520302;	//提高英雄品质(返回)
+	MSG_RES.RES_ADD_EQUIP_LEVEL								= 520303;	//提高英雄装备等级(返回)
 }
 
 if (typeof MSG_ACTIVE == "undefined") {

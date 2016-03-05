@@ -356,3 +356,37 @@ function MSG_520302() {
 		this.quality = buffer.read_int32();
 	}
 }
+
+//提高英雄装备等级
+function MSG_120303() {
+	this.hero_id = 0;
+	this.equip_index = 0;
+	
+	this.serialize = function(buffer) {
+		buffer.write_int32(this.hero_id);
+		buffer.write_int32(this.equip_index);
+	}
+	
+	this.deserialize = function(buffer) {
+		this.hero_id = buffer.read_int32();
+		this.equip_index = buffer.read_int32();
+	}
+}
+
+function MSG_520303() {
+	this.hero_id = 0;
+	this.equip_index = 0;
+	this.equip_level = 0;
+	
+	this.serialize = function(buffer) {
+		buffer.write_int32(this.hero_id);
+		buffer.write_int32(this.equip_index);
+		buffer.write_int32(this.equip_level);
+	}
+	
+	this.deserialize = function(buffer) {
+		this.hero_id = buffer.read_int32();
+		this.equip_index = buffer.read_int32();
+		this.equip_level = buffer.read_int32();
+	}
+}
