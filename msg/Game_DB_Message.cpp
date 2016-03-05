@@ -30,11 +30,11 @@ void MSG_550000::serialize(Block_Buffer &buffer) const {
 
 int MSG_550000::deserialize(Block_Buffer &buffer) {
 	uint16_t __db_cache_vec_vec_size = buffer.read_uint16();
-	Player_DB_Cache v;
+	Player_DB_Cache v0;
 	for(uint16_t i = 0; i < __db_cache_vec_vec_size; ++i) {
-		if(v.deserialize(buffer))
+		if(v0.deserialize(buffer))
 			return -1;
-		db_cache_vec.push_back(v);
+		db_cache_vec.push_back(v0);
 	}
 
 	return 0;

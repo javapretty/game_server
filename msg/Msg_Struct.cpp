@@ -116,19 +116,19 @@ int Hero_Detail::deserialize(Block_Buffer &buffer) {
 	star = buffer.read_int32();
 	quality = buffer.read_int32();
 	uint16_t __equip_info_vec_size = buffer.read_uint16();
-	Equip_Detail equip_detail;
+	Equip_Detail v0;
 	for(uint16_t i = 0; i < __equip_info_vec_size; ++i) {
-		if(equip_detail.deserialize(buffer))
+		if(v0.deserialize(buffer))
 			return -1;
-		equip_info.push_back(equip_detail);
+		equip_info.push_back(v0);
 	}
 
 	uint16_t __property_info_vec_size = buffer.read_uint16();
-	Property_Detail property_detail;
+	Property_Detail v2;
 	for(uint16_t i = 0; i < __property_info_vec_size; ++i) {
-		if(property_detail.deserialize(buffer))
+		if(v2.deserialize(buffer))
 			return -1;
-		property_info.push_back(property_detail);
+		property_info.push_back(v2);
 	}
 
 	return 0;

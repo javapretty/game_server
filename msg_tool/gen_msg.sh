@@ -419,11 +419,11 @@ function do_gendeserialize()
 			do
 				let j=i+1
 				echo -e "\tuint16_t __${_ARRAY_[$i]}_vec_size = buffer.read_uint16();" >> $_DST_FILE_C_
-				echo -e "\t${_ARRAY_[$j]} v;" >> $_DST_FILE_C_
+				echo -e "\t${_ARRAY_[$j]} v${i};" >> $_DST_FILE_C_
 				echo -e "\tfor(uint16_t i = 0; i < __${_ARRAY_[$i]}_vec_size; ++i) {" >> $_DST_FILE_C_
-				echo -e "\t\tif(v.deserialize(buffer))" >> $_DST_FILE_C_
+				echo -e "\t\tif(v${i}.deserialize(buffer))" >> $_DST_FILE_C_
 				echo -e "\t\t\treturn -1;" >> $_DST_FILE_C_
-				echo -e "\t\t${_ARRAY_[$i]}.push_back(v);" >> $_DST_FILE_C_
+				echo -e "\t\t${_ARRAY_[$i]}.push_back(v${i});" >> $_DST_FILE_C_
 				echo -e "\t}\n" >> $_DST_FILE_C_
 				let i=i+2
 			done

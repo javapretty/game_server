@@ -30,11 +30,11 @@ void MSG_300100::serialize(Block_Buffer &buffer) const {
 
 int MSG_300100::deserialize(Block_Buffer &buffer) {
 	uint16_t __item_info_vec_size = buffer.read_uint16();
-	Item_Basic_Info v;
+	Item_Basic_Info v0;
 	for(uint16_t i = 0; i < __item_info_vec_size; ++i) {
-		if(v.deserialize(buffer))
+		if(v0.deserialize(buffer))
 			return -1;
-		item_info.push_back(v);
+		item_info.push_back(v0);
 	}
 
 	return 0;
@@ -93,11 +93,11 @@ void MSG_300200::serialize(Block_Buffer &buffer) const {
 
 int MSG_300200::deserialize(Block_Buffer &buffer) {
 	uint16_t __mail_info_vec_size = buffer.read_uint16();
-	Mail_Detail v;
+	Mail_Detail v0;
 	for(uint16_t i = 0; i < __mail_info_vec_size; ++i) {
-		if(v.deserialize(buffer))
+		if(v0.deserialize(buffer))
 			return -1;
-		mail_info.push_back(v);
+		mail_info.push_back(v0);
 	}
 
 	return 0;
