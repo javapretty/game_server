@@ -36,6 +36,28 @@ struct Role_Info {
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
+struct Property_Detail {
+
+	int32_t type; //属性类型
+
+	int32_t value; //属性值
+
+	Property_Detail(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+struct Equip_Detail {
+
+	int32_t equip_id; //装备id
+
+	int32_t level; //装备等级
+
+	Equip_Detail(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
 struct Hero_Detail {
 
 	int32_t hero_id; // 英雄id
@@ -48,11 +70,9 @@ struct Hero_Detail {
 
 	int32_t quality; //英雄品质等级
 
-	int32_t power; //力量
+	std::vector<Equip_Detail> equip_info; //英雄装备信息
 
-	int32_t brains; //智力
-
-	int32_t agile; //敏捷
+	std::vector<Property_Detail> property_info; //英雄属性信息
 
 	Hero_Detail(void);
 	void serialize(Block_Buffer &buffer) const;

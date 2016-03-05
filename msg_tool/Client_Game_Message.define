@@ -111,3 +111,15 @@ struct MSG_520302 {
 	int32_t hero_id;
 	int32_t quality;		//英雄品质等级
 };
+
+//提高英雄装备等级
+struct MSG_120303 {
+	int32_t hero_id;
+	int32_t equip_index;		//	装备位置索引
+};
+
+struct MSG_520303 {
+	int32_t hero_id;
+	int32_t equip_index;
+	int32_t equip_level;
+};

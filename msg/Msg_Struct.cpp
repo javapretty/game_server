@@ -45,6 +45,46 @@ void Role_Info::reset(){
 	role_name.clear();
 }
 
+Property_Detail::Property_Detail(void){
+	reset();
+}
+
+void Property_Detail::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(type);
+	buffer.write_int32(value);
+}
+
+int Property_Detail::deserialize(Block_Buffer &buffer) {
+	type = buffer.read_int32();
+	value = buffer.read_int32();
+	return 0;
+}
+
+void Property_Detail::reset(){
+	type = 0;
+	value = 0;
+}
+
+Equip_Detail::Equip_Detail(void){
+	reset();
+}
+
+void Equip_Detail::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(equip_id);
+	buffer.write_int32(level);
+}
+
+int Equip_Detail::deserialize(Block_Buffer &buffer) {
+	equip_id = buffer.read_int32();
+	level = buffer.read_int32();
+	return 0;
+}
+
+void Equip_Detail::reset(){
+	equip_id = 0;
+	level = 0;
+}
+
 Hero_Detail::Hero_Detail(void){
 	reset();
 }
@@ -55,9 +95,18 @@ void Hero_Detail::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(exp);
 	buffer.write_int32(star);
 	buffer.write_int32(quality);
-	buffer.write_int32(power);
-	buffer.write_int32(brains);
-	buffer.write_int32(agile);
+	uint16_t __equip_info_vec_size = equip_info.size();
+	buffer.write_uint16(__equip_info_vec_size);
+	for(uint16_t i = 0; i < __equip_info_vec_size; ++i) {
+		equip_info[i].serialize(buffer);
+	}
+
+	uint16_t __property_info_vec_size = property_info.size();
+	buffer.write_uint16(__property_info_vec_size);
+	for(uint16_t i = 0; i < __property_info_vec_size; ++i) {
+		property_info[i].serialize(buffer);
+	}
+
 }
 
 int Hero_Detail::deserialize(Block_Buffer &buffer) {
@@ -66,9 +115,22 @@ int Hero_Detail::deserialize(Block_Buffer &buffer) {
 	exp = buffer.read_int32();
 	star = buffer.read_int32();
 	quality = buffer.read_int32();
-	power = buffer.read_int32();
-	brains = buffer.read_int32();
-	agile = buffer.read_int32();
+	uint16_t __equip_info_vec_size = buffer.read_uint16();
+	Equip_Detail equip_detail;
+	for(uint16_t i = 0; i < __equip_info_vec_size; ++i) {
+		if(equip_detail.deserialize(buffer))
+			return -1;
+		equip_info.push_back(equip_detail);
+	}
+
+	uint16_t __property_info_vec_size = buffer.read_uint16();
+	Property_Detail property_detail;
+	for(uint16_t i = 0; i < __property_info_vec_size; ++i) {
+		if(property_detail.deserialize(buffer))
+			return -1;
+		property_info.push_back(property_detail);
+	}
+
 	return 0;
 }
 
@@ -78,9 +140,8 @@ void Hero_Detail::reset(){
 	exp = 0;
 	star = 0;
 	quality = 0;
-	power = 0;
-	brains = 0;
-	agile = 0;
+	equip_info.clear();
+	property_info.clear();
 }
 
 Item_Basic_Info::Item_Basic_Info(void){
