@@ -55,4 +55,54 @@ function Player() {
 		player_cid_map.remove(this.cid);
 		player_role_id_map.remove(this.player_info.role_id);
 	}
+	
+	this.set_data_change = function() {
+		this.cplayer.set_player_data_change(data_change.PLAYER_CHANGE);
+	}
+	
+	this.getMaxVitality = function() {
+        var levelArray = new Array();
+		levelArray.push(this.player_info.level.toString());
+        var maxVitality = Math.floor(util.lookupDataTable("config/vitality/playerLevel.json", "Max Vitality", levelArray));
+        return maxVitality;
+    }
+	
+	this.buy_vitality = function() {
+		print('buy_vitality, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " msec:", msec());
+		//1.检查元宝是否充足
+		var todyBuyArry = new Array();
+		todyBuyArry.push((this.player_info.today_buy + 1).toString());
+		var costGold = util.lookupDataTable("config/vitality/GradientPrice.json", "Vitality", todyBuyArry);
+		var curGold = this.bag.bag_info.gold;
+		//暂时注释
+		if (curGold < costGold){
+			return this.cplayer.respond_error_result(msg_res.RES_BUY_VITALITY_INFO, error.ERROR_GOLD_NOT_ENOUGH);
+		}
+		
+		//2.检查可以购买体力次数
+		var vipArry = new Array();
+		vipArry.push(this.player_info.vip.toString());
+		var canBuyTimes = util.lookupDataTable("config/vip/vip.json", "Buy Vit Max", vipArry);
+		if (this.player_info.today_buy >= canBuyTimes){
+			return this.cplayer.respond_error_result(msg_res.RES_BUY_VITALITY_INFO, error.ERROR_VITALITY_TIMES_NOT_ENOUGH);
+		}
+		
+		//3.更新元宝
+		var result = this.bag.bag_sub_money(0, costGold);
+		
+		//4.更新购买次数以及体力修改时间
+		this.player_info.last_change_time = util.getTimestamp();
+		this.player_info.today_buy = this.player_info.today_buy + 1;
+		
+		//5.更新体力(120应该为配置)
+		var maxVit = this.getMaxVitality();
+		this.player_info.vitality = Math.min(Math.max(0, (this.player_info.vitality + 120)), maxVit);
+		
+		//6.返回消息给客户端
+		var buf = pop_buffer();
+		buf.write_int32(this.player_info.vitality);
+		this.cplayer.respond_success_result(msg_res.RES_BUY_VITALITY_INFO, buf);
+		push_buffer(buf);
+		this.set_data_change();
+	}
 }
