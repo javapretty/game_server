@@ -74,9 +74,9 @@ function Player() {
 		todyBuyArry.push((this.player_info.today_buy + 1).toString());
 		var costGold = util.lookupDataTable("config/vitality/GradientPrice.json", "Vitality", todyBuyArry);
 		var curGold = this.bag.bag_info.gold;
-		// if (curGold < costGold){
-			// return this.cplayer.respond_error_result(MSG_RES.RES_BUY_VITALITY_INFO, ERROR_CODE.ERROR_GOLD_NOT_ENOUGH);
-		// }
+		if (curGold < costGold){
+			return this.cplayer.respond_error_result(MSG_RES.RES_BUY_VITALITY_INFO, ERROR_CODE.ERROR_GOLD_NOT_ENOUGH);
+		}
 		
 		//2.检查可以购买体力次数
 		var vipArry = new Array();
