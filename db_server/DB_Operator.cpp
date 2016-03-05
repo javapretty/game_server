@@ -286,6 +286,7 @@ int DB_Operator::load_player_info(int64_t role_id, Game_Player_Info &player_info
 		player_info.last_change_time = res["last_change_time"].numberLong();
 		player_info.today_buy = res["today_buy"].numberInt();
 		player_info.vip = res["vip"].numberInt();
+		player_info.vip_exp = res["vip_exp"].numberInt();
 		player_info.charge_gold = res["charge_gold"].numberInt();
 		return 0;
 	} else {
@@ -312,6 +313,7 @@ int DB_Operator::save_player_info(int64_t role_id, Game_Player_Info &player_info
 			<< "last_change_time" <<  (long long int)player_info.last_change_time
 			<< "today_buy" << player_info.today_buy
 			<< "vip" << player_info.vip
+			<< "vip_exp" << player_info.vip_exp
 			<< "charge_gold" << player_info.charge_gold;
 
 	CACHED_CONNECTION.update("mmo.role", MONGO_QUERY("role_id" << (long long int)role_id),
