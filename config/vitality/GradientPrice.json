@@ -1,0 +1,39 @@
+{
+"1":{
+    "Shop 7 Refresh" : 10,
+    "Queue Jump" : 0,
+    "Summon So Special Shop" : 980,
+    "Shop 1 Refresh" : 50,
+    "Elite Reset" : 20,
+    "Excavate Search" : 100,
+    "Shop 4 Refresh" : 10,
+    "Summon Special Shop" : 680,
+    "Shop 3 Refresh" : 100,
+    "Shop 2 Refresh" : 100,
+    "Vitality" : 50,
+    "Skill Upgrade Reset" : 10,
+    "Midas" : 10,
+    "PVP Buy" : 50,
+    "Shop 5 Refresh" : 10,
+    "Times" : 1
+	},
+	
+"2":{
+    "Shop 7 Refresh" : 10,
+    "Queue Jump" : 100,
+    "Summon So Special Shop" : 0,
+    "Shop 1 Refresh" : 50,
+    "Elite Reset" : 50,
+    "Excavate Search" : 100,
+    "Shop 4 Refresh" : 10,
+    "Summon Special Shop" : 0,
+    "Shop 3 Refresh" : 100,
+    "Shop 2 Refresh" : 100,
+    "Vitality" : 50,
+    "Skill Upgrade Reset" : 20,
+    "Midas" : 20,
+    "PVP Buy" : 100,
+    "Shop 5 Refresh" : 10,
+    "Times" : 2
+  }
+}
