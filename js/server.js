@@ -14,7 +14,7 @@ require('player.js');
 require('hero.js');
 require('bag.js');
 require('mail.js');
-
+require('util.js');
 //cid----player  全局玩家对象
 var player_cid_map = new Map();
 //role_id---player 全局玩家对象
@@ -102,6 +102,9 @@ function process_client_buffer(buffer) {
 			case MSG_REQ.REQ_ADD_HERO_QUALITY:
 				player.hero.add_hero_quality(buffer);
 				break;
+			case msg_req.REQ_BUY_VITALITY:
+				player.buy_vitality();
+				break;	
 			default:
 				break;
 			}
