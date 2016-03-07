@@ -523,3 +523,34 @@ void MSG_520303::reset(){
 	equip_index = 0;
 	equip_level = 0;
 }
+
+MSG_120003::MSG_120003(void){
+	reset();
+}
+
+void MSG_120003::serialize(Block_Buffer &buffer) const {
+}
+
+int MSG_120003::deserialize(Block_Buffer &buffer) {
+	return 0;
+}
+
+void MSG_120003::reset(){
+}
+
+MSG_520003::MSG_520003(void){
+	reset();
+}
+
+void MSG_520003::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(vitality);
+}
+
+int MSG_520003::deserialize(Block_Buffer &buffer) {
+	vitality = buffer.read_int32();
+	return 0;
+}
+
+void MSG_520003::reset(){
+	vitality = 0;
+}

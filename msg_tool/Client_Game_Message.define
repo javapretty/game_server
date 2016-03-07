@@ -123,3 +123,16 @@ struct MSG_520303 {
 	int32_t equip_index;
 	int32_t equip_level;
 };
+
+/*
+购买玩家体力
+*/
+struct MSG_120003 {
+};
+
+/*
+玩家购买体力(返回)
+*/
+struct MSG_520003 {
+	int32_t vitality;
+};

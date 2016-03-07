@@ -290,6 +290,30 @@ struct MSG_520303 {
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
+/*
+
+	购买玩家体力
+*/
+struct MSG_120003 {
+
+	MSG_120003(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+/*
+
+	玩家购买体力(返回)
+*/
+struct MSG_520003 {
+
+	int32_t vitality;
+
+	MSG_520003(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
 
 
 #endif
