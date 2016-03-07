@@ -27,10 +27,6 @@ void read_json(const FunctionCallbackInfo<Value>& args);
 void print(const FunctionCallbackInfo<Value>& args);
 //函数说明：程序睡眠Time_Value(0,100)	参数：无	返回值：无
 void sleep(const FunctionCallbackInfo<Value>& args);
-//函数说明：返回当前时间的秒值 	参数：无	返回值：时间秒值
-void sec(const FunctionCallbackInfo<Value>& args);
-//函数说明：返回当前时间的毫秒值	参数：无	返回值：时间毫秒值
-void msec(const FunctionCallbackInfo<Value>& args);
 
 //函数说明：发送消息到db_server 	参数：1,buffer对象	返回值：无
 void send_msg_to_db(const FunctionCallbackInfo<Value>& args);

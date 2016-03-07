@@ -27,10 +27,6 @@ Local<Context> Create_Context(Isolate* isolate) {
 		FunctionTemplate::New(isolate, print));
 	global->Set(String::NewFromUtf8(isolate, "sleep", NewStringType::kNormal).ToLocalChecked(),
 		FunctionTemplate::New(isolate, sleep));
-	global->Set(String::NewFromUtf8(isolate, "sec", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, sec));
-	global->Set(String::NewFromUtf8(isolate, "msec", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, msec));
 	global->Set(String::NewFromUtf8(isolate, "pop_buffer", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, pop_buffer));
 	global->Set(String::NewFromUtf8(isolate, "push_buffer", NewStringType::kNormal).ToLocalChecked(),
@@ -202,17 +198,6 @@ void print(const FunctionCallbackInfo<Value>& args) {
 void sleep(const FunctionCallbackInfo<Value>& args) {
 	Time_Value::sleep(Time_Value(0,100));
 }
-
-void sec(const FunctionCallbackInfo<Value>& args) {
-	double sec = Time_Value::gettimeofday().sec();
-	args.GetReturnValue().Set(sec);
-}
-
-void msec(const FunctionCallbackInfo<Value>& args) {
-	double msec = Time_Value::gettimeofday().msec();
-	args.GetReturnValue().Set(msec);
-}
-
 
 void send_msg_to_db(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 1) {

@@ -63,16 +63,16 @@ function Player() {
 	this.getMaxVitality = function() {
     	var levelArray = new Array();
 		levelArray.push(this.player_info.level.toString());
-    	var maxVitality = Math.floor(util.lookupDataTable("config/vitality/playerLevel.json", "Max Vitality", levelArray));
+    	var maxVitality = Math.floor(util.lookup_data_table("config/vitality/playerLevel.json", "Max Vitality", levelArray));
     	return maxVitality;
     }
 	
 	this.buy_vitality = function() {
-		print('buy_vitality, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " msec:", msec());
+		print('buy_vitality, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
 		//1.检查元宝是否充足
 		var todyBuyArry = new Array();
 		todyBuyArry.push((this.player_info.today_buy + 1).toString());
-		var costGold = util.lookupDataTable("config/vitality/gradientPrice.json", "Vitality", todyBuyArry);
+		var costGold = util.lookup_data_table("config/vitality/gradientPrice.json", "Vitality", todyBuyArry);
 		var curGold = this.bag.bag_info.gold;
 		if (curGold < costGold){
 			return this.cplayer.respond_error_result(Msg_Res.RES_BUY_VITALITY, Error_Code.ERROR_GOLD_NOT_ENOUGH);
@@ -81,7 +81,7 @@ function Player() {
 		//2.检查可以购买体力次数
 		var vipArry = new Array();
 		vipArry.push(this.player_info.vip.toString());
-		var canBuyTimes = util.lookupDataTable("config/vip/vip.json", "Buy Vit Max", vipArry);
+		var canBuyTimes = util.lookup_data_table("config/vip/vip.json", "Buy Vit Max", vipArry);
 		if (this.player_info.today_buy >= canBuyTimes){
 			return this.cplayer.respond_error_result(Msg_Res.RES_BUY_VITALITY, Error_Code.ERROR_VITALITY_TIMES_NOT_ENOUGH);
 		}
@@ -90,7 +90,7 @@ function Player() {
 		var result = this.bag.bag_sub_money(0, costGold);
 		
 		//4.更新购买次数以及体力修改时间
-		this.player_info.last_change_time = util.getTimestamp();
+		this.player_info.last_change_time = util.now_msec();
 		this.player_info.today_buy = this.player_info.today_buy + 1;
 		
 		//5.更新体力(120应该为配置)
@@ -105,14 +105,14 @@ function Player() {
 	}
 	
 	this.update_vip = function(transactionType){
-		print('update_vip, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " msec:", msec());
+		print('update_vip, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
 		
 		var vipArry = new Array();
 		vipArry.push(transactionType);
-		var newVipExp = this.player_info.vip_exp + util.lookupDataTable("config/vip/recharge.json", "VIP Exp", vipArry);
+		var newVipExp = this.player_info.vip_exp + util.lookup_data_table("config/vip/recharge.json", "VIP Exp", vipArry);
 		
-		var vipModule = util.lookupDataTable("config/vip/vip.json", null, null);
-		var vipMaxLevle = util.lookupDataTable("config/parameter/parameterTable.josn", "max_vip_level", null);
+		var vipModule = util.lookup_data_table("config/vip/vip.json", null, null);
+		var vipMaxLevle = util.lookup_data_table("config/parameter/parameterTable.josn", "max_vip_level", null);
 		for (var i = 0; i < vipMaxLevle; i++)
 		{
 			if (newVipExp < vipModule[i.toString()]["Recharge"]){

@@ -35,7 +35,7 @@ function Hero() {
 	}
 	
 	this.fetch_hero_info = function() {
-		print('fetch_hero_info, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " msec:", msec());
+		print('fetch_hero_info, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " util.now_msec:", util.now_msec());
 		
 		var msg_res = new MSG_520300();
 		this.hero_info.hero_map.each(function(key,value,index) {
@@ -48,7 +48,7 @@ function Hero() {
 	}
 	
 	this.add_hero_star = function(buffer) {
-		print('add_hero_star, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " msec:", msec());
+		print('add_hero_star, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " util.now_msec:", util.now_msec());
 		
 		var msg_req = new MSG_120302();
 		msg_req.deserialize(buffer); 
@@ -70,8 +70,9 @@ function Hero() {
     	var item = new Item_Info();
     	item.id = hero_obj.star_item_id;
     	item.amount = hero_obj.star_item_amount[hero_detail.level];
-    	print(item.id, item.amount);
-    	var result = this.player.bag.bag_erase_item(item);
+    	var item_array = new Array();
+    	item_array.push(item);
+    	var result = this.player.bag.bag_erase_item(item_array);
     	if (result != 0) {
     		return this.player.cplayer.respond_error_result(Msg_Res.RES_ADD_HERO_STAR, result);
     	}
@@ -88,7 +89,7 @@ function Hero() {
 	}
 	
 	this.add_hero_quality = function(buffer) {
-		print('add_hero_quality, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " msec:", msec());
+		print('add_hero_quality, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " util.now_msec:", util.now_msec());
 		
 		var msg_req = new MSG_120302();
 		msg_req.deserialize(buffer); 
@@ -124,7 +125,7 @@ function Hero() {
 	}
 	
 	this.add_equip_level = function(buffer) {
-		print('add_equip_level, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " msec:", msec());
+		print('add_equip_level, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " util.now_msec:", util.now_msec());
 		
 		var msg_req = new MSG_120303();
 		msg_req.deserialize(buffer); 
@@ -146,7 +147,7 @@ function Hero() {
 	}
 	
 	this.equip_on_off = function(buffer) {
-		print('equip_on_off, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " msec:", msec());
+		print('equip_on_off, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " util.now_msec:", util.now_msec());
 		
 		var msg_req = new MSG_120304();
 		msg_req.deserialize(buffer); 

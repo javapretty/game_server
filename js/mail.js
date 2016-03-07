@@ -24,7 +24,7 @@ function Mail() {
 	}
 
 	this.fetch_mail_info = function() {
-		print('fetch_mail_info, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " msec:", msec());
+		print('fetch_mail_info, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " util.now_msec:", util.now_msec());
 		
 		var msg_res = new MSG_520200();
 		this.mail_info.mail_map.each(function(key,value,index) {
@@ -38,7 +38,7 @@ function Mail() {
 }
 
 	this.pickup_mail = function(buffer) {
-		print('pickup_mail, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " msec:", msec());
+		print('pickup_mail, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " util.now_msec:", util.now_msec());
 	
 		var msg_req = new MSG_120201();
 		msg_req.deserialize(buffer);
@@ -72,7 +72,7 @@ function Mail() {
 	}
 
 	this.delete_mail = function(buffer) {
-		print('delete_mail, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " msec:", msec());
+		print('delete_mail, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " util.now_msec:", util.now_msec());
 	
 		var msg_req = new MSG_120202();
 		msg_req.deserialize(buffer);
@@ -108,7 +108,7 @@ function Mail() {
 	}
 
 	this.send_mail = function(buffer) {
-		print('send_mail, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " msec:", msec());
+		print('send_mail, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " util.now_msec:", util.now_msec());
 		
 		var msg_req = new MSG_120203();
 		msg_req.deserialize(buffer);	
@@ -129,13 +129,10 @@ function Mail() {
 		this.player.cplayer.respond_error_result(Msg_Res.RES_SEND_MAIL, result);
 	}
 	
-	this.pickup_item_money = function(mail_detail) {
-		var result = 0;
-		for (var i = 0; i < mail_detail.item_info.length; ++i) {
-			result = this.player.bag.bag_inster_item(mail_detail.item_info[i]);
-			if (result != 0) {
-				return result;
-			}			
+	this.pickup_item_money = function(mail_detail) {		
+		var result = this.player.bag.bag_insert_item(mail_detail.item_info);
+		if (result != 0) {
+			return result;
 		}
 		
 		result = this.player.bag.bag_add_money(mail_detail.copper, mail_detail.gold);

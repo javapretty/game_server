@@ -6,7 +6,7 @@
 var util = function () {};
 
 //获取json配置项
-util.lookupDataTable = function(file, destElement, ElementArr) {
+util.lookup_data_table = function(file, destElement, ElementArr) {
 	var content = read_json(file);
 	try {
 		var tableData = JSON.parse(content);
@@ -42,7 +42,7 @@ util.lookupDataTable = function(file, destElement, ElementArr) {
 }
 
 //获取当前时间戳(毫秒单位)
-util.getTimestamp  = function(date){
+util.now_msec = function(date){
 	if (arguments.length){
 		return date.getTime();
 	}
@@ -53,7 +53,7 @@ util.getTimestamp  = function(date){
 }
 
 //time格式int
-util.isSameDayByStamp  = function(timeA, timeB){	
+util.is_same_day  = function(timeA, timeB){	
 	var dateA = new Date(timeA);
 	var dateB = new Date(timeB);
 	
@@ -71,10 +71,10 @@ util.isSameDayByStamp  = function(timeA, timeB){
  * @return boolean 返回是否需要重置
  *
  */
-util.isTimeNeedReset = function(lastResetTimestamp){
-    var h = 5; //每日重置 Hour
+util.is_need_reset = function(last_reset_time) {
+    var h = 6; //每日重置 Hour
     var m = 0; //每日重置 Min
     var s = 0; //每日重置 Sec
     var ts = (h * 3600 * 1000 + m * 60 * 1000 + s);
-    return !util.isSameDayByStamp(time() - $ts, $lastResetTimestamp - $ts);
+    return !util.is_same_day(time() - $ts, $last_reset_time - $ts);
 }

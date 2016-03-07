@@ -24,7 +24,7 @@ function Bag() {
 	}
 	
 	this.fetch_bag_info = function() {
-		print('fetch_bag_info, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " msec:", msec());
+		print('fetch_bag_info, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " util.now_msec:", util.now_msec());
 	
 		var msg_res = new MSG_520100();
 		this.bag_info.item_map.each(function(key,value,index) {
@@ -38,22 +38,24 @@ function Bag() {
 	}
 	
 	this.use_item = function(buffer) {
-		print('use_item, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " msec:", msec());
+		print('use_item, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " util.now_msec:", util.now_msec());
 		
 		var msg_req = new MSG_120101();
 		msg_req.deserialize(buffer);
-		var result = this.bag_erase_item(msg_req.item);
-		
+		var item_array = new Array();
+		item_array.push(msg_req.item);
+		var result = this.bag_erase_item(item_array);
 		this.player.cplayer.respond_error_result(Msg_Res.RES_USE_ITEM, result);
 	}
 	
 	this.sell_item = function(buffer) {
-		print('sell_item, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " msec:", msec());
+		print('sell_item, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " util.now_msec:", util.now_msec());
 		
 		var msg_req = new MSG_120102();
 		msg_req.deserialize(buffer);
-		var result = this.bag_erase_item(msg_req.item);
-		
+		var item_array = new Array();
+		item_array.push(msg_req.item);
+		var result = this.bag_erase_item(item_array);
 		this.player.cplayer.respond_error_result(Msg_Res.RES_SELL_ITEM, result);
 	}
 	
@@ -69,33 +71,41 @@ function Bag() {
 		this.bag_active_money();
 	}
 	
-	this.bag_insert_item = function(item) {
-		var item_info = this.bag_info.item_map.get(item.id);
-		if (item_info == null) {
-			if (this.bag_info.item_map.size() >= 2000)
-				return Error_Code.ERROR_BAG_FULL;
-			this.bag_info.item_map = put(item.id, item);	
-		} else {
-			item_info.amount += item.amount;
+	this.bag_insert_item = function(item_array) {
+		for (var i = 0; i < item_array.length; ++i) {
+			var item_info = this.bag_info.item_map.get(item_array[i].id);
+			if (item_info == null) {
+				this.bag_info.item_map = put(item_array[i].id, item_array[i]);	
+			} else {
+				item_info.amount += item_array[i].amount;
+			}	
 		}
 		
 		this.bag_active_item();
 		return 0;
 	}
 	
-	this.bag_erase_item = function(item) {
-		var item_info = this.bag_info.item_map.get(item.id);
-		if (item_info != null) {
-			item_info.amount -= item.amount;
-			if (item_info.amount < 0) {
+	this.bag_erase_item = function(item_array) {
+		for (var i = 0; i < item_array.length; ++i) {
+			var item_info = this.bag_info.item_map.get(item_array[i].id);
+			if (item_info == null) {
+				return Error_Code.ERROR_ITEM_NOT_ENOUGH;
+			} else {
+				if (item_info.amount < item_array[i].amount) {
+					return Error_Code.ERROR_ITEM_NOT_ENOUGH;
+				}
+			}
+		}
+		
+		for (var i = 0; i < item_array.length; ++i) {
+			var item_info = this.bag_info.item_map.get(item_array[i].id);
+			item_info.amount -= item_array[i].amount;
+			if (item_info.amount == 0) {
 				this.bag_info.item_map.remove(item.id);
 			}
-			this.bag_active_item();
-			return 0;		
-		} else {
-			print('item_info is null');
-			return Error_Code.ERROR_ITEM_NOT_ENOUGH;
 		}
+		
+		this.bag_active_item();
 	}
 	
 	this.bag_active_money = function() {
