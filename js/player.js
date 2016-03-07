@@ -122,6 +122,8 @@ function Player() {
 			this.player_info.vip = i;
 		}
 		
+		this.player_info.vip_exp = newVipExp;
+		
 		print('after update vip:', this.player_info.vip);
 	}
 }
