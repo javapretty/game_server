@@ -361,15 +361,27 @@ function MSG_520302() {
 function MSG_120303() {
 	this.hero_id = 0;
 	this.equip_index = 0;
+	this.item_info = new Array();
 	
 	this.serialize = function(buffer) {
 		buffer.write_int32(this.hero_id);
 		buffer.write_int32(this.equip_index);
+		var length = this.item_info.length;
+		bufer.write_uint16(length);
+		for (var i = 0; i < length; ++i) {
+			this.item_info[i].serialize(buffer);
+		}
 	}
 	
 	this.deserialize = function(buffer) {
 		this.hero_id = buffer.read_int32();
 		this.equip_index = buffer.read_int32();
+		var length = buffer.read_uint16();
+		for (var i = 0; i < length; ++i) {
+			var item = new Item_Info();
+			item.deserialize(buffer);
+			this.item_info.push(item);
+		}
 	}
 }
 
@@ -388,5 +400,41 @@ function MSG_520303() {
 		this.hero_id = buffer.read_int32();
 		this.equip_index = buffer.read_int32();
 		this.equip_level = buffer.read_int32();
+	}
+}
+
+function MSG_120304() {
+	this.hero_id = 0;
+	this.on = 0;
+	this.equip_info = new Item_Info();
+	
+	this.serialize = function(buffer) {
+		buffer.write_int32(this.hero_id);
+		buffer.write_bool(this.on);
+		equip_info.serialize(buffer);
+	}
+	
+	this.deserialize = function(buffer) {
+		this.hero_id = buffer.read_int32();
+		this.on = buffer.read_bool();
+		equip_info.deserialize(buffer);
+	}
+}
+
+function MSG_520304() {
+	this.hero_id = 0;
+	this.on = 0;
+	this.equip_info = new Item_Info();
+	
+	this.serialize = function(buffer) {
+		buffer.write_int32(this.hero_id);
+		buffer.write_bool(this.on);
+		equip_info.serialize(buffer);
+	}
+	
+	this.deserialize = function(buffer) {
+		this.hero_id = buffer.read_int32();
+		this.on = buffer.read_bool();
+		equip_info.deserialize(buffer);
 	}
 }

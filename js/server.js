@@ -72,6 +72,9 @@ function process_client_buffer(buffer) {
 		var player = player_cid_map.get(cid);
 		if (player) {
 			switch(msg_id) {
+			case Msg_Req.REQ_BUY_VITALITY:
+				player.buy_vitality();
+				break;	
 			case Msg_Req.REQ_FETCH_BAG_INFO:
 				player.bag.fetch_bag_info();
 				break;
@@ -102,11 +105,11 @@ function process_client_buffer(buffer) {
 			case Msg_Req.REQ_ADD_HERO_QUALITY:
 				player.hero.add_hero_quality(buffer);
 				break;
-			case Msg_Req.REQ_BUY_VITALITY:
-				player.buy_vitality();
-				break;	
 			case Msg_Req.REQ_ADD_EQUIP_LEVEL:
 				player.hero.add_equip_level(buffer);
+				break;
+			case Msg_Req.REQ_EQUIP_ON_OFF:
+				player.hero.equip_on_off(buffer);
 				break;
 			default:
 				break;

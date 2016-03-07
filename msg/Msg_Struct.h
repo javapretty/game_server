@@ -47,13 +47,15 @@ struct Property_Detail {
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
-struct Equip_Detail {
+struct Item_Info {
 
-	int32_t equip_id; //装备id
+	int32_t item_id;
 
-	int32_t level; //装备等级
+	int32_t amount;
 
-	Equip_Detail(void);
+	int32_t level;
+
+	Item_Info(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
@@ -70,22 +72,11 @@ struct Hero_Detail {
 
 	int32_t quality; //英雄品质等级
 
-	std::vector<Equip_Detail> equip_info; //英雄装备信息
+	std::vector<Item_Info> equip_info; //英雄装备信息
 
 	std::vector<Property_Detail> property_info; //英雄属性信息
 
 	Hero_Detail(void);
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-};
-struct Item_Basic_Info {
-
-	int32_t id; //物品id
-
-	int32_t amount; //物品数量
-
-	Item_Basic_Info(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

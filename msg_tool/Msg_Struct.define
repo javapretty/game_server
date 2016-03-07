@@ -16,9 +16,10 @@ struct Property_Detail {
 	int32_t value;					//属性值
 }
 
-struct Equip_Detail {
-	int32_t equip_id;				//装备id
-	int32_t level;					//装备等级
+struct Item_Info {
+	int32_t item_id;
+	int32_t amount;
+	int32_t level;
 }
 
 struct Hero_Detail {
@@ -27,13 +28,8 @@ struct Hero_Detail {
 	int32_t exp;						//英雄经验
 	int32_t star;						//英雄星级
 	int32_t quality;				//英雄品质等级
-	std::vector<Equip_Detail> equip_info;					//英雄装备信息
+	std::vector<Item_Info> equip_info;					//英雄装备信息
 	std::vector<Property_Detail> property_info;		//英雄属性信息
-};
-
-struct Item_Basic_Info {
-	int32_t id;				//物品id
-	int32_t amount;			//物品数量
 };
 
 struct Mail_Detail {

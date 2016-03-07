@@ -65,23 +65,26 @@ void Property_Detail::reset(){
 	value = 0;
 }
 
-Equip_Detail::Equip_Detail(void){
+Item_Info::Item_Info(void){
 	reset();
 }
 
-void Equip_Detail::serialize(Block_Buffer &buffer) const {
-	buffer.write_int32(equip_id);
+void Item_Info::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(item_id);
+	buffer.write_int32(amount);
 	buffer.write_int32(level);
 }
 
-int Equip_Detail::deserialize(Block_Buffer &buffer) {
-	equip_id = buffer.read_int32();
+int Item_Info::deserialize(Block_Buffer &buffer) {
+	item_id = buffer.read_int32();
+	amount = buffer.read_int32();
 	level = buffer.read_int32();
 	return 0;
 }
 
-void Equip_Detail::reset(){
-	equip_id = 0;
+void Item_Info::reset(){
+	item_id = 0;
+	amount = 0;
 	level = 0;
 }
 
@@ -116,7 +119,7 @@ int Hero_Detail::deserialize(Block_Buffer &buffer) {
 	star = buffer.read_int32();
 	quality = buffer.read_int32();
 	uint16_t __equip_info_vec_size = buffer.read_uint16();
-	Equip_Detail v0;
+	Item_Info v0;
 	for(uint16_t i = 0; i < __equip_info_vec_size; ++i) {
 		if(v0.deserialize(buffer))
 			return -1;
@@ -142,26 +145,6 @@ void Hero_Detail::reset(){
 	quality = 0;
 	equip_info.clear();
 	property_info.clear();
-}
-
-Item_Basic_Info::Item_Basic_Info(void){
-	reset();
-}
-
-void Item_Basic_Info::serialize(Block_Buffer &buffer) const {
-	buffer.write_int32(id);
-	buffer.write_int32(amount);
-}
-
-int Item_Basic_Info::deserialize(Block_Buffer &buffer) {
-	id = buffer.read_int32();
-	amount = buffer.read_int32();
-	return 0;
-}
-
-void Item_Basic_Info::reset(){
-	id = 0;
-	amount = 0;
 }
 
 Mail_Detail::Mail_Detail(void){

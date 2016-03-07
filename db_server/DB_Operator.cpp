@@ -344,10 +344,11 @@ int DB_Operator::load_hero_info(int64_t role_id, Hero_Info &hero_info) {
 		BSONObj obj_equip;
 		while (iter_equip.more()){
 			obj_equip = iter_equip.next().embeddedObject();
-			Equip_Detail equip_detail;
-			equip_detail.equip_id = obj_equip["equip_id"].numberInt();
-			equip_detail.level = obj_equip["level"].numberInt();
-			hero_detail.equip_info.push_back(equip_detail);
+			Item_Info item_info;
+			item_info.item_id = obj_equip["item_id"].numberInt();
+			item_info.amount = obj_equip["amount"].numberInt();
+			item_info.level = obj_equip["level"].numberInt();
+			hero_detail.equip_info.push_back(item_info);
 		}
 
 		BSONObjIterator iter_property(obj.getObjectField("property"));
@@ -369,8 +370,8 @@ int DB_Operator::save_hero_info(int64_t role_id, Hero_Info &hero_info) {
 	std::vector<BSONObj> hero_vec;
 	for (Hero_Info::Hero_Map::const_iterator iter = hero_info.hero_map.begin(); iter != hero_info.hero_map.end(); ++iter) {
 		std::vector<BSONObj> equip_vec;
-		for (std::vector<Equip_Detail>::const_iterator it = iter->second.equip_info.begin(); it != iter->second.equip_info.end(); ++it) {
-			equip_vec.push_back(BSON("equip_id" << it->equip_id << "level" << it->level));
+		for (std::vector<Item_Info>::const_iterator it = iter->second.equip_info.begin(); it != iter->second.equip_info.end(); ++it) {
+			equip_vec.push_back(BSON("item_id" << it->item_id << "amount" << it->amount << "level" << it->level));
 		}
 
 		std::vector<BSONObj> property_vec;
@@ -411,8 +412,8 @@ int DB_Operator::load_bag_info(int64_t role_id, Bag_Info &bag_info) {
 	while (iter.more()){
 		obj = iter.next().embeddedObject();
 		Item_Info item;
-		if (load_item_detail(obj, item) == 0) {
-			bag_info.item_map[item.item_basic.id] = item;
+		if (load_item_info(obj, item) == 0) {
+			bag_info.item_map[item.item_id] = item;
 		}
 	}
 	return 0;
@@ -422,7 +423,7 @@ int DB_Operator::save_bag_info(int64_t role_id, Bag_Info &bag_info) {
 	std::vector<BSONObj> item_vec;
 	BSONObj obj;
 	for (Bag_Info::Item_Map::const_iterator iter = bag_info.item_map.begin(); iter != bag_info.item_map.end(); ++iter) {
-		save_item_detail(iter->second, obj);
+		save_item_info(iter->second, obj);
 		item_vec.push_back(obj);
 	}
 
@@ -437,17 +438,18 @@ int DB_Operator::save_bag_info(int64_t role_id, Bag_Info &bag_info) {
 	return 0;
 }
 
-int DB_Operator::load_item_detail(const BSONObj &obj, Item_Info &item) {
+int DB_Operator::load_item_info(const BSONObj &obj, Item_Info &item) {
 	item.reset();
-	item.item_basic.id = obj["id"].numberInt();
-	item.item_basic.amount = obj["amount"].numberInt();
+	item.item_id = obj["item_id"].numberInt();
+	item.amount = obj["amount"].numberInt();
+	item.level = obj["level"].numberInt();
 
 	return 0;
 }
 
-int DB_Operator::save_item_detail(const Item_Info &item, mongo::BSONObj &obj) {
+int DB_Operator::save_item_info(const Item_Info &item, mongo::BSONObj &obj) {
 	BSONObjBuilder item_builder;
-	item_builder << "id" << item.item_basic.id << "amount" << item.item_basic.amount;
+	item_builder << "item_id" << item.item_id << "amount" << item.amount << "level" << item.level;
 	obj = item_builder.obj();
 	return 0;
 }

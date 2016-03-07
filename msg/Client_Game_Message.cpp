@@ -96,6 +96,37 @@ void MSG_520002::reset(){
 	role_id = 0;
 }
 
+MSG_120003::MSG_120003(void){
+	reset();
+}
+
+void MSG_120003::serialize(Block_Buffer &buffer) const {
+}
+
+int MSG_120003::deserialize(Block_Buffer &buffer) {
+	return 0;
+}
+
+void MSG_120003::reset(){
+}
+
+MSG_520003::MSG_520003(void){
+	reset();
+}
+
+void MSG_520003::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(vitality);
+}
+
+int MSG_520003::deserialize(Block_Buffer &buffer) {
+	vitality = buffer.read_int32();
+	return 0;
+}
+
+void MSG_520003::reset(){
+	vitality = 0;
+}
+
 MSG_120100::MSG_120100(void){
 	reset();
 }
@@ -125,7 +156,7 @@ void MSG_520100::serialize(Block_Buffer &buffer) const {
 
 int MSG_520100::deserialize(Block_Buffer &buffer) {
 	uint16_t __item_info_vec_size = buffer.read_uint16();
-	Item_Basic_Info v0;
+	Item_Info v0;
 	for(uint16_t i = 0; i < __item_info_vec_size; ++i) {
 		if(v0.deserialize(buffer))
 			return -1;
@@ -488,17 +519,32 @@ MSG_120303::MSG_120303(void){
 void MSG_120303::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(hero_id);
 	buffer.write_int32(equip_index);
+	uint16_t __item_info_vec_size = item_info.size();
+	buffer.write_uint16(__item_info_vec_size);
+	for(uint16_t i = 0; i < __item_info_vec_size; ++i) {
+		item_info[i].serialize(buffer);
+	}
+
 }
 
 int MSG_120303::deserialize(Block_Buffer &buffer) {
 	hero_id = buffer.read_int32();
 	equip_index = buffer.read_int32();
+	uint16_t __item_info_vec_size = buffer.read_uint16();
+	Item_Info v0;
+	for(uint16_t i = 0; i < __item_info_vec_size; ++i) {
+		if(v0.deserialize(buffer))
+			return -1;
+		item_info.push_back(v0);
+	}
+
 	return 0;
 }
 
 void MSG_120303::reset(){
 	hero_id = 0;
 	equip_index = 0;
+	item_info.clear();
 }
 
 MSG_520303::MSG_520303(void){
@@ -524,33 +570,48 @@ void MSG_520303::reset(){
 	equip_level = 0;
 }
 
-MSG_120003::MSG_120003(void){
+MSG_120304::MSG_120304(void){
 	reset();
 }
 
-void MSG_120003::serialize(Block_Buffer &buffer) const {
+void MSG_120304::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(hero_id);
+	buffer.write_bool(on);
+	equip_info.serialize(buffer);
 }
 
-int MSG_120003::deserialize(Block_Buffer &buffer) {
+int MSG_120304::deserialize(Block_Buffer &buffer) {
+	hero_id = buffer.read_int32();
+	on = buffer.read_bool();
+	equip_info.deserialize(buffer);
 	return 0;
 }
 
-void MSG_120003::reset(){
+void MSG_120304::reset(){
+	hero_id = 0;
+	on = false;
+	equip_info.reset();
 }
 
-MSG_520003::MSG_520003(void){
+MSG_520304::MSG_520304(void){
 	reset();
 }
 
-void MSG_520003::serialize(Block_Buffer &buffer) const {
-	buffer.write_int32(vitality);
+void MSG_520304::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(hero_id);
+	buffer.write_bool(on);
+	equip_info.serialize(buffer);
 }
 
-int MSG_520003::deserialize(Block_Buffer &buffer) {
-	vitality = buffer.read_int32();
+int MSG_520304::deserialize(Block_Buffer &buffer) {
+	hero_id = buffer.read_int32();
+	on = buffer.read_bool();
+	equip_info.deserialize(buffer);
 	return 0;
 }
 
-void MSG_520003::reset(){
-	vitality = 0;
+void MSG_520304::reset(){
+	hero_id = 0;
+	on = false;
+	equip_info.reset();
 }

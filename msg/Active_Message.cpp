@@ -30,7 +30,7 @@ void MSG_300100::serialize(Block_Buffer &buffer) const {
 
 int MSG_300100::deserialize(Block_Buffer &buffer) {
 	uint16_t __item_info_vec_size = buffer.read_uint16();
-	Item_Basic_Info v0;
+	Item_Info v0;
 	for(uint16_t i = 0; i < __item_info_vec_size; ++i) {
 		if(v0.deserialize(buffer))
 			return -1;

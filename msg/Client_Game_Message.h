@@ -71,6 +71,24 @@ struct MSG_520002 {
 	void reset(void);
 };
 
+	//购买玩家体力
+struct MSG_120003 {
+
+	MSG_120003(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+struct MSG_520003 {
+
+	int32_t vitality;
+
+	MSG_520003(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+
 	//获取背包信息
 struct MSG_120100 {
 
@@ -81,7 +99,7 @@ struct MSG_120100 {
 };
 struct MSG_520100 {
 
-	std::vector<Item_Basic_Info> item_info;
+	std::vector<Item_Info> item_info;
 
 	MSG_520100(void);
 	void serialize(Block_Buffer &buffer) const;
@@ -92,7 +110,7 @@ struct MSG_520100 {
 	//使用物品
 struct MSG_120101 {
 
-	Item_Basic_Info item;
+	Item_Info item;
 
 	MSG_120101(void);
 	void serialize(Block_Buffer &buffer) const;
@@ -110,7 +128,7 @@ struct MSG_520101 {
 	//出售物品
 struct MSG_120102 {
 
-	Item_Basic_Info item;
+	Item_Info item;
 
 	MSG_120102(void);
 	void serialize(Block_Buffer &buffer) const;
@@ -272,6 +290,8 @@ struct MSG_120303 {
 
 	int32_t equip_index; // 装备位置索引
 
+	std::vector<Item_Info> item_info; //喂掉的装备列表
+
 	MSG_120303(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
@@ -290,26 +310,30 @@ struct MSG_520303 {
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
-/*
 
-	购买玩家体力
-*/
-struct MSG_120003 {
+	//英雄装备穿脱
+struct MSG_120304 {
 
-	MSG_120003(void);
+	int32_t hero_id;
+
+	bool on; // true表示穿，false表示脱
+
+	Item_Info equip_info; //装备信息
+
+	MSG_120304(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
-/*
+struct MSG_520304 {
 
-	玩家购买体力(返回)
-*/
-struct MSG_520003 {
+	int32_t hero_id;
 
-	int32_t vitality;
+	bool on; // true表示穿，false表示脱
 
-	MSG_520003(void);
+	Item_Info equip_info; //装备信息
+
+	MSG_520304(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

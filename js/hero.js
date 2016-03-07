@@ -13,6 +13,17 @@ function Hero() {
 	this.load_data = function(player, buffer) {
 		this.player = player;
 		this.hero_info.deserialize(buffer);
+		
+		//初始化英雄装备信息
+		this.hero_info.hero_map.each(function(key,value,index) {
+			if (value.equip_info.length != 6) {
+				value.equip_info = [];
+				for (var i = 0; i < 6; ++i) {
+					var equip_detail = new Equip_Detail();
+					value.equip_info.push(equip_detail);
+				}
+			}
+    	});
 	}
 	
 	this.save_data = function(buffer) {
@@ -81,11 +92,31 @@ function Hero() {
 		
 		var msg_req = new MSG_120302();
 		msg_req.deserialize(buffer); 
+		var hero_detail = this.hero_info.hero_map.get(msg_req.hero_id);
+		if (hero_detail == null) {
+			return this.player.cplayer.respond_error_result(Msg_Res.RES_ADD_HERO_QUALITY, Error_Code.ERROR_CLIENT_PARAM);
+		}
+		
+		var can_add = true;
+		for (var i = 0; i < hero_detail.equip_info.length; ++i) {
+			if (hero_detail.equip_info[i].equip_id == 0) {
+				can_add = false;
+				break;
+			}
+		}
+		if (!can_add) {
+			return this.player.cplayer.respond_error_result(Msg_Res.RES_ADD_HERO_QUALITY, Error_Code.ERROR_CLIENT_OPERATE);
+		}
+		//英雄突破，装备清零
+		for (var i = 0; i < hero_detail.equip_info.length; ++i) {
+			hero_detail.equip_info[i] = new Equip_Info();
+		}
+		hero_detail.quality++;
 		this.set_data_change();
 
 		var msg_res = new MSG_520302();
 		msg_res.hero_id = msg_req.hero_id;
-		msg_res.quality = 1;
+		msg_res.quality = hero_detail.quality;
 		var buf = pop_buffer();
 		msg_res.serialize(buf);
 		this.player.cplayer.respond_success_result(Msg_Res.RES_ADD_HERO_QUALITY, buf);
@@ -97,6 +128,11 @@ function Hero() {
 		
 		var msg_req = new MSG_120303();
 		msg_req.deserialize(buffer); 
+		var hero_detail = this.hero_info.hero_map.get(msg_req.hero_id);
+		if (hero_detail == null || msg_req.equip_index < 0 || msg_req.equip_index >= hero_detail.equip_info.length) {
+			return this.player.cplayer.respond_error_result(Msg_Res.RES_ADD_EQUIP_LEVEL, Error_Code.ERROR_CLIENT_PARAM);
+		}
+		
 		this.set_data_change();
 
 		var msg_res = new MSG_520303();
@@ -106,6 +142,27 @@ function Hero() {
 		var buf = pop_buffer();
 		msg_res.serialize(buf);
 		this.player.cplayer.respond_success_result(Msg_Res.RES_ADD_EQUIP_LEVEL, buf);
+		push_buffer(buf);
+	}
+	
+	this.equip_on_off = function(buffer) {
+		print('equip_on_off, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " msec:", msec());
+		
+		var msg_req = new MSG_120304();
+		msg_req.deserialize(buffer); 
+		var hero_detail = this.hero_info.hero_map.get(msg_req.hero_id);
+		if (hero_detail == null || msg_req.equip_index < 0 || msg_req.equip_index >= hero_detail.equip_info.length) {
+			return this.player.cplayer.respond_error_result(Msg_Res.RES_EQUIP_ON_OFF, Error_Code.ERROR_CLIENT_PARAM);
+		}
+		this.set_data_change();
+
+		var msg_res = new MSG_520304();
+		msg_res.hero_id = msg_req.hero_id;
+		msg_res.on = msg_req.on;
+		msg_res.item_info = msg_req.item_info;
+		var buf = pop_buffer();
+		msg_res.serialize(buf);
+		this.player.cplayer.respond_success_result(Msg_Res.RES_EQUIP_ON_OFF, buf);
 		push_buffer(buf);
 	}
 }

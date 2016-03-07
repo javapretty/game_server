@@ -4,7 +4,7 @@ struct MSG_300000 {
 
 //物品信息更新
 struct MSG_300100 {
-	std::vector<Item_Basic_Info> item_info;
+	std::vector<Item_Info> item_info;
 };
 
 //物品附加信息更新

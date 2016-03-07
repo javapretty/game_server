@@ -88,17 +88,20 @@ function Property_Detail() {
 	}
 }
 
-function Equip_Detail() {
-	this.equip_id = 0;		//装备id
-	this.level = 0;				//装备等级
+function Item_Info() {
+	this.item_id = 0;				//道具id
+	this.amount = 0;				//道具数量
+	this.level = 0;					//道具等级
 	
 	this.serialize = function(buffer) {
-		buffer.write_int32(this.equip_id);
+		buffer.write_int32(this.item_id);
+		buffer.write_int32(this.amount);
 		buffer.write_int32(this.level);
 	}
 	
 	this.deserialize = function(buffer) {
-		this.equip_id = buffer.read_int32();
+		this.item_id = buffer.read_int32();
+		this.amount = buffer.read_int32();
 		this.level = buffer.read_int32();
 	}
 }
@@ -138,9 +141,9 @@ function Hero_Detail() {
 		this.quality = buffer.read_int32();
 		var equip_len = buffer.read_uint16();
 		for (var i = 0; i < equip_len; ++i) {
-			var equip_detail = new Equip_Detail();
-			equip_detail.deserialize(buffer);
-			this.equip_info.push(equip_detail);
+			var item_info = new Item_Info();
+			item_info.deserialize(buffer);
+			this.equip_info.push(item_info);
 		}
 		var property_len = buffer.read_uint16();
 		for (var i = 0; i < property_len; ++i) {
@@ -168,21 +171,6 @@ function Hero_Info() {
 			hero_detail.deserialize(buffer);
 			this.hero_map.put(hero_detail.hero_id, hero_detail);
 		}
-	}
-}
-
-function Item_Info() {
-	this.id = 0;				//物品id
-	this.amount = 0;		//物品数量
-	
-	this.serialize = function(buffer) {
-		buffer.write_int32(this.id);
-		buffer.write_int32(this.amount);
-	}
-	
-	this.deserialize = function(buffer) {
-		this.id = buffer.read_int32();
-		this.amount = buffer.read_int32();
 	}
 }
 

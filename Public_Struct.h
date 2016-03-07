@@ -188,7 +188,7 @@ struct Game_Player_Info {
 	int64_t last_change_time;				//上次更改体力时间
 	int today_buy ;						//当前购买次数
 	int vip;									//vip等级
-	int vip_exp = 0;					//vip对应的经验值
+	int vip_exp;					//vip对应的经验值
 	int charge_gold;					//总共充值的元宝数
 
 	Game_Player_Info(void);
@@ -206,15 +206,6 @@ struct Hero_Info {
 	void reset(void);
 
 	Hero_Map hero_map;
-};
-
-struct Item_Info {
-	Item_Info(void);
-	int serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-
-	Item_Basic_Info item_basic;
 };
 
 struct Bag_Info {

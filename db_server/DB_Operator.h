@@ -52,8 +52,9 @@ public:
 
 	int load_bag_info(int64_t role_id, Bag_Info &bag_info);
 	int save_bag_info(int64_t role_id, Bag_Info &bag_info);
-	int load_item_detail(const mongo::BSONObj &obj, Item_Info &item);
-	int save_item_detail(const Item_Info &item, mongo::BSONObj &obj);
+
+	int load_item_info(const mongo::BSONObj &obj, Item_Info &item);
+	int save_item_info(const Item_Info &item, mongo::BSONObj &obj);
 
 	int load_mail_info(int64_t role_id, Mail_Info &mail_info);
 	int save_mail_info(int64_t role_id, Mail_Info &mail_info);

@@ -25,7 +25,7 @@ struct MSG_300000 {
 	//物品信息更新
 struct MSG_300100 {
 
-	std::vector<Item_Basic_Info> item_info;
+	std::vector<Item_Info> item_info;
 
 	MSG_300100(void);
 	void serialize(Block_Buffer &buffer) const;

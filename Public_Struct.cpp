@@ -199,24 +199,6 @@ void Hero_Info::reset(void) {
 	hero_map.clear();
 }
 
-Item_Info::Item_Info(void) {
-	reset();
-}
-
-int Item_Info::serialize(Block_Buffer &buffer) const {
-	item_basic.serialize(buffer);
-	return 0;
-}
-
-int Item_Info::deserialize(Block_Buffer &buffer){
-	item_basic.deserialize(buffer);
-	return 0;
-}
-
-void Item_Info::reset(void){
-	item_basic.reset();
-}
-
 Bag_Info::Bag_Info(void) { reset(); }
 
 int Bag_Info::serialize(Block_Buffer &buffer) const {
@@ -238,7 +220,7 @@ int Bag_Info::deserialize(Block_Buffer &buffer) {
 	Item_Info item_info;
 	for (int i = 0; i < size; ++i) {
 		item_info.deserialize(buffer);
-		item_map[item_info.item_basic.id] = item_info;
+		item_map[item_info.item_id] = item_info;
 	}
 	return 0;
 }

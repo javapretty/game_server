@@ -53,6 +53,7 @@ enum Login_Client_Message {
 enum Client_Game_Message {
 	REQ_FETCH_ROLE_INFO								=	120001,	//获取角色信息
 	REQ_CREATE_ROLE 									= 	120002,	//创建角色
+	REQ_BUY_VITALITY									= 120003,	//购买体力
 
 	REQ_FETCH_BAG_INFO 								= 120100,	//获取背包信息
 	REQ_USE_ITEM 											= 120101,	//使用物品
@@ -67,11 +68,13 @@ enum Client_Game_Message {
 	REQ_ADD_HERO_STAR									=	120301,	//提高英雄星级
 	REQ_ADD_HERO_QUALITY							= 120302,	//提高英雄品质
 	REQ_ADD_EQUIP_LEVEL								= 120303,	//提高英雄装备等级
+	REQ_EQUIP_ON_OFF									=	120304,	//英雄装备穿脱
 };
 
 enum Game_Client_Message {
 	RES_FETCH_ROLE_INFO								=	520001,	//获取角色信息(返回)
 	RES_CREATE_ROLE 									= 	520002,	//创建角色(返回)
+	RES_BUY_VITALITY									= 520003,	//购买体力(返回)
 
 	RES_FETCH_BAG_INFO 								= 520100,	//获取背包信息(返回)
 	RES_USE_ITEM											= 520101,	//使用物品(返回)
@@ -86,6 +89,7 @@ enum Game_Client_Message {
 	RES_ADD_HERO_STAR									=	520301,	//提高英雄星级(返回)
 	RES_ADD_HERO_QUALITY							= 520302,	//提高英雄品质(返回)
 	RES_ADD_EQUIP_LEVEL								= 520303,	//提高英雄装备等级(返回)
+	RES_EQUIP_ON_OFF									=	520304,	//英雄装备穿脱(返回)
 };
 
 //此次包含login,game,chat,master与gate通信的消息
