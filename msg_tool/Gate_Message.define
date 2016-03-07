@@ -1,6 +1,4 @@
-/*
-gate-->login校验玩家accout session数据
-*/
+//gate-->login校验玩家
 struct MSG_140000 {
 	std::string account;
 	std::string session;
@@ -8,9 +6,7 @@ struct MSG_140000 {
 	int32_t gate_port;
 };
 
-/*
-login-->gate校验玩家结果
-*/
+//login-->gate校验玩家结果
 struct MSG_140001 {
 	std::string account;
 };

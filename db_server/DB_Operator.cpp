@@ -443,13 +443,17 @@ int DB_Operator::load_item_info(const BSONObj &obj, Item_Info &item) {
 	item.item_id = obj["item_id"].numberInt();
 	item.amount = obj["amount"].numberInt();
 	item.level = obj["level"].numberInt();
+	item.exp = obj["exp"].numberInt();
 
 	return 0;
 }
 
 int DB_Operator::save_item_info(const Item_Info &item, mongo::BSONObj &obj) {
 	BSONObjBuilder item_builder;
-	item_builder << "item_id" << item.item_id << "amount" << item.amount << "level" << item.level;
+	item_builder << "item_id" << item.item_id
+			<< "amount" << item.amount
+			<< "level" << item.level
+			<< "exp" << item.exp;
 	obj = item_builder.obj();
 	return 0;
 }

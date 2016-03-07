@@ -3,6 +3,9 @@ git add .
 git commit -m "注释内容"
 git push origin master
 
+将本地工作区代码还原为git服务器上面版本
+git checkout -- js/hero.js
+
 change your romote url from https to ssh:
 git remote set-url origin git@github.com:jice1001/server.git
 git remote -v

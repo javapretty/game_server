@@ -15,10 +15,8 @@
 #include "Public_Struct.h"
 
 
-/*
 
-	gate-->login校验玩家accout session数据
-*/
+	//gate-->login校验玩家
 struct MSG_140000 {
 
 	std::string account;
@@ -34,10 +32,8 @@ struct MSG_140000 {
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
-/*
 
-	login-->gate校验玩家结果
-*/
+	//login-->gate校验玩家结果
 struct MSG_140001 {
 
 	std::string account;

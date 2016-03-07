@@ -59,7 +59,7 @@ function Hero() {
 		
 		var json_str = read_json('config/hero/hero.json');
   		var hero_obj = JSON.parse(json_str)[msg_req.hero_id];
-    	if (hero_obj == null) {
+    	if (hero_obj == null || hero_detail.level >= hero_obj.star_item_amount.length) {
     		return this.player.cplayer.respond_error_result(Msg_Res.RES_ADD_HERO_STAR, Error_Code.ERROR_CONFIG_NOT_EXIST);
     	}
     	
@@ -134,12 +134,28 @@ function Hero() {
 			return this.player.cplayer.respond_error_result(Msg_Res.RES_ADD_EQUIP_LEVEL, Error_Code.ERROR_CLIENT_PARAM);
 		}
 		
+		var equip = hero_detail.equip_info[msg_req.equip_index];
+		var json_str = read_json('config/bag/item.json');
+		var json_obj = JSON.parse(json_str);
+  		var equip_obj = json_obj[equip.item_id];
+    	if (equip_obj == null || equip.level >= equip_obj.level_exp.length) {
+    		return this.player.cplayer.respond_error_result(Msg_Res.RES_ADD_EQUIP_LEVEL, Error_Code.ERROR_CONFIG_NOT_EXIST);
+    	}
+    	
+    	for (var i = 0; i < msg_req.item_info.length; ++i) {
+    		equip.exp += json_obj[msg_req.item_info[i]].exp;
+    	}
+    	if (equip.exp >= equip_obj.level_exp[equip.level]) {
+    		equip.exp -= equip_obj.level_exp[equip.level];
+    		equip.level++;
+    	}
 		this.set_data_change();
 
 		var msg_res = new MSG_520303();
 		msg_res.hero_id = msg_req.hero_id;
 		msg_res.equip_index = msg_req.equip_index;
-		msg_res.equip_level = 1;
+		msg_res.equip_level = equip.level;
+		msg_res.equip_exp = equip.exp;
 		var buf = pop_buffer();
 		msg_res.serialize(buf);
 		this.player.cplayer.respond_success_result(Msg_Res.RES_ADD_EQUIP_LEVEL, buf);

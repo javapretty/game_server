@@ -1,34 +1,28 @@
-/*
-注册
-*/
+//注册
 struct MSG_100000 {
-	std::string account;/*账号*/
-	std::string password;/*密码*/
+	std::string account;
+	std::string password;
 };
 
 struct MSG_500000 {
-	std::string ip;		/*gate ip*/
-	int32_t port;			/*gate port*/
+	std::string ip;		//gate ip
+	int32_t port;			//gate port
 	std::string session;
 };
 
-/*
-登录
-*/
+//登录
 struct MSG_100001 {
-	std::string account;/*账号*/
-	std::string password;/*密码*/
+	std::string account;
+	std::string password;
 };
 
 struct MSG_500001 {
-	std::string ip;		/*gate ip*/
-	int32_t port;			/*gate port*/
+	std::string ip;		//gate ip
+	int32_t port;			//gate port
 	std::string session;
 };
 
-/*
-客户端登录gate
-*/
+//客户端登录gate
 struct MSG_100002 {
 	std::string account;
 	std::string session;		//登录验证的seesion
@@ -38,9 +32,7 @@ struct MSG_500002 {
 	std::string account;
 };
 
-/*
-心跳
-*/
+//心跳
 struct MSG_100003 {
 	int32_t client_time;
 };

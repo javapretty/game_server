@@ -15,10 +15,8 @@
 #include "Public_Struct.h"
 
 
-/*
 
-	后台MySQL数据库插入测试
-*/
+	//后台MySQL数据库插入测试
 struct MSG_180000 {
 
 	int32_t id;
@@ -30,27 +28,25 @@ struct MSG_180000 {
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
-/*
 
-	后台登录退出流水
-*/
+	//后台登录退出流水
 struct MSG_180001 {
 
-	int64_t role_id;/*角色id*/
+	int64_t role_id;
 
-	std::string role_name;/*角色名*/
+	std::string role_name;
 
-	std::string account;/*账号*/
+	std::string account;
 
-	uint16_t level;/*等级*/
+	uint16_t level;
 
-	std::string client_ip;/*客户端IP*/
+	std::string client_ip;
 
-	uint32_t login_time;/*登录时间戳*/
+	uint32_t login_time;
 
-	uint32_t logout_time;/*退出时间戳*/
+	uint32_t logout_time;
 
-	uint32_t online_time;/*在线时长*/
+	uint32_t online_time;
 
 	MSG_180001(void);
 	void serialize(Block_Buffer &buffer) const;

@@ -389,17 +389,20 @@ function MSG_520303() {
 	this.hero_id = 0;
 	this.equip_index = 0;
 	this.equip_level = 0;
+	this.equip_exp = 0;
 	
 	this.serialize = function(buffer) {
 		buffer.write_int32(this.hero_id);
 		buffer.write_int32(this.equip_index);
 		buffer.write_int32(this.equip_level);
+		buffer.write_int32(this.equip_exp);
 	}
 	
 	this.deserialize = function(buffer) {
 		this.hero_id = buffer.read_int32();
 		this.equip_index = buffer.read_int32();
 		this.equip_level = buffer.read_int32();
+		this.equip_exp = buffer.read_int32();
 	}
 }
 

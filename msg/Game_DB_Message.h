@@ -15,10 +15,8 @@
 #include "Public_Struct.h"
 
 
-/*
 
-	加载 db_cache
-*/
+	//加载db_cache
 struct MSG_150000 {
 
 	MSG_150000(void);
@@ -35,10 +33,8 @@ struct MSG_550000 {
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
-/*
 
-	加载玩家信息
-*/
+	//加载玩家信息
 struct MSG_150001 {
 
 	Account_Info account_info;
@@ -57,10 +53,8 @@ struct MSG_550001 {
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
-/*
 
-	创建玩家
-*/
+	//创建玩家
 struct MSG_150002 {
 
 	Game_Player_Info player_info;
@@ -79,10 +73,8 @@ struct MSG_550002 {
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
-/*
 
-	保存玩家信息
-*/
+	//保存玩家信息
 struct MSG_150003 {
 
 	Player_Data player_data;
@@ -101,10 +93,8 @@ struct MSG_550003 {
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
-/*
 
-	保存邮件信息
-*/
+	//保存邮件信息
 struct MSG_150004 {
 
 	int64_t role_id;

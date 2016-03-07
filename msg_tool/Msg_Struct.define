@@ -20,6 +20,7 @@ struct Item_Info {
 	int32_t item_id;
 	int32_t amount;
 	int32_t level;
+	int32_t exp;
 }
 
 struct Hero_Detail {

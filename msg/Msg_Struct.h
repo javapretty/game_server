@@ -55,6 +55,8 @@ struct Item_Info {
 
 	int32_t level;
 
+	int32_t exp;
+
 	Item_Info(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);

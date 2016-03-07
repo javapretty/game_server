@@ -73,12 +73,14 @@ void Item_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(item_id);
 	buffer.write_int32(amount);
 	buffer.write_int32(level);
+	buffer.write_int32(exp);
 }
 
 int Item_Info::deserialize(Block_Buffer &buffer) {
 	item_id = buffer.read_int32();
 	amount = buffer.read_int32();
 	level = buffer.read_int32();
+	exp = buffer.read_int32();
 	return 0;
 }
 
@@ -86,6 +88,7 @@ void Item_Info::reset(){
 	item_id = 0;
 	amount = 0;
 	level = 0;
+	exp = 0;
 }
 
 Hero_Detail::Hero_Detail(void){

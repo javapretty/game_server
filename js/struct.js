@@ -92,17 +92,20 @@ function Item_Info() {
 	this.item_id = 0;				//道具id
 	this.amount = 0;				//道具数量
 	this.level = 0;					//道具等级
+	this.exp = 0;
 	
 	this.serialize = function(buffer) {
 		buffer.write_int32(this.item_id);
 		buffer.write_int32(this.amount);
 		buffer.write_int32(this.level);
+		buffer.write_int32(this.exp);
 	}
 	
 	this.deserialize = function(buffer) {
 		this.item_id = buffer.read_int32();
 		this.amount = buffer.read_int32();
 		this.level = buffer.read_int32();
+		this.exp = buffer.read_int32();
 	}
 }
 

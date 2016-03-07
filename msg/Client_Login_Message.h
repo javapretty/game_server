@@ -12,15 +12,13 @@
 #include "Msg_Struct.h"
 
 
-/*
 
-	注册
-*/
+	//注册
 struct MSG_100000 {
 
-	std::string account;/*账号*/
+	std::string account;
 
-	std::string password;/*密码*/
+	std::string password;
 
 	MSG_100000(void);
 	void serialize(Block_Buffer &buffer) const;
@@ -29,9 +27,9 @@ struct MSG_100000 {
 };
 struct MSG_500000 {
 
-	std::string ip; /*gate ip*/
+	std::string ip; //gate ip
 
-	int32_t port; /*gate port*/
+	int32_t port; //gate port
 
 	std::string session;
 
@@ -40,15 +38,13 @@ struct MSG_500000 {
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
-/*
 
-	登录
-*/
+	//登录
 struct MSG_100001 {
 
-	std::string account;/*账号*/
+	std::string account;
 
-	std::string password;/*密码*/
+	std::string password;
 
 	MSG_100001(void);
 	void serialize(Block_Buffer &buffer) const;
@@ -57,9 +53,9 @@ struct MSG_100001 {
 };
 struct MSG_500001 {
 
-	std::string ip; /*gate ip*/
+	std::string ip; //gate ip
 
-	int32_t port; /*gate port*/
+	int32_t port; //gate port
 
 	std::string session;
 
@@ -68,10 +64,8 @@ struct MSG_500001 {
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
-/*
 
-	客户端登录gate
-*/
+	//客户端登录gate
 struct MSG_100002 {
 
 	std::string account;
@@ -92,10 +86,8 @@ struct MSG_500002 {
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
-/*
 
-	心跳
-*/
+	//心跳
 struct MSG_100003 {
 
 	int32_t client_time;

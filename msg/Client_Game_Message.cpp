@@ -555,12 +555,14 @@ void MSG_520303::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(hero_id);
 	buffer.write_int32(equip_index);
 	buffer.write_int32(equip_level);
+	buffer.write_int32(equip_exp);
 }
 
 int MSG_520303::deserialize(Block_Buffer &buffer) {
 	hero_id = buffer.read_int32();
 	equip_index = buffer.read_int32();
 	equip_level = buffer.read_int32();
+	equip_exp = buffer.read_int32();
 	return 0;
 }
 
@@ -568,6 +570,7 @@ void MSG_520303::reset(){
 	hero_id = 0;
 	equip_index = 0;
 	equip_level = 0;
+	equip_exp = 0;
 }
 
 MSG_120304::MSG_120304(void){

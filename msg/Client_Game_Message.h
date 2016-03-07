@@ -50,11 +50,11 @@ struct MSG_120002 {
 
 	std::string role_name;
 
-	uint8_t gender; /*0 女，1 男*/
+	uint8_t gender; // 0女，1男
 
-	int32_t agent_num; /*平台*/
+	int32_t agent_num; //平台编号
 
-	int32_t server_num; /*服*/
+	int32_t server_num; //服务器编号
 
 	MSG_120002(void);
 	void serialize(Block_Buffer &buffer) const;
@@ -304,6 +304,8 @@ struct MSG_520303 {
 	int32_t equip_index;
 
 	int32_t equip_level;
+
+	int32_t equip_exp;
 
 	MSG_520303(void);
 	void serialize(Block_Buffer &buffer) const;
