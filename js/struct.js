@@ -211,6 +211,7 @@ function Mail_Detail() {
 	this.mail_content = ""; //邮件内容
 	this.copper = 0;				//铜钱
 	this.gold = 0;					//元宝
+	this.item_info = new Array();	//道具信息
 	
 	this.serialize = function(buffer) {
 		buffer.write_bool(this.pickup);
@@ -223,6 +224,11 @@ function Mail_Detail() {
 		buffer.write_string(this.mail_content);
 		buffer.write_int32(this.copper);
 		buffer.write_int32(this.gold);
+		var len = this.item_info.length;
+		buffer.write_uint16(len);
+		for (var i = 0; i < len; ++i) {
+			this.item_info[i].serialize(buffer);
+		}
 	}
 
 	this.deserialize = function(buffer) {
@@ -236,6 +242,12 @@ function Mail_Detail() {
 		this.mail_content = buffer.read_string();
 		this.copper = buffer.read_int32();
 		this.gold = buffer.read_int32();
+		var len = buffer.read_uint16();
+		for (var i = 0; i < len; ++i) {
+			var item = new Item_Info;
+			item.deserialize(buffer);
+			this.item_info.push(item);
+		}
     };
 }
 

@@ -43,4 +43,5 @@ struct Mail_Detail {
 	std::string mail_content;	//邮件内容
 	int32_t copper;						//铜钱
 	int32_t gold;							//元宝
+	std::vector<Item_Info> item_info;	//道具信息
 };

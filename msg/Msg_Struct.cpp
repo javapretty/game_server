@@ -162,6 +162,12 @@ void Mail_Detail::serialize(Block_Buffer &buffer) const {
 	buffer.write_string(sender_name);
 	buffer.write_string(mail_title);
 	buffer.write_string(mail_content);
+	uint16_t __item_info_vec_size = item_info.size();
+	buffer.write_uint16(__item_info_vec_size);
+	for(uint16_t i = 0; i < __item_info_vec_size; ++i) {
+		item_info[i].serialize(buffer);
+	}
+
 }
 
 int Mail_Detail::deserialize(Block_Buffer &buffer) {
@@ -175,6 +181,14 @@ int Mail_Detail::deserialize(Block_Buffer &buffer) {
 	sender_name = buffer.read_string();
 	mail_title = buffer.read_string();
 	mail_content = buffer.read_string();
+	uint16_t __item_info_vec_size = buffer.read_uint16();
+	Item_Info v0;
+	for(uint16_t i = 0; i < __item_info_vec_size; ++i) {
+		if(v0.deserialize(buffer))
+			return -1;
+		item_info.push_back(v0);
+	}
+
 	return 0;
 }
 
@@ -189,4 +203,5 @@ void Mail_Detail::reset(){
 	sender_name.clear();
 	mail_title.clear();
 	mail_content.clear();
+	item_info.clear();
 }

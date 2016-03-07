@@ -462,8 +462,8 @@ int DB_Operator::load_mail_info(int64_t role_id, Mail_Info &mail_info) {
 
 	mail_info.total_count = res["total_count"].numberInt();
 
-	BSONObj mail = res.getObjectField("mail_detail");
-	BSONObjIterator iter(mail);
+	BSONObj mail_obj = res.getObjectField("mail_detail");
+	BSONObjIterator iter(mail_obj);
 	while (iter.more()) {
 		BSONObj obj = iter.next().embeddedObject();
 		Mail_Detail mail_detail;
@@ -477,6 +477,17 @@ int DB_Operator::load_mail_info(int64_t role_id, Mail_Info &mail_info) {
 		mail_detail.mail_content = obj["mail_content"].valuestrsafe();
 		mail_detail.copper = obj["copper"].numberInt();
 		mail_detail.gold = obj["gold"].numberInt();
+
+		BSONObjIterator item_iter(res.getObjectField("item"));
+		BSONObj item_obj;
+		while (item_iter.more()){
+			item_obj = iter.next().embeddedObject();
+			Item_Info item;
+			if (load_item_info(item_obj, item) == 0) {
+				mail_detail.item_info.push_back(item);
+			}
+		}
+
 		mail_info.mail_map.insert(std::make_pair(mail_detail.mail_id, mail_detail));
 	}
 
@@ -487,6 +498,13 @@ int DB_Operator::save_mail_info(int64_t role_id, Mail_Info &mail_info) {
 	std::vector<BSONObj> mail_vec;
 	for (Mail_Info::Mail_Map::const_iterator iter = mail_info.mail_map.begin();
 			iter != mail_info.mail_map.end(); iter++) {
+		std::vector<BSONObj> item_vec;
+		BSONObj item_obj;
+		for (std::vector<Item_Info>::const_iterator it = iter->second.item_info.begin(); it != iter->second.item_info.end(); ++it) {
+			save_item_info(*it, item_obj);
+			item_vec.push_back(item_obj);
+		}
+
 		mail_vec.push_back(BSON("mail_id" << iter->second.mail_id
 				<< "pickup" << iter->second.pickup
 				<< "send_time" << iter->second.send_time
@@ -496,7 +514,8 @@ int DB_Operator::save_mail_info(int64_t role_id, Mail_Info &mail_info) {
 				<< "mail_title" << iter->second.mail_title
 				<< "mail_content" << iter->second.mail_content
 				<< "copper" << iter->second.copper
-				<< "gold" << iter->second.gold));
+				<< "gold" << iter->second.gold
+				<< "item" << item_obj));
 	}
 
 	BSONObjBuilder set_builder;

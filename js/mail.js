@@ -46,10 +46,9 @@ function Mail() {
 		var msg_res = new MSG_520201();
 		if (msg_req.mail_id == 0) {
 			this.mail_info.mail_map.each(function(key,value,index) {
-				var result = this.player.bag.bag_add_money(value.copper, value.gold);
+				var result = this.pickup_item_money(value);
 				if (result == 0) {
 					msg_res.mail_id_info.push(key);
-					value.pickup = true;
 				}
     		});
 		} else {
@@ -57,10 +56,10 @@ function Mail() {
 			if (mail_detail == null) {
 				return this.player.cplayer.respond_error_result(Msg_Res.RES_PICKUP_MAIL, Error_Code.ERROR_CLIENT_PARAM);
 			}
-			var result = this.player.bag.bag_add_money(mail_detail.copper, mail_detail.gold);
+			
+			var result = this.pickup_item_money(value);
 			if (result == 0) {
-				msg_res.mail_id_info.push(msg_req.mail_id);
-				mail_detail.pickup = true;
+					msg_res.mail_id_info.push(msg_req.mail_id);
 			}
 		}
 	
@@ -81,10 +80,9 @@ function Mail() {
 		var msg_res = new MSG_520202();
 		if (msg_req.mail_id == 0) {
 			this.mail_info.mail_map.each(function(key,value,index) {
-				var result = this.player.bag.bag_add_money(value.copper, value.gold);
+				var result = this.pickup_item_money(value);
 				if (result == 0) {
 					msg_res.mail_id_info.push(key);
-					value.pickup = true;
 				}
     		});
     		this.mail_info.mail_map.clear();
@@ -93,11 +91,11 @@ function Mail() {
 			if (mail_detail == null) {
 				return this.player.cplayer.respond_error_result(Msg_Res.RES_DEL_MAIL, Error_Code.ERROR_CLIENT_PARAM);
 			}
-			var result = this.player.bag.bag_add_money(mail_detail.copper, mail_detail.gold);
+			
+			var result = this.pickup_item_money(value);
 			if (result == 0) {
-				msg_res.mail_id_info.push(msg_req.mail_id);
-				mail_detail.pickup = true;
-				this.mail_info.mail_map.remove(mail_id);
+					msg_res.mail_id_info.push(msg_req.mail_id);
+					this.mail_info.mail_map.remove(msg_req.mail_id);
 			}
 		}
 	
@@ -131,17 +129,22 @@ function Mail() {
 		this.player.cplayer.respond_error_result(Msg_Res.RES_SEND_MAIL, result);
 	}
 	
-	//读取json配置文件
-	this.read_mail = function() {
-		var content = read_json('config/mail/mail.json');
-  		try {
-    		var mail_obj = JSON.parse(content);
-    		if (mail_obj != null) {
-    			print("sender_name:", mail_obj.answer_mail.sender_name, " mail_title:", mail_obj.answer_mail.mail_title, " mail_context:", mail_obj.answer_mail.mail_content);
-    		}
-  		} catch (err) {
-  			print(err.message);
-  		}
+	this.pickup_item_money = function(mail_detail) {
+		var result = 0;
+		for (var i = 0; i < mail_detail.item_info.length; ++i) {
+			result = this.player.bag.bag_inster_item(mail_detail.item_info[i]);
+			if (result != 0) {
+				return result;
+			}			
+		}
+		
+		result = this.player.bag.bag_add_money(mail_detail.copper, mail_detail.gold);
+		if (result != 0) {
+			return result;
+		}
+		
+		mail_detail.pickup = true;
+		return 0;
 	}
 }
 

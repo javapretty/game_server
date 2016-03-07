@@ -103,6 +103,8 @@ struct Mail_Detail {
 
 	int32_t gold; //元宝
 
+	std::vector<Item_Info> item_info; //道具信息
+
 	Mail_Detail(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
