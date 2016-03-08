@@ -5,8 +5,8 @@ struct MSG_100000 {
 };
 
 struct MSG_500000 {
-	std::string ip;		//gate ip
-	int32_t port;			//gate port
+	std::string ip;		//gate_ip
+	int32_t port;			//gate_port
 	std::string session;
 };
 
@@ -17,8 +17,8 @@ struct MSG_100001 {
 };
 
 struct MSG_500001 {
-	std::string ip;		//gate ip
-	int32_t port;			//gate port
+	std::string ip;		//gate_ip
+	int32_t port;			//gate_port
 	std::string session;
 };
 
