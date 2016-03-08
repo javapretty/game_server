@@ -11,23 +11,7 @@
 #include "boost/unordered_map.hpp"
 #include "Time_Value.h"
 #include "Misc.h"
-#include "Msg_Struct.h"
-
-enum Sender_Type {
-	ROLE_MAIL = 1,
-	SYSTEM_MAIL = 2,
-};
-
-struct Account_Info {
-	std::string account;
-	int agent_num;
-	int server_num;
-
-	Account_Info(void);
-	int serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-};
+#include "Game_Struct.h"
 
 struct Cid_Info {
 	int32_t gate_cid;			//gate连接game,master的cid
@@ -56,18 +40,6 @@ inline std::size_t hash_value(const Cid_Info &cid_info) {
     return seed;
 }
 
-struct Ip_Info {
-	std::string ip;
-	int port;
-
-	Ip_Info(void) { reset(); };
-
-	void reset(void) {
-		ip.clear();
-		port = 0;
-	}
-};
-
 struct Saving_Info {
 	int64_t role_id;		// 角色
 	Time_Value timestamp;	// 保存时的时间错
@@ -84,24 +56,34 @@ struct Close_Info {
 	Close_Info(int p_cid, const Time_Value &p_timestamp) : cid(p_cid), timestamp(p_timestamp) { }
 };
 
-struct Msg_Info {
-	bool is_inited;
-	int cid;
-	long hash_key;				/// 用于加解密的hash key
-	uint32_t msg_serial;				/// 上一条消息序号
-	Time_Value msg_timestamp;			/// 上一条消息时间戳
-	uint32_t msg_interval_count_;		/// 操作频率统计
-	Time_Value msg_interval_timestamp;
+struct Tick_Info {
+	const Time_Value server_info_interval_tick;
+	Time_Value server_info_last_tick;
 
-	void reset(void) {
-		is_inited = false;
-		cid = -1;
-		hash_key = 0;
-		msg_serial = 0;
-		msg_timestamp = Time_Value::zero;
-		msg_interval_count_ = 0;
-		msg_interval_timestamp = Time_Value::zero;
-	}
+	const Time_Value player_interval_tick; /// Game_Player定时器间隔
+	Time_Value player_last_tick;
+
+	const Time_Value manager_interval_tick; /// Game_Manager
+	Time_Value manager_last_tick;
+
+	const Time_Value saving_scanner_interval_tick;	// 玩家下线保存表的扫描
+	Time_Value saving_scanner_last_tick;
+
+	const Time_Value object_pool_interval_tick;
+	Time_Value object_pool_last_tick;
+
+	Tick_Info(void)
+	: server_info_interval_tick(Time_Value(300, 0)),
+	  server_info_last_tick(Time_Value::zero),
+	  player_interval_tick(Time_Value(0, 500 * 1000)),
+	  player_last_tick(Time_Value::zero),
+	  manager_interval_tick(1, 0),
+	  manager_last_tick(Time_Value::zero),
+	  saving_scanner_interval_tick(20, 0),
+	  saving_scanner_last_tick(Time_Value::zero),
+	  object_pool_interval_tick(300, 0),
+	  object_pool_last_tick(Time_Value::zero)
+	{ }
 };
 
 struct Recycle_Tick {
@@ -135,104 +117,6 @@ struct Recycle_Tick {
 	}
 };
 
-struct Login_Player_Info {
-	Time_Value session_tick;
-	std::string account;
-	std::string gate_ip;
-	int gate_port;
-	std::string session;
-
-	Login_Player_Info(void);
-	int serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-};
-
-struct Gate_Player_Info {
-	int64_t role_id;
-	std::string account;
-
-	Gate_Player_Info(void);
-	int serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-};
-
-struct Master_Player_Info {
-	int64_t role_id;
-	std::string account;
-	std::string role_name;
-	int level;
-
-	Master_Player_Info(void);
-	int serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-};
-
-struct Game_Player_Info {
-	int64_t role_id;					//玩家id
-	std::string account;			//玩家账号名
-	std::string role_name;		//玩家名字
-	std::string client_ip;		//客户端ip
-	int agent_num;						//平台编号
-	int server_num;						//服务器编号
-	int level;     			   		//玩家等级
-	int exp;									//玩家经验
-	int gender; 							//0(女),1(男)
-	int career; 							//职业1-3
-	int create_time;					//创建角色时刻
-	int last_sign_in_time;		//最后登录时间
-	int last_sign_out_time;		//最后登出时间
-	int vitality;							//玩家体力
-	int64_t last_change_time;	//上次更改体力时间
-	int today_buy ;					//今天购买次数
-	int vip_level;					//vip等级
-	int vip_exp;						//vip经验值
-	int charge_gold;				//总共充值的元宝数
-
-	Game_Player_Info(void);
-	int serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-};
-
-struct Hero_Info {
-	typedef boost::unordered_map<int32_t, Hero_Detail> Hero_Map;
-
-	Hero_Info();
-	int serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-
-	Hero_Map hero_map;
-};
-
-struct Bag_Info {
-	typedef boost::unordered_map<int32_t, Item_Info> Item_Map;
-
-	Bag_Info();
-	int serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-
-	int32_t copper;
-	int32_t gold;
-	Item_Map item_map;
-};
-
-struct Mail_Info {
-	Mail_Info(void);
-	int serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-
-	typedef std::map<int, Mail_Detail> Mail_Map;	//邮件map要按照邮件id排序，不能改成unordered_map
-
-	int total_count; 			//邮件的总数量，即目前为止收到的所有邮件数
-	Mail_Map mail_map;
-};
-
 struct Player_Data {
 	enum	{
 		NULL_STATUS,
@@ -252,10 +136,8 @@ struct Player_Data {
 		CHANGE_END
 	};
 
-	typedef boost::unordered_set<int> Change_Set;
-
 	int8_t status;
-	Change_Set change_set;
+	boost::unordered_set<int> change_set;
 
 	Game_Player_Info player_info;
 	Hero_Info hero_info;
@@ -272,25 +154,7 @@ struct Player_Data {
 	void set_change(int change_id);
 };
 
-struct Player_DB_Cache {
-	int64_t role_id;
-	std::string account;
-	std::string role_name;
-	int agent_num;
-	int server_num;
-	int gender;
-	int career;
-	int level;
-
-	int serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-};
-
 struct DB_Cache {
-	typedef boost::unordered_map<int64_t, Player_DB_Cache> ID_Player_Cache_Map;
-	typedef boost::unordered_map<std::string, Player_DB_Cache> Account_Player_Cache_Map;
-
 	const static int player_cache_map_bucket_num = 50000;
 
 	DB_Cache(void)
@@ -303,38 +167,8 @@ struct DB_Cache {
 		account_player_cache_map.clear();
 	}
 
-	ID_Player_Cache_Map id_player_cache_map;
-	Account_Player_Cache_Map account_player_cache_map;
-};
-
-struct Tick_Info {
-	const Time_Value server_info_interval_tick;
-	Time_Value server_info_last_tick;
-
-	const Time_Value player_interval_tick; /// Game_Player定时器间隔
-	Time_Value player_last_tick;
-
-	const Time_Value manager_interval_tick; /// Game_Manager
-	Time_Value manager_last_tick;
-
-	const Time_Value saving_scanner_interval_tick;	// 玩家下线保存表的扫描
-	Time_Value saving_scanner_last_tick;
-
-	const Time_Value object_pool_interval_tick;
-	Time_Value object_pool_last_tick;
-
-	Tick_Info(void)
-	: server_info_interval_tick(Time_Value(300, 0)),
-	  server_info_last_tick(Time_Value::zero),
-	  player_interval_tick(Time_Value(0, 500 * 1000)),
-	  player_last_tick(Time_Value::zero),
-	  manager_interval_tick(1, 0),
-	  manager_last_tick(Time_Value::zero),
-	  saving_scanner_interval_tick(20, 0),
-	  saving_scanner_last_tick(Time_Value::zero),
-	  object_pool_interval_tick(300, 0),
-	  object_pool_last_tick(Time_Value::zero)
-	{ }
+	boost::unordered_map<int64_t,Player_DB_Cache> id_player_cache_map;
+	boost::unordered_map<std::string,Player_DB_Cache> account_player_cache_map;
 };
 
 #endif /* PUBLIC_STURCT_H_ */

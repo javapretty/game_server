@@ -15,4 +15,3 @@ struct MSG_180001 {
 	uint32_t logout_time;
 	uint32_t online_time;
 };
-

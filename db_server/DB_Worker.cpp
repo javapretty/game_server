@@ -172,7 +172,7 @@ int DB_Worker::process_save_mail(MSG_150004 &msg) {
 	mail_info.mail_map.insert(std::make_pair(msg.mail_detail.mail_id, msg.mail_detail));
 
 	if (mail_info.mail_map.size() > 100) {
-		for (Mail_Info::Mail_Map::iterator iter = mail_info.mail_map.begin();
+		for (std::map<int,Mail_Detail>::iterator iter = mail_info.mail_map.begin();
 				iter != mail_info.mail_map.end(); ++iter) {
 			mail_info.mail_map.erase(iter);
 			break;

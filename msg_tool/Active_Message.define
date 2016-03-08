@@ -16,7 +16,7 @@ struct MSG_300100 {
 //物品附加信息更新
 struct MSG_300101 {
 	
-}
+};
 
 //金钱更新
 struct MSG_300102 {

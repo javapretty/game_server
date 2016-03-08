@@ -368,7 +368,7 @@ int DB_Operator::load_hero_info(int64_t role_id, Hero_Info &hero_info) {
 
 int DB_Operator::save_hero_info(int64_t role_id, Hero_Info &hero_info) {
 	std::vector<BSONObj> hero_vec;
-	for (Hero_Info::Hero_Map::const_iterator iter = hero_info.hero_map.begin(); iter != hero_info.hero_map.end(); ++iter) {
+	for (boost::unordered_map<int32_t,Hero_Detail>::const_iterator iter = hero_info.hero_map.begin(); iter != hero_info.hero_map.end(); ++iter) {
 		std::vector<BSONObj> equip_vec;
 		for (std::vector<Item_Info>::const_iterator it = iter->second.equip_info.begin(); it != iter->second.equip_info.end(); ++it) {
 			equip_vec.push_back(BSON("item_id" << it->item_id << "amount" << it->amount << "level" << it->level));
@@ -422,7 +422,7 @@ int DB_Operator::load_bag_info(int64_t role_id, Bag_Info &bag_info) {
 int DB_Operator::save_bag_info(int64_t role_id, Bag_Info &bag_info) {
 	std::vector<BSONObj> item_vec;
 	BSONObj obj;
-	for (Bag_Info::Item_Map::const_iterator iter = bag_info.item_map.begin(); iter != bag_info.item_map.end(); ++iter) {
+	for (boost::unordered_map<int32_t,Item_Info>::const_iterator iter = bag_info.item_map.begin(); iter != bag_info.item_map.end(); ++iter) {
 		save_item_info(iter->second, obj);
 		item_vec.push_back(obj);
 	}
@@ -500,7 +500,7 @@ int DB_Operator::load_mail_info(int64_t role_id, Mail_Info &mail_info) {
 
 int DB_Operator::save_mail_info(int64_t role_id, Mail_Info &mail_info) {
 	std::vector<BSONObj> mail_vec;
-	for (Mail_Info::Mail_Map::const_iterator iter = mail_info.mail_map.begin();
+	for (std::map<int,Mail_Detail>::const_iterator iter = mail_info.mail_map.begin();
 			iter != mail_info.mail_map.end(); iter++) {
 		std::vector<BSONObj> item_vec;
 		BSONObj item_obj;
