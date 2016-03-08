@@ -4,24 +4,26 @@ struct Role_Info {
 	std::string role_name;		//玩家名字
 	int32_t level;						//玩家等级
 	int32_t exp;							//玩家经验
-	int32_t career;						//0(女),1(男)
-	int32_t gender;						//职业1-3
+	int32_t career;						//职业
+	int32_t gender;						//0(女)1(男)
 	int32_t vitality;					//玩家体力
-	int32_t vip;							//vip等级
+	int32_t today_buy;				//今天购买次数
+	int32_t vip_level;				//vip等级
+	int32_t vip_exp;					//vip经验
 	int32_t charge_gold;			//总共充值的元宝数
 };
 
 struct Property_Detail {
 	int32_t type;						//属性类型
 	int32_t value;					//属性值
-}
+};
 
 struct Item_Info {
 	int32_t item_id;
 	int32_t amount;
 	int32_t level;
 	int32_t exp;
-}
+};
 
 struct Hero_Detail {
 	int32_t hero_id;				//	英雄id

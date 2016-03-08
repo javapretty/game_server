@@ -25,7 +25,7 @@ struct MSG_520002 {
 	int64_t role_id;
 };
 
-//购买玩家体力
+//购买体力
 struct MSG_120003 {
 };
 
@@ -137,12 +137,14 @@ struct MSG_520303 {
 //英雄装备穿脱
 struct MSG_120304 {
 	int32_t hero_id;
+	int32_t equip_index;		//	装备位置索引
 	bool on;								//	true表示穿，false表示脱
 	Item_Info equip_info;		//装备信息
 };
 
 struct MSG_520304 {
 	int32_t hero_id;
+	int32_t equip_index;		//	装备位置索引
 	bool on;								//	true表示穿，false表示脱
 	Item_Info equip_info;		//装备信息
 };

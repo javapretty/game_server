@@ -14,6 +14,25 @@ if (typeof Data_Change == "undefined") {
 	Data_Change.MAIL_CHANGE = 4;
 }
 
+if (typeof Property_Type == "undefined") {
+	var Property_Type = {};
+	Property_Type.POWER = 1;					//力量
+	Property_Type.BRAINS = 2;					//智力
+	Property_Type.AGILE = 3;					//敏捷
+	Property_Type.POWER_GROW = 4;			//力量成长
+	Property_Type.BRAINS_GROW = 5;			//智力成长
+	Property_Type.AGILE_GROW = 6;			//敏捷成长
+	Property_Type.HP = 7;							//当前生命
+	Property_Type.HP_MAX = 8;					//最大生命
+	Property_Type.ANGER = 9;					//当前怒气
+	Property_Type.ANGER_MAX =10;				//最大怒气
+	Property_Type.PHYSICAL_ATTACK = 11;//物理攻击
+	Property_Type.MAGIC_ATTACK = 12;		//魔法攻击
+	Property_Type.PHYSICAL_DEF = 13;		//物理防御
+	Property_Type.MAGIC_DEF = 14;			//魔法防御
+	Property_Type.CRIT = 15;					//暴击
+}
+	
 if (typeof Msg_Db == "undefined") {
 	var Msg_Db = {};
 	Msg_Db.SYNC_GAME_DB_SAVE_MAIL_INFO					= 150004;	//保存邮件信息
@@ -46,6 +65,7 @@ if (typeof Error_Code == "undefined") {
 	Error_Code.ERROR_ITEM_NOT_ENOUGH					= 10000102;				//物品不足
 	Error_Code.ERROR_COPPER_NOT_ENOUGH				= 10000103;				//铜钱不足
 	Error_Code.ERROR_GOLD_NOT_ENOUGH					= 10000104;				//元宝不足
+	Error_Code.ERROR_VITALITY_TIMES_NOT_ENOUGH	=	10000105;				//购买体力次数不足
 }
 
 if (typeof Msg_Req == "undefined") {
@@ -99,7 +119,8 @@ if (typeof Msg_Active == "undefined") {
 	var Msg_Active = {};
 	
 	Msg_Active.ACTIVE_DISCONNECT 							=	300000;	//断开连接
-
+	Msg_Active.ACTIVE_VIP_INFO									=	300001;	//更新vip信息
+	
 	Msg_Active.ACTIVE_ITEM_INFO 								= 300100;	//物品信息更新
 	Msg_Active.ACTIVE_ITEM_ADDIT_INFO 					= 300101;	//物品附加信息更新
 	Msg_Active.ACTIVE_MONEY_INFO 							= 300102;	//金钱更新

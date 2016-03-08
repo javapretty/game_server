@@ -1,33 +1,7 @@
 {
     "10400" : {
-        "Type" : "Instant",
-        "Description" : "",
-        "Mutiple" : 0,
-        "Order" : 23,
-        "Get Diamond" : 150,
-        "Replace ID" : 0,
-        "Icon" : "UI/alpha/HVGA/recharge_diamond_icon_5.png",
-        "Limit" : 0,
-        "Recommended" : false,
-        "ID" : 10400,
-        "VIP Exp" : 150,
-        "Days" : 0,
-        "Hero" : 0,
-        "Cost" : 5
-    },
-    "10410" : {
-        "Type" : "Instant",
-        "Mutiple" : 0,
-        "Order" : 22,
-        "Get Diamond" : 350,
-        "Replace ID" : 10510,
-        "Icon" : "UI/alpha/HVGA/recharge_diamond_icon_5.png",
-        "Limit" : 0,
-        "Recommended" : false,
-        "ID" : 10410,
-        "VIP Exp" : 300,
-        "Days" : 0,
-        "Hero" : 0,
-        "Cost" : 10
+    	"vip_exp" : 150,
+    	"order" : 23,
+    	"gold" : 150
     }
 }

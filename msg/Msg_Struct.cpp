@@ -11,7 +11,9 @@ void Role_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(career);
 	buffer.write_int32(gender);
 	buffer.write_int32(vitality);
-	buffer.write_int32(vip);
+	buffer.write_int32(today_buy);
+	buffer.write_int32(vip_level);
+	buffer.write_int32(vip_exp);
 	buffer.write_int32(charge_gold);
 	buffer.write_int64(role_id);
 	buffer.write_string(account);
@@ -24,7 +26,9 @@ int Role_Info::deserialize(Block_Buffer &buffer) {
 	career = buffer.read_int32();
 	gender = buffer.read_int32();
 	vitality = buffer.read_int32();
-	vip = buffer.read_int32();
+	today_buy = buffer.read_int32();
+	vip_level = buffer.read_int32();
+	vip_exp = buffer.read_int32();
 	charge_gold = buffer.read_int32();
 	role_id = buffer.read_int64();
 	account = buffer.read_string();
@@ -33,13 +37,6 @@ int Role_Info::deserialize(Block_Buffer &buffer) {
 }
 
 void Role_Info::reset(){
-	level = 0;
-	exp = 0;
-	career = 0;
-	gender = 0;
-	vitality = 0;
-	vip = 0;
-	charge_gold = 0;
 	role_id = 0;
 	account.clear();
 	role_name.clear();
