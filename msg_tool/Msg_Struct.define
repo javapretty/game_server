@@ -14,14 +14,14 @@ struct Role_Info {
 struct Property_Detail {
 	int32_t type;						//属性类型
 	int32_t value;					//属性值
-}
+};
 
 struct Item_Info {
 	int32_t item_id;
 	int32_t amount;
 	int32_t level;
 	int32_t exp;
-}
+};
 
 struct Hero_Detail {
 	int32_t hero_id;				//	英雄id
