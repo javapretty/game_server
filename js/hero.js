@@ -19,8 +19,8 @@ function Hero() {
 			if (value.equip_info.length != 6) {
 				value.equip_info = [];
 				for (var i = 0; i < 6; ++i) {
-					var equip_detail = new Equip_Detail();
-					value.equip_info.push(equip_detail);
+					var item_info = new Item_Info();
+					value.equip_info.push(item_info);
 				}
 			}
     	});
@@ -57,8 +57,7 @@ function Hero() {
 			return this.player.cplayer.respond_error_result(Msg_Res.RES_ADD_HERO_STAR, Error_Code.ERROR_CLIENT_PARAM);
 		}
 		
-		var json_str = read_json('config/hero/hero.json');
-  		var hero_obj = JSON.parse(json_str)[msg_req.hero_id];
+  		var hero_obj = util.get_json_config('config/hero/hero.json', msg_req.hero_id);
     	if (hero_obj == null || hero_detail.level >= hero_obj.star_item_amount.length) {
     		return this.player.cplayer.respond_error_result(Msg_Res.RES_ADD_HERO_STAR, Error_Code.ERROR_CONFIG_NOT_EXIST);
     	}
@@ -77,6 +76,7 @@ function Hero() {
     		return this.player.cplayer.respond_error_result(Msg_Res.RES_ADD_HERO_STAR, result);
     	}
     	hero_detail.star++;
+    	this.refresh_hero_property(hero_detail);
     	this.set_data_change();
     	
     	var msg_res = new MSG_520301();
@@ -113,6 +113,7 @@ function Hero() {
 			hero_detail.equip_info[i] = new Equip_Info();
 		}
 		hero_detail.quality++;
+		this.refresh_hero_property(hero_detail);
 		this.set_data_change();
 
 		var msg_res = new MSG_520302();
@@ -142,13 +143,20 @@ function Hero() {
     		return this.player.cplayer.respond_error_result(Msg_Res.RES_ADD_EQUIP_LEVEL, Error_Code.ERROR_CONFIG_NOT_EXIST);
     	}
     	
+    	var result = this.player.bag.bag_erase_item(msg_req.item_info);
+		if (result != 0) {
+			return this.player.cplayer.respond_error_result(Msg_Res.RES_ADD_EQUIP_LEVEL, result);
+		}
+    	
+    	//增加经验升级
     	for (var i = 0; i < msg_req.item_info.length; ++i) {
-    		equip.exp += json_obj[msg_req.item_info[i]].exp;
+    		equip.exp += json_obj[msg_req.item_info[i].item_id].exp * msg_req.item_info[i].amount;
     	}
     	if (equip.exp >= equip_obj.level_exp[equip.level]) {
     		equip.exp -= equip_obj.level_exp[equip.level];
     		equip.level++;
     	}
+    	this.refresh_hero_property(hero_detail);
 		this.set_data_change();
 
 		var msg_res = new MSG_520303();
@@ -171,6 +179,37 @@ function Hero() {
 		if (hero_detail == null || msg_req.equip_index < 0 || msg_req.equip_index >= hero_detail.equip_info.length) {
 			return this.player.cplayer.respond_error_result(Msg_Res.RES_EQUIP_ON_OFF, Error_Code.ERROR_CLIENT_PARAM);
 		}
+		
+		if (msg_req.on) {
+			//穿装备
+			var equip_obj = util.get_json_config('config/bag/item.json', msg_req.equip_info.item_id);
+			if (equip_obj == null) {
+				return this.player.cplayer.respond_error_result(Msg_Res.RES_EQUIP_ON_OFF, Error_Code.ERROR_CONFIG_NOT_EXIST);
+			}
+			//判断装备等级，部位
+			if (equip_obj.level > hero_detail.level || equip_obj.part != msg_req.equip_index) {
+				return this.player.cplayer.respond_error_result(Msg_Res.RES_EQUIP_ON_OFF, Error_Code.ERROR_CLIENT_OPERATE);
+			}
+			
+			var item_array = new Array();
+			item_array.push(msg_req.equip_info);
+			var result = this.player.bag.bag_erase_item(item_array);
+			if (result != 0) {
+				return this.player.cplayer.respond_error_result(Msg_Res.RES_EQUIP_ON_OFF, result);
+			}
+			
+			hero_detail.equip_info[msg_req.equip_index] = msg_req.equip_info;
+		} else {
+			//脱装备
+			var item_array = new Array();
+			item_array.push(hero_detail.equip_info[msg_req.equip_index]);
+			var result = this.player.bag.bag_insert_item(item_array);
+			if (result != 0) {
+				return this.player.cplayer.respond_error_result(Msg_Res.RES_EQUIP_ON_OFF, result);
+			}
+			hero_detail.equip_info[msg_req.equip_index] = new Item_Info();
+		}
+		this.refresh_hero_property(hero_detail);
 		this.set_data_change();
 
 		var msg_res = new MSG_520304();
@@ -181,5 +220,9 @@ function Hero() {
 		msg_res.serialize(buf);
 		this.player.cplayer.respond_success_result(Msg_Res.RES_EQUIP_ON_OFF, buf);
 		push_buffer(buf);
+	}
+	
+	this.refresh_hero_property = function(hero_detail) {
+	
 	}
 }

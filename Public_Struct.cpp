@@ -124,7 +124,7 @@ int Game_Player_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(vitality);
 	buffer.write_int64(last_change_time);
 	buffer.write_int32(today_buy);
-	buffer.write_int32(vip);
+	buffer.write_int32(vip_level);
 	buffer.write_int32(vip_exp);
 	buffer.write_int32(charge_gold);
 	return 0;
@@ -147,7 +147,7 @@ int Game_Player_Info::deserialize(Block_Buffer &buffer) {
 	vitality = buffer.read_int32();
 	last_change_time = buffer.read_int64();
 	today_buy = buffer.read_int32();
-	vip = buffer.read_int32();
+	vip_level = buffer.read_int32();
 	vip_exp = buffer.read_int32();
 	charge_gold = buffer.read_int32();
 	return 0;
@@ -170,7 +170,7 @@ void Game_Player_Info::reset(void) {
 	vitality = 0;
 	last_change_time = 0;
 	today_buy = 0;
-	vip = 0;
+	vip_level = 0;
 	vip_exp = 0;
 	charge_gold = 0;
 }

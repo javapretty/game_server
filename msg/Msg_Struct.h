@@ -21,13 +21,17 @@ struct Role_Info {
 
 	int32_t exp; //玩家经验
 
-	int32_t career; //0(女),1(男)
+	int32_t career; //职业
 
-	int32_t gender; //职业1-3
+	int32_t gender; //0(女)1(男)
 
 	int32_t vitality; //玩家体力
 
-	int32_t vip; //vip等级
+	int32_t today_buy; //今天购买次数
+
+	int32_t vip_level; //vip等级
+
+	int32_t vip_exp; //vip经验
 
 	int32_t charge_gold; //总共充值的元宝数
 

@@ -15,6 +15,26 @@ int MSG_300000::deserialize(Block_Buffer &buffer) {
 void MSG_300000::reset(){
 }
 
+MSG_300001::MSG_300001(void){
+	reset();
+}
+
+void MSG_300001::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(vip_level);
+	buffer.write_int32(vip_exp);
+}
+
+int MSG_300001::deserialize(Block_Buffer &buffer) {
+	vip_level = buffer.read_int32();
+	vip_exp = buffer.read_int32();
+	return 0;
+}
+
+void MSG_300001::reset(){
+	vip_level = 0;
+	vip_exp = 0;
+}
+
 MSG_300100::MSG_300100(void){
 	reset();
 }

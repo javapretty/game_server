@@ -2,6 +2,12 @@
 struct MSG_300000 {
 };
 
+//更新vip信息
+struct MSG_300001 {
+	int32_t vip_level;
+	int32_t vip_exp;
+};
+
 //物品信息更新
 struct MSG_300100 {
 	std::vector<Item_Info> item_info;

@@ -5,36 +5,11 @@
 
 var util = function () {};
 
-//获取json配置项
-util.lookup_data_table = function(file, destElement, ElementArr) {
-	var content = read_json(file);
+//获取配置文件对象
+util.get_json_config = function(file_path, key) {
 	try {
-		var tableData = JSON.parse(content);
-		if (tableData == null) {
-			return null;
-		}
-		
-		if (ElementArr instanceof Array) {			
-			var ArrayLen = ElementArr.length;
-			for(var i = 0; i < ArrayLen; i++) {
-				var element = ElementArr[i];
-				if (tableData[element] != null) {
-					tableData = tableData[element];
-				} else {
-					return null;
-				}
-			}
-		}
-		
-		if (destElement != null) {
-			if (tableData[destElement] != null) {
-				return tableData[destElement];
-			} else {
-				return null;
-			}
-		}
-		return tableData;	
-			
+		var json_str = read_json(file_path);
+		return JSON.parse(json_str)[key];
 	} catch (err) {
 		print(err.message);
 		return null;

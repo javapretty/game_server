@@ -185,11 +185,11 @@ struct Game_Player_Info {
 	int last_sign_in_time;		//最后登录时间
 	int last_sign_out_time;		//最后登出时间
 	int vitality;							//玩家体力
-	int64_t last_change_time;				//上次更改体力时间
-	int today_buy ;						//当前购买次数
-	int vip;									//vip等级
-	int vip_exp;					//vip对应的经验值
-	int charge_gold;					//总共充值的元宝数
+	int64_t last_change_time;	//上次更改体力时间
+	int today_buy ;					//今天购买次数
+	int vip_level;					//vip等级
+	int vip_exp;						//vip经验值
+	int charge_gold;				//总共充值的元宝数
 
 	Game_Player_Info(void);
 	int serialize(Block_Buffer &buffer) const;

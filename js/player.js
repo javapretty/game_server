@@ -60,42 +60,30 @@ function Player() {
 		this.cplayer.set_player_data_change(Data_Change.PLAYER_CHANGE);
 	}
 	
-	this.getMaxVitality = function() {
-    	var levelArray = new Array();
-		levelArray.push(this.player_info.level.toString());
-    	var maxVitality = Math.floor(util.lookup_data_table("config/vitality/playerLevel.json", "Max Vitality", levelArray));
-    	return maxVitality;
-    }
-	
 	this.buy_vitality = function() {
 		print('buy_vitality, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
-		//1.检查元宝是否充足
-		var todyBuyArry = new Array();
-		todyBuyArry.push((this.player_info.today_buy + 1).toString());
-		var costGold = util.lookup_data_table("config/vitality/gradientPrice.json", "Vitality", todyBuyArry);
-		var curGold = this.bag.bag_info.gold;
-		if (curGold < costGold){
-			return this.cplayer.respond_error_result(Msg_Res.RES_BUY_VITALITY, Error_Code.ERROR_GOLD_NOT_ENOUGH);
-		}
-		
-		//2.检查可以购买体力次数
-		var vipArry = new Array();
-		vipArry.push(this.player_info.vip.toString());
-		var canBuyTimes = util.lookup_data_table("config/vip/vip.json", "Buy Vit Max", vipArry);
-		if (this.player_info.today_buy >= canBuyTimes){
+
+		//1.检查可以购买体力次数
+		var max_buy_times = util.get_json_config('config/vip/vip.json', this.player_info.vip_level).buy_vitality_max;
+		if (this.player_info.today_buy >= max_buy_times){
 			return this.cplayer.respond_error_result(Msg_Res.RES_BUY_VITALITY, Error_Code.ERROR_VITALITY_TIMES_NOT_ENOUGH);
 		}
 
-		//3.更新元宝
-		var result = this.bag.bag_sub_money(0, costGold);
+		//2.更新元宝
+		var cost_gold = util.get_json_config('config/util/price.json', this.player_info.today_buy).vitality;
+		var result = this.bag.bag_sub_money(0, cost_gold);
+		if (result != 0) {
+			return this.cplayer.respond_error_result(Msg_Res.RES_BUY_VITALITY, Error_Code.ERROR_GOLD_NOT_ENOUGH);
+		}
 		
 		//4.更新购买次数以及体力修改时间
 		this.player_info.last_change_time = util.now_msec();
-		this.player_info.today_buy = this.player_info.today_buy + 1;
+		this.player_info.today_buy++;
 		
 		//5.更新体力(120应该为配置)
-		var maxVit = this.getMaxVitality();
+		var maxVit = util.get_json_config('config/player/level.json', this.player_info.level).max_vitality;
 		this.player_info.vitality = Math.min(Math.max(0, (this.player_info.vitality + 120)), maxVit);
+		
 		//6.返回消息给客户端
 		var buf = pop_buffer();
 		buf.write_int32(this.player_info.vitality);
@@ -104,26 +92,28 @@ function Player() {
 		this.set_data_change();
 	}
 	
-	this.update_vip = function(transactionType){
+	this.update_vip = function(charge_id) {
 		print('update_vip, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
 		
-		var vipArry = new Array();
-		vipArry.push(transactionType);
-		var newVipExp = this.player_info.vip_exp + util.lookup_data_table("config/vip/recharge.json", "VIP Exp", vipArry);
-		
-		var vipModule = util.lookup_data_table("config/vip/vip.json", null, null);
-		var vipMaxLevle = util.lookup_data_table("config/parameter/parameterTable.josn", "max_vip_level", null);
-		for (var i = 0; i < vipMaxLevle; i++)
-		{
-			if (newVipExp < vipModule[i.toString()]["Recharge"]){
-				continue;
-			}
-			
-			this.player_info.vip = i;
+		var charge_exp = util.get_json_config('config/vip/charge.json', charge_id).vip_exp;
+		this.player_info.vip_exp += charge_exp;
+		var max_vip_level = util.get_json_config('config/util/param.json', max_vip_level);
+		for (var i = this.player_info.vip_level; i < max_vip_level; ++i) {
+			var level_exp = util.get_json_config('config/vip/vip.json', i).level_exp;
+			if (this.player_info.vip_exp < level_exp) 
+				break;
+				
+			this.player_info.vip_level++;
+			this.player_info.vip_exp -= level_exp;
 		}
 		
-		this.player_info.vip_exp = newVipExp;
-		
-		print('after update vip:', this.player_info.vip);
+		var msg_active = new MSG_300001();
+		msg_active.vip_level = this.player_info.vip_level;
+		msg_active.vip_exp = this.player_info.vip_exp;
+		var buf = pop_buffer();
+		msg_active.serialize(buf);
+		this.cplayer.respond_success_result(Msg_Active.ACTIVE_VIP_INFO, buf);
+		push_buffer(buf);
+		this.set_data_change();
 	}
 }

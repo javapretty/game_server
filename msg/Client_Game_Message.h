@@ -71,7 +71,7 @@ struct MSG_520002 {
 	void reset(void);
 };
 
-	//购买玩家体力
+	//购买体力
 struct MSG_120003 {
 
 	MSG_120003(void);
@@ -318,6 +318,8 @@ struct MSG_120304 {
 
 	int32_t hero_id;
 
+	int32_t equip_index; // 装备位置索引
+
 	bool on; // true表示穿，false表示脱
 
 	Item_Info equip_info; //装备信息
@@ -330,6 +332,8 @@ struct MSG_120304 {
 struct MSG_520304 {
 
 	int32_t hero_id;
+
+	int32_t equip_index; // 装备位置索引
 
 	bool on; // true表示穿，false表示脱
 

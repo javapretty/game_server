@@ -6,6 +6,47 @@
 *	tel:18268193219
 */
 
+//服务器主动断开连接
+function MSG_300000() {
+	this.serialize = function(buffer) {
+	}
+	
+	this.deserialize = function(buffer) {
+	}
+}
+
+//服务器主动断开连接
+function MSG_300001() {
+	this.vip_level = 0;
+	this.vip_exp = 0;
+	
+	this.serialize = function(buffer) {
+		buffer.write_int32(this.vip_level);
+		buffer.write_int32(this.vip_exp);
+	}
+	
+	this.deserialize = function(buffer) {
+		this.vip_level = buffer.read_int32();
+		this.vip_exp = buffer.read_int32();
+	}
+}
+
+//金钱更新
+function MSG_300102() {
+	this.copper = 0;
+	this.gold = 0;
+	
+	this.serialize = function(buffer) {
+		buffer.write_int32(this.copper);
+		buffer.write_int32(this.gold);
+	}
+	
+	this.deserialize = function(buffer) {
+		this.copper = buffer.read_int32();
+		this.gold = buffer.read_int32();
+	}
+}
+
 //物品信息更新
 function MSG_300100() {
 	this.item_info = new Array();
@@ -72,6 +113,27 @@ function MSG_300200() {
 			mail.deserialize(buffer);
 			this.mail_info.push(mail);
 		}
+	}
+}
+
+//购买体力
+function MSG_120003() {
+	this.serialize = function(buffer) {
+	}
+	
+	this.deserialize = function(buffer) {
+	}
+}
+
+function MSG_520003() {
+	this.vitality = 0;
+
+	this.serialize = function(buffer) {
+		buffer.write_int32(this.vitality);
+	}
+	
+	this.deserialize = function(buffer) {
+		this.vitality = buffer.read_int32();
 	}
 }
 
@@ -408,17 +470,20 @@ function MSG_520303() {
 
 function MSG_120304() {
 	this.hero_id = 0;
+	this.equip_index = 0;
 	this.on = 0;
 	this.equip_info = new Item_Info();
 	
 	this.serialize = function(buffer) {
 		buffer.write_int32(this.hero_id);
+		buffer.write_int32(this.equip_index);
 		buffer.write_bool(this.on);
 		equip_info.serialize(buffer);
 	}
 	
 	this.deserialize = function(buffer) {
 		this.hero_id = buffer.read_int32();
+		this.equip_index = buffer.read_int32();
 		this.on = buffer.read_bool();
 		equip_info.deserialize(buffer);
 	}
@@ -426,17 +491,20 @@ function MSG_120304() {
 
 function MSG_520304() {
 	this.hero_id = 0;
+	this.equip_index = 0;
 	this.on = 0;
 	this.equip_info = new Item_Info();
 	
 	this.serialize = function(buffer) {
 		buffer.write_int32(this.hero_id);
+		buffer.write_int32(this.equip_index);
 		buffer.write_bool(this.on);
 		equip_info.serialize(buffer);
 	}
 	
 	this.deserialize = function(buffer) {
 		this.hero_id = buffer.read_int32();
+		this.equip_index = buffer.read_int32();
 		this.on = buffer.read_bool();
 		equip_info.deserialize(buffer);
 	}

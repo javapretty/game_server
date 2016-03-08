@@ -186,7 +186,9 @@ int Game_Player::respond_role_login(void) {
 	msg.role_info.career = player_data_.player_info.career;
 	msg.role_info.gender = player_data_.player_info.gender;
 	msg.role_info.vitality = player_data_.player_info.vitality;
-	msg.role_info.vip = player_data_.player_info.vip;
+	msg.role_info.today_buy = player_data_.player_info.today_buy;
+	msg.role_info.vip_level = player_data_.player_info.vip_level;
+	msg.role_info.vip_exp = player_data_.player_info.vip_exp;
 	msg.role_info.charge_gold = player_data_.player_info.charge_gold;
 
 	Block_Buffer buf;
