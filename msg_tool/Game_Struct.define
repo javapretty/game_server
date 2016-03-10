@@ -1,0 +1,88 @@
+struct Account_Info {
+	std::string account;
+	int32_t agent_num;
+	int32_t server_num;
+};
+
+struct Ip_Info {
+	std::string ip;
+	int32_t port;
+};
+
+struct Msg_Info {
+	bool is_inited;
+	int32_t cid;
+	int64_t hash_key;				//用于加解密的hash key
+	uint32_t msg_serial;				//上一条消息序号
+	Time_Value msg_timestamp;			//上一条消息时间戳
+	uint32_t msg_interval_count_;		//操作频率统计
+	Time_Value msg_interval_timestamp;
+};
+
+struct Player_DB_Cache {
+	int64_t role_id;
+	std::string account;
+	std::string role_name;
+	int32_t agent_num;
+	int32_t server_num;
+	int32_t gender;
+	int32_t career;
+	int32_t level;
+};
+
+struct Login_Player_Info {
+	Time_Value session_tick;
+	std::string account;
+	std::string gate_ip;
+	int32_t gate_port;
+	std::string session;
+};
+
+struct Gate_Player_Info {
+	int64_t role_id;
+	std::string account;
+};
+
+struct Master_Player_Info {
+	int64_t role_id;
+	std::string account;
+	std::string role_name;
+	int32_t level;
+};
+
+struct Game_Player_Info {
+	int64_t role_id;					//玩家id
+	std::string account;			//玩家账号名
+	std::string role_name;		//玩家名字
+	std::string client_ip;		//客户端ip
+	int32_t agent_num;						//平台编号
+	int32_t server_num;						//服务器编号
+	int32_t level;     			   		//玩家等级
+	int32_t exp;									//玩家经验
+	int32_t gender; 							//0(女),1(男)
+	int32_t career; 							//职业1-3
+	int32_t create_time;					//创建角色时刻
+	int32_t last_sign_in_time;		//最后登录时间
+	int32_t last_sign_out_time;		//最后登出时间
+	int32_t vitality;							//玩家体力
+	int64_t last_change_time;	//上次更改体力时间
+	int32_t today_buy ;					//今天购买次数
+	int32_t vip_level;					//vip等级
+	int32_t vip_exp;						//vip经验值
+	int32_t charge_gold;				//总共充值的元宝数
+};
+
+struct Hero_Info {
+	boost::unordered_map<int32_t(hero_id),Hero_Detail> hero_map;
+};
+
+struct Bag_Info {
+	int32_t copper;
+	int32_t gold;
+	boost::unordered_map<int32_t(item_id),Item_Info> item_map;
+};
+
+struct Mail_Info {
+	int32_t total_count; 			//邮件的总数量，即目前为止收到的所有邮件数
+	std::map<int32_t(mail_id),Mail_Detail> mail_map;
+};

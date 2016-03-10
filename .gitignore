@@ -2,3 +2,5 @@
 /lib_log/
 /natives_blob.bin
 /snapshot_blob.bin
+/msg_tool/CPP/
+/msg_tool/JS/
