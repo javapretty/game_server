@@ -1,7 +1,13 @@
+/** 
+* struct Client_Login_Message description
+* 
+* [This file was auto-generated. Please Do not edit]
+*
+*/
+
 #include "Client_Login_Message.h"
 
-
-MSG_100000::MSG_100000(void){
+MSG_100000::MSG_100000(void) {
 	reset();
 }
 
@@ -16,35 +22,35 @@ int MSG_100000::deserialize(Block_Buffer &buffer) {
 	return 0;
 }
 
-void MSG_100000::reset(){
+void MSG_100000::reset(void) {
 	account.clear();
 	password.clear();
 }
 
-MSG_500000::MSG_500000(void){
+MSG_500000::MSG_500000(void) {
 	reset();
 }
 
 void MSG_500000::serialize(Block_Buffer &buffer) const {
-	buffer.write_int32(port);
 	buffer.write_string(ip);
+	buffer.write_int32(port);
 	buffer.write_string(session);
 }
 
 int MSG_500000::deserialize(Block_Buffer &buffer) {
-	port = buffer.read_int32();
 	ip = buffer.read_string();
+	port = buffer.read_int32();
 	session = buffer.read_string();
 	return 0;
 }
 
-void MSG_500000::reset(){
-	port = 0;
+void MSG_500000::reset(void) {
 	ip.clear();
+	port = 0;
 	session.clear();
 }
 
-MSG_100001::MSG_100001(void){
+MSG_100001::MSG_100001(void) {
 	reset();
 }
 
@@ -59,35 +65,35 @@ int MSG_100001::deserialize(Block_Buffer &buffer) {
 	return 0;
 }
 
-void MSG_100001::reset(){
+void MSG_100001::reset(void) {
 	account.clear();
 	password.clear();
 }
 
-MSG_500001::MSG_500001(void){
+MSG_500001::MSG_500001(void) {
 	reset();
 }
 
 void MSG_500001::serialize(Block_Buffer &buffer) const {
-	buffer.write_int32(port);
 	buffer.write_string(ip);
+	buffer.write_int32(port);
 	buffer.write_string(session);
 }
 
 int MSG_500001::deserialize(Block_Buffer &buffer) {
-	port = buffer.read_int32();
 	ip = buffer.read_string();
+	port = buffer.read_int32();
 	session = buffer.read_string();
 	return 0;
 }
 
-void MSG_500001::reset(){
-	port = 0;
+void MSG_500001::reset(void) {
 	ip.clear();
+	port = 0;
 	session.clear();
 }
 
-MSG_100002::MSG_100002(void){
+MSG_100002::MSG_100002(void) {
 	reset();
 }
 
@@ -102,12 +108,12 @@ int MSG_100002::deserialize(Block_Buffer &buffer) {
 	return 0;
 }
 
-void MSG_100002::reset(){
+void MSG_100002::reset(void) {
 	account.clear();
 	session.clear();
 }
 
-MSG_500002::MSG_500002(void){
+MSG_500002::MSG_500002(void) {
 	reset();
 }
 
@@ -120,11 +126,11 @@ int MSG_500002::deserialize(Block_Buffer &buffer) {
 	return 0;
 }
 
-void MSG_500002::reset(){
+void MSG_500002::reset(void) {
 	account.clear();
 }
 
-MSG_100003::MSG_100003(void){
+MSG_100003::MSG_100003(void) {
 	reset();
 }
 
@@ -137,11 +143,11 @@ int MSG_100003::deserialize(Block_Buffer &buffer) {
 	return 0;
 }
 
-void MSG_100003::reset(){
+void MSG_100003::reset(void) {
 	client_time = 0;
 }
 
-MSG_500003::MSG_500003(void){
+MSG_500003::MSG_500003(void) {
 	reset();
 }
 
@@ -156,7 +162,7 @@ int MSG_500003::deserialize(Block_Buffer &buffer) {
 	return 0;
 }
 
-void MSG_500003::reset(){
+void MSG_500003::reset(void) {
 	client_time = 0;
 	server_time = 0;
 }

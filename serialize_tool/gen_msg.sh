@@ -1,21 +1,22 @@
 #! /bin/bash
 
 JS_DEFINES_1="Active_Message Client_Game_Message"
-JS_DEFINES_2="Game_Struct"
+JS_DEFINES_2="Msg_Struct Game_Struct"
 
 CPP_DEFINES="Active_Message Client_Game_Message Client_Login_Message Game_DB_Message Game_Master_Message
 				Gate_Message Log_Message Msg_Struct Game_Struct"
 
-ROOT_PATH='/root/server/server/'
-DEFINE_PATH=$ROOT_PATH'msg_tool/'
-CPP_TARGET=$ROOT_PATH'msg'
-JS_TARGET=$ROOT_PATH'js'
+SERVER_PATH='/root/server/server/'
+DEFINE_PATH=$SERVER_PATH'serialize_tool/'
+CPP_TARGET=$SERVER_PATH'msg'
+JS_TARGET=$SERVER_PATH'js'
+ROBOT_PATH='/root/server/robot/msg'
 
 function gen_msg(){
 	cd $DEFINE_PATH
 	gen_cpp
 	gen_js
-	install_file
+	cp_file
 	do_some_others
 }
 
@@ -34,13 +35,16 @@ function gen_js(){
 	done
 }
 
-function install_file(){
-	mv -f CPP/* $CPP_TARGET
-	mv -f JS/* $JS_TARGET
+function cp_file(){
+	cp -rf CPP/* $CPP_TARGET
+	cp -rf CPP/* $ROBOT_PATH
+	cp -rf JS/* $JS_TARGET
 }
 
 function do_some_others(){
 	mv -f $CPP_TARGET/Game_Struct.* $ROOT_PATH
+	rm -rf CPP
+	rm -rf JS
 }
 
 gen_msg

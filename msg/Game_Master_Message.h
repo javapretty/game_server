@@ -1,38 +1,35 @@
-/**
- * struct Game_Master_Message description
- *
- * [This file was auto-generated. Please Do not edit]
- *
- */
+/** 
+* struct Game_Master_Message description
+* 
+* [This file was auto-generated. Please Do not edit]
+*
+*/
 
-#ifndef GAME_MASTER_MESSAGE_H_
-#define GAME_MASTER_MESSAGE_H_
+#ifndef __Game_Master_Message__H
+#define __Game_Master_Message__H
 
 #include "Block_Buffer.h"
+#include "boost/unordered_map.hpp"
+#include "Time_Value.h"
 #include "Msg_Struct.h"
-
-
 #include "Public_Struct.h"
 
-
 struct MSG_160001 {
-
-	Master_Player_Info player_info;
+	Master_Player_Info player_info;	
 
 	MSG_160001(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
-struct MSG_160002 {
 
-	int64_t role_id;
+struct MSG_160002 {
+	int64_t role_id;	
 
 	MSG_160002(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
-
 
 #endif

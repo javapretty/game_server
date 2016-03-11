@@ -1,19 +1,19 @@
-/**
- * struct Active_Message description
- *
- * [This file was auto-generated. Please Do not edit]
- *
- */
+/** 
+* struct Active_Message description
+* 
+* [This file was auto-generated. Please Do not edit]
+*
+*/
 
-#ifndef ACTIVE_MESSAGE_H_
-#define ACTIVE_MESSAGE_H_
+#ifndef __Active_Message__H
+#define __Active_Message__H
 
 #include "Block_Buffer.h"
+#include "boost/unordered_map.hpp"
+#include "Time_Value.h"
 #include "Msg_Struct.h"
+#include "Public_Struct.h"
 
-
-
-	//服务器主动断开连接
 struct MSG_300000 {
 
 	MSG_300000(void);
@@ -22,12 +22,9 @@ struct MSG_300000 {
 	void reset(void);
 };
 
-	//更新vip信息
 struct MSG_300001 {
-
-	int32_t vip_level;
-
-	int32_t vip_exp;
+	int32_t vip_level;	
+	int32_t vip_exp;	
 
 	MSG_300001(void);
 	void serialize(Block_Buffer &buffer) const;
@@ -35,10 +32,8 @@ struct MSG_300001 {
 	void reset(void);
 };
 
-	//物品信息更新
 struct MSG_300100 {
-
-	std::vector<Item_Info> item_info;
+	std::vector<Item_Info> item_info;	
 
 	MSG_300100(void);
 	void serialize(Block_Buffer &buffer) const;
@@ -46,10 +41,7 @@ struct MSG_300100 {
 	void reset(void);
 };
 
-	//物品附加信息更新
 struct MSG_300101 {
-
-	
 
 	MSG_300101(void);
 	void serialize(Block_Buffer &buffer) const;
@@ -57,12 +49,9 @@ struct MSG_300101 {
 	void reset(void);
 };
 
-	//金钱更新
 struct MSG_300102 {
-
-	int32_t copper;
-
-	int32_t gold;
+	int32_t copper;	
+	int32_t gold;	
 
 	MSG_300102(void);
 	void serialize(Block_Buffer &buffer) const;
@@ -70,16 +59,13 @@ struct MSG_300102 {
 	void reset(void);
 };
 
-	//邮件信息更新
 struct MSG_300200 {
-
-	std::vector<Mail_Detail> mail_info;
+	std::vector<Mail_Detail> mail_info;	
 
 	MSG_300200(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
-
 
 #endif

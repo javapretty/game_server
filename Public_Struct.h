@@ -56,6 +56,26 @@ struct Close_Info {
 	Close_Info(int p_cid, const Time_Value &p_timestamp) : cid(p_cid), timestamp(p_timestamp) { }
 };
 
+struct Msg_Info {
+	bool is_inited;
+	int cid;
+	long hash_key;				/// 用于加解密的hash key
+	uint32_t msg_serial;				/// 上一条消息序号
+	Time_Value msg_timestamp;			/// 上一条消息时间戳
+	uint32_t msg_interval_count_;		/// 操作频率统计
+	Time_Value msg_interval_timestamp;
+
+	void reset(void) {
+		is_inited = false;
+		cid = -1;
+		hash_key = 0;
+		msg_serial = 0;
+		msg_timestamp = Time_Value::zero;
+		msg_interval_count_ = 0;
+		msg_interval_timestamp = Time_Value::zero;
+	}
+};
+
 struct Tick_Info {
 	const Time_Value server_info_interval_tick;
 	Time_Value server_info_last_tick;
@@ -139,7 +159,7 @@ struct Player_Data {
 	int8_t status;
 	boost::unordered_set<int> change_set;
 
-	Game_Player_Info player_info;
+	Player_Info player_info;
 	Hero_Info hero_info;
 	Bag_Info bag_info;
 	Mail_Info mail_info;
@@ -161,11 +181,6 @@ struct DB_Cache {
 	: id_player_cache_map(player_cache_map_bucket_num),
 	  account_player_cache_map(player_cache_map_bucket_num)
 	{ }
-
-	void reset(void) {
-		id_player_cache_map.clear();
-		account_player_cache_map.clear();
-	}
 
 	boost::unordered_map<int64_t,Player_DB_Cache> id_player_cache_map;
 	boost::unordered_map<std::string,Player_DB_Cache> account_player_cache_map;

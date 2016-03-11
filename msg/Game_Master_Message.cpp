@@ -1,7 +1,13 @@
+/** 
+* struct Game_Master_Message description
+* 
+* [This file was auto-generated. Please Do not edit]
+*
+*/
+
 #include "Game_Master_Message.h"
 
-
-MSG_160001::MSG_160001(void){
+MSG_160001::MSG_160001(void) {
 	reset();
 }
 
@@ -14,11 +20,11 @@ int MSG_160001::deserialize(Block_Buffer &buffer) {
 	return 0;
 }
 
-void MSG_160001::reset(){
+void MSG_160001::reset(void) {
 	player_info.reset();
 }
 
-MSG_160002::MSG_160002(void){
+MSG_160002::MSG_160002(void) {
 	reset();
 }
 
@@ -31,6 +37,6 @@ int MSG_160002::deserialize(Block_Buffer &buffer) {
 	return 0;
 }
 
-void MSG_160002::reset(){
+void MSG_160002::reset(void) {
 	role_id = 0;
 }

@@ -9,25 +9,15 @@ struct Ip_Info {
 	int32_t port;
 };
 
-struct Msg_Info {
-	bool is_inited;
-	int32_t cid;
-	int64_t hash_key;				//用于加解密的hash key
-	uint32_t msg_serial;				//上一条消息序号
-	Time_Value msg_timestamp;			//上一条消息时间戳
-	uint32_t msg_interval_count_;		//操作频率统计
-	Time_Value msg_interval_timestamp;
-};
-
 struct Player_DB_Cache {
 	int64_t role_id;
 	std::string account;
 	std::string role_name;
 	int32_t agent_num;
 	int32_t server_num;
+	int32_t level;
 	int32_t gender;
 	int32_t career;
-	int32_t level;
 };
 
 struct Login_Player_Info {
@@ -50,7 +40,7 @@ struct Master_Player_Info {
 	int32_t level;
 };
 
-struct Game_Player_Info {
+struct Player_Info {
 	int64_t role_id;					//玩家id
 	std::string account;			//玩家账号名
 	std::string role_name;		//玩家名字

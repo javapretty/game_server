@@ -40,12 +40,12 @@ public:
 	inline int64_t get_min_server_diff_key(void);
 	inline int64_t get_max_server_diff_key(void);
 
-	int64_t create_init_player(Game_Player_Info &player_info);
+	int64_t create_init_player(Player_Info &player_info);
 	bool has_role_by_account(std::string &account, const int agent_num, const int server_num);
 	int64_t get_role_id(const std::string &account, const int agent_num, const int server_num);
 
-	int load_player_info(int64_t role_id, Game_Player_Info &player_info);
-	int save_player_info(int64_t role_id, Game_Player_Info &player_info);
+	int load_player_info(int64_t role_id, Player_Info &player_info);
+	int save_player_info(int64_t role_id, Player_Info &player_info);
 
 	int load_hero_info(int64_t role_id, Hero_Info &hero_info);
 	int save_hero_info(int64_t role_id, Hero_Info &hero_info);
