@@ -1,7 +1,9 @@
 /** 
 * struct Client_Login_Message description
 * 
-* [This file was auto-generated. Please Do not edit]
+* This file was auto-generated. Please Do not edit
+* 
+* [Version 1.0]
 *
 */
 
@@ -9,10 +11,7 @@
 #define __Client_Login_Message__H
 
 #include "Block_Buffer.h"
-#include "boost/unordered_map.hpp"
-#include "Time_Value.h"
 #include "Msg_Struct.h"
-#include "Public_Struct.h"
 
 struct MSG_100000 {
 	std::string account;	

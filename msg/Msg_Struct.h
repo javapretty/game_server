@@ -1,7 +1,9 @@
 /** 
 * struct Msg_Struct description
 * 
-* [This file was auto-generated. Please Do not edit]
+* This file was auto-generated. Please Do not edit
+* 
+* [Version 1.0]
 *
 */
 
@@ -10,7 +12,6 @@
 
 #include "Block_Buffer.h"
 #include "boost/unordered_map.hpp"
-#include "Time_Value.h"
 
 struct Role_Info {
 	int64_t role_id;	//玩家id

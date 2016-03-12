@@ -1,7 +1,9 @@
 /** 
 * struct Game_Struct description
 * 
-* [This file was auto-generated. Please Do not edit]
+* This file was auto-generated. Please Do not edit
+* 
+* [Version 1.0]
 *
 */
 
@@ -9,8 +11,6 @@
 #define __Game_Struct__H
 
 #include "Block_Buffer.h"
-#include "boost/unordered_map.hpp"
-#include "Time_Value.h"
 #include "Msg_Struct.h"
 
 struct Account_Info {
@@ -55,7 +55,7 @@ struct Login_Player_Info {
 	std::string gate_ip;	
 	int32_t gate_port;	
 	std::string session;	
-	int64_t session_tick;
+	int64_t session_tick;	
 
 	Login_Player_Info(void);
 	void serialize(Block_Buffer &buffer) const;

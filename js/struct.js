@@ -1,7 +1,9 @@
 /** 
 * struct JS file description
 * 
-* [This file was auto-generated. Please Do not edit]
+* This file was auto-generated. Please Do not edit
+* 
+* [Version 1.0]
 *
 */
 
@@ -187,7 +189,9 @@ function Mail_Detail() {
 /** 
 * struct JS file description
 * 
-* [This file was auto-generated. Please Do not edit]
+* This file was auto-generated. Please Do not edit
+* 
+* [Version 1.0]
 *
 */
 
@@ -262,21 +266,22 @@ function Login_Player_Info() {
 	this.gate_ip = ""
 	this.gate_port = 0;
 	this.session = ""
+	this.session_tick = 0;
 
 	this.serialize = function(buffer) {
-		this.session_tick.serialize(buffer);
 		buffer.write_string(this.account);
 		buffer.write_string(this.gate_ip);
 		buffer.write_int32(this.gate_port);
 		buffer.write_string(this.session);
+		buffer.write_int64(this.session_tick);
 	}
 
 	this.deserialize = function(buffer) {
-		this.session_tick.deserialize(buffer);
 		this.account = buffer.read_string();
 		this.gate_ip = buffer.read_string();
 		this.gate_port = buffer.read_int32();
 		this.session = buffer.read_string();
+		this.session_tick = buffer.read_int64();
 	}
 }
 

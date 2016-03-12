@@ -1,7 +1,9 @@
 /** 
 * struct JS file description
 * 
-* [This file was auto-generated. Please Do not edit]
+* This file was auto-generated. Please Do not edit
+* 
+* [Version 1.0]
 *
 */
 
@@ -97,7 +99,9 @@ function MSG_300200() {
 /** 
 * struct JS file description
 * 
-* [This file was auto-generated. Please Do not edit]
+* This file was auto-generated. Please Do not edit
+* 
+* [Version 1.0]
 *
 */
 

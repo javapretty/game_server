@@ -1,7 +1,9 @@
 /** 
 * struct Client_Login_Message description
 * 
-* [This file was auto-generated. Please Do not edit]
+* This file was auto-generated. Please Do not edit
+* 
+* [Version 1.0]
 *
 */
 
