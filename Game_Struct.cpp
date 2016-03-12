@@ -93,28 +93,28 @@ Login_Player_Info::Login_Player_Info(void) {
 }
 
 void Login_Player_Info::serialize(Block_Buffer &buffer) const {
-	session_tick.serialize(buffer);
 	buffer.write_string(account);
 	buffer.write_string(gate_ip);
 	buffer.write_int32(gate_port);
 	buffer.write_string(session);
+	buffer.write_int64(session_tick);
 }
 
 int Login_Player_Info::deserialize(Block_Buffer &buffer) {
-	session_tick.deserialize(buffer);
 	account = buffer.read_string();
 	gate_ip = buffer.read_string();
 	gate_port = buffer.read_int32();
 	session = buffer.read_string();
+	session_tick = buffer.read_int64();
 	return 0;
 }
 
 void Login_Player_Info::reset(void) {
-	session_tick = Time_Value::zero;
 	account.clear();
 	gate_ip.clear();
 	gate_port = 0;
 	session.clear();
+	session_tick = 0;
 }
 
 Gate_Player_Info::Gate_Player_Info(void) {

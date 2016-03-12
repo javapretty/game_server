@@ -277,7 +277,7 @@ int Login_Manager::player_tick(Time_Value &now) {
 	Login_Player_Account_Map t_accouont_map(player_account_map_); /// 因为Login_Player::time_up()里有改变player_account_map_的操作, 直接在其上使用迭代器导致迭代器失效core
 	for (Login_Player_Account_Map::iterator it = t_accouont_map.begin(); it != t_accouont_map.end(); ++it) {
 		if (it->second){
-			if (now - it->second->login_player_info().session_tick > Recycle_Tick::session_interval_) {
+			if (now.sec() - it->second->login_player_info().session_tick > Recycle_Tick::session_interval_.sec()) {
 				LOGIN_CLIENT_SERVER->receive().push_drop(it->second->get_cid());	//断开客户端与login的连接
 				it->second->link_close();
 			}

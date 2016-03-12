@@ -51,11 +51,11 @@ struct Player_DB_Cache {
 };
 
 struct Login_Player_Info {
-	Time_Value session_tick;	
 	std::string account;	
 	std::string gate_ip;	
 	int32_t gate_port;	
 	std::string session;	
+	int64_t session_tick;
 
 	Login_Player_Info(void);
 	void serialize(Block_Buffer &buffer) const;

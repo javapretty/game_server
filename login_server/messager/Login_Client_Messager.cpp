@@ -73,7 +73,7 @@ int Login_Client_Messager::client_register(int cid, int msg_id, Block_Buffer &bu
 		player->reset();
 		player->set_cid(cid);
 		Login_Player_Info player_info;
-		player_info.session_tick = Time_Value::gettimeofday();
+		player_info.session_tick = Time_Value::gettimeofday().sec();
 		player_info.account = msg.account;
 		player_info.gate_ip = res_msg.ip;
 		player_info.gate_port = res_msg.port;
@@ -126,7 +126,7 @@ int Login_Client_Messager::client_login(int cid, int msg_id, Block_Buffer &buf) 
 		player->reset();
 		player->set_cid(cid);
 		Login_Player_Info player_info;
-		player_info.session_tick = Time_Value::gettimeofday();
+		player_info.session_tick = Time_Value::gettimeofday().sec();
 		player_info.account = msg.account;
 		player_info.gate_ip = res_msg.ip;
 		player_info.gate_port = res_msg.port;
