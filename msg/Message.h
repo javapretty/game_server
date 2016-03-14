@@ -128,11 +128,12 @@ enum Active_Message{
 	ACTIVE_DISCONNECT 								=	300000,	//服务器主动断开连接
 	ACTIVE_VIP_INFO										=	300001,	//更新vip信息
 
-	ACTIVE_ITEM_INFO 									= 300100,	//物品信息更新
-	ACTIVE_ITEM_ADDIT_INFO 						= 300101,	//物品附加信息更新
-	ACTIVE_MONEY_INFO 								= 300102,	//金钱更新
+	ACTIVE_MONEY_INFO 								= 300100,	//金钱更新
+	ACTIVE_ITEM_INFO 									= 300101,	//物品信息更新
 
-	ACTIVE_RECEIVE_MAIL 							= 300200,	//邮件信息更新
+	ACTIVE_MAIL_INFO 									= 300200,	//邮件信息更新
+
+	ACTIVE_PROPERTY_INFO 							= 300300,	//英雄属性信息更新
 };
 
 enum Inner_Message{

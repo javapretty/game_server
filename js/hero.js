@@ -223,6 +223,13 @@ function Hero() {
 	}
 	
 	this.refresh_hero_property = function(hero_detail) {
-	
+		//根据公式计算各模块对英雄属性的英雄，包括装备，星级，品质
+		
+		var msg_active = new MSG_300300();
+		msg_active.property_info = hero_detail.property;
+		var buf = pop_buffer();
+		msg_active.serialize(buf);
+		this.player.cplayer.respond_success_result(Msg_Active.ACTIVE_PROPERTY_INFO, buf);
+		push_buffer(buf);
 	}
 }

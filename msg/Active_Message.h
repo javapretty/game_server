@@ -32,7 +32,8 @@ struct MSG_300001 {
 };
 
 struct MSG_300100 {
-	std::vector<Item_Info> item_info;	
+	int32_t copper;	
+	int32_t gold;	
 
 	MSG_300100(void);
 	void serialize(Block_Buffer &buffer) const;
@@ -41,18 +42,9 @@ struct MSG_300100 {
 };
 
 struct MSG_300101 {
+	std::vector<Item_Info> item_info;	
 
 	MSG_300101(void);
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-};
-
-struct MSG_300102 {
-	int32_t copper;	
-	int32_t gold;	
-
-	MSG_300102(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
@@ -62,6 +54,15 @@ struct MSG_300200 {
 	std::vector<Mail_Detail> mail_info;	
 
 	MSG_300200(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+
+struct MSG_300300 {
+	std::vector<Property_Detail> property_info;	
+
+	MSG_300300(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

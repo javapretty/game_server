@@ -8,23 +8,24 @@ struct MSG_300001 {
 	int32_t vip_exp;
 };
 
-//物品信息更新
-struct MSG_300100 {
-	std::vector<Item_Info> item_info;
-};
-
-//物品附加信息更新
-struct MSG_300101 {
-	
-};
-
 //金钱更新
-struct MSG_300102 {
+struct MSG_300100 {
 	int32_t copper;
 	int32_t gold;
+};
+
+//物品信息更新
+struct MSG_300101 {
+	std::vector<Item_Info> item_info;
 };
 
 //邮件信息更新
 struct MSG_300200 {
 	std::vector<Mail_Detail> mail_info;
 };
+
+//英雄属性信息更新
+struct MSG_300300 {
+	std::vector<Property_Detail> property_info;
+};
+

@@ -64,9 +64,10 @@ if (typeof Msg_Active == "undefined") {
 	Msg_Active.ACTIVE_DISCONNECT 							=	300000;	//断开连接
 	Msg_Active.ACTIVE_VIP_INFO									=	300001;	//更新vip信息
 	
-	Msg_Active.ACTIVE_ITEM_INFO 								= 300100;	//物品信息更新
-	Msg_Active.ACTIVE_ITEM_ADDIT_INFO 					= 300101;	//物品附加信息更新
-	Msg_Active.ACTIVE_MONEY_INFO 							= 300102;	//金钱更新
+	Msg_Active.ACTIVE_MONEY_INFO 							= 300100;	//金钱更新
+	Msg_Active.ACTIVE_ITEM_INFO 								= 300101;	//物品信息更新
 
-	Msg_Active.ACTIVE_RECEIVE_MAIL 						= 300200;	//收到邮件
+	Msg_Active.ACTIVE_MAIL_INFO	 							= 300200;	//邮件信息更新
+	
+	Msg_Active.ACTIVE_PROPERTY_INFO 						= 300300;	//英雄属性信息更新
 }

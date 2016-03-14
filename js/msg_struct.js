@@ -32,6 +32,21 @@ function MSG_300001() {
 }
 
 function MSG_300100() {
+	this.copper = 0;
+	this.gold = 0;
+
+	this.serialize = function(buffer) {
+		buffer.write_int32(this.copper);
+		buffer.write_int32(this.gold);
+	}
+
+	this.deserialize = function(buffer) {
+		this.copper = buffer.read_int32();
+		this.gold = buffer.read_int32();
+	}
+}
+
+function MSG_300101() {
 	this.item_info = new Array();
 
 	this.serialize = function(buffer) {
@@ -52,30 +67,6 @@ function MSG_300100() {
 	}
 }
 
-function MSG_300101() {
-
-	this.serialize = function(buffer) {
-	}
-
-	this.deserialize = function(buffer) {
-	}
-}
-
-function MSG_300102() {
-	this.copper = 0;
-	this.gold = 0;
-
-	this.serialize = function(buffer) {
-		buffer.write_int32(this.copper);
-		buffer.write_int32(this.gold);
-	}
-
-	this.deserialize = function(buffer) {
-		this.copper = buffer.read_int32();
-		this.gold = buffer.read_int32();
-	}
-}
-
 function MSG_300200() {
 	this.mail_info = new Array();
 
@@ -93,6 +84,27 @@ function MSG_300200() {
 			var mail_info_v = new Mail_Detail();
 			mail_info_v.deserialize(buffer);
 			this.mail_info.push(mail_info_v);
+		}
+	}
+}
+
+function MSG_300300() {
+	this.property_info = new Array();
+
+	this.serialize = function(buffer) {
+		var len = this.property_info.length;
+		buffer.write_uint16(len);
+		for(var i = 0; i < len; ++i) {
+			this.property_info[i].serialize(buffer);
+		}
+	}
+
+	this.deserialize = function(buffer) {
+		var len = buffer.read_uint16();
+		for(var i = 0; i < len; ++i) {
+			var property_info_v = new Property_Detail();
+			property_info_v.deserialize(buffer);
+			this.property_info.push(property_info_v);
 		}
 	}
 }

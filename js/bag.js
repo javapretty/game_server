@@ -109,7 +109,7 @@ function Bag() {
 	}
 	
 	this.bag_active_money = function() {
-		var msg_active = new MSG_300102();
+		var msg_active = new MSG_300100();
 		msg_active.copper = this.bag_info.copper;
 		msg_active.gold = this.bag_info.gold;
 		
@@ -121,7 +121,7 @@ function Bag() {
 	}
 	
 	this.bag_active_item = function() {
-		var msg_active = new MSG_300100();
+		var msg_active = new MSG_300101();
 		this.bag_info.item_map.each(function(key,value,index) {
 			msg_active.item_info.push(value);
     	});

@@ -168,7 +168,7 @@ function send_mail_inner(receiver_id, mail_detail) {
 			msg_active.mail_info.push(mail_detail);
 			var buf = pop_buffer();
 			msg_active.serialize(buf);
-			receiver.cplayer.respond_success_result(Msg_Active.ACTIVE_RECEIVE_MAIL, buf);
+			receiver.cplayer.respond_success_result(Msg_Active.ACTIVE_MAIL_INFO, buf);
 			push_buffer(buf);
 			
 			receiver.mail.set_data_change();
