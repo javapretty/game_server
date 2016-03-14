@@ -122,7 +122,7 @@ int Game_Inner_Messager::process_loaded_player_data(Block_Buffer &buf) {
 	case Player_Data::ROLE_HAS_EXIST: {
 		/// [创建角色]创建的角色名已存在
 		Block_Buffer res_buf;
-		res_buf.make_player_message(RES_CREATE_ROLE, ERROR_EXIST_ROLE_NAME, player_cid);
+		res_buf.make_player_message(RES_CREATE_ROLE, ERROR_ROLE_NAME_EXIST, player_cid);
 		MSG_520002 res_msg;
 		res_msg.role_id = 0;
 		res_msg.serialize(res_buf);

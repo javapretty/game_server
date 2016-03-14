@@ -6,8 +6,10 @@
 *	tel:18268193219
 */
 
-require('enum.js');
 require('map.js');
+require('enum.js');
+require('error.js');
+require('msg.js');
 require('struct.js');
 require('msg_struct.js');
 require('player.js');

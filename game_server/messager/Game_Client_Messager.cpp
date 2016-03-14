@@ -78,7 +78,7 @@ int Game_Client_Messager::process_120001(int gate_cid, int player_cid, MSG_12000
 		/// 回收中处理
 		if (player->recycle_status() == Recycle_Tick::RECYCLE) {
 			Block_Buffer msg_buf;
-			msg_buf.make_player_message(ACTIVE_DISCONNECT, ERROR_LOGIN_PLAYER_RECOVERING, player_cid);
+			msg_buf.make_player_message(ACTIVE_DISCONNECT, ERROR_DISCONNECT_RECOVERING, player_cid);
 			msg_buf.finish_message();
 			return GAME_MANAGER->send_to_gate(gate_cid, msg_buf);
 		}
