@@ -2,8 +2,14 @@
 struct MSG_300000 {
 };
 
-//更新vip信息
+//更新玩家信息
 struct MSG_300001 {
+	int32_t player_level;
+	int32_t player_exp;
+};
+
+//更新vip信息
+struct MSG_300002 {
 	int32_t vip_level;
 	int32_t vip_exp;
 };

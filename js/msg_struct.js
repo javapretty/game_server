@@ -17,6 +17,21 @@ function MSG_300000() {
 }
 
 function MSG_300001() {
+	this.player_level = 0;
+	this.player_exp = 0;
+
+	this.serialize = function(buffer) {
+		buffer.write_int32(this.player_level);
+		buffer.write_int32(this.player_exp);
+	}
+
+	this.deserialize = function(buffer) {
+		this.player_level = buffer.read_int32();
+		this.player_exp = buffer.read_int32();
+	}
+}
+
+function MSG_300002() {
 	this.vip_level = 0;
 	this.vip_exp = 0;
 

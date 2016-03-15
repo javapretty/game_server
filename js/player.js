@@ -60,6 +60,58 @@ function Player() {
 		this.cplayer.set_player_data_change(Data_Change.PLAYER_CHANGE);
 	}
 	
+	this.add_exp = function(exp) {
+		print('add_exp, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " exp:", exp);
+		
+		if (exp <= 0) {
+			return Error_Code.ERROR_CLIENT_PARAM;
+		}
+		
+		//经验增加升级
+		this.player_info.exp += exp;
+		var max_player_level = util.get_json_config('config/util/param.json', max_player_level);
+		for (var i = this.player_info.level; i < max_player_level; ++i) {
+			var level_exp = util.get_json_config('config/player/level.json', i).level_exp;
+			if (this.player_info.exp < level_exp) 
+				break;
+				
+			this.player_info.level++;
+			this.player_info.exp -= level_exp;
+		}
+		
+		var msg_active = new MSG_300001();
+		msg_active.player_level = this.player_info.level;
+		msg_active.player_exp = this.player_info.exp;
+		var buf = pop_buffer();
+		msg_active.serialize(buf);
+		this.cplayer.respond_success_result(Msg_Active.ACTIVE_PLAYER_INFO, buf);
+		push_buffer(buf);
+		this.set_data_change();
+	}
+	
+	this.update_vip = function(charge_id) {
+		var charge_exp = util.get_json_config('config/vip/charge.json', charge_id).vip_exp;
+		this.player_info.vip_exp += charge_exp;
+		var max_vip_level = util.get_json_config('config/util/param.json', max_vip_level);
+		for (var i = this.player_info.vip_level; i < max_vip_level; ++i) {
+			var level_exp = util.get_json_config('config/vip/vip.json', i).level_exp;
+			if (this.player_info.vip_exp < level_exp) 
+				break;
+				
+			this.player_info.vip_level++;
+			this.player_info.vip_exp -= level_exp;
+		}
+		
+		var msg_active = new MSG_300002();
+		msg_active.vip_level = this.player_info.vip_level;
+		msg_active.vip_exp = this.player_info.vip_exp;
+		var buf = pop_buffer();
+		msg_active.serialize(buf);
+		this.cplayer.respond_success_result(Msg_Active.ACTIVE_VIP_INFO, buf);
+		push_buffer(buf);
+		this.set_data_change();
+	}
+	
 	this.buy_vitality = function() {
 		print('buy_vitality, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
 
@@ -88,31 +140,6 @@ function Player() {
 		var buf = pop_buffer();
 		buf.write_int32(this.player_info.vitality);
 		this.cplayer.respond_success_result(Msg_Res.RES_BUY_VITALITY, buf);
-		push_buffer(buf);
-		this.set_data_change();
-	}
-	
-	this.update_vip = function(charge_id) {
-		print('update_vip, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
-		
-		var charge_exp = util.get_json_config('config/vip/charge.json', charge_id).vip_exp;
-		this.player_info.vip_exp += charge_exp;
-		var max_vip_level = util.get_json_config('config/util/param.json', max_vip_level);
-		for (var i = this.player_info.vip_level; i < max_vip_level; ++i) {
-			var level_exp = util.get_json_config('config/vip/vip.json', i).level_exp;
-			if (this.player_info.vip_exp < level_exp) 
-				break;
-				
-			this.player_info.vip_level++;
-			this.player_info.vip_exp -= level_exp;
-		}
-		
-		var msg_active = new MSG_300001();
-		msg_active.vip_level = this.player_info.vip_level;
-		msg_active.vip_exp = this.player_info.vip_exp;
-		var buf = pop_buffer();
-		msg_active.serialize(buf);
-		this.cplayer.respond_success_result(Msg_Active.ACTIVE_VIP_INFO, buf);
 		push_buffer(buf);
 		this.set_data_change();
 	}

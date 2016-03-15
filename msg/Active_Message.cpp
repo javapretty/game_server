@@ -28,17 +28,37 @@ MSG_300001::MSG_300001(void) {
 }
 
 void MSG_300001::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(player_level);
+	buffer.write_int32(player_exp);
+}
+
+int MSG_300001::deserialize(Block_Buffer &buffer) {
+	player_level = buffer.read_int32();
+	player_exp = buffer.read_int32();
+	return 0;
+}
+
+void MSG_300001::reset(void) {
+	player_level = 0;
+	player_exp = 0;
+}
+
+MSG_300002::MSG_300002(void) {
+	reset();
+}
+
+void MSG_300002::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(vip_level);
 	buffer.write_int32(vip_exp);
 }
 
-int MSG_300001::deserialize(Block_Buffer &buffer) {
+int MSG_300002::deserialize(Block_Buffer &buffer) {
 	vip_level = buffer.read_int32();
 	vip_exp = buffer.read_int32();
 	return 0;
 }
 
-void MSG_300001::reset(void) {
+void MSG_300002::reset(void) {
 	vip_level = 0;
 	vip_exp = 0;
 }

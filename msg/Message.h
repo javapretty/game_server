@@ -126,7 +126,8 @@ enum LOG_Message {
 
 enum Active_Message{
 	ACTIVE_DISCONNECT 								=	300000,	//服务器主动断开连接
-	ACTIVE_VIP_INFO										=	300001,	//更新vip信息
+	ACTIVE_PLAYER_INFO								=	300001,	//更新玩家信息
+	ACTIVE_VIP_INFO										=	300002,	//更新vip信息
 
 	ACTIVE_MONEY_INFO 								= 300100,	//金钱更新
 	ACTIVE_ITEM_INFO 									= 300101,	//物品信息更新

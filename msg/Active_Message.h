@@ -22,10 +22,20 @@ struct MSG_300000 {
 };
 
 struct MSG_300001 {
+	int32_t player_level;	
+	int32_t player_exp;	
+
+	MSG_300001(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+
+struct MSG_300002 {
 	int32_t vip_level;	
 	int32_t vip_exp;	
 
-	MSG_300001(void);
+	MSG_300002(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

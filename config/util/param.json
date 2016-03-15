@@ -1,4 +1,6 @@
 {
+		"max_player_level" : 90,
+		"max_vip_level": 2,
     "sync_vitality_gap" : 360,
     "default_normal_sweep_times" : 10,
     "default_elite_sweep_times" : 3,
@@ -19,6 +21,5 @@
     "team_level_max" : 80,
     "sweep_coin_id" : 390,
     "stren_health_ratio" : 19,
-    "join_excavate_hero_level_limit" : 35,
-		"max_vip_level": 2
+    "join_excavate_hero_level_limit" : 35
 }
