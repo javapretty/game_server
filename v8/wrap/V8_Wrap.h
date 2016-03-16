@@ -40,5 +40,9 @@ void push_client_buffer(const FunctionCallbackInfo<Value>& args);
 void get_load_player_data(const FunctionCallbackInfo<Value>& args);
 //函数说明：获取下线玩家的cid		参数：无	返回值：cid值
 void get_drop_player_cid(const FunctionCallbackInfo<Value>& args);
+//函数说明：从c++层获取超时定时器
+void get_timeout_timer(const FunctionCallbackInfo<Value>& args);
+//函数说明：注册定时器到c++层
+void register_timer_in(const FunctionCallbackInfo<Value>& args);
 
 #endif /* V8_WRAP_H_ */

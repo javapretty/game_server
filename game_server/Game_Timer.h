@@ -11,6 +11,31 @@
 #include "Epoll_Watcher.h"
 #include "Block_Buffer.h"
 
+struct V8_Timer_Handler {
+	int timer_id; //js层定时器编号
+	int interval; //定时时间间隔
+	int next_time; //下一次执行时间(UNIX时间戳)
+	bool isUseful; //是否继续使用
+};
+
+class Compare {
+public:
+	bool operator()(V8_Timer_Handler *t1, V8_Timer_Handler *t2);
+};
+
+//脚本层定时器优先队列
+class V8_Timer_Queue {
+typedef std::vector<V8_Timer_Handler*> CONTAINER;
+public:
+	V8_Timer_Handler* top();
+	void push(V8_Timer_Handler* handler);
+	void pop();
+	void del(V8_Timer_Handler* handler);
+	bool empty();
+private:
+	CONTAINER container_;
+};
+
 class Game_Timer_Handler: public Event_Handler {
 public:
 	Game_Timer_Handler(void);

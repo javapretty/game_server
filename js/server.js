@@ -17,11 +17,18 @@ require('hero.js');
 require('bag.js');
 require('mail.js');
 require('util.js');
+require('timer.js');
+require('shop.js');
 
 //cid----player  全局玩家对象
 var player_cid_map = new Map();
 //role_id---player 全局玩家对象
 var player_role_id_map = new Map();
+
+var timers = new Timers(); //定时器管理器
+var shop = new Shop(); //商店
+timers.register(shop, 3);//给商店添加3秒间隔的定时行为
+
 //执行脚本主循环函数
 main();
 
@@ -54,6 +61,9 @@ function main() {
 			}
 		}
 	
+		while((t = get_timeout_timer()) != null){
+			timers.check_timer(t);
+		}
 		if (all_empty) {
 			sleep();
 			continue;

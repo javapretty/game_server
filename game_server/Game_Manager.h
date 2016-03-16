@@ -15,6 +15,7 @@
 #include "Object_Pool.h"
 #include "Game_Player.h"
 #include "Msg_Define.h"
+#include "Game_Timer.h"
 
 class Game_Manager: public Thread {
 public:
@@ -22,6 +23,8 @@ public:
 	typedef Object_Pool<Game_Player, Spin_Lock> Game_Player_Pool;
 	typedef Block_List<Thread_Mutex> Data_List;
 	typedef List<int, Thread_Mutex> Int_List;
+	typedef List<int, Thread_Mutex> Timer_List_Out;
+	typedef List<V8_Timer_Handler*, Thread_Mutex> Timer_List_In;
 
 	typedef boost::unordered_map<std::string, Cid_Info> Logining_Map;
 	typedef boost::unordered_map<int64_t, Saving_Info> Saving_Map;
@@ -72,7 +75,8 @@ public:
 	Block_Buffer* pop_player_data(void);
 	int push_drop_player_cid(int cid);
 	int pop_drop_player_cid(void);
-
+	int pop_v8_timer(void); //js层获取超时定时器编号
+	int push_v8_register_timer(V8_Timer_Handler *handler); //js层注册定时器队列
 	/// 消息处理
 	int process_list();
 	void process_drop_gate_cid(int gate_cid);
@@ -108,6 +112,7 @@ public:
 	int manager_tick(Time_Value &now);
 	int saving_scanner_tick(Time_Value &now);
 	void object_pool_tick(Time_Value &now);
+	int sync_v8_tick(Time_Value &now); //同步js层和c++层的定时器状态
 
 	void get_server_info(Block_Buffer &buf);
 
@@ -142,6 +147,9 @@ private:
 	Data_List game_db_data_list_;						///db-->game
 	Data_List game_master_data_list_;				///master-->game
 	Data_List self_loop_block_list_; 				///self_loop_block_list
+	Timer_List_Out v8_timer_list_;
+	Timer_List_In v8_register_timer_list_;
+	V8_Timer_Queue v8_timer_queue_;
 
 	Data_List player_data_list_; 						//玩家数据,传送给js层
 	Int_List drop_player_cid_list_;					//掉线的玩家cid列表
@@ -261,6 +269,18 @@ inline int Game_Manager::pop_drop_player_cid(void) {
 		return 0;
 	}
 	return drop_player_cid_list_.pop_front();
+}
+
+inline int Game_Manager::pop_v8_timer(void){
+	if (v8_timer_list_.empty()) {
+			return 0;
+		}
+		return v8_timer_list_.pop_front();
+}
+
+inline int Game_Manager::push_v8_register_timer(V8_Timer_Handler *handler){
+	v8_register_timer_list_.push_back(handler);
+	return 0;
 }
 
 inline const Time_Value &Game_Manager::tick_time(void) {

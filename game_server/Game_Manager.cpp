@@ -261,11 +261,40 @@ int Game_Manager::tick(void) {
 	player_tick(now);
 	manager_tick(now);
 
+	sync_v8_tick(now);
 	server_info_tick(now);
 	object_pool_tick(now);
 	//LOG->show_msg_time(now);
 
 	saving_scanner_tick(now);
+	return 0;
+}
+
+int Game_Manager::sync_v8_tick(Time_Value &now){
+	int sec = now.sec();
+	while(!v8_register_timer_list_.empty()){ //js层是否注册新定时器进来
+		V8_Timer_Handler *handler = v8_register_timer_list_.pop_front();
+		if(handler->isUseful == false){
+			v8_timer_queue_.del(handler);
+		}
+		else {
+			handler->next_time = handler->next_time == 0 ? sec + handler->interval : handler->next_time;
+			v8_timer_queue_.push(handler);
+		}
+	}
+	while((!v8_timer_queue_.empty()) && ((sec > v8_timer_queue_.top()->next_time)
+			||(v8_timer_queue_.top()->isUseful == false))){
+		V8_Timer_Handler *handler = v8_timer_queue_.top();
+		v8_timer_queue_.pop();
+		if(handler->isUseful == true){
+			handler->next_time += handler->interval;
+			v8_timer_list_.push_back(handler->timer_id);
+			v8_timer_queue_.push(handler);
+		}
+		else{
+			delete handler;
+		}
+	}
 	return 0;
 }
 
