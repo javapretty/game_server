@@ -15,25 +15,39 @@ struct V8_Timer_Handler {
 	int timer_id; //js层定时器编号
 	int interval; //定时时间间隔
 	int next_time; //下一次执行时间(UNIX时间戳)
-	bool isUseful; //是否继续使用
 };
 
-class Compare {
+class V8_Timer_Compare {
 public:
 	bool operator()(V8_Timer_Handler *t1, V8_Timer_Handler *t2);
 };
 
-//脚本层定时器优先队列
-class V8_Timer_Queue {
-typedef std::vector<V8_Timer_Handler*> CONTAINER;
+//优先队列
+template <typename Obj, typename Compare, typename LOCK = NULL_MUTEX>
+class Priority_Queue {
+typedef std::vector<Obj> CONTAINER;
 public:
-	V8_Timer_Handler* top();
-	void push(V8_Timer_Handler* handler);
-	void pop();
-	void del(V8_Timer_Handler* handler);
-	bool empty();
+	Obj top(){
+		GUARD(LOCK, mon, this->lock_);
+		return container_.front();
+	}
+	void push(Obj obj){
+		GUARD(LOCK, mon, this->lock_);
+		container_.push_back(obj);
+		std::push_heap(container_.begin(), container_.end(), Compare());
+	}
+	void pop(){
+		GUARD(LOCK, mon, this->lock_);
+		std::pop_heap(container_.begin(), container_.end(), Compare());
+		container_.pop_back();
+	}
+	bool empty(){
+		GUARD(LOCK, mon, this->lock_);
+		return container_.empty();
+	}
 private:
 	CONTAINER container_;
+	LOCK lock_;
 };
 
 class Game_Timer_Handler: public Event_Handler {

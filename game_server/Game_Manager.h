@@ -23,8 +23,8 @@ public:
 	typedef Object_Pool<Game_Player, Spin_Lock> Game_Player_Pool;
 	typedef Block_List<Thread_Mutex> Data_List;
 	typedef List<int, Thread_Mutex> Int_List;
-	typedef List<int, Thread_Mutex> Timer_List_Out;
-	typedef List<V8_Timer_Handler*, Thread_Mutex> Timer_List_In;
+	typedef List<int, Thread_Mutex> Timer_List;
+	typedef Priority_Queue<V8_Timer_Handler*, V8_Timer_Compare, Thread_Mutex> V8_Timer_Queue;
 
 	typedef boost::unordered_map<std::string, Cid_Info> Logining_Map;
 	typedef boost::unordered_map<int64_t, Saving_Info> Saving_Map;
@@ -147,8 +147,7 @@ private:
 	Data_List game_db_data_list_;						///db-->game
 	Data_List game_master_data_list_;				///master-->game
 	Data_List self_loop_block_list_; 				///self_loop_block_list
-	Timer_List_Out v8_timer_list_;
-	Timer_List_In v8_register_timer_list_;
+	Timer_List v8_timer_list_;
 	V8_Timer_Queue v8_timer_queue_;
 
 	Data_List player_data_list_; 						//玩家数据,传送给js层
@@ -279,7 +278,7 @@ inline int Game_Manager::pop_v8_timer(void){
 }
 
 inline int Game_Manager::push_v8_register_timer(V8_Timer_Handler *handler){
-	v8_register_timer_list_.push_back(handler);
+	v8_timer_queue_.push(handler);
 	return 0;
 }
 

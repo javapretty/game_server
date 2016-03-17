@@ -26,8 +26,7 @@ var player_cid_map = new Map();
 var player_role_id_map = new Map();
 
 var timers = new Timers(); //定时器管理器
-var shop = new Shop(); //商店
-timers.register(shop, 3);//给商店添加3秒间隔的定时行为
+timers.init();
 
 //执行脚本主循环函数
 main();
@@ -61,9 +60,11 @@ function main() {
 			}
 		}
 	
-		while((t = get_timeout_timer()) != null){
-			timers.check_timer(t);
+		var tid = get_timeout_timer();
+		if(tid != null){
+			tick(tid);
 		}
+		
 		if (all_empty) {
 			sleep();
 			continue;
@@ -133,3 +134,9 @@ function process_client_buffer(buffer) {
 	}
 	push_client_buffer(gate_cid, buffer);
 }
+
+function tick(tid){
+	var func = timers.get_func(tid);
+	func();
+}
+

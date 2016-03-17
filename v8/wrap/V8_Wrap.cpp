@@ -304,15 +304,14 @@ void get_timeout_timer(const FunctionCallbackInfo<Value>& args) {
 }
 
 void register_timer_in(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 4) {
+	if (args.Length() != 3) {
 			LOG_INFO("register timer args error, length: %d\n", args.Length());
 			return;
 		}
 	int timer_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int interval = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int next_time = args[2]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	int isUseful = args[3]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	V8_Timer_Handler *handler = new V8_Timer_Handler{timer_id, interval, next_time, static_cast<bool>(isUseful)};
-	LOG_INFO("register args is %d %d %d %d\n", handler->timer_id, handler->next_time, handler->interval, handler->isUseful);
+	V8_Timer_Handler *handler = new V8_Timer_Handler{timer_id, interval, next_time};
+	LOG_INFO("register args is %d %d %d\n", handler->timer_id, handler->next_time, handler->interval);
 	GAME_MANAGER->push_v8_register_timer(handler);
 }

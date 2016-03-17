@@ -50,32 +50,6 @@ int Game_Timer_Handler::handle_timeout(const Time_Value &tv) {
 	return GAME_MANAGER->push_self_loop_message(tick_msg_buf_);
 }
 
-bool Compare::operator()(V8_Timer_Handler *t1, V8_Timer_Handler *t2){
+bool V8_Timer_Compare::operator()(V8_Timer_Handler *t1, V8_Timer_Handler *t2){
 	return t1->next_time > t2->next_time;
-}
-
-void V8_Timer_Queue::push(V8_Timer_Handler *handler){
-	container_.push_back(handler);
-	std::push_heap(container_.begin(), container_.end(), Compare());
-}
-
-V8_Timer_Handler *V8_Timer_Queue::top(){
-	return container_.front();
-}
-
-void V8_Timer_Queue::pop(){
-	std::pop_heap(container_.begin(), container_.end(), Compare());
-	container_.pop_back();
-}
-
-void V8_Timer_Queue::del(V8_Timer_Handler *handler){
-	for(CONTAINER::iterator iter = container_.begin(); iter!= container_.end(); iter++){
-		if((*iter)->timer_id == handler->timer_id){
-			(*iter)->isUseful = false;
-		}
-	}
-}
-
-bool V8_Timer_Queue::empty(){
-	return container_.empty();
 }

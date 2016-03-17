@@ -7,15 +7,10 @@
 */
 
 function Shop() {
-	this.timing = 1; //取消定时器即把该字段设为0
 	this.seq = 0;
 
 	this.handleTimeOut = function(){ //有定时行为的对象的接口函数
 		print("shop tick ", this.seq);
 		this.seq++;
-		if(this.seq == 5){
-			print("shop deregister");
-			this.timing = 0;
-		}
 	}
 }
