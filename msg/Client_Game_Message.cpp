@@ -620,3 +620,43 @@ void MSG_520304::reset(void) {
 	on = 0;
 	equip_info.reset();
 }
+
+MSG_120305::MSG_120305(void) {
+	reset();
+}
+
+void MSG_120305::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(hero_id);
+	buffer.write_int32(skill_id);
+}
+
+int MSG_120305::deserialize(Block_Buffer &buffer) {
+	hero_id = buffer.read_int32();
+	skill_id = buffer.read_int32();
+	return 0;
+}
+
+void MSG_120305::reset(void) {
+	hero_id = 0;
+	skill_id = 0;
+}
+
+MSG_520305::MSG_520305(void) {
+	reset();
+}
+
+void MSG_520305::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(hero_id);
+	buffer.write_int32(skill_id);
+}
+
+int MSG_520305::deserialize(Block_Buffer &buffer) {
+	hero_id = buffer.read_int32();
+	skill_id = buffer.read_int32();
+	return 0;
+}
+
+void MSG_520305::reset(void) {
+	hero_id = 0;
+	skill_id = 0;
+}

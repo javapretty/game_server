@@ -593,3 +593,33 @@ function MSG_520304() {
 		this.equip_info.deserialize(buffer);
 	}
 }
+
+function MSG_120305() {
+	this.hero_id = 0;
+	this.skill_id = 0;
+
+	this.serialize = function(buffer) {
+		buffer.write_int32(this.hero_id);
+		buffer.write_int32(this.skill_id);
+	}
+
+	this.deserialize = function(buffer) {
+		this.hero_id = buffer.read_int32();
+		this.skill_id = buffer.read_int32();
+	}
+}
+
+function MSG_520305() {
+	this.hero_id = 0;
+	this.skill_id = 0;
+
+	this.serialize = function(buffer) {
+		buffer.write_int32(this.hero_id);
+		buffer.write_int32(this.skill_id);
+	}
+
+	this.deserialize = function(buffer) {
+		this.hero_id = buffer.read_int32();
+		this.skill_id = buffer.read_int32();
+	}
+}

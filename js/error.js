@@ -29,6 +29,7 @@ if (typeof Error_Code == "undefined") {
 	Error_Code.ERROR_ROLE_NAME_EXIST 					= 10102;				//角色名已存在
 	Error_Code.ERROR_ROLE_OFFLINE 							= 10103;				//玩家已离线
 	Error_Code.ERROR_VITALITY_TIMES_NOT_ENOUGH	=	10104;				//购买体力次数不足
+	Error_Code.ERROR_SKILL_POINT_NOT_ENOUGH			=	10105;				//技能点不足
 	
 	Error_Code.ERROR_BAG_FULL									= 10200,				//背包已满
 	Error_Code.ERROR_ITEM_NOT_EXIST						= 10201;				//物品不存在

@@ -125,6 +125,9 @@ function process_client_buffer(buffer) {
 			case Msg_Req.REQ_EQUIP_ON_OFF:
 				player.hero.equip_on_off(buffer);
 				break;
+			case Msg_Req.REQ_ADD_SKILL_LEVEL:
+				player.hero.add_skill_level(buffer);
+				break;
 			default:
 				break;
 			}
@@ -139,4 +142,3 @@ function tick(tid){
 	var func = timers.get_func(tid);
 	func();
 }
-

@@ -9,7 +9,7 @@
 #ifndef MSG_DEFINE_H_
 #define MSG_DEFINE_H_
 
-#include "Err_Code.h"
+#include "Error.h"
 #include "Message.h"
 #include "Active_Message.h"
 #include "Client_Login_Message.h"

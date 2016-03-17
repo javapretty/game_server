@@ -34,6 +34,7 @@ if (typeof Msg_Req == "undefined") {
 	Msg_Req.REQ_ADD_HERO_QUALITY								= 120302;	//提高英雄品质
 	Msg_Req.REQ_ADD_EQUIP_LEVEL								= 120303;	//提高英雄装备等级
 	Msg_Req.REQ_EQUIP_ON_OFF									=	120304;	//英雄装备穿脱
+	Msg_Req.REQ_ADD_SKILL_LEVEL								= 120305;	//提高英雄技能等级
 }
 
 if (typeof Msg_Res == "undefined") {
@@ -56,6 +57,7 @@ if (typeof Msg_Res == "undefined") {
 	Msg_Res.RES_ADD_HERO_QUALITY								= 520302;	//提高英雄品质(返回)
 	Msg_Res.RES_ADD_EQUIP_LEVEL								= 520303;	//提高英雄装备等级(返回)
 	Msg_Res.RES_EQUIP_ON_OFF									=	520304;	//英雄装备穿脱(返回)
+	Msg_Res.RES_ADD_SKILL_LEVEL								= 520305;	//提高英雄技能等级(返回)
 }
 
 if (typeof Msg_Active == "undefined") {

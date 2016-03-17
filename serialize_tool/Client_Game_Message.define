@@ -148,3 +148,14 @@ struct MSG_520304 {
 	bool on;								//	true表示穿，false表示脱
 	Item_Info equip_info;		//装备信息
 };
+
+//提高英雄技能等级
+struct MSG_120305 {
+	int32_t hero_id;
+	int32_t skill_id;
+};
+
+struct MSG_520305 {
+	int32_t hero_id;
+	int32_t skill_id;
+};

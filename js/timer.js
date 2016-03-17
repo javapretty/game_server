@@ -21,10 +21,5 @@ function Timers() {
 	}
 
 	this.init = function(){
-		this.register(this.test_time_out, 3);
-	}
-
-	this.test_time_out = function(){
-		print("timer test");
 	}
 }
