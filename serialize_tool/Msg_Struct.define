@@ -48,3 +48,16 @@ struct Mail_Detail {
 	int32_t gold;							//元宝
 	std::vector<Item_Info> item_info;	//道具信息
 };
+
+struct Product_Info {
+	int32_t product_id;
+	int32_t item_id;
+	int32_t price;
+	int32_t count; //剩余购买次数
+};
+
+struct Shop_Detail {
+	int32_t shop_type; //商店类型，1是铜币，2是金币
+	int32_t fresh_count;
+	std::vector<Product_Info> products;
+};

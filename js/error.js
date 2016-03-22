@@ -35,4 +35,7 @@ if (typeof Error_Code == "undefined") {
 	Error_Code.ERROR_ITEM_NOT_ENOUGH						= 10202;				//物品不足
 	Error_Code.ERROR_COPPER_NOT_ENOUGH					= 10203;				//铜钱不足
 	Error_Code.ERROR_GOLD_NOT_ENOUGH						= 10204;				//元宝不足
+	Error_Code.ERROR_PRODUCT_NOT_EXIST						= 10205;				//商品不存在
+	Error_Code.ERROR_PRODUCT_NOT_ENOUGH						= 10206;				//商品数量不足
+	Error_Code.ERROR_REFRESH_NOT_ENOUGH						= 10207;				//商店刷新次数耗尽
 }

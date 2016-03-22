@@ -1,0 +1,28 @@
+{
+	"COPPER_SHOP" : {
+		"REFRESH_COST" :[10, 20, 30]
+		"PRODUCTS" : [
+			{
+				"product_id" :1001,
+				"item_id" :100000001, 
+				"price" : 10,
+				"count" : 5,
+    		}
+			
+			{
+				"product_id": 1002
+				"item_id":100000002, 
+				"price": 20,
+				"count": 5,
+    		}	
+	
+			{
+				"product_id": 1003
+				"item_id":100000003, 
+				"price": 30,
+				"count": 5,
+    		}
+		]
+	}
+	
+}

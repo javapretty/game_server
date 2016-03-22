@@ -59,6 +59,8 @@ public:
 	int load_mail_info(int64_t role_id, Mail_Info &mail_info);
 	int save_mail_info(int64_t role_id, Mail_Info &mail_info);
 
+	int load_shop_info(int64_t role_id, Shop_Info &shop_info);
+	int save_shop_info(int64_t role_id, Shop_Info &shop_info);
 private:
 	DB_Operator(void);
 	virtual ~DB_Operator(void);

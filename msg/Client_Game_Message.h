@@ -299,4 +299,58 @@ struct MSG_520304 {
 	void reset(void);
 };
 
+struct MSG_120400 {
+	uint32_t shop_type;	//商店类型
+
+	MSG_120400(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+
+struct MSG_520400 {
+	Shop_Detail shop;	
+
+	MSG_520400(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+
+struct MSG_120401 {
+	uint32_t shop_type;	//商店类型
+	uint32_t product_id;	
+	uint32_t amount;	
+
+	MSG_120401(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+
+struct MSG_520401 {
+
+	MSG_520401(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+
+struct MSG_120402 {
+	uint32_t shop_type;	//商店类型
+
+	MSG_120402(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+
+struct MSG_520402 {
+
+	MSG_520402(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+
 #endif

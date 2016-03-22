@@ -148,3 +148,29 @@ struct MSG_520304 {
 	bool on;								//	true表示穿，false表示脱
 	Item_Info equip_info;		//装备信息
 };
+
+//获取商店列表
+struct MSG_120400 {
+	uint32_t shop_type; //商店类型
+};
+
+struct MSG_520400 {
+	Shop_Detail shop;
+};
+
+//购买商店物品
+struct MSG_120401 {
+	uint32_t shop_type; //商店类型
+	uint32_t product_id;
+	uint32_t amount;
+};
+
+struct MSG_520401 {
+};
+
+struct MSG_120402 {
+	uint32_t shop_type; //商店类型
+};
+
+struct MSG_520402 {
+};

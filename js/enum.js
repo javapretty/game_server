@@ -12,6 +12,7 @@ if (typeof Data_Change == "undefined") {
 	Data_Change.HERO_CHANGE = 2;
 	Data_Change.BAG_CHANGE = 3;
 	Data_Change.MAIL_CHANGE = 4;
+	Data_Change.SHOP_CHANGE = 5;
 }
 
 if (typeof Property_Type == "undefined") {
@@ -31,4 +32,10 @@ if (typeof Property_Type == "undefined") {
 	Property_Type.PHYSICAL_DEF = 13;		//物理防御
 	Property_Type.MAGIC_DEF = 14;			//魔法防御
 	Property_Type.CRIT = 15;					//暴击
+}
+
+if (typeof Shop_Type == "undefined") {
+	var Shop_Type = {};
+	Shop_Type.COPPER_SHOP = 1; //铜币商店
+	Shop_Type.GOLD_SHOP = 2; //金币商店
 }

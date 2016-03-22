@@ -10,7 +10,7 @@ function Timers() {
 	this.timers = new Map(); 
 	this.timer_id = 1;
 	
-	this.register = function(handler, interval, nexttime = Date.parse(new Date()) / 1000){
+	this.register = function(handler, interval, nexttime = util.now_msec() / 1000){
 		register_timer_in(this.timer_id, interval, nexttime);
 		this.timers.put(this.timer_id, handler);
 		this.timer_id++;
@@ -21,7 +21,7 @@ function Timers() {
 	}
 
 	this.init = function(){
-		this.register(this.test_time_out, 3);
+		//this.register(this.test_time_out, 3);
 	}
 
 	this.test_time_out = function(){

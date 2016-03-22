@@ -13,6 +13,7 @@ function Player() {
 	this.hero = new Hero();
 	this.bag = new Bag();
 	this.mail = new Mail();
+	this.shop = new Shop();
 
 	//玩家上线，加载数据
 	this.load_player_data = function(buffer) {
@@ -28,7 +29,8 @@ function Player() {
 		this.hero.load_data(this, buffer);
 		this.bag.load_data(this, buffer);
 		this.mail.load_data(this, buffer);
-		
+		this.shop.load_data(this, buffer);
+	
 		print('------load_data,status:', status, ' role_id:', this.player_info.role_id, ' role_name:', this.player_info.role_name);
 		this.cid = gate_cid * 10000 + player_cid;
 		this.cplayer = get_player_by_cid(gate_cid, player_cid);
@@ -50,6 +52,7 @@ function Player() {
 		this.hero.save_data(buffer);
 		this.bag.save_data(buffer);
 		this.mail.save_data(buffer);
+		this.shop.save_data(buffer);
 		print('------save_data,role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name);
 		
 		player_cid_map.remove(this.cid);

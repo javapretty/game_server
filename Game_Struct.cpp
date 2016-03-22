@@ -325,3 +325,30 @@ void Mail_Info::reset(void) {
 	total_count = 0;
 	mail_map.clear();
 }
+
+Shop_Info::Shop_Info(void) {
+	reset();
+}
+
+void Shop_Info::serialize(Block_Buffer &buffer) const {
+
+	buffer.write_uint16(shop_detail.size());
+	for(boost::unordered_map<int32_t,Shop_Detail>::const_iterator it = shop_detail.begin();
+		it != shop_detail.end(); ++it) {
+		it->second.serialize(buffer);
+	}
+}
+
+int Shop_Info::deserialize(Block_Buffer &buffer) {
+	uint16_t shop_detail_size = buffer.read_uint16();
+	for (int16_t i = 0; i < shop_detail_size; ++i) {
+		Shop_Detail _v;
+		_v.deserialize(buffer);
+		shop_detail[_v.shop_type] =  _v;
+	}
+	return 0;
+}
+
+void Shop_Info::reset(void) {
+	shop_detail.clear();
+}

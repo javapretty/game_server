@@ -153,6 +153,7 @@ struct Player_Data {
 		HERO_CHANGE,
 		BAG_CHANGE,
 		MAIL_CHANGE,
+		SHOP_CHANGE,
 		CHANGE_END
 	};
 
@@ -163,6 +164,7 @@ struct Player_Data {
 	Hero_Info hero_info;
 	Bag_Info bag_info;
 	Mail_Info mail_info;
+	Shop_Info shop_info;
 
 	Player_Data(void);
 	int serialize(Block_Buffer &buffer) const;

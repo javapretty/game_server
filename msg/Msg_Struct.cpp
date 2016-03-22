@@ -213,3 +213,61 @@ void Mail_Detail::reset(void) {
 	gold = 0;
 	item_info.clear();
 }
+
+Product_Info::Product_Info(void) {
+	reset();
+}
+
+void Product_Info::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(product_id);
+	buffer.write_int32(item_id);
+	buffer.write_int32(price);
+	buffer.write_int32(count);
+}
+
+int Product_Info::deserialize(Block_Buffer &buffer) {
+	product_id = buffer.read_int32();
+	item_id = buffer.read_int32();
+	price = buffer.read_int32();
+	count = buffer.read_int32();
+	return 0;
+}
+
+void Product_Info::reset(void) {
+	product_id = 0;
+	item_id = 0;
+	price = 0;
+	count = 0;
+}
+
+Shop_Detail::Shop_Detail(void) {
+	reset();
+}
+
+void Shop_Detail::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(shop_type);
+	buffer.write_int32(fresh_count);
+	uint16_t products_size = products.size();
+	buffer.write_uint16(products_size);
+	for(uint16_t i = 0; i < products_size; ++i) {
+		products[i].serialize(buffer);
+	}
+}
+
+int Shop_Detail::deserialize(Block_Buffer &buffer) {
+	shop_type = buffer.read_int32();
+	fresh_count = buffer.read_int32();
+	uint16_t products_size = buffer.read_uint16();
+	Product_Info products_v;
+	for(uint16_t i = 0; i < products_size; ++i) {
+		products_v.deserialize(buffer);
+		products.push_back(products_v);
+	}
+	return 0;
+}
+
+void Shop_Detail::reset(void) {
+	shop_type = 0;
+	fresh_count = 0;
+	products.clear();
+}

@@ -142,4 +142,13 @@ struct Mail_Info {
 	void reset(void);
 };
 
+struct Shop_Info {
+	boost::unordered_map<int32_t,Shop_Detail> shop_detail;	
+
+	Shop_Info(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+
 #endif
