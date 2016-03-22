@@ -14,14 +14,10 @@
 
 Master_Manager::Master_Manager(void):
   player_role_id_map_(get_hash_table_size(12000)),
-  is_register_timer_(false),
-  msg_count_onoff_(true) {
-	register_timer();
-}
+  server_status_(STATUS_NORMAL),
+  msg_count_onoff_(true) { }
 
-Master_Manager::~Master_Manager(void) {
-	unregister_timer();
-}
+Master_Manager::~Master_Manager(void) { }
 
 Master_Manager *Master_Manager::instance_;
 
@@ -35,8 +31,6 @@ int Master_Manager::init(void) {
 	tick_time_ = Time_Value::gettimeofday();
 
 	SERVER_CONFIG;
-	status_ = STATUS_NORMAL;
-
 	MASTER_INNER_MESSAGER;					/// 内部消息处理
 	MASTER_CLIENT_MESSAGER;					/// 外部消息处理
 	MASTER_TIMER->thr_create();			///	定时器
@@ -47,23 +41,6 @@ int Master_Manager::init(void) {
 
 void Master_Manager::run_handler(void) {
 	process_list();
-}
-
-int Master_Manager::register_timer(void) {
-	is_register_timer_ = true;
-	return 0;
-}
-
-int Master_Manager::unregister_timer(void) {
-	is_register_timer_ = false;
-	return 0;
-}
-
-int Master_Manager::time_up(const Time_Value &now) {
-	if (! is_register_timer_)
-		return 0;
-
-	return 0;
 }
 
 int Master_Manager::send_to_gate(int cid, Block_Buffer &buf) {
@@ -131,10 +108,6 @@ int Master_Manager::process_list(void) {
 	return 0;
 }
 
-int Master_Manager::server_status(void) {
-	return status_;
-}
-
 int Master_Manager::bind_role_id_master_player(int64_t role_id, Master_Player &player) {
 	if (! player_role_id_map_.insert(std::make_pair(role_id, &player)).second) {
 		LOG_TRACE("insert failure");
@@ -165,8 +138,6 @@ int Master_Manager::tick(void) {
 	tick_time_ = now;
 
 	player_tick(now);
-	manager_tick(now);
-
 	server_info_tick(now);
 	object_pool_tick(now);
 	//LOG->show_msg_time(now);
@@ -196,14 +167,6 @@ int Master_Manager::player_tick(Time_Value &now) {
 		if (it->second)
 			it->second->tick(now);
 	}
-	return 0;
-}
-
-int Master_Manager::manager_tick(Time_Value &now) {
-	if (now - tick_info_.manager_last_tick < tick_info_.manager_interval_tick)
-		return 0;
-	tick_info_.manager_last_tick = now;
-	this->time_up(now);
 	return 0;
 }
 

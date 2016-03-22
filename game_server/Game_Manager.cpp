@@ -19,14 +19,10 @@ Game_Manager::Game_Manager(void):
   saving_map_(get_hash_table_size(512)),
   player_cid_map_(get_hash_table_size(12000)),
   player_role_id_map_(get_hash_table_size(12000)),
-  is_register_timer_(false),
-  msg_count_onoff_(true) {
-	register_timer();
-}
+  server_status_(STATUS_NORMAL),
+  msg_count_onoff_(true) { }
 
-Game_Manager::~Game_Manager(void) {
-	unregister_timer();
-}
+Game_Manager::~Game_Manager(void) {}
 
 Game_Manager *Game_Manager::instance_;
 
@@ -40,7 +36,6 @@ const int32_t Game_Manager::saving_player_time = 20;
 
 int Game_Manager::init(void) {
 	tick_time_ = Time_Value::gettimeofday();
-	status_ = STATUS_NORMAL;
 
 	GAME_INNER_MESSAGER;					/// 内部消息处理
 	GAME_CLIENT_MESSAGER;					/// 外部消息处理
@@ -166,10 +161,6 @@ void Game_Manager::process_drop_gate_cid(int gate_cid) {
 	}
 }
 
-int Game_Manager::server_status(void) {
-	return status_;
-}
-
 int Game_Manager::bind_cid_game_player(Cid_Info &cid_info, Game_Player &player) {
 	if (! player_cid_map_.insert(std::make_pair(cid_info, &player)).second) {
 		LOG_INFO("insert failure");
@@ -237,36 +228,16 @@ int Game_Manager::unbind_game_player(Game_Player &player) {
 	return 0;
 }
 
-int Game_Manager::register_timer(void) {
-	is_register_timer_ = true;
-	return 0;
-}
-
-int Game_Manager::unregister_timer(void) {
-	is_register_timer_ = false;
-	return 0;
-}
-
-int Game_Manager::time_up(const Time_Value &now) {
-	if (! is_register_timer_)
-		return 0;
-
-	return 0;
-}
-
 int Game_Manager::tick(void) {
 	Time_Value now(Time_Value::gettimeofday());
 	tick_time_ = now;
 
 	player_tick(now);
-	manager_tick(now);
-
 	sync_v8_tick(now);
 	server_info_tick(now);
 	object_pool_tick(now);
-	//LOG->show_msg_time(now);
-
 	saving_scanner_tick(now);
+	//LOG->show_msg_time(now);
 	return 0;
 }
 
@@ -303,14 +274,6 @@ int Game_Manager::player_tick(Time_Value &now) {
 		if (it->second)
 			it->second->tick(now);
 	}
-	return 0;
-}
-
-int Game_Manager::manager_tick(Time_Value &now) {
-	if (now - tick_info_.manager_last_tick < tick_info_.manager_interval_tick)
-		return 0;
-	tick_info_.manager_last_tick = now;
-	this->time_up(now);
 	return 0;
 }
 

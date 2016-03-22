@@ -16,14 +16,11 @@
 
 Gate_Manager::Gate_Manager(void):
   player_cid_map_(get_hash_table_size(12000)),
-  is_register_timer_(false),
-  msg_count_onoff_(true) {
-	register_timer();
-}
+  server_status_(STATUS_NORMAL),
+  verify_pack_onoff_(true),
+  msg_count_onoff_(true) { }
 
-Gate_Manager::~Gate_Manager(void) {
-	unregister_timer();
-}
+Gate_Manager::~Gate_Manager(void) { }
 
 Gate_Manager *Gate_Manager::instance_;
 
@@ -37,7 +34,6 @@ int Gate_Manager::init(void) {
 	tick_time_ = Time_Value::gettimeofday();
 
 	SERVER_CONFIG;
-	status_ = STATUS_NORMAL;
 	md5_key_ = SERVER_CONFIG->server_misc()["gate_md5_key"].asString();
 
 	GATE_INNER_MESSAGER;					/// 内部消息处理
@@ -47,7 +43,7 @@ int Gate_Manager::init(void) {
 	{ /// 包验证开关
 		const Json::Value &server_conf = SERVER_CONFIG->server_conf();
 		if (server_conf["verify_pack"].asInt()) {
-			set_verify_pack_onoff(1);
+			verify_pack_onoff_ = true;
 		}
 	}
 	return 0;
@@ -55,23 +51,6 @@ int Gate_Manager::init(void) {
 
 void Gate_Manager::run_handler(void) {
 	process_list();
-}
-
-int Gate_Manager::register_timer(void) {
-	is_register_timer_ = true;
-	return 0;
-}
-
-int Gate_Manager::unregister_timer(void) {
-	is_register_timer_ = false;
-	return 0;
-}
-
-int Gate_Manager::time_up(const Time_Value &now) {
-	if (! is_register_timer_)
-		return 0;
-
-	return 0;
 }
 
 int Gate_Manager::send_to_client(int cid, Block_Buffer &buf) {
@@ -206,12 +185,8 @@ void Gate_Manager::process_drop_cid(int cid) {
 	}
 }
 
-int Gate_Manager::server_status(void) {
-	return status_;
-}
-
 int Gate_Manager::self_close_process(void) {
-	status_ = STATUS_CLOSING;
+	server_status_ = STATUS_CLOSING;
 
 	Block_Buffer buf;
 	buf.make_inner_message(ACTIVE_DISCONNECT, ERROR_DISCONNECT_SELF);
@@ -299,8 +274,6 @@ int Gate_Manager::tick(void) {
 
 	close_list_tick(now);
 	player_tick(now);
-	manager_tick(now);
-
 	server_info_tick(now);
 	object_pool_tick(now);
 	//LOG->show_msg_time(now);
@@ -345,14 +318,6 @@ int Gate_Manager::player_tick(Time_Value &now) {
 	return 0;
 }
 
-int Gate_Manager::manager_tick(Time_Value &now) {
-	if (now - tick_info_.manager_last_tick < tick_info_.manager_interval_tick)
-		return 0;
-	tick_info_.manager_last_tick = now;
-	this->time_up(now);
-	return 0;
-}
-
 void Gate_Manager::object_pool_tick(Time_Value &now) {
 	if (now - tick_info_.object_pool_last_tick < tick_info_.object_pool_interval_tick)
 		return;
@@ -389,10 +354,6 @@ void Gate_Manager::free_cache(void) {
 
 	block_pool_.shrink_all();
 	gate_player_pool_.shrink_all();
-}
-
-void Gate_Manager::set_verify_pack_onoff(int v) {
-	verify_pack_onoff_ = v;
 }
 
 void Gate_Manager::print_msg_count(void) {

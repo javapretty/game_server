@@ -48,7 +48,10 @@ public:
 	void run_handler(void);
 
 	int load_db_cache(void);
-	DB_Cache *db_cache(void) { return db_cache_; }
+	inline DB_Cache *db_cache(void) { return db_cache_; }
+
+	/// 服务器状态
+	inline int server_status(void) { return server_status_; };
 
 	Game_Player *pop_game_player(void);
 	int push_game_player(Game_Player *player);
@@ -59,9 +62,6 @@ public:
 	int send_to_gate(int cid, Block_Buffer &buf);
 	int send_to_master(Block_Buffer &buf);
 	int send_to_db(Block_Buffer &buf);
-
-	/// 服务器状态
-	int server_status(void);
 
 	/// 通信层投递消息到Game_Manager
 	void push_drop_gate_cid(int cid);
@@ -102,23 +102,16 @@ public:
 	Saving_Map &saving_map(void);
 
 	/// 定时器处理
-	int register_timer(void);
-	int unregister_timer(void);
-	int time_up(const Time_Value &now);
-
 	int tick(void);
+	/// 返回上次tick的绝对时间, 最大误差有100毫秒,主要为减少系统调用gettimeofday()调用次数
+	inline const Time_Value &tick_time(void) { return tick_time_; };
 	int server_info_tick(Time_Value &now);
 	int player_tick(Time_Value &now);
-	int manager_tick(Time_Value &now);
 	int saving_scanner_tick(Time_Value &now);
 	void object_pool_tick(Time_Value &now);
 	int sync_v8_tick(Time_Value &now); //同步js层和c++层的定时器状态
 
 	void get_server_info(Block_Buffer &buf);
-
-	/// 返回上次tick的绝对时间, 最大误差有100毫秒
-	/// 主要为减少系统调用gettimeofday()调用次数
-	const Time_Value &tick_time(void);
 	void object_pool_size(void);
 	void free_cache(void);
 
@@ -163,10 +156,9 @@ private:
 	Game_Player_Role_Name_Map player_role_name_map_;	/// role_name - Game_Player
 
 	Tick_Info tick_info_;
-
-	int status_;
-	bool is_register_timer_;
 	Time_Value tick_time_;
+
+	int server_status_;
 
 	/// 消息统计
 	bool msg_count_onoff_;
@@ -280,10 +272,6 @@ inline int Game_Manager::pop_v8_timer(void){
 inline int Game_Manager::push_v8_register_timer(V8_Timer_Handler *handler){
 	v8_timer_queue_.push(handler);
 	return 0;
-}
-
-inline const Time_Value &Game_Manager::tick_time(void) {
-	return tick_time_;
 }
 
 inline void Game_Manager::set_msg_count_onoff(int v) {

@@ -36,14 +36,11 @@ public:
 	};
 
 	static Gate_Manager *instance(void);
-
 	int init(void);
 	void run_handler(void);
 
-	/// 定时器处理
-	int register_timer(void);
-	int unregister_timer(void);
-	int time_up(const Time_Value &now);
+	/// 服务器状态
+	inline int server_status(void) { return server_status_; };
 
 	Gate_Player *pop_gate_player(void);
 	int push_gate_player(Gate_Player *player);
@@ -56,8 +53,6 @@ public:
 
 	/// 关闭连接
 	int close_client(int cid);
-	/// 服务器状态
-	int server_status(void);
 	/// 主动关闭处理
 	int self_close_process(void);
 
@@ -77,34 +72,27 @@ public:
 	int bind_cid_gate_player(int cid, Gate_Player &player);
 	int unbind_cid_gate_player(int cid);
 	Gate_Player *find_cid_gate_player(int cid);
-
 	int bind_account_gate_player(std::string& account, Gate_Player &player);
 	int unbind_account_gate_player(std::string& account);
 	Gate_Player *find_account_gate_player(std::string& account);
-
 	int unbind_gate_player(Gate_Player &player);
 
+	/// 定时器处理
 	int tick(void);
+	/// 返回上次tick的绝对时间, 最大误差有100毫秒,主要为减少系统调用gettimeofday()调用次数
+	inline const Time_Value &tick_time(void) { return tick_time_; };
 	int close_list_tick(Time_Value &now);
 	int server_info_tick(Time_Value &now);
 	int player_tick(Time_Value &now);
-	int manager_tick(Time_Value &now);
 	void object_pool_tick(Time_Value &now);
 
 	void get_server_info(Block_Buffer &buf);
 	void get_server_ip_port(int player_cid, std::string &ip, int &port);
-
-	/// 返回上次tick的绝对时间, 最大误差有100毫秒
-	/// 主要为减少系统调用gettimeofday()调用次数
-	const Time_Value &tick_time(void);
 	void object_pool_size(void);
 	void free_cache(void);
 
-	std::string &md5_key(void);
-
-	/// 包验证
-	int get_verify_pack_onoff(void);
-	void set_verify_pack_onoff(int v);
+	std::string &md5_key(void) { return md5_key_; };
+	bool verify_pack(void) { return verify_pack_onoff_; };
 
 	/// 统计内部消息量
 	void set_msg_count_onoff(int v);
@@ -138,14 +126,13 @@ private:
 	Gate_Player_Account_Map player_account_map_;
 
 	Tick_Info tick_info_;
-
-	int status_;
-	bool is_register_timer_;
 	Time_Value tick_time_;
+
+	int server_status_;
+
 	std::string md5_key_;
 
-	int verify_pack_onoff_;
-
+	bool verify_pack_onoff_;
 	/// 消息统计
 	bool msg_count_onoff_;
 	Msg_Count_Map inner_msg_count_map_; //内部消息统计
@@ -197,22 +184,10 @@ inline int Gate_Manager::push_self_loop_message(Block_Buffer &msg_buf) {
 	return 0;
 }
 
-inline const Time_Value &Gate_Manager::tick_time(void) {
-	return tick_time_;
-}
-
-inline int Gate_Manager::get_verify_pack_onoff(void) {
-	return verify_pack_onoff_;
-}
-
 inline void Gate_Manager::set_msg_count_onoff(int v) {
 	if (v == 0 || v == 1) {
 		msg_count_onoff_ = v;
 	}
-}
-
-inline std::string &Gate_Manager::md5_key(void) {
-	return md5_key_;
 }
 
 inline void Gate_Manager::inner_msg_count(Block_Buffer &buf) {

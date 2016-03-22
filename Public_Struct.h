@@ -59,10 +59,10 @@ struct Close_Info {
 struct Msg_Info {
 	bool is_inited;
 	int cid;
-	long hash_key;				/// 用于加解密的hash key
-	uint32_t msg_serial;				/// 上一条消息序号
+	long hash_key;								/// 用于加解密的hash key
+	uint32_t msg_serial;					/// 上一条消息序号
 	Time_Value msg_timestamp;			/// 上一条消息时间戳
-	uint32_t msg_interval_count_;		/// 操作频率统计
+	uint32_t msg_interval_count_;	/// 操作频率统计
 	Time_Value msg_interval_timestamp;
 
 	void reset(void) {
@@ -83,9 +83,6 @@ struct Tick_Info {
 	const Time_Value player_interval_tick; /// Game_Player定时器间隔
 	Time_Value player_last_tick;
 
-	const Time_Value manager_interval_tick; /// Game_Manager
-	Time_Value manager_last_tick;
-
 	const Time_Value saving_scanner_interval_tick;	// 玩家下线保存表的扫描
 	Time_Value saving_scanner_last_tick;
 
@@ -97,8 +94,6 @@ struct Tick_Info {
 	  server_info_last_tick(Time_Value::zero),
 	  player_interval_tick(Time_Value(0, 500 * 1000)),
 	  player_last_tick(Time_Value::zero),
-	  manager_interval_tick(1, 0),
-	  manager_last_tick(Time_Value::zero),
 	  saving_scanner_interval_tick(20, 0),
 	  saving_scanner_last_tick(Time_Value::zero),
 	  object_pool_interval_tick(300, 0),

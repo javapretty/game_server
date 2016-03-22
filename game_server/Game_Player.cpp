@@ -102,9 +102,7 @@ int Game_Player::sign_out(void) {
 	player_data_.deserialize(*player_data_buffer_);
 	GAME_MANAGER->push_block_buffer(player_data_buffer_);
 
-	Time_Value now = GAME_MANAGER->tick_time();
-	this->player_data_.player_info.last_sign_out_time = now.sec();
-
+	this->player_data_.player_info.last_sign_out_time = GAME_MANAGER->tick_time().sec();
 	save_player(true);
 	unregister_timer();
 	sync_signout_to_master();

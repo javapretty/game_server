@@ -29,7 +29,6 @@ int Gate_Client_Messager::process_block(Block_Buffer &buf) {
 	int32_t msg_id = buf.read_int32();
 	int32_t  status = buf.read_int32();
 
-	LOG_DEBUG("player_cid:%d, len:%d, serial_cipher:%llu, msg_time_cipher:%llu, msg_id:%ld, status:%d", player_cid, len, serial_cipher, msg_time_cipher, msg_id, status);
 	if (msg_id >= CLIENT_GATE_MESSAGE_START && msg_id <= CLIENT_GATE_MESSAGE_END) {
 		return process_gate_block(player_cid, msg_id, buf);
 	}
@@ -41,9 +40,16 @@ int Gate_Client_Messager::process_block(Block_Buffer &buf) {
 	}
 
 	 /// 校验包, 用于防截包/自组包/重复发包
-	int ret = player->verify_msg_info(serial_cipher, msg_time_cipher);
-	if (ret < 0) {
-		return -1;
+	if (GATE_MANAGER->verify_pack()) {
+		int result = player->verify_msg_info(serial_cipher, msg_time_cipher);
+		if (result != 0) {
+			LOG_DEBUG("player_cid:%d, len:%d, serial_cipher:%llu, msg_time_cipher:%llu, msg_id:%ld, status:%d", player_cid, len, serial_cipher, msg_time_cipher, msg_id, status);
+			Block_Buffer res_buf;
+			res_buf.make_inner_message(msg_id, result);
+			res_buf.finish_message();
+			GATE_MANAGER->send_to_client(player_cid, res_buf);
+			return GATE_MANAGER->close_client(player_cid);
+		}
 	}
 
 	if (msg_id >= CLIENT_GAME_MESSAGE_START && msg_id <= CLIENT_GAME_MESSAGE_END) {
