@@ -24,10 +24,9 @@ require('shop.js');
 var player_cid_map = new Map();
 //role_id---player 全局玩家对象
 var player_role_id_map = new Map();
-
-var timers = new Timers(); //定时器管理器
-timers.init();
-
+//定时器管理器
+var timer = new Timer();
+timer.init();
 //执行脚本主循环函数
 main();
 
@@ -60,9 +59,16 @@ function main() {
 			}
 		}
 	
-		var tid = get_timeout_timer();
-		if(tid != null){
-			tick(tid);
+		while(true) {
+			var timer_id = get_timer_id();
+			if (timer_id == 0)
+				break;
+			
+			all_empty = false;
+			var timer_handler = timer.get_timer_handler(timer_id);
+			if (timer_handler != null) {
+				timer_handler();
+			}
 		}
 		
 		if (all_empty) {
@@ -136,9 +142,4 @@ function process_client_buffer(buffer) {
 		}
 	}
 	push_client_buffer(gate_cid, buffer);
-}
-
-function tick(tid){
-	var func = timers.get_func(tid);
-	func();
 }

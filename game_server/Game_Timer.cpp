@@ -34,6 +34,25 @@ void Game_Timer::register_handler(void) {
 	watcher_.add(&timer_handler_, Epoll_Watcher::EVENT_TIMEOUT, &timeout_tv);
 }
 
+void Game_Timer::register_v8_handler(int timer_id, int internal, int first_tick_internal) {
+	V8_Timer_Handler *handler = v8_timer_pool_.pop();
+	handler->timer_id = timer_id;
+	handler->interval = internal;
+	handler->next_tick = Time_Value::gettimeofday() + Time_Value(first_tick_internal);
+	v8_timer_queue_.push(handler);
+}
+
+int Game_Timer::v8_tick(const Time_Value &now){
+	while(!v8_timer_queue_.empty() && (now > v8_timer_queue_.top()->next_tick)) {
+		V8_Timer_Handler *handler = v8_timer_queue_.top();
+		v8_timer_queue_.pop();
+		v8_timer_list_.push_back(handler->timer_id);
+		handler->next_tick += Time_Value(handler->interval / 1000, handler->interval % 1000 * 1000);
+		v8_timer_queue_.push(handler);
+	}
+	return 0;
+}
+
 Game_Timer_Handler::Game_Timer_Handler(void) {
 	init_tick_msg_buf();
 }
@@ -47,9 +66,7 @@ void Game_Timer_Handler::init_tick_msg_buf(void) {
 }
 
 int Game_Timer_Handler::handle_timeout(const Time_Value &tv) {
-	return GAME_MANAGER->push_self_loop_message(tick_msg_buf_);
-}
-
-bool V8_Timer_Compare::operator()(V8_Timer_Handler *t1, V8_Timer_Handler *t2){
-	return t1->next_time > t2->next_time;
+	GAME_MANAGER->push_self_loop_message(tick_msg_buf_);
+	GAME_TIMER->v8_tick(tv);
+	return 0;
 }

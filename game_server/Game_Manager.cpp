@@ -233,7 +233,6 @@ int Game_Manager::tick(void) {
 	tick_time_ = now;
 
 	player_tick(now);
-	sync_v8_tick(now);
 	server_info_tick(now);
 	object_pool_tick(now);
 	saving_scanner_tick(now);
@@ -241,14 +240,14 @@ int Game_Manager::tick(void) {
 	return 0;
 }
 
-int Game_Manager::sync_v8_tick(Time_Value &now){
-	int sec = now.sec();
-	while(!v8_timer_queue_.empty() && (sec > v8_timer_queue_.top()->next_time)){
-		V8_Timer_Handler *handler = v8_timer_queue_.top();
-		v8_timer_queue_.pop();
-		handler->next_time += handler->interval;
-		v8_timer_list_.push_back(handler->timer_id);
-		v8_timer_queue_.push(handler);
+int Game_Manager::player_tick(Time_Value &now) {
+	if (now - tick_info_.player_last_tick < tick_info_.player_interval_tick)
+		return 0;
+	tick_info_.player_last_tick = now;
+	Game_Player_Role_Id_Map t_role_map(player_role_id_map_); /// 因为Game_Player::time_up()里有改变player_role_id_map_的操作, 直接在其上使用迭代器导致迭代器失效core
+	for (Game_Player_Role_Id_Map::iterator it = t_role_map.begin(); it != t_role_map.end(); ++it) {
+		if (it->second)
+			it->second->tick(now);
 	}
 	return 0;
 }
@@ -262,18 +261,6 @@ int Game_Manager::server_info_tick(Time_Value &now) {
 	game_gate_server_info_.reset();
 	GAME_GATE_SERVER->get_server_info(game_gate_server_info_);
 
-	return 0;
-}
-
-int Game_Manager::player_tick(Time_Value &now) {
-	if (now - tick_info_.player_last_tick < tick_info_.player_interval_tick)
-		return 0;
-	tick_info_.player_last_tick = now;
-	Game_Player_Role_Id_Map t_role_map(player_role_id_map_); /// 因为Game_Player::time_up()里有改变player_role_id_map_的操作, 直接在其上使用迭代器导致迭代器失效core
-	for (Game_Player_Role_Id_Map::iterator it = t_role_map.begin(); it != t_role_map.end(); ++it) {
-		if (it->second)
-			it->second->tick(now);
-	}
 	return 0;
 }
 
