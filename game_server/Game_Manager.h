@@ -15,7 +15,6 @@
 #include "Object_Pool.h"
 #include "Game_Player.h"
 #include "Msg_Define.h"
-#include "Game_Timer.h"
 
 class Game_Manager: public Thread {
 public:

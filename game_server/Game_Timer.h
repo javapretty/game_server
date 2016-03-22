@@ -10,6 +10,7 @@
 #include "Thread.h"
 #include "Epoll_Watcher.h"
 #include "Block_Buffer.h"
+#include "Priority_Queue.h"
 
 struct V8_Timer_Handler {
 	int timer_id; 				//js层定时器编号
@@ -22,34 +23,6 @@ public:
 	inline bool operator()(V8_Timer_Handler *t1, V8_Timer_Handler *t2) {
 		return t1->next_tick > t2->next_tick;
 	}
-};
-
-//优先队列
-template <typename Obj, typename Compare, typename LOCK = NULL_MUTEX>
-class Priority_Queue {
-typedef std::vector<Obj> CONTAINER;
-public:
-	Obj top(){
-		GUARD(LOCK, mon, this->lock_);
-		return container_.front();
-	}
-	void push(Obj obj){
-		GUARD(LOCK, mon, this->lock_);
-		container_.push_back(obj);
-		std::push_heap(container_.begin(), container_.end(), Compare());
-	}
-	void pop(){
-		GUARD(LOCK, mon, this->lock_);
-		std::pop_heap(container_.begin(), container_.end(), Compare());
-		container_.pop_back();
-	}
-	bool empty(){
-		GUARD(LOCK, mon, this->lock_);
-		return container_.empty();
-	}
-private:
-	CONTAINER container_;
-	LOCK lock_;
 };
 
 class Game_Timer_Handler: public Event_Handler {
