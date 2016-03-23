@@ -66,15 +66,26 @@ Bag.prototype.bag_add_money = function(copper, gold) {
 	this.bag_info.copper += copper;
 	this.bag_info.gold += gold;
 	this.bag_active_money();
+	return 0;
 }
 	
 Bag.prototype.bag_sub_money = function(copper, gold) {
+	if (this.bag_info.copper < copper) {
+		return Error_Code.ERROR_COPPER_NOT_ENOUGH;
+	}
+	if (this.bag_info.gold < copper) {
+		return Error_Code.ERROR_GOLD_NOT_ENOUGH;
+	}
 	this.bag_info.copper -= copper;
 	this.bag_info.gold -= gold;
 	this.bag_active_money();
+	return 0;
 }
 	
 Bag.prototype.bag_insert_item = function(item_array) {
+	if (this.bag_info.item_map.size + item_array.length > 2000){
+		return Error_Code.ERROR_BAG_FULL;
+	}
 	for (var i = 0; i < item_array.length; ++i) {
 		var item_info = this.bag_info.item_map.get(item_array[i].id);
 		if (item_info == null) {
@@ -109,6 +120,7 @@ Bag.prototype.bag_erase_item = function(item_array) {
 	}
 	
 	this.bag_active_item();
+	return 0;
 }
 	
 Bag.prototype.bag_active_money = function() {
