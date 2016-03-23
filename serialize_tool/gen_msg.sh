@@ -15,6 +15,7 @@ ROBOT_PATH=$DEFINE_PATH'../../robot/msg'
 function gen_msg(){
 	gen_cpp
 	gen_js
+	gen_msgd
 	cp_file
 	do_some_others
 }
@@ -37,12 +38,17 @@ function gen_js(){
 	done
 }
 
+function gen_msgd(){
+	./serialize_tool msg $DEFINE_PATH Message.define msg
+}
+
 function cp_file(){
 	wildcard='.*'
 	cp -rf CPP/* $CPP_TARGET
 	for file in $CPP_DEFINES_OUTER;do
 		cp -rf CPP/${file}${wildcard} $ROBOT_PATH
 	done
+	cp -rf CPP/Message.h $ROBOT_PATH
 	cp -rf JS/* $JS_TARGET
 }
 

@@ -39,6 +39,10 @@ enum Client_Game_Message {
 	REQ_ADD_EQUIP_LEVEL								= 120303,	//提高英雄装备等级
 	REQ_EQUIP_ON_OFF									=	120304,	//英雄装备穿脱
 	REQ_ADD_SKILL_LEVEL								= 120305,	//提高英雄技能等级
+	
+	REQ_FETCH_SHOP_INFO								= 120400,	//拉取商店信息
+	REQ_BUY_PRODUCT								= 120401,	//购买物品
+	REQ_REFRESH_SHOP								= 120402,	//刷新商店
 };
 
 enum Game_Client_Message {
@@ -61,6 +65,10 @@ enum Game_Client_Message {
 	RES_ADD_EQUIP_LEVEL								= 520303,	//提高英雄装备等级(返回)
 	RES_EQUIP_ON_OFF									=	520304,	//英雄装备穿脱(返回)
 	RES_ADD_SKILL_LEVEL								= 520305,	//提高英雄技能等级(返回)
+	
+	RES_FETCH_SHOP_INFO								= 520400,	//拉取商店信息(返回)
+	RES_BUY_PRODUCT								= 520401,	//购买物品(返回)
+	RES_REFRESH_SHOP								= 520402,	//刷新商店(返回)
 };
 
 //此次包含login,game,chat,master与gate通信的消息
