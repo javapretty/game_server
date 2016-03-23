@@ -67,9 +67,7 @@ void get_player_by_cid();
 //函数说明：通过role_name获取player对象  	参数：1,role_name	返回值：player对象
 void get_player_by_name();
 //函数说明：获取player_data buffer对象 	参数：无	返回值：buffer对象
-void player_data_buffer();
-//函数说明：设置玩家数据改变 	参数：1,改变的模块id	返回值：无
-void set_player_data_change();
+void get_player_data_buffer();
 //函数说明：发送成功的消息buffer到client 	参数：1,msg_id 2,buffer对象	返回值：无
 void respond_success_result();
 //函数说明：发送错误消息号到client 	参数：1,msg_id 2,错误号	返回值：无

@@ -7,8 +7,9 @@
 #include "Game_Manager.h"
 
 Game_Player::Game_Player(void):
-  is_register_timer_(0),
-  player_data_buffer_(0)
+  is_register_timer_(false),
+  read_player_data_buffer_(0),
+  write_player_data_buffer_(0)
 { }
 
 Game_Player::~Game_Player(void) { }
@@ -55,14 +56,28 @@ int Game_Player::respond_error_result(int msg_id, int err, Block_Buffer *buf) {
 int Game_Player::load_player(Player_Data &player_data) {
 	GAME_MANAGER->logining_map().erase(player_data.player_info.account);
 	player_data_ = player_data;
+
+	read_player_data_buffer_ = GAME_MANAGER->pop_block_buffer();
+	write_player_data_buffer_ = GAME_MANAGER->pop_block_buffer();
+	read_player_data_buffer_->write_int32(cid_info_.gate_cid);
+	read_player_data_buffer_->write_int32(cid_info_.player_cid);
+	player_data_.serialize(*read_player_data_buffer_);
+	GAME_MANAGER->push_player_data(read_player_data_buffer_);
 	return 0;
 }
 
 int Game_Player::save_player(bool is_logout) {
+	//js端写入值后，反序列化获取值
+	if (write_player_data_buffer_->readable_bytes() > 0) {
+		player_data_.deserialize(*write_player_data_buffer_);
+	}
+
 	if (is_logout) {
 		player_data_.status = Player_Data::ROLE_SAVE_OFFLINE;
+		player_data_.player_info.last_sign_out_time = GAME_MANAGER->tick_time().sec();
 	} else {
-		if (player_data_.change_set.size() <= 0) {
+		if (player_data_.change_module.size() <= 0) {
+			LOG_INFO("no player data module change, role_id=%ld, name=%s", player_data_.player_info.role_id, player_data_.player_info.role_name.c_str());
 			return -1;
 		}
 	}
@@ -86,28 +101,19 @@ int Game_Player::sign_in(std::string account) {
 	LOG_DEBUG("player sign in game_server. account=[%s], gate_cid = %d, player_cid = %d, role_id=%ld, name=%s",
 			account.c_str(), cid_info_.gate_cid, cid_info_.player_cid, player_data_.player_info.role_id, player_data_.player_info.role_name.c_str());
 
-	player_data_buffer_ = GAME_MANAGER->pop_block_buffer();
-	player_data_buffer_->write_int32(cid_info_.gate_cid);
-	player_data_buffer_->write_int32(cid_info_.player_cid);
-	player_data_.serialize(*player_data_buffer_);
-	GAME_MANAGER->push_player_data(player_data_buffer_);
-
-	login_success();
+	respond_role_login();
 	register_timer();
 	sync_signin_to_master();
 	return 0;
 }
 
 int Game_Player::sign_out(void) {
-	player_data_.deserialize(*player_data_buffer_);
-	GAME_MANAGER->push_block_buffer(player_data_buffer_);
-
-	this->player_data_.player_info.last_sign_out_time = GAME_MANAGER->tick_time().sec();
 	save_player(true);
 	unregister_timer();
 	sync_signout_to_master();
 	reset();
-
+	GAME_MANAGER->push_block_buffer(read_player_data_buffer_);
+	GAME_MANAGER->push_block_buffer(write_player_data_buffer_);
 	return 0;
 }
 
@@ -116,7 +122,6 @@ void Game_Player::reset(void) {
 	is_register_timer_ = false;
 	recycle_tick_.reset();
 	last_save_timestamp_ = Time_Value::zero;
-
 	player_data_.reset();
 }
 
@@ -168,14 +173,8 @@ int Game_Player::unregister_timer(void) {
 	return 0;
 }
 
-int Game_Player::login_success(void) {
-	respond_role_login();
-	return 0;
-}
-
 int Game_Player::respond_role_login(void) {
 	MSG_520001 msg;
-	msg.reset();
 	msg.role_info.role_id = player_data_.player_info.role_id;
 	msg.role_info.account = player_data_.player_info.account;
 	msg.role_info.role_name = player_data_.player_info.role_name;

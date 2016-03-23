@@ -22,11 +22,8 @@ Local<Object> wrap_player(Isolate* isolate, Game_Player *player) {
 	player_obj->SetInternalField(0, player_ptr);
 
 	// 为当前对象设置其对外函数接口
-	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "player_data_buffer", NewStringType::kNormal).ToLocalChecked(),
-		                    FunctionTemplate::New(isolate, player_data_buffer)->GetFunction()) ;
-
-	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "set_player_data_change", NewStringType::kNormal).ToLocalChecked(),
-		                    FunctionTemplate::New(isolate, set_player_data_change)->GetFunction()) ;
+	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "get_player_data_buffer", NewStringType::kNormal).ToLocalChecked(),
+		                    FunctionTemplate::New(isolate, get_player_data_buffer)->GetFunction()) ;
 
 	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "respond_success_result", NewStringType::kNormal).ToLocalChecked(),
 	                    FunctionTemplate::New(isolate, respond_success_result)->GetFunction()) ;
@@ -85,14 +82,14 @@ void get_player_by_name(const FunctionCallbackInfo<Value>& args) {
 	}
 }
 
-void player_data_buffer(const FunctionCallbackInfo<Value>& args) {
+void get_player_data_buffer(const FunctionCallbackInfo<Value>& args) {
 	Game_Player *player = unwrap_player(args.Holder());
 	if (!player) {
 		args.GetReturnValue().SetNull();
 		return;
 	}
 
-	Block_Buffer *buf = player->player_data_buffer();
+	Block_Buffer *buf = player->write_player_data_buffer();
 	if (buf) {
 		buf->reset();
 		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
@@ -100,21 +97,6 @@ void player_data_buffer(const FunctionCallbackInfo<Value>& args) {
 		//设置对象为空
 		args.GetReturnValue().SetNull();
 	}
-}
-
-void set_player_data_change(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 1) {
-		LOG_INFO("set_player_data_change args error, length: %d\n", args.Length());
-		return;
-	}
-
-	Game_Player *player = unwrap_player(args.Holder());
-	if (!player) {
-		return;
-	}
-
-	int change_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	player->player_data().set_change(change_id);
 }
 
 void respond_success_result(const FunctionCallbackInfo<Value>& args) {

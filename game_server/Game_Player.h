@@ -23,7 +23,7 @@ public:
 	int respond_error_result(int msg_id, int err, Block_Buffer *buf = 0);
 
 	Player_Data &player_data(void) { return player_data_; }
-	Block_Buffer *player_data_buffer(void) { return player_data_buffer_; }
+	Block_Buffer *write_player_data_buffer(void) { return write_player_data_buffer_; }
 
 	int load_player(Player_Data &player_data);
 	int save_player(bool is_logout = false);
@@ -44,14 +44,14 @@ public:
 	int register_timer(void);
 	int unregister_timer(void);
 
-	int login_success(void);
 	int respond_role_login(void);
 
 private:
 	bool is_register_timer_;
 	Cid_Info cid_info_;		///登录信息，包括gate_cid和player_cid
 	Player_Data player_data_;
-	Block_Buffer *player_data_buffer_;
+	Block_Buffer *read_player_data_buffer_;			//供js端读取登录数据的buffer
+	Block_Buffer *write_player_data_buffer_;		//供js端写入玩家数据的buffer
 	Recycle_Tick recycle_tick_;
 	Time_Value last_save_timestamp_;
 };

@@ -17,11 +17,7 @@ Bag.prototype.load_data = function(player, buffer) {
 Bag.prototype.save_data = function(buffer) {
 	this.bag_info.serialize(buffer);
 }
-	
-Bag.prototype.set_data_change = function() {
-	this.player.cplayer.set_player_data_change(Data_Change.BAG_CHANGE);
-}
-	
+
 Bag.prototype.tick = function(now) {
 	
 }
@@ -132,7 +128,7 @@ Bag.prototype.bag_active_money = function() {
 	msg_active.serialize(buf);
 	this.player.cplayer.respond_success_result(Msg_Active.ACTIVE_MONEY_INFO, buf);
 	push_buffer(buf);
-	this.set_data_change();
+	this.player.set_data_change(Data_Change.BAG_CHANGE);
 }
 	
 Bag.prototype.bag_active_item = function() {
@@ -145,5 +141,5 @@ Bag.prototype.bag_active_item = function() {
 	msg_active.serialize(buf);
 	this.player.cplayer.respond_success_result(Msg_Active.ACTIVE_ITEM_INFO, buf);
 	push_buffer(buf);
-	this.set_data_change();
+	this.player.set_data_change(Data_Change.BAG_CHANGE);
 }

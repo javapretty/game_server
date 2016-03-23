@@ -5,8 +5,10 @@
 */
 
 function Player() {
+	this.sync_player_data_tick = util.now_sec();
 	this.cid = 0;
 	this.cplayer = null;
+	this.change_module = new Array();
 	this.player_info = new Player_Info();
 	this.hero = new Hero();
 	this.bag = new Bag();
@@ -22,8 +24,12 @@ Player.prototype.load_player_data = function(buffer) {
 	
 	var gate_cid = buffer.read_int32();
 	var player_cid = buffer.read_int32();
-	var status = buffer.read_int8();
-	var size = buffer.read_uint16();
+	var status = buffer.read_int8();					//status
+	var change_len = buffer.read_uint16();		//change_module len
+	for(var i = 0; i < change_len; ++i) {
+		var change_id = buffer.read_int32();
+		this.change_module.push(change_id);
+	}
 	this.player_info.deserialize(buffer);
 	this.hero.load_data(this, buffer);
 	this.bag.load_data(this, buffer);
@@ -38,37 +44,60 @@ Player.prototype.load_player_data = function(buffer) {
 	player_role_id_map.insert(this.player_info.role_id, this);
 }
 	
-	//玩家离线，保存数据
+//玩家离线，保存数据
 Player.prototype.save_player_data = function() {
-	var buffer = this.cplayer.player_data_buffer();
+	print('------save_data,role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name);
+	
+	this.sync_player_data();
+	player_cid_map.remove(this.cid);
+	player_role_id_map.remove(this.player_info.role_id);
+}
+
+Player.prototype.sync_player_data = function() {
+	var buffer = this.cplayer.get_player_data_buffer();
 	if (buffer == null) {
 		return;
 	}
 	
-	buffer.write_int8(0);		//status
-	buffer.write_uint16(0);		//change_set size
+	buffer.write_int8(0);			//status
+	var change_len = this.change_module.length;
+	buffer.write_uint16(change_len);
+	for(var i = 0; i < change_len; ++i) {
+		buffer.write_int32(this.change_module[i]);
+	}
 	this.player_info.serialize(buffer);
 	this.hero.save_data(buffer);
 	this.bag.save_data(buffer);
 	this.mail.save_data(buffer);
 	this.shop.save_data(buffer);
-	print('------save_data,role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name);
-	
-	player_cid_map.remove(this.cid);
-	player_role_id_map.remove(this.player_info.role_id);
 }
 	
-Player.prototype.set_data_change = function() {
-	this.cplayer.set_player_data_change(Data_Change.PLAYER_CHANGE);
+Player.prototype.set_data_change = function(change_id) {
+	var exist = false;
+	for (var i = 0; i < this.change_module.length; ++i) {
+		if (this.change_module[i] == change_id) {
+			exist = true;
+			break;
+		}
+	}
+	if (!exist) {
+		this.change_module.push(change_id);
+	}
 }
 	
 Player.prototype.tick = function(now) {
 	//技能点回复，五分钟回复一点
 	if (this.player_info.skill_point < 10) {
-		if (now > this.player_info.recover_skill_time) {
+		if (now - this.player_info.recover_skill_time >= 300) {
 			this.player_info.skill_point++;
-			this.player_info.recover_skill_time = now + 300;
+			this.player_info.recover_skill_time = now;
 		}
+	}
+	
+	//同步玩家数据到C++,15s一次
+	if (now - this.sync_player_data_tick >= 15) {
+		this.sync_player_data();
+		this.sync_player_data_tick = now;
 	}
 }
 	
@@ -98,7 +127,7 @@ Player.prototype.add_exp = function(exp) {
 	msg_active.serialize(buf);
 	this.cplayer.respond_success_result(Msg_Active.ACTIVE_PLAYER_INFO, buf);
 	push_buffer(buf);
-	this.set_data_change();
+	this.set_data_change(Data_Change.PLAYER_CHANGE);
 }
 	
 Player.prototype.update_vip = function(charge_id) {
@@ -121,7 +150,7 @@ Player.prototype.update_vip = function(charge_id) {
 	msg_active.serialize(buf);
 	this.cplayer.respond_success_result(Msg_Active.ACTIVE_VIP_INFO, buf);
 	push_buffer(buf);
-	this.set_data_change();
+	this.set_data_change(Data_Change.PLAYER_CHANGE);
 }
 	
 Player.prototype.buy_vitality = function() {
@@ -150,5 +179,5 @@ Player.prototype.buy_vitality = function() {
 	buf.write_int32(this.player_info.vitality);
 	this.cplayer.respond_success_result(Msg_Res.RES_BUY_VITALITY, buf);
 	push_buffer(buf);
-	this.set_data_change();
+	this.set_data_change(Data_Change.PLAYER_CHANGE);
 }

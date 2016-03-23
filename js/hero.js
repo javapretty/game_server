@@ -29,10 +29,6 @@ Hero.prototype.save_data = function(buffer) {
 	this.hero_info.serialize(buffer);
 }
 	
-Hero.prototype.set_data_change = function() {
-	this.player.cplayer.set_player_data_change(Data_Change.HERO_CHANGE);
-}
-	
 Hero.prototype.tick = function(now) {
 	
 }
@@ -69,22 +65,22 @@ Hero.prototype.add_hero_star = function(buffer) {
     	return this.player.cplayer.respond_error_result(Msg_Res.RES_ADD_HERO_STAR, Error_Code.ERROR_CLIENT_OPERATE);
     }
     	
-    var item = new Item_Info();
-    item.id = hero_obj.star_item_id;
-    item.amount = hero_obj.star_item_amount[hero_detail.level];
-    var item_array = new Array();
-    item_array.push(item);
-    var result = this.player.bag.bag_erase_item(item_array);
-    if (result != 0) {
+	var item = new Item_Info();
+	item.id = hero_obj.star_item_id;
+	item.amount = hero_obj.star_item_amount[hero_detail.level];
+	var item_array = new Array();
+	item_array.push(item);
+  	var result = this.player.bag.bag_erase_item(item_array);
+  if (result != 0) {
     	return this.player.cplayer.respond_error_result(Msg_Res.RES_ADD_HERO_STAR, result);
-    }
-    hero_detail.star++;
-    this.refresh_hero_property(hero_detail);
-    this.set_data_change();
+	}
+  hero_detail.star++;
+  this.refresh_hero_property(hero_detail);
+  this.player.set_data_change(Data_Change.HERO_CHANGE);
     	
-    var msg_res = new MSG_520301();
-    msg_res.hero_id = msg_req.hero_id;
-    msg_res.star = hero_detail.star;
+  var msg_res = new MSG_520301();
+  msg_res.hero_id = msg_req.hero_id;
+  msg_res.star = hero_detail.star;
 	var buf = pop_buffer();
 	msg_res.serialize(buf);
 	this.player.cplayer.respond_success_result(Msg_Res.RES_ADD_HERO_STAR, buf);
@@ -117,7 +113,7 @@ Hero.prototype.add_hero_quality = function(buffer) {
 	}
 	hero_detail.quality++;
 	this.refresh_hero_property(hero_detail);
-	this.set_data_change();
+	this.player.set_data_change(Data_Change.HERO_CHANGE);
 
 	var msg_res = new MSG_520302();
 	msg_res.hero_id = msg_req.hero_id;
@@ -160,7 +156,7 @@ Hero.prototype.add_equip_level = function(buffer) {
     	equip.level++;
     }
     this.refresh_hero_property(hero_detail);
-	this.set_data_change();
+	this.player.set_data_change(Data_Change.HERO_CHANGE);
 
 	var msg_res = new MSG_520303();
 	msg_res.hero_id = msg_req.hero_id;
@@ -213,7 +209,7 @@ Hero.prototype.equip_on_off = function(buffer) {
 		hero_detail.equip_info[msg_req.equip_index] = new Item_Info();
 	}
 	this.refresh_hero_property(hero_detail);
-	this.set_data_change();
+	this.player.set_data_change(Data_Change.HERO_CHANGE);
 
 	var msg_res = new MSG_520304();
 	msg_res.hero_id = msg_req.hero_id;
@@ -246,7 +242,7 @@ Hero.prototype.add_skill_level = function(buffer) {
 			break;
 		}
 	}
-	this.set_data_change();
+	this.player.set_data_change(Data_Change.HERO_CHANGE);
 
 	var msg_res = new MSG_520305();
 	msg_res.hero_id = msg_req.hero_id;

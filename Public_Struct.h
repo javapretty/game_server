@@ -7,7 +7,6 @@
 #ifndef PUBLIC_STURCT_H_
 #define PUBLIC_STURCT_H_
 
-#include "boost/unordered_set.hpp"
 #include "boost/unordered_map.hpp"
 #include "Time_Value.h"
 #include "Misc.h"
@@ -133,8 +132,8 @@ struct Recycle_Tick {
 };
 
 struct Player_Data {
-	enum	{
-		NULL_STATUS,
+	enum	 {
+		NULL_STATUS = 0,
 		SUCCESS_LOADED,			/// 加载成功
 		SUCCESS_CREATED,		/// 创建成功
 		ROLE_NOT_EXIST,			/// 角色不存在
@@ -143,8 +142,7 @@ struct Player_Data {
 	};
 
 	enum {
-		CHANGE_FIRST = 0,
-		PLAYER_CHANGE,
+		PLAYER_CHANGE = 1,
 		HERO_CHANGE,
 		BAG_CHANGE,
 		MAIL_CHANGE,
@@ -153,7 +151,7 @@ struct Player_Data {
 	};
 
 	int8_t status;
-	boost::unordered_set<int> change_set;
+	std::vector<int32_t> change_module;
 
 	Player_Info player_info;
 	Hero_Info hero_info;

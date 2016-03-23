@@ -28,10 +28,6 @@ Shop.prototype.save_data = function(buffer) {
 	this.shop_info.serialize(buffer);
 }
 
-Shop.prototype.set_data_change = function() {
-	this.player.cplayer.set_player_data_change(Data_Change.SHOP_CHANGE);
-}
-
 Shop.prototype.tick = function(now) {
 	
 }
@@ -76,6 +72,8 @@ Shop.prototype.refresh_by_player = function(buffer){
 		print("these's no shop type ", msg_req.shop_type);
 		break;
 	}
+	
+	this.player.set_data_change(Data_Change.SHOP_CHANGE);
 }
 
 Shop.prototype.buy_product = function(buffer){
@@ -96,6 +94,8 @@ Shop.prototype.buy_product = function(buffer){
 		print("these's no shop type ", msg_req.shop_type);
 		break;
 	}
+	
+	this.player.set_data_change(Data_Change.SHOP_CHANGE);
 }
 
 Shop.prototype.refresh_shop = function(shop_type, fresh_count = -1){

@@ -15,9 +15,9 @@ Player_Data::Player_Data(void) { reset(); }
 int Player_Data::serialize(Block_Buffer &buffer) const {
 	buffer.write_int8(status);
 
-	buffer.write_uint16(change_set.size());
-	for(boost::unordered_set<int>::const_iterator it = change_set.begin();
-			it != change_set.end(); ++it) {
+	buffer.write_uint16(change_module.size());
+	for(std::vector<int>::const_iterator it = change_module.begin();
+			it != change_module.end(); ++it) {
 		buffer.write_int32(*it);
 	}
 	player_info.serialize(buffer);
@@ -35,7 +35,7 @@ int Player_Data::deserialize(Block_Buffer &buffer) {
 	int change_id = 0;
 	for (int16_t i = 0; i < size; ++i) {
 		change_id = buffer.read_int32();
-		change_set.insert(change_id);
+		change_module.push_back(change_id);
 	}
 	player_info.deserialize(buffer);
 	hero_info.deserialize(buffer);
@@ -55,7 +55,7 @@ int Player_Data::load(int64_t role_id) {
 }
 
 int Player_Data::save(void) {
-	for (boost::unordered_set<int>::iterator it = change_set.begin(); it != change_set.end(); ++it) {
+	for (std::vector<int>::iterator it = change_module.begin(); it != change_module.end(); ++it) {
 		switch(*it) {
 		case PLAYER_CHANGE:
 			CACHED_INSTANCE->save_player_info(player_info.role_id, player_info);
@@ -79,7 +79,7 @@ int Player_Data::save(void) {
 
 void Player_Data::reset(void) {
 	status =	NULL_STATUS;
-	change_set.clear();
+	change_module.clear();
 
 	player_info.reset();
 	hero_info.reset();
@@ -90,14 +90,10 @@ void Player_Data::reset(void) {
 
 void Player_Data::set_all_change(bool is_change) {
 	if (is_change) {
-		for (int i = CHANGE_FIRST + 1; i < CHANGE_END; ++i) {
-			change_set.insert(i);
+		for (int i = PLAYER_CHANGE; i < CHANGE_END; ++i) {
+			change_module.push_back(i);
 		}
 	} else {
-		change_set.clear();
+		change_module.clear();
 	}
-}
-
-void Player_Data::set_change(int change_id) {
-	change_set.insert(change_id);
 }

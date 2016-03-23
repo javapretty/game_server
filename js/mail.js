@@ -18,10 +18,6 @@ Mail.prototype.save_data = function(buffer) {
 	this.mail_info.serialize(buffer);
 }
 	
-Mail.prototype.set_data_change = function() {
-	this.player.cplayer.set_player_data_change(Data_Change.MAIL_CHANGE);
-}
-
 Mail.prototype.tick = function(now) {
 	
 }
@@ -71,7 +67,7 @@ Mail.prototype.pickup_mail = function(buffer) {
 	this.player.cplayer.respond_success_result(Msg_Res.RES_PICKUP_MAIL, buf);
 	push_buffer(buf);
 	
-	this.set_data_change();
+	this.player.set_data_change(Data_Change.MAIL_CHANGE);
 }
 
 Mail.prototype.delete_mail = function(buffer) {
@@ -107,7 +103,7 @@ Mail.prototype.delete_mail = function(buffer) {
 	this.player.cplayer.respond_success_result(Msg_Res.RES_DEL_MAIL, buf);
 	push_buffer(buf);
 	
-	this.set_data_change();
+	this.player.set_data_change(Data_Change.MAIL_CHANGE);
 }
 
 Mail.prototype.send_mail = function(buffer) {
@@ -173,7 +169,7 @@ Mail.prototype.send_mail_inner = function(receiver_id, mail_detail) {
 		receiver.cplayer.respond_success_result(Msg_Active.ACTIVE_MAIL_INFO, buf);
 		push_buffer(buf);
 		
-		receiver.mail.set_data_change();
+		receiver.set_data_change(Data_Change.MAIL_CHANGE);
 	} else {
 		var buf = pop_buffer();
 		buf.make_inner_message(Msg_Db.SYNC_GAME_DB_SAVE_MAIL_INFO);
