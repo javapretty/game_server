@@ -11,7 +11,7 @@
 
 class Game_Player {
 public:
-	const static Time_Value game_player_save_interval_;
+	const static Time_Value save_interval_;
 
 	Game_Player(void);
 	virtual ~Game_Player(void);
@@ -41,19 +41,15 @@ public:
 	int recycle_status(void);
 	int recycle_tick(const Time_Value &now);
 
-	int register_timer(void);
-	int unregister_timer(void);
-
 	int respond_role_login(void);
 
 private:
-	bool is_register_timer_;
-	Cid_Info cid_info_;		///登录信息，包括gate_cid和player_cid
+	Cid_Info cid_info_;							//登录信息，包括gate_cid和player_cid
 	Player_Data player_data_;
 	Block_Buffer *read_player_data_buffer_;			//供js端读取登录数据的buffer
 	Block_Buffer *write_player_data_buffer_;		//供js端写入玩家数据的buffer
 	Recycle_Tick recycle_tick_;
-	Time_Value last_save_timestamp_;
+	Time_Value last_save_tick_;			//上次保存数据tick
 };
 
 ////////////////////////////////////////////////////////////////////////////////

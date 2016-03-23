@@ -7,14 +7,13 @@
 #include "Game_Manager.h"
 
 Game_Player::Game_Player(void):
-  is_register_timer_(false),
   read_player_data_buffer_(0),
   write_player_data_buffer_(0)
 { }
 
 Game_Player::~Game_Player(void) { }
 
-const Time_Value Game_Player::game_player_save_interval_ = Time_Value(30, 0);
+const Time_Value Game_Player::save_interval_ = Time_Value(30, 0);
 
 int Game_Player::respond_success_result(int msg_id, Block_Buffer *buf) {
 		return respond_error_result(msg_id, 0, buf);
@@ -102,14 +101,12 @@ int Game_Player::sign_in(std::string account) {
 			account.c_str(), cid_info_.gate_cid, cid_info_.player_cid, player_data_.player_info.role_id, player_data_.player_info.role_name.c_str());
 
 	respond_role_login();
-	register_timer();
 	sync_signin_to_master();
 	return 0;
 }
 
 int Game_Player::sign_out(void) {
 	save_player(true);
-	unregister_timer();
 	sync_signout_to_master();
 	reset();
 	GAME_MANAGER->push_block_buffer(read_player_data_buffer_);
@@ -119,9 +116,8 @@ int Game_Player::sign_out(void) {
 
 void Game_Player::reset(void) {
 	cid_info_.reset();
-	is_register_timer_ = false;
 	recycle_tick_.reset();
-	last_save_timestamp_ = Time_Value::zero;
+	last_save_tick_ = Time_Value::gettimeofday();
 	player_data_.reset();
 }
 
@@ -152,24 +148,11 @@ int Game_Player::tick(Time_Value &now) {
 	if (recycle_tick(now) == 1)
 		return 0;
 
-	if (! is_register_timer_)
-		return 0;
-
-	if (now - last_save_timestamp_ > game_player_save_interval_) {
+	if (now - last_save_tick_ > save_interval_) {
 		save_player();
-		last_save_timestamp_ = now;
+		last_save_tick_ = now;
 	}
 
-	return 0;
-}
-
-int Game_Player::register_timer(void) {
-	is_register_timer_ = true;
-	return 0;
-}
-
-int Game_Player::unregister_timer(void) {
-	is_register_timer_ = false;
 	return 0;
 }
 
