@@ -149,6 +149,17 @@ struct MSG_520304 {
 	Item_Info equip_info;		//装备信息
 };
 
+//提高英雄技能等级
+struct MSG_120305 {
+	int32_t hero_id;
+	int32_t skill_id;
+};
+
+struct MSG_520305 {
+	int32_t hero_id;
+	int32_t skill_id;
+};
+
 //获取商店列表
 struct MSG_120400 {
 	uint32_t shop_type; //商店类型

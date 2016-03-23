@@ -184,11 +184,12 @@ void Player_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(last_sign_in_time);
 	buffer.write_int32(last_sign_out_time);
 	buffer.write_int32(vitality);
-	buffer.write_int64(last_change_time);
-	buffer.write_int32(today_buy);
+	buffer.write_int32(buy_vitality_times);
 	buffer.write_int32(vip_level);
 	buffer.write_int32(vip_exp);
 	buffer.write_int32(charge_gold);
+	buffer.write_int32(skill_point);
+	buffer.write_int64(recover_skill_time);
 }
 
 int Player_Info::deserialize(Block_Buffer &buffer) {
@@ -206,11 +207,12 @@ int Player_Info::deserialize(Block_Buffer &buffer) {
 	last_sign_in_time = buffer.read_int32();
 	last_sign_out_time = buffer.read_int32();
 	vitality = buffer.read_int32();
-	last_change_time = buffer.read_int64();
-	today_buy = buffer.read_int32();
+	buy_vitality_times = buffer.read_int32();
 	vip_level = buffer.read_int32();
 	vip_exp = buffer.read_int32();
 	charge_gold = buffer.read_int32();
+	skill_point = buffer.read_int32();
+	recover_skill_time = buffer.read_int64();
 	return 0;
 }
 
@@ -229,11 +231,12 @@ void Player_Info::reset(void) {
 	last_sign_in_time = 0;
 	last_sign_out_time = 0;
 	vitality = 0;
-	last_change_time = 0;
-	today_buy = 0;
+	buy_vitality_times = 0;
 	vip_level = 0;
 	vip_exp = 0;
 	charge_gold = 0;
+	skill_point = 0;
+	recover_skill_time = 0;
 }
 
 Hero_Info::Hero_Info(void) {

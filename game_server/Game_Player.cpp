@@ -102,9 +102,7 @@ int Game_Player::sign_out(void) {
 	player_data_.deserialize(*player_data_buffer_);
 	GAME_MANAGER->push_block_buffer(player_data_buffer_);
 
-	Time_Value now = GAME_MANAGER->tick_time();
-	this->player_data_.player_info.last_sign_out_time = now.sec();
-
+	this->player_data_.player_info.last_sign_out_time = GAME_MANAGER->tick_time().sec();
 	save_player(true);
 	unregister_timer();
 	sync_signout_to_master();
@@ -186,10 +184,11 @@ int Game_Player::respond_role_login(void) {
 	msg.role_info.career = player_data_.player_info.career;
 	msg.role_info.gender = player_data_.player_info.gender;
 	msg.role_info.vitality = player_data_.player_info.vitality;
-	msg.role_info.today_buy = player_data_.player_info.today_buy;
+	msg.role_info.buy_vitality_times = player_data_.player_info.buy_vitality_times;
 	msg.role_info.vip_level = player_data_.player_info.vip_level;
 	msg.role_info.vip_exp = player_data_.player_info.vip_exp;
 	msg.role_info.charge_gold = player_data_.player_info.charge_gold;
+	msg.role_info.skill_point = player_data_.player_info.skill_point;
 
 	Block_Buffer buf;
 	buf.make_player_message(RES_FETCH_ROLE_INFO, 0, cid_info_.player_cid);

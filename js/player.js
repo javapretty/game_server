@@ -120,26 +120,23 @@ function Player() {
 
 		//1.检查可以购买体力次数
 		var max_buy_times = util.get_json_config('config/vip/vip.json', this.player_info.vip_level).buy_vitality_max;
-		if (this.player_info.today_buy >= max_buy_times){
+		if (this.player_info.buy_vitality_times >= max_buy_times){
 			return this.cplayer.respond_error_result(Msg_Res.RES_BUY_VITALITY, Error_Code.ERROR_VITALITY_TIMES_NOT_ENOUGH);
 		}
 
 		//2.更新元宝
-		var cost_gold = util.get_json_config('config/util/price.json', this.player_info.today_buy).vitality;
+		var cost_gold = util.get_json_config('config/util/price.json', this.player_info.buy_vitality_times).vitality;
 		var result = this.bag.bag_sub_money(0, cost_gold);
 		if (result != 0) {
 			return this.cplayer.respond_error_result(Msg_Res.RES_BUY_VITALITY, Error_Code.ERROR_GOLD_NOT_ENOUGH);
 		}
 		
-		//4.更新购买次数以及体力修改时间
-		this.player_info.last_change_time = util.now_msec();
-		this.player_info.today_buy++;
-		
-		//5.更新体力(120应该为配置)
+		//3.更新体力(120应该为配置)
+		this.player_info.buy_vitality_times++;
 		var maxVit = util.get_json_config('config/player/level.json', this.player_info.level).max_vitality;
 		this.player_info.vitality = Math.min(Math.max(0, (this.player_info.vitality + 120)), maxVit);
 		
-		//6.返回消息给客户端
+		//4.返回消息给客户端
 		var buf = pop_buffer();
 		buf.write_int32(this.player_info.vitality);
 		this.cplayer.respond_success_result(Msg_Res.RES_BUY_VITALITY, buf);

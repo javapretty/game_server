@@ -16,10 +16,11 @@ function Role_Info() {
 	this.career = 0;
 	this.gender = 0;
 	this.vitality = 0;
-	this.today_buy = 0;
+	this.buy_vitality_times = 0;
 	this.vip_level = 0;
 	this.vip_exp = 0;
 	this.charge_gold = 0;
+	this.skill_point = 0;
 
 	this.serialize = function(buffer) {
 		buffer.write_int64(this.role_id);
@@ -30,10 +31,11 @@ function Role_Info() {
 		buffer.write_int32(this.career);
 		buffer.write_int32(this.gender);
 		buffer.write_int32(this.vitality);
-		buffer.write_int32(this.today_buy);
+		buffer.write_int32(this.buy_vitality_times);
 		buffer.write_int32(this.vip_level);
 		buffer.write_int32(this.vip_exp);
 		buffer.write_int32(this.charge_gold);
+		buffer.write_int32(this.skill_point);
 	}
 
 	this.deserialize = function(buffer) {
@@ -45,10 +47,11 @@ function Role_Info() {
 		this.career = buffer.read_int32();
 		this.gender = buffer.read_int32();
 		this.vitality = buffer.read_int32();
-		this.today_buy = buffer.read_int32();
+		this.buy_vitality_times = buffer.read_int32();
 		this.vip_level = buffer.read_int32();
 		this.vip_exp = buffer.read_int32();
 		this.charge_gold = buffer.read_int32();
+		this.skill_point = buffer.read_int32();
 	}
 }
 
@@ -94,6 +97,8 @@ function Hero_Detail() {
 	this.exp = 0;
 	this.star = 0;
 	this.quality = 0;
+	this.energy = 0;
+	this.skill_info = new Array();
 	this.equip_info = new Array();
 	this.property_info = new Array();
 
@@ -103,6 +108,12 @@ function Hero_Detail() {
 		buffer.write_int32(this.exp);
 		buffer.write_int32(this.star);
 		buffer.write_int32(this.quality);
+		buffer.write_int32(this.energy);
+		var len = this.skill_info.length;
+		buffer.write_uint16(len);
+		for(var i = 0; i < len; ++i) {
+			buffer.write_int32(this.skill_info[i]);
+		}
 		var len = this.equip_info.length;
 		buffer.write_uint16(len);
 		for(var i = 0; i < len; ++i) {
@@ -121,6 +132,13 @@ function Hero_Detail() {
 		this.exp = buffer.read_int32();
 		this.star = buffer.read_int32();
 		this.quality = buffer.read_int32();
+		this.energy = buffer.read_int32();
+		var len = buffer.read_uint16();
+		for(var i = 0; i < len; ++i) {
+			var skill_info_v;
+			skill_info_v = buffer.read_int32();
+			this.skill_info.push(skill_info_v);
+		}
 		var len = buffer.read_uint16();
 		for(var i = 0; i < len; ++i) {
 			var equip_info_v = new Item_Info();
@@ -384,11 +402,12 @@ function Player_Info() {
 	this.last_sign_in_time = 0;
 	this.last_sign_out_time = 0;
 	this.vitality = 0;
-	this.last_change_time = 0;
-	this.today_buy = 0;
+	this.buy_vitality_times = 0;
 	this.vip_level = 0;
 	this.vip_exp = 0;
 	this.charge_gold = 0;
+	this.skill_point = 0;
+	this.recover_skill_time = 0;
 
 	this.serialize = function(buffer) {
 		buffer.write_int64(this.role_id);
@@ -405,11 +424,12 @@ function Player_Info() {
 		buffer.write_int32(this.last_sign_in_time);
 		buffer.write_int32(this.last_sign_out_time);
 		buffer.write_int32(this.vitality);
-		buffer.write_int64(this.last_change_time);
-		buffer.write_int32(this.today_buy);
+		buffer.write_int32(this.buy_vitality_times);
 		buffer.write_int32(this.vip_level);
 		buffer.write_int32(this.vip_exp);
 		buffer.write_int32(this.charge_gold);
+		buffer.write_int32(this.skill_point);
+		buffer.write_int64(this.recover_skill_time);
 	}
 
 	this.deserialize = function(buffer) {
@@ -427,11 +447,12 @@ function Player_Info() {
 		this.last_sign_in_time = buffer.read_int32();
 		this.last_sign_out_time = buffer.read_int32();
 		this.vitality = buffer.read_int32();
-		this.last_change_time = buffer.read_int64();
-		this.today_buy = buffer.read_int32();
+		this.buy_vitality_times = buffer.read_int32();
 		this.vip_level = buffer.read_int32();
 		this.vip_exp = buffer.read_int32();
 		this.charge_gold = buffer.read_int32();
+		this.skill_point = buffer.read_int32();
+		this.recover_skill_time = buffer.read_int64();
 	}
 }
 

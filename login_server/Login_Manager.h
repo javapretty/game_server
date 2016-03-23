@@ -37,9 +37,11 @@ public:
 	};
 
 	static Login_Manager *instance(void);
-
 	int init(void);
 	void run_handler(void);
+
+	/// 服务器状态
+	inline int server_status(void) { return server_status_; };
 
 	int init_gate_ip(void);
 	void get_gate_ip(std::string &account, std::string &ip, int &port);
@@ -57,18 +59,12 @@ public:
 
 	int unbind_login_player(Login_Player &player);
 
-	/// 定时器处理
-	int register_timer(void);
-	int unregister_timer(void);
-
 	/// 发送数据接口
 	int send_to_client(int cid, Block_Buffer &buf);
 	int send_to_gate(int cid, Block_Buffer &buf);
 
 	/// 关闭连接
 	int close_client(int cid);
-	/// 服务器状态
-	int server_status(void);
 	/// 主动关闭处理
 	int self_close_process(void);
 
@@ -82,18 +78,16 @@ public:
 	int process_list();
 	void process_drop_cid(int cid);
 
+	/// 定时器处理
 	int tick(void);
+	/// 返回上次tick的绝对时间, 最大误差有100毫秒,主要为减少系统调用gettimeofday()调用次数
+	inline const Time_Value &tick_time(void) { return tick_time_; };
 	int close_list_tick(Time_Value &now);
-	int player_tick(Time_Value &now);
 	int server_info_tick(Time_Value &now);
-	int manager_tick(Time_Value &now);
+	int player_tick(Time_Value &now);
 	void object_pool_tick(Time_Value &now);
 
 	void get_server_info(Block_Buffer &buf);
-
-	/// 返回上次tick的绝对时间, 最大误差有100毫秒
-	/// 主要为减少系统调用gettimeofday()调用次数
-	const Time_Value &tick_time(void);
 	void object_pool_size(void);
 	void free_cache(void);
 
@@ -124,23 +118,20 @@ private:
 	Server_Info login_client_server_info_;
 	Server_Info login_gate_server_info_;
 
-	Tick_Info tick_info_;
-
 	Login_Player_Pool login_player_pool_;
 	Int_List drop_cid_list_;
 
-	int status_;
-	bool is_register_timer_;
+	Tick_Info tick_info_;
 	Time_Value tick_time_;
+
+	int server_status_;
 
 	/// 消息统计
 	bool msg_count_onoff_;
 	Msg_Count_Map inner_msg_count_map_;
 
 	Ip_Vec gate_ip_vec_;
-
 	Check_Account check_account_;
-
 
 	Login_Player_Map player_cid_map_; /// cid - Login_Player map
 	Login_Player_Account_Map player_account_map_; /// role_id - Login_Player map
@@ -181,10 +172,6 @@ inline int Login_Manager::push_self_loop_message(Block_Buffer &msg_buf) {
 	buf->copy(&msg_buf);
 	self_loop_block_list_.push_back(buf);
 	return 0;
-}
-
-inline const Time_Value &Login_Manager::tick_time(void) {
-	return tick_time_;
 }
 
 inline void Login_Manager::set_msg_count_onoff(int v) {

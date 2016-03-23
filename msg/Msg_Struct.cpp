@@ -22,10 +22,11 @@ void Role_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(career);
 	buffer.write_int32(gender);
 	buffer.write_int32(vitality);
-	buffer.write_int32(today_buy);
+	buffer.write_int32(buy_vitality_times);
 	buffer.write_int32(vip_level);
 	buffer.write_int32(vip_exp);
 	buffer.write_int32(charge_gold);
+	buffer.write_int32(skill_point);
 }
 
 int Role_Info::deserialize(Block_Buffer &buffer) {
@@ -37,10 +38,11 @@ int Role_Info::deserialize(Block_Buffer &buffer) {
 	career = buffer.read_int32();
 	gender = buffer.read_int32();
 	vitality = buffer.read_int32();
-	today_buy = buffer.read_int32();
+	buy_vitality_times = buffer.read_int32();
 	vip_level = buffer.read_int32();
 	vip_exp = buffer.read_int32();
 	charge_gold = buffer.read_int32();
+	skill_point = buffer.read_int32();
 	return 0;
 }
 
@@ -53,10 +55,11 @@ void Role_Info::reset(void) {
 	career = 0;
 	gender = 0;
 	vitality = 0;
-	today_buy = 0;
+	buy_vitality_times = 0;
 	vip_level = 0;
 	vip_exp = 0;
 	charge_gold = 0;
+	skill_point = 0;
 }
 
 Property_Detail::Property_Detail(void) {
@@ -115,6 +118,12 @@ void Hero_Detail::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(exp);
 	buffer.write_int32(star);
 	buffer.write_int32(quality);
+	buffer.write_int32(energy);
+	uint16_t skill_info_size = skill_info.size();
+	buffer.write_uint16(skill_info_size);
+	for(uint16_t i = 0; i < skill_info_size; ++i) {
+		buffer.write_int32(skill_info[i]);
+	}
 	uint16_t equip_info_size = equip_info.size();
 	buffer.write_uint16(equip_info_size);
 	for(uint16_t i = 0; i < equip_info_size; ++i) {
@@ -133,6 +142,13 @@ int Hero_Detail::deserialize(Block_Buffer &buffer) {
 	exp = buffer.read_int32();
 	star = buffer.read_int32();
 	quality = buffer.read_int32();
+	energy = buffer.read_int32();
+	uint16_t skill_info_size = buffer.read_uint16();
+	int32_t skill_info_v;
+	for(uint16_t i = 0; i < skill_info_size; ++i) {
+		skill_info_v = buffer.read_int32();
+		skill_info.push_back(skill_info_v);
+	}
 	uint16_t equip_info_size = buffer.read_uint16();
 	Item_Info equip_info_v;
 	for(uint16_t i = 0; i < equip_info_size; ++i) {
@@ -154,6 +170,8 @@ void Hero_Detail::reset(void) {
 	exp = 0;
 	star = 0;
 	quality = 0;
+	energy = 0;
+	skill_info.clear();
 	equip_info.clear();
 	property_info.clear();
 }

@@ -24,9 +24,10 @@ require('shop.js');
 var player_cid_map = new Map();
 //role_id---player 全局玩家对象
 var player_role_id_map = new Map();
-//定时器管理对象
-var timers = new Timers();
-timers.init();
+
+//定时器管理器
+var timer = new Timer();
+timer.init();
 
 //全局数据对象
 var shop_base = JSON.parse(read_json('config/shop/product.json'));
@@ -63,9 +64,16 @@ function main() {
 			}
 		}
 	
-		var tid = get_timeout_timer();
-		if(tid != null){
-			tick(tid);
+		while(true) {
+			var timer_id = get_timer_id();
+			if (timer_id == 0)
+				break;
+			
+			all_empty = false;
+			var timer_handler = timer.get_timer_handler(timer_id);
+			if (timer_handler != null) {
+				timer_handler();
+			}
 		}
 		
 		if (all_empty) {
@@ -128,6 +136,9 @@ function process_client_buffer(buffer) {
 			case Msg_Req.REQ_EQUIP_ON_OFF:
 				player.hero.equip_on_off(buffer);
 				break;
+			case Msg_Req.REQ_ADD_SKILL_LEVEL:
+				player.hero.add_skill_level(buffer);
+				break;
 			case Msg_Req.REQ_FETCH_SHOP_INFO:
 				player.shop.fetch_shop_info(buffer);
 				break;
@@ -136,7 +147,6 @@ function process_client_buffer(buffer) {
 				break;
 			case Msg_Req.REQ_REFRESH_SHOP:
 				player.shop.refresh_by_player(buffer);
-				break;
 			default:
 				print("Can not find the msg_id:", msg_id);
 				break;
@@ -147,9 +157,3 @@ function process_client_buffer(buffer) {
 	}
 	push_client_buffer(gate_cid, buffer);
 }
-
-function tick(tid){
-	var func = timers.get_func(tid);
-	func();
-}
-

@@ -299,6 +299,26 @@ struct MSG_520304 {
 	void reset(void);
 };
 
+struct MSG_120305 {
+	int32_t hero_id;	
+	int32_t skill_id;	
+
+	MSG_120305(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+
+struct MSG_520305 {
+	int32_t hero_id;	
+	int32_t skill_id;	
+
+	MSG_520305(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+
 struct MSG_120400 {
 	uint32_t shop_type;	//商店类型
 

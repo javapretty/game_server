@@ -35,10 +35,8 @@ public:
 	int init(void);
 	void run_handler(void);
 
-	/// 定时器处理
-	int register_timer(void);
-	int unregister_timer(void);
-	int time_up(const Time_Value &now);
+	/// 服务器状态
+	inline int server_status(void) { return server_status_; };
 
 	Master_Player *pop_master_player(void);
 	int push_master_player(Master_Player *player);
@@ -46,9 +44,6 @@ public:
 	/// 发送数据接口
 	int send_to_gate(int cid, Block_Buffer &buf);
 	int send_to_game(int cid, Block_Buffer &buf);
-
-	/// 服务器状态
-	int server_status(void);
 
 	/// 通信层投递消息到Master_Manager
 	int push_master_gate_data(Block_Buffer *buf);
@@ -63,18 +58,15 @@ public:
 	Master_Player *find_role_id_master_player(int64_t role_id);
 	int unbind_master_player(Master_Player &player);
 
+	/// 定时器处理
 	int tick(void);
+	/// 返回上次tick的绝对时间, 最大误差有100毫秒,主要为减少系统调用gettimeofday()调用次数
+	inline const Time_Value &tick_time(void) { return tick_time_; };
 	int server_info_tick(Time_Value &now);
 	int player_tick(Time_Value &now);
-	int manager_tick(Time_Value &now);
 	void object_pool_tick(Time_Value &now);
 
-	inline Master_Player_Role_Id_Map& player_role_id_map(void);
 	void get_server_info(Block_Buffer &buf);
-
-	/// 返回上次tick的绝对时间, 最大误差有100毫秒
-	/// 主要为减少系统调用gettimeofday()调用次数
-	const Time_Value &tick_time(void);
 	void object_pool_size(void);
 	void free_cache(void);
 
@@ -106,10 +98,9 @@ private:
 	Master_Player_Role_Id_Map player_role_id_map_; /// role_id - Master_Player map
 
 	Tick_Info tick_info_;
-
-	int status_;
-	bool is_register_timer_;
 	Time_Value tick_time_;
+
+	int server_status_;
 
 	/// 消息统计
 	bool msg_count_onoff_;
@@ -125,10 +116,6 @@ inline Master_Player *Master_Manager::pop_master_player(void) {
 
 inline int Master_Manager::push_master_player(Master_Player *player) {
 	return master_player_pool_.push(player);
-}
-
-inline Master_Manager::Master_Player_Role_Id_Map& Master_Manager::player_role_id_map(void) {
-	return player_role_id_map_;
 }
 
 inline int Master_Manager::push_master_gate_data(Block_Buffer *buf) {
@@ -151,10 +138,6 @@ inline int Master_Manager::push_self_loop_message(Block_Buffer &msg_buf) {
 	buf->copy(&msg_buf);
 	self_loop_block_list_.push_back(buf);
 	return 0;
-}
-
-inline const Time_Value &Master_Manager::tick_time(void) {
-	return tick_time_;
 }
 
 inline void Master_Manager::set_msg_count_onoff(int v) {

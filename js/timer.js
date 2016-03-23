@@ -6,25 +6,25 @@
 *	tel:15618920470
 */
 
-function Timers() {
-	this.timers = new Map(); 
-	this.timer_id = 1;
+function Timer() {
+	var timer_map = new Map(); 
+	var timer_id = 1;
 	
-	this.register = function(handler, interval, nexttime = util.now_msec() / 1000){
-		register_timer_in(this.timer_id, interval, nexttime);
-		this.timers.put(this.timer_id, handler);
-		this.timer_id++;
+	this.register_timer = function(interval, next_tick, handler) {
+		register_timer(timer_id, interval, next_tick);
+		timer_map.put(timer_id, handler);
+		timer_id++;
 	}
 
-	this.get_func = function(timer_id){
-		return this.timers.get(timer_id);
+	this.get_timer_handler = function(timer_id) {
+		return timer_map.get(timer_id);
 	}
-
-	this.init = function(){
-		//this.register(this.test_time_out, 3);
+	
+	this.init = function() {
+		//注册玩家定时器，时间间隔500ms，每次到期遍历在线玩家进行处理
+		this.register_timer(500, 0, this.player_handler);
 	}
-
-	this.test_time_out = function(){
-		print("timer test");
+	
+	this.player_handler = function() {
 	}
 }

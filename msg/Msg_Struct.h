@@ -22,10 +22,11 @@ struct Role_Info {
 	int32_t career;	//职业
 	int32_t gender;	//0(女)1(男)
 	int32_t vitality;	//玩家体力
-	int32_t today_buy;	//今天购买次数
+	int32_t buy_vitality_times;	//今天购买次数
 	int32_t vip_level;	//vip等级
 	int32_t vip_exp;	//vip经验
 	int32_t charge_gold;	//总共充值的元宝数
+	int32_t skill_point;	//技能点
 
 	Role_Info(void);
 	void serialize(Block_Buffer &buffer) const;
@@ -61,8 +62,10 @@ struct Hero_Detail {
 	int32_t exp;	//英雄经验
 	int32_t star;	//英雄星级
 	int32_t quality;	//英雄品质等级
-	std::vector<Item_Info> equip_info;	//英雄装备信息
-	std::vector<Property_Detail> property_info;	//英雄属性信息
+	int32_t energy;	//能量值，满的时候放大招
+	std::vector<int32_t> skill_info;	//技能信息
+	std::vector<Item_Info> equip_info;	//装备信息
+	std::vector<Property_Detail> property_info;	//属性信息
 
 	Hero_Detail(void);
 	void serialize(Block_Buffer &buffer) const;

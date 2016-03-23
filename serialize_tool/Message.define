@@ -1,34 +1,3 @@
-/*
- * Message.h
- *
- *  Created on: 2015年12月28日
- *      Author: zhangyalei
- */
-
-#ifndef MSG_MESSAGE_H_
-#define MSG_MESSAGE_H_
-
-/*消息ID说明
-100000-109999		Client--->Login,Gate
-110000-119999  	Client--->Chat
-120000-129999		Client--->Game
-130000-139999		Client--->Master
-140000-149999		Login,Game,Master,Chat<--->Gate
-150000-159999  Game<--->DB
-160000-169999		Game<--->Master
-170000-179999		Master<--->DB
-180000-189999		Game--->LogStream		操作流水日志
-190000-199999
-300000-309999		ActiveMessage			服务器发到客户端主动消息
-400000-499999		InnerMessage			服务器内部消息
-
-500000-500999		Login,Gate->Client
-520000-529999		Game->Client
-530000-539999		Master->Client
-540000-549999		Chat->Client
-550000-559999		DB-->Game
-*/
-
 enum Message_Bound {
 	CLIENT_GATE_MESSAGE_START 					= 100000,
 	CLIENT_GATE_MESSAGE_END 					= 109999,
@@ -142,5 +111,3 @@ enum Active_Message{
 enum Inner_Message{
 	SYNC_INNER_TIMER_TICK 						= 	400000,	//定时器tick
 };
-
-#endif /* MSG_MESSAGE_H_ */

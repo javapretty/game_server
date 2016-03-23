@@ -222,6 +222,38 @@ function Hero() {
 		push_buffer(buf);
 	}
 	
+	this.add_skill_level = function(buffer) {
+		print('add_skill_level, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " util.now_msec:", util.now_msec());
+		
+		if (this.player.player_info.skill_point <= 0) {
+			return this.player.cplayer.respond_error_result(Msg_Res.RES_ADD_SKILL_LEVEL, Error_Code.ERROR_SKILL_POINT_NOT_ENOUGH);
+		}
+		
+		var msg_req = new MSG_120305();
+		msg_req.deserialize(buffer); 
+		var hero_detail = this.hero_info.hero_map.get(msg_req.hero_id);
+		if (hero_detail == null) {
+			return this.player.cplayer.respond_error_result(Msg_Res.RES_ADD_SKILL_LEVEL, Error_Code.ERROR_CLIENT_PARAM);
+		}
+		
+		for (var i = 0; i < hero_detail.skill_info.length; ++i) {
+			if (msg_req.skill_id == hero_detail.skill_info[i]) {
+				hero_detail.skill_info[i]++;
+				this.player.player_info.skill_point--;
+				break;
+			}
+		}
+		this.set_data_change();
+
+		var msg_res = new MSG_520305();
+		msg_res.hero_id = msg_req.hero_id;
+		msg_res.skill_id = msg_req.skill_id + 1;
+		var buf = pop_buffer();
+		msg_res.serialize(buf);
+		this.player.cplayer.respond_success_result(Msg_Res.RES_ADD_SKILL_LEVEL, buf);
+		push_buffer(buf);
+	}
+	
 	this.refresh_hero_property = function(hero_detail) {
 		//根据公式计算各模块对英雄属性的英雄，包括装备，星级，品质
 		

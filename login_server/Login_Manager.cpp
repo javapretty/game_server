@@ -12,15 +12,12 @@
 #include "Login_Inner_Messager.h"
 
 Login_Manager::Login_Manager(void):
-  is_register_timer_(false),
+	server_status_(STATUS_NORMAL),
   msg_count_onoff_(true),
   player_cid_map_(get_hash_table_size(12000)) ,
-  player_account_map_(get_hash_table_size(12000)) {
-	register_timer();
-}
+  player_account_map_(get_hash_table_size(12000)) {}
 
 Login_Manager::~Login_Manager(void) {
-	unregister_timer();
 	check_account_.release_mysql_conn();
 }
 
@@ -34,7 +31,6 @@ Login_Manager *Login_Manager::instance(void) {
 
 int Login_Manager::init(void) {
 	tick_time_ = Time_Value::gettimeofday();
-	status_ = STATUS_NORMAL;
 
 	SERVER_CONFIG;
 	LOGIN_INNER_MESSAGER;					/// 内部消息处理
@@ -118,16 +114,6 @@ Login_Player *Login_Manager::find_cid_login_player(int cid) {
 int Login_Manager::unbind_login_player(Login_Player &player) {
 	player_account_map_.erase(player.login_player_info().account);
 	player_cid_map_.erase(player.get_cid());
-	return 0;
-}
-
-int Login_Manager::register_timer(void) {
-	is_register_timer_ = true;
-	return 0;
-}
-
-int Login_Manager::unregister_timer(void) {
-	is_register_timer_ = false;
 	return 0;
 }
 
@@ -219,12 +205,9 @@ void Login_Manager::process_drop_cid(int cid) {
 	}
 }
 
-int Login_Manager::server_status(void) {
-	return status_;
-}
 
 int Login_Manager::self_close_process(void) {
-	status_ = STATUS_CLOSING;
+	server_status_ = STATUS_CLOSING;
 	return 0;
 }
 
@@ -234,8 +217,6 @@ int Login_Manager::tick(void) {
 
 	close_list_tick(now);
 	player_tick(now);
-	manager_tick(now);
-
 	server_info_tick(now);
 	object_pool_tick(now);
 	//LOG->show_msg_time(now);
@@ -285,13 +266,6 @@ int Login_Manager::player_tick(Time_Value &now) {
 		}
 	}
 
-	return 0;
-}
-
-int Login_Manager::manager_tick(Time_Value &now) {
-	if (now - tick_info_.manager_last_tick < tick_info_.manager_interval_tick)
-		return 0;
-	tick_info_.manager_last_tick = now;
 	return 0;
 }
 

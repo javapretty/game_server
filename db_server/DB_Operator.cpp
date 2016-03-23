@@ -286,11 +286,12 @@ int DB_Operator::load_player_info(int64_t role_id, Player_Info &player_info) {
 		player_info.last_sign_in_time = res["last_sign_in_time"].numberInt();
 		player_info.last_sign_out_time = res["last_sign_out_time"].numberInt();
 		player_info.vitality = res["vitality"].numberInt();
-		player_info.last_change_time = res["last_change_time"].numberLong();
-		player_info.today_buy = res["today_buy"].numberInt();
+		player_info.buy_vitality_times = res["buy_vitality_times"].numberInt();
 		player_info.vip_level = res["vip_level"].numberInt();
 		player_info.vip_exp = res["vip_exp"].numberInt();
 		player_info.charge_gold = res["charge_gold"].numberInt();
+		player_info.skill_point = res["skill_point"].numberInt();
+		player_info.recover_skill_time = res["recover_skill_time"].numberLong();
 		return 0;
 	} else {
 		return -1;
@@ -313,11 +314,12 @@ int DB_Operator::save_player_info(int64_t role_id, Player_Info &player_info) {
 			<< "last_sign_in_time" << player_info.last_sign_in_time
 			<< "last_sign_out_time" << player_info.last_sign_out_time
 			<< "vitality" << player_info.vitality
-			<< "last_change_time" <<  (long long int)player_info.last_change_time
-			<< "today_buy" << player_info.today_buy
+			<< "buy_vitality_times" << player_info.buy_vitality_times
 			<< "vip_level" << player_info.vip_level
 			<< "vip_exp" << player_info.vip_exp
-			<< "charge_gold" << player_info.charge_gold;
+			<< "charge_gold" << player_info.charge_gold
+			<< "skill_point" << player_info.skill_point
+			<< "recover_skill_time" << (long long int)player_info.recover_skill_time;
 
 	CACHED_CONNECTION.update("mmo.role", MONGO_QUERY("role_id" << (long long int)role_id),
 			BSON("$set" << builder.obj()), true);
@@ -342,6 +344,7 @@ int DB_Operator::load_hero_info(int64_t role_id, Hero_Info &hero_info) {
 		hero_detail.exp = obj["exp"].numberInt();
 		hero_detail.star = obj["star"].numberInt();
 		hero_detail.quality = obj["quality"].numberInt();
+		hero_detail.energy = obj["energy"].numberInt();
 
 		BSONObjIterator iter_equip(obj.getObjectField("equip"));
 		BSONObj obj_equip;
@@ -387,6 +390,7 @@ int DB_Operator::save_hero_info(int64_t role_id, Hero_Info &hero_info) {
 				<< "exp" << iter->second.exp
 				<< "star" << iter->second.star
 				<< "quality" << iter->second.quality
+				<< "energy" << iter->second.energy
 				<< "equip" << equip_vec
 				<< "property" << property_vec));
 	}

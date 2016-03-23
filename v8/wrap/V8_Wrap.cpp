@@ -15,6 +15,7 @@
 #include "Time_Value.h"
 #include "Game_Server.h"
 #include "Game_Manager.h"
+#include "Game_Timer.h"
 #include "Game_Client_Messager.h"
 
 Local<Context> Create_Context(Isolate* isolate) {
@@ -27,6 +28,10 @@ Local<Context> Create_Context(Isolate* isolate) {
 		FunctionTemplate::New(isolate, print));
 	global->Set(String::NewFromUtf8(isolate, "sleep", NewStringType::kNormal).ToLocalChecked(),
 		FunctionTemplate::New(isolate, sleep));
+	global->Set(String::NewFromUtf8(isolate, "register_timer", NewStringType::kNormal).ToLocalChecked(),
+					FunctionTemplate::New(isolate, register_timer));
+	global->Set(String::NewFromUtf8(isolate, "get_timer_id", NewStringType::kNormal).ToLocalChecked(),
+				FunctionTemplate::New(isolate, get_timer_id));
 	global->Set(String::NewFromUtf8(isolate, "pop_buffer", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, pop_buffer));
 	global->Set(String::NewFromUtf8(isolate, "push_buffer", NewStringType::kNormal).ToLocalChecked(),
@@ -47,10 +52,6 @@ Local<Context> Create_Context(Isolate* isolate) {
 			FunctionTemplate::New(isolate, get_player_by_cid));
 	global->Set(String::NewFromUtf8(isolate, "get_player_by_name", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, get_player_by_name));
-	global->Set(String::NewFromUtf8(isolate, "get_timeout_timer", NewStringType::kNormal).ToLocalChecked(),
-				FunctionTemplate::New(isolate, get_timeout_timer));
-	global->Set(String::NewFromUtf8(isolate, "register_timer_in", NewStringType::kNormal).ToLocalChecked(),
-					FunctionTemplate::New(isolate, register_timer_in));
 
 	return Context::New(isolate, NULL, global);
 }
@@ -203,6 +204,24 @@ void sleep(const FunctionCallbackInfo<Value>& args) {
 	Time_Value::sleep(Time_Value(0,100));
 }
 
+void register_timer(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 3) {
+			LOG_INFO("register timer args error, length: %d\n", args.Length());
+			return;
+	}
+
+	int timer_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int interval = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int first_tick_internal = args[2]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	LOG_INFO("register_timer,timer_id:%d, interval:%dms, first_tick_internal:%ds\n", timer_id, interval, first_tick_internal);
+	GAME_TIMER->register_v8_handler(timer_id, interval, first_tick_internal);
+}
+
+void get_timer_id(const FunctionCallbackInfo<Value>& args) {
+	int timer_id = GAME_TIMER->pop_v8_timer();
+	args.GetReturnValue().Set(timer_id);
+}
+
 void send_msg_to_db(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 1) {
 		LOG_INFO("process_login_block args error, length: %d\n", args.Length());
@@ -292,26 +311,4 @@ void get_load_player_data(const FunctionCallbackInfo<Value>& args) {
 void get_drop_player_cid(const FunctionCallbackInfo<Value>& args) {
 	int cid = GAME_MANAGER->pop_drop_player_cid();
 	args.GetReturnValue().Set(cid);
-}
-
-void get_timeout_timer(const FunctionCallbackInfo<Value>& args) {
-	int timer = GAME_MANAGER->pop_v8_timer();
-	if(timer != 0){
-		args.GetReturnValue().Set(timer);
-	} else {
-		args.GetReturnValue().SetNull();
-	}
-}
-
-void register_timer_in(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 3) {
-			LOG_INFO("register timer args error, length: %d\n", args.Length());
-			return;
-		}
-	int timer_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	int interval = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	int next_time = args[2]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	V8_Timer_Handler *handler = new V8_Timer_Handler{timer_id, interval, next_time};
-	LOG_INFO("register args is %d %d %d\n", handler->timer_id, handler->next_time, handler->interval);
-	GAME_MANAGER->push_v8_register_timer(handler);
 }
