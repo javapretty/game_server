@@ -9,7 +9,7 @@
 require('map.js');
 require('enum.js');
 require('error.js');
-require('msg.js');
+require('message.js');
 require('struct.js');
 require('msg_struct.js');
 require('player.js');

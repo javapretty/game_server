@@ -33,6 +33,10 @@ function Shop() {
 		this.player.cplayer.set_player_data_change(Data_Change.SHOP_CHANGE);
 	}
 
+	this.tick = function(now) {
+		
+	}
+	
 	this.fetch_shop_info = function(buffer){
 		print('fetch_shop_info, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " util.now_msec:", util.now_msec());
 	
@@ -58,10 +62,6 @@ function Shop() {
 		this.shop_info.shop_detail.put(shop_type, shop);
 	}
 	
-	this.refresh_by_timer = function(){
-		this.refresh_shop(Shop_Type.COPPER_SHOP);
-	}
-
 	this.refresh_by_player = function(buffer){
 		print('refresh_by_player, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " util.now_msec:", util.now_msec());
 	

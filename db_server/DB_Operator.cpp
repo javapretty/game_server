@@ -574,26 +574,26 @@ int DB_Operator::load_shop_info(int64_t role_id, Shop_Info &shop_info) {
 }
 
 int DB_Operator::save_shop_info(int64_t role_id, Shop_Info &shop_info) {
-		std::vector<BSONObj> shop_vec;
-		for (boost::unordered_map<int,Shop_Detail>::const_iterator iter = shop_info.shop_detail.begin();
-				iter != shop_info.shop_detail.end(); iter++) {
-			std::vector<BSONObj> product_vec;
-			for (std::vector<Product_Info>::const_iterator it = iter->second.products.begin(); it != iter->second.products.end(); ++it) {
-				BSONObjBuilder item_builder;
-				item_builder << "product_id" << (*it).product_id
-						<< "item_id" << (*it).item_id
-						<< "price" << (*it).price
-						<< "count" << (*it).count;
+	std::vector<BSONObj> shop_vec;
+	for (boost::unordered_map<int,Shop_Detail>::const_iterator iter = shop_info.shop_detail.begin();
+			iter != shop_info.shop_detail.end(); iter++) {
+		std::vector<BSONObj> product_vec;
+		for (std::vector<Product_Info>::const_iterator it = iter->second.products.begin(); it != iter->second.products.end(); ++it) {
+			BSONObjBuilder item_builder;
+			item_builder << "product_id" << (*it).product_id
+					<< "item_id" << (*it).item_id
+					<< "price" << (*it).price
+					<< "count" << (*it).count;
 				product_vec.push_back(item_builder.obj());
-			}
-
-			shop_vec.push_back(BSON("shop_type" << iter->second.shop_type
-					<< "fresh_count" << iter->second.fresh_count
-					<< "products" << product_vec));
 		}
 
-		BSONObjBuilder set_builder;
-		set_builder << "shop_detail" << shop_vec;
+		shop_vec.push_back(BSON("shop_type" << iter->second.shop_type
+				<< "fresh_count" << iter->second.fresh_count
+				<< "products" << product_vec));
+	}
+
+	BSONObjBuilder set_builder;
+	set_builder << "role_id" << (long long int)role_id << "shop_detail" << shop_vec;
 
 	CACHED_CONNECTION.update("mmo.shop", MONGO_QUERY("role_id" << (long long int)role_id),
 			BSON("$set" << set_builder.obj() ), true);
