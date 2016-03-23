@@ -1,7 +1,33 @@
 {
 	"100000001": {
 		"sort": 1,
-		"name": "测试武器",
+		"name": "测试武器1",
+		"color": 2,
+		"attack": 10,
+		"exp": 20,
+		"level_exp" : [100,200,300,400,500],
+		"career": 3,
+		"part": 0,
+		"level": 0,
+		"price": 10
+    },
+	
+	"100000002": {
+		"sort": 1,
+		"name": "测试武器2",
+		"color": 2,
+		"attack": 10,
+		"exp": 20,
+		"level_exp" : [100,200,300,400,500],
+		"career": 3,
+		"part": 0,
+		"level": 0,
+		"price": 10
+    },
+	
+	"100000003": {
+		"sort": 1,
+		"name": "测试武器3",
 		"color": 2,
 		"attack": 10,
 		"exp": 20,

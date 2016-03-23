@@ -159,3 +159,29 @@ struct MSG_520305 {
 	int32_t hero_id;
 	int32_t skill_id;
 };
+
+//获取商店列表
+struct MSG_120400 {
+	uint32_t shop_type; //商店类型
+};
+
+struct MSG_520400 {
+	Shop_Detail shop;
+};
+
+//购买商店物品
+struct MSG_120401 {
+	uint32_t shop_type; //商店类型
+	uint32_t product_id;
+	uint32_t amount;
+};
+
+struct MSG_520401 {
+};
+
+struct MSG_120402 {
+	uint32_t shop_type; //商店类型
+};
+
+struct MSG_520402 {
+};

@@ -24,9 +24,14 @@ require('shop.js');
 var player_cid_map = new Map();
 //role_id---player 全局玩家对象
 var player_role_id_map = new Map();
+
 //定时器管理器
 var timer = new Timer();
 timer.init();
+
+//全局数据对象
+var shop_base = JSON.parse(read_json('config/shop/product.json'));
+
 //执行脚本主循环函数
 main();
 
@@ -134,7 +139,16 @@ function process_client_buffer(buffer) {
 			case Msg_Req.REQ_ADD_SKILL_LEVEL:
 				player.hero.add_skill_level(buffer);
 				break;
+			case Msg_Req.REQ_FETCH_SHOP_INFO:
+				player.shop.fetch_shop_info(buffer);
+				break;
+			case Msg_Req.REQ_BUY_PRODUCT:
+				player.shop.buy_product(buffer);
+				break;
+			case Msg_Req.REQ_REFRESH_SHOP:
+				player.shop.refresh_by_player(buffer);
 			default:
+				print("Can not find the msg_id:", msg_id);
 				break;
 			}
 		} else {

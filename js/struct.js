@@ -204,6 +204,54 @@ function Mail_Detail() {
 		}
 	}
 }
+
+function Product_Info() {
+	this.product_id = 0;
+	this.item_id = 0;
+	this.price = 0;
+	this.count = 0;
+
+	this.serialize = function(buffer) {
+		buffer.write_int32(this.product_id);
+		buffer.write_int32(this.item_id);
+		buffer.write_int32(this.price);
+		buffer.write_int32(this.count);
+	}
+
+	this.deserialize = function(buffer) {
+		this.product_id = buffer.read_int32();
+		this.item_id = buffer.read_int32();
+		this.price = buffer.read_int32();
+		this.count = buffer.read_int32();
+	}
+}
+
+function Shop_Detail() {
+	this.shop_type = 0;
+	this.fresh_count = 0;
+	this.products = new Array();
+
+	this.serialize = function(buffer) {
+		buffer.write_int32(this.shop_type);
+		buffer.write_int32(this.fresh_count);
+		var len = this.products.length;
+		buffer.write_uint16(len);
+		for(var i = 0; i < len; ++i) {
+			this.products[i].serialize(buffer);
+		}
+	}
+
+	this.deserialize = function(buffer) {
+		this.shop_type = buffer.read_int32();
+		this.fresh_count = buffer.read_int32();
+		var len = buffer.read_uint16();
+		for(var i = 0; i < len; ++i) {
+			var products_v = new Product_Info();
+			products_v.deserialize(buffer);
+			this.products.push(products_v);
+		}
+	}
+}
 /** 
 * struct JS file description
 * 
@@ -473,6 +521,26 @@ function Mail_Info() {
 			var _v = new Mail_Detail();
 			_v.deserialize(buffer);
 			this.mail_map.put(_v.mail_id, _v);
+		}
+	}
+}
+
+function Shop_Info() {
+	this.shop_detail = new Map();
+
+	this.serialize = function(buffer) {
+		buffer.write_uint16(this.shop_detail.size());
+		this.shop_detail.each(function(_key,_v,index) {
+			_v.serialize(buffer);
+		});
+	}
+
+	this.deserialize = function(buffer) {
+		var len = buffer.read_uint16();
+		for (var i = 0; i < len; ++i) {
+			var _v = new Shop_Detail();
+			_v.deserialize(buffer);
+			this.shop_detail.put(_v.shop_type, _v);
 		}
 	}
 }

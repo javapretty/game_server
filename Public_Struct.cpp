@@ -24,6 +24,7 @@ int Player_Data::serialize(Block_Buffer &buffer) const {
 	hero_info.serialize(buffer);
 	bag_info.serialize(buffer);
 	mail_info.serialize(buffer);
+	shop_info.serialize(buffer);
 	return 0;
 }
 
@@ -40,6 +41,7 @@ int Player_Data::deserialize(Block_Buffer &buffer) {
 	hero_info.deserialize(buffer);
 	bag_info.deserialize(buffer);
 	mail_info.deserialize(buffer);
+	shop_info.deserialize(buffer);
 	return 0;
 }
 
@@ -48,6 +50,7 @@ int Player_Data::load(int64_t role_id) {
 	CACHED_INSTANCE->load_hero_info(role_id, hero_info);
 	CACHED_INSTANCE->load_bag_info(role_id, bag_info);
 	CACHED_INSTANCE->load_mail_info(role_id, mail_info);
+	CACHED_INSTANCE->load_shop_info(role_id, shop_info);
 	return 0;
 }
 
@@ -66,6 +69,9 @@ int Player_Data::save(void) {
 		case MAIL_CHANGE:
 			CACHED_INSTANCE->save_mail_info(player_info.role_id, mail_info);
 			break;
+		case SHOP_CHANGE:
+			CACHED_INSTANCE->save_shop_info(player_info.role_id, shop_info);
+			break;
 		}
 	}
 	return 0;
@@ -79,6 +85,7 @@ void Player_Data::reset(void) {
 	hero_info.reset();
 	bag_info.reset();
 	mail_info.reset();
+	shop_info.reset();
 }
 
 void Player_Data::set_all_change(bool is_change) {

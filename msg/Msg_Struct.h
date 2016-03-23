@@ -92,4 +92,27 @@ struct Mail_Detail {
 	void reset(void);
 };
 
+struct Product_Info {
+	int32_t product_id;	
+	int32_t item_id;	
+	int32_t price;	
+	int32_t count;	//剩余购买次数
+
+	Product_Info(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+
+struct Shop_Detail {
+	int32_t shop_type;	//商店类型，1是铜币，2是金币
+	int32_t fresh_count;	
+	std::vector<Product_Info> products;	
+
+	Shop_Detail(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+
 #endif

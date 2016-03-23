@@ -77,3 +77,7 @@ struct Mail_Info {
 	int32_t total_count; 			//邮件的总数量，即目前为止收到的所有邮件数
 	std::map<int32_t(mail_id),Mail_Detail> mail_map;
 };
+
+struct Shop_Info {
+	boost::unordered_map<int32_t(shop_type),Shop_Detail> shop_detail;
+};

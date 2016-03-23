@@ -79,7 +79,7 @@ function Bag() {
 		for (var i = 0; i < item_array.length; ++i) {
 			var item_info = this.bag_info.item_map.get(item_array[i].id);
 			if (item_info == null) {
-				this.bag_info.item_map = put(item_array[i].id, item_array[i]);	
+				this.bag_info.item_map.put(item_array[i].id, item_array[i]);	
 			} else {
 				item_info.amount += item_array[i].amount;
 			}	

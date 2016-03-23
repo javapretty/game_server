@@ -623,3 +623,75 @@ function MSG_520305() {
 		this.skill_id = buffer.read_int32();
 	}
 }
+
+function MSG_120400() {
+	this.shop_type = 0;
+
+	this.serialize = function(buffer) {
+		buffer.write_uint32(this.shop_type);
+	}
+
+	this.deserialize = function(buffer) {
+		this.shop_type = buffer.read_uint32();
+	}
+}
+
+function MSG_520400() {
+	this.shop = new Shop_Detail();
+
+	this.serialize = function(buffer) {
+		this.shop.serialize(buffer);
+	}
+
+	this.deserialize = function(buffer) {
+		this.shop.deserialize(buffer);
+	}
+}
+
+function MSG_120401() {
+	this.shop_type = 0;
+	this.product_id = 0;
+	this.amount = 0;
+
+	this.serialize = function(buffer) {
+		buffer.write_uint32(this.shop_type);
+		buffer.write_uint32(this.product_id);
+		buffer.write_uint32(this.amount);
+	}
+
+	this.deserialize = function(buffer) {
+		this.shop_type = buffer.read_uint32();
+		this.product_id = buffer.read_uint32();
+		this.amount = buffer.read_uint32();
+	}
+}
+
+function MSG_520401() {
+
+	this.serialize = function(buffer) {
+	}
+
+	this.deserialize = function(buffer) {
+	}
+}
+
+function MSG_120402() {
+	this.shop_type = 0;
+
+	this.serialize = function(buffer) {
+		buffer.write_uint32(this.shop_type);
+	}
+
+	this.deserialize = function(buffer) {
+		this.shop_type = buffer.read_uint32();
+	}
+}
+
+function MSG_520402() {
+
+	this.serialize = function(buffer) {
+	}
+
+	this.deserialize = function(buffer) {
+	}
+}

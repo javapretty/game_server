@@ -660,3 +660,105 @@ void MSG_520305::reset(void) {
 	hero_id = 0;
 	skill_id = 0;
 }
+
+MSG_120400::MSG_120400(void) {
+	reset();
+}
+
+void MSG_120400::serialize(Block_Buffer &buffer) const {
+	buffer.write_uint32(shop_type);
+}
+
+int MSG_120400::deserialize(Block_Buffer &buffer) {
+	shop_type = buffer.read_uint32();
+	return 0;
+}
+
+void MSG_120400::reset(void) {
+	shop_type = 0;
+}
+
+MSG_520400::MSG_520400(void) {
+	reset();
+}
+
+void MSG_520400::serialize(Block_Buffer &buffer) const {
+	shop.serialize(buffer);
+}
+
+int MSG_520400::deserialize(Block_Buffer &buffer) {
+	shop.deserialize(buffer);
+	return 0;
+}
+
+void MSG_520400::reset(void) {
+	shop.reset();
+}
+
+MSG_120401::MSG_120401(void) {
+	reset();
+}
+
+void MSG_120401::serialize(Block_Buffer &buffer) const {
+	buffer.write_uint32(shop_type);
+	buffer.write_uint32(product_id);
+	buffer.write_uint32(amount);
+}
+
+int MSG_120401::deserialize(Block_Buffer &buffer) {
+	shop_type = buffer.read_uint32();
+	product_id = buffer.read_uint32();
+	amount = buffer.read_uint32();
+	return 0;
+}
+
+void MSG_120401::reset(void) {
+	shop_type = 0;
+	product_id = 0;
+	amount = 0;
+}
+
+MSG_520401::MSG_520401(void) {
+	reset();
+}
+
+void MSG_520401::serialize(Block_Buffer &buffer) const {
+}
+
+int MSG_520401::deserialize(Block_Buffer &buffer) {
+	return 0;
+}
+
+void MSG_520401::reset(void) {
+}
+
+MSG_120402::MSG_120402(void) {
+	reset();
+}
+
+void MSG_120402::serialize(Block_Buffer &buffer) const {
+	buffer.write_uint32(shop_type);
+}
+
+int MSG_120402::deserialize(Block_Buffer &buffer) {
+	shop_type = buffer.read_uint32();
+	return 0;
+}
+
+void MSG_120402::reset(void) {
+	shop_type = 0;
+}
+
+MSG_520402::MSG_520402(void) {
+	reset();
+}
+
+void MSG_520402::serialize(Block_Buffer &buffer) const {
+}
+
+int MSG_520402::deserialize(Block_Buffer &buffer) {
+	return 0;
+}
+
+void MSG_520402::reset(void) {
+}
