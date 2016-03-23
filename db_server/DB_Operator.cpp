@@ -393,7 +393,7 @@ int DB_Operator::save_hero_info(int64_t role_id, Hero_Info &hero_info) {
 	}
 
 	BSONObjBuilder tmp_builder;
-	tmp_builder << "hero_detail" << hero_vec;
+	tmp_builder << "role_id" << (long long int)role_id << "hero_detail" << hero_vec;
 
 	CACHED_CONNECTION.update("mmo.hero", MONGO_QUERY("role_id" << (long long int)role_id),
 			BSON("$set" << tmp_builder.obj()), true);
@@ -432,7 +432,8 @@ int DB_Operator::save_bag_info(int64_t role_id, Bag_Info &bag_info) {
 	}
 
 	BSONObjBuilder tmp_builder;
-	tmp_builder << "copper" << bag_info.copper
+	tmp_builder << "role_id" << (long long int)role_id
+		<< "copper" << bag_info.copper
 		<< "gold" << bag_info.gold
 		<< "item" << item_vec;
 
@@ -527,7 +528,8 @@ int DB_Operator::save_mail_info(int64_t role_id, Mail_Info &mail_info) {
 	}
 
 	BSONObjBuilder set_builder;
-	set_builder << "total_count" << mail_info.total_count
+	set_builder << "role_id" << (long long int)role_id
+			<< "total_count" << mail_info.total_count
 			<< "mail_detail" << mail_vec;
 
 	CACHED_CONNECTION.update("mmo.mail", MONGO_QUERY("role_id" << (long long int)role_id),

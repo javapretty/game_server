@@ -26,5 +26,12 @@ function Timer() {
 	}
 	
 	this.player_handler = function() {
+		var now = util.now_sec();
+		player_role_id_map.each(function(key,value,index) {
+			value.tick(now);
+			value.bag.tick(now);
+			value.hero.tick(now);
+			value.mail.tick(now);
+    	});
 	}
 }

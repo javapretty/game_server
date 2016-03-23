@@ -60,6 +60,16 @@ function Player() {
 		this.cplayer.set_player_data_change(Data_Change.PLAYER_CHANGE);
 	}
 	
+	this.tick = function(now) {
+		//技能点回复，五分钟回复一点
+		if (this.player_info.skill_point < 10) {
+			if (now > this.player_info.recover_skill_time) {
+				this.player_info.skill_point++;
+				this.player_info.recover_skill_time = now + 300;
+			}
+		}
+	}
+	
 	this.add_exp = function(exp) {
 		print('add_exp, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " exp:", exp);
 		

@@ -23,6 +23,10 @@ function Mail() {
 		this.player.cplayer.set_player_data_change(Data_Change.MAIL_CHANGE);
 	}
 
+	this.tick = function(now) {
+		
+	}
+
 	this.fetch_mail_info = function() {
 		print('fetch_mail_info, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " util.now_msec:", util.now_msec());
 		

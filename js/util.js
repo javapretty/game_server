@@ -16,15 +16,14 @@ util.get_json_config = function(file_path, key) {
 	}
 }
 
+//获取当前时间戳(秒单位)
+util.now_sec = function() {
+	return Math.round(new Date().getTime()/1000);
+}
+
 //获取当前时间戳(毫秒单位)
-util.now_msec = function(date){
-	if (arguments.length){
-		return date.getTime();
-	}
-	else{
-		var nowTime = new Date();
-		return nowTime.getTime();
-	}
+util.now_msec = function(date) {
+	return new Date().getTime(); 
 }
 
 //time格式int

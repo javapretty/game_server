@@ -23,6 +23,10 @@ function Bag() {
 		this.player.cplayer.set_player_data_change(Data_Change.BAG_CHANGE);
 	}
 	
+	this.tick = function(now) {
+		
+	}
+	
 	this.fetch_bag_info = function() {
 		print('fetch_bag_info, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " util.now_msec:", util.now_msec());
 	
