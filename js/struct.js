@@ -471,7 +471,7 @@ function Hero_Info() {
 		for (var i = 0; i < len; ++i) {
 			var _v = new Hero_Detail();
 			_v.deserialize(buffer);
-			this.hero_map.put(_v.hero_id, _v);
+			this.hero_map.insert(_v.hero_id, _v);
 		}
 	}
 }
@@ -497,7 +497,7 @@ function Bag_Info() {
 		for (var i = 0; i < len; ++i) {
 			var _v = new Item_Info();
 			_v.deserialize(buffer);
-			this.item_map.put(_v.item_id, _v);
+			this.item_map.insert(_v.item_id, _v);
 		}
 	}
 }
@@ -520,7 +520,7 @@ function Mail_Info() {
 		for (var i = 0; i < len; ++i) {
 			var _v = new Mail_Detail();
 			_v.deserialize(buffer);
-			this.mail_map.put(_v.mail_id, _v);
+			this.mail_map.insert(_v.mail_id, _v);
 		}
 	}
 }
@@ -540,7 +540,7 @@ function Shop_Info() {
 		for (var i = 0; i < len; ++i) {
 			var _v = new Shop_Detail();
 			_v.deserialize(buffer);
-			this.shop_detail.put(_v.shop_type, _v);
+			this.shop_detail.insert(_v.shop_type, _v);
 		}
 	}
 }

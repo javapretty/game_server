@@ -2,8 +2,6 @@
 *	描述：脚本主循环
 *	作者：张亚磊
 *	时间：2016/02/24
-*	qq:784599938
-*	tel:18268193219
 */
 
 require('map.js');
@@ -64,6 +62,7 @@ function main() {
 			}
 		}
 	
+		//处理定时器消息
 		while(true) {
 			var timer_id = get_timer_id();
 			if (timer_id == 0)

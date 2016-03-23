@@ -2,8 +2,6 @@
 *	描述：定时器系统
 *	作者：李俊良
 *	时间：2016/03/15
-*	qq:975338436
-*	tel:15618920470
 */
 
 function Timer() {
@@ -12,7 +10,7 @@ function Timer() {
 	
 	this.register_timer = function(interval, next_tick, handler) {
 		register_timer(timer_id, interval, next_tick);
-		timer_map.put(timer_id, handler);
+		timer_map.insert(timer_id, handler);
 		timer_id++;
 	}
 
