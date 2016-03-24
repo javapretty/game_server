@@ -15,3 +15,4 @@ util.now_sec = function() {
 util.now_msec = function(date) {
 	return new Date().getTime(); 
 }
+

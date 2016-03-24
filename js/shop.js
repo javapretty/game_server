@@ -28,8 +28,8 @@ Shop.prototype.save_data = function(buffer) {
 	this.shop_info.serialize(buffer);
 }
 
-Shop.prototype.tick = function(now) {
-	
+Shop.prototype.tick = function() {
+	this.refresh_shop(Shop_Type.COPPER_SHOP);
 }
 	
 Shop.prototype.fetch_shop_info = function(buffer){
@@ -56,24 +56,26 @@ Shop.prototype.refresh_by_player = function(buffer){
 		this.player.cplayer.respond_error_result(Msg_Res.RES_REFRESH_SHOP, Error_Code.ERROR_REFRESH_NOT_ENOUGH);
 		return;
 	}
-	var cost;
-	switch(msg_req.shop_type){
-		case Shop_Type.COPPER_SHOP:
-		cost = config.shop_json[Shop_Type.COPPER_SHOP].refresh_cost[3 - count];
-		if(cost > this.player.bag.bag_info.copper){
-			this.player.cplayer.respond_error_result(Msg_Res.RES_REFRESH_SHOP, Error_Code.ERROR_COPPER_NOT_ENOUGH);
-			return;
-		}
-		this.player.bag.bag_sub_money(cost, 0);
-		this.refresh_shop(Shop_Type.COPPER_SHOP, count - 1);
-		this.player.bag.bag_sub_money(cost, 0);
-		break;
-		default:
-		print("these's no shop type ", msg_req.shop_type);
-		break;
+	var max_count = config.vip_json[this.player.player_info.vip_level]['refresh_count'];
+	var cost = config.shop_json[msg_req.shop_type].refresh_cost[max_count - count];
+	var error = 0;
+	if(msg_req.shop_type == Shop_Type.COPPER_SHOP)
+		error = this.player.bag.bag_sub_money(cost, 0);
+	if(error != 0){
+		this.player.cplayer.respond_error_result(Msg_Res.RES_REFRESH_SHOP, error);
+		return;
 	}
+	this.refresh_shop(msg_req.shop_type, count - 1);
 	
 	this.player.set_data_change(Data_Change.SHOP_CHANGE);
+}
+
+Shop.prototype.refresh_shop = function(shop_type, fresh_count = -1){
+	var shop = this.get_rand_product(config.shop_json[shop_type].product, 2);
+	shop.shop_type = shop_type;
+	shop.fresh_count = ( fresh_count < 0 ? config.vip_json[this.player.player_info.vip_level]['refresh_count'] : fresh_count);
+	this.shop_info.shop_detail.remove(shop_type);
+	this.shop_info.shop_detail.insert(shop_type, shop);
 }
 
 Shop.prototype.buy_product = function(buffer){
@@ -86,27 +88,26 @@ Shop.prototype.buy_product = function(buffer){
 		this.player.cplayer.respond_error_result(Msg_Res.RES_BUY_PRODUCT, Error_Code.ERROR_PRODUCT_NOT_EXIST);
 		return;
 	}
-	switch(msg_req.shop_type){
-		case Shop_Type.COPPER_SHOP:
-		this.buy_copper_product(product, msg_req.amount);
-		break;
-		default:
-		print("these's no shop type ", msg_req.shop_type);
-		break;
+	if((product.count - msg_req.amount) < 0){
+		this.player.cplayer.respond_error_result(Msg_Res.RES_BUY_PRODUCT, Error_Code.ERROR_PRODUCT_NOT_ENOUGH);
+		return;
 	}
+	var error = 0;
+	if(msg_req.shop_type == Shop_Type.COPPER_SHOP)
+		error = this.player.bag.bag_sub_money(product.price * msg_req.amount, 0);
+	if(error != 0){
+		this.player.cplayer.respond_error_result(Msg_Res.RES_BUY_PRODUCT, error);
+		return;
+	}
+	var item_arr = new Array();
+	var item = new Item_Info();
+	item.item_id = product.item_id;
+	item.amount = msg_req.amount;
+	item_arr.push(item);
+	this.player.bag.bag_insert_item(item_arr);
+	product.count -= msg_req.amount;
 	
 	this.player.set_data_change(Data_Change.SHOP_CHANGE);
-}
-
-Shop.prototype.refresh_shop = function(shop_type, fresh_count = -1){
-	var shop;
-	if(shop_type == Shop_Type.COPPER_SHOP){
-		shop = this.get_rand_product(config.shop_json[Shop_Type.COPPER_SHOP].product, 2);
-	}
-	shop.shop_type = Shop_Type.COPPER_SHOP;
-	shop.fresh_count = ( fresh_count < 0 ? 3 : fresh_count);
-	this.shop_info.shop_detail.remove(shop_type);
-	this.shop_info.shop_detail.insert(shop_type, shop);
 }
 	
 Shop.prototype.get_product = function(shop_type, product_id){
@@ -117,26 +118,7 @@ Shop.prototype.get_product = function(shop_type, product_id){
 		}
 	}
 	return null;
-}
-	
-Shop.prototype.buy_copper_product = function(product, amount){
-	if(this.player.bag.bag_info.copper < product.price * amount){
-		this.player.cplayer.respond_error_result(Msg_Res.RES_BUY_PRODUCT, Error_Code.ERROR_COPPER_NOT_ENOUGH);
-		return;
-	}
-	if((product.count - amount) < 0){
-		this.player.cplayer.respond_error_result(Msg_Res.RES_BUY_PRODUCT, Error_Code.ERROR_PRODUCT_NOT_ENOUGH);
-		return;
-	}
-	this.player.bag.bag_sub_money(product.price, 0);
-	var item_arr = new Array();
-	var item = new Item_Info();
-	item.id = product.item_id;
-	item.amount = amount;
-	item_arr.push(item);
-	this.player.bag.bag_insert_item(item_arr);
-	product.count -= amount;
-}
+}	
 
 Shop.prototype.get_rand_product = function(base, num){
 	if(num > base.length){
