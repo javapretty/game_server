@@ -16,14 +16,17 @@ public:
 	Game_Player(void);
 	virtual ~Game_Player(void);
 
-	void set_cid_info(Cid_Info &cid_info);
-	Cid_Info &cid_info(void);
-
 	int respond_success_result(int msg_id, Block_Buffer *buf = 0);
 	int respond_error_result(int msg_id, int err, Block_Buffer *buf = 0);
 
-	Player_Data &player_data(void) { return player_data_; }
-	Block_Buffer *write_player_data_buffer(void) { return write_player_data_buffer_; }
+	inline void set_cid(int gate_cid, int player_cid) {
+		gate_cid_ = gate_cid;
+		player_cid_ = player_cid;
+	}
+	inline int gate_cid(void) { return gate_cid_; }
+	inline int player_cid(void) { return player_cid_; }
+	inline Player_Data &player_data(void) { return player_data_; }
+	inline Block_Buffer *write_player_data_buffer(void) { return write_player_data_buffer_; }
 
 	int load_player(Player_Data &player_data);
 	int save_player(bool is_logout = false);
@@ -44,21 +47,13 @@ public:
 	int respond_role_login(void);
 
 private:
-	Cid_Info cid_info_;							//登录信息，包括gate_cid和player_cid
+	int gate_cid_;			//gate连接game的cid
+	int player_cid_;		//player连接gate的cid
 	Player_Data player_data_;
 	Block_Buffer *read_player_data_buffer_;			//供js端读取登录数据的buffer
 	Block_Buffer *write_player_data_buffer_;		//供js端写入玩家数据的buffer
 	Recycle_Tick recycle_tick_;
 	Time_Value last_save_tick_;			//上次保存数据tick
 };
-
-////////////////////////////////////////////////////////////////////////////////
-inline void Game_Player::set_cid_info(Cid_Info &cid_info) {
-	cid_info_ = cid_info;
-}
-
-inline Cid_Info &Game_Player::cid_info(void) {
-	return cid_info_;
-}
 
 #endif /* GAME_PLAYER_H_ */

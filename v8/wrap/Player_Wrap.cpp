@@ -49,8 +49,7 @@ void get_player_by_cid(const FunctionCallbackInfo<Value>& args) {
 
 	int gate_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int player_cid = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	Cid_Info cid_info(gate_cid, 0, player_cid);
-	Game_Player *player = GAME_MANAGER->find_cid_game_player(cid_info);
+	Game_Player *player = GAME_MANAGER->find_cid_game_player(gate_cid * 10000 + player_cid);
 	if (player) {
 		args.GetReturnValue().Set(wrap_player(args.GetIsolate(), player));
 	} else {

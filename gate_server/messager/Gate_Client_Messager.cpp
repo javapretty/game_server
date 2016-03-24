@@ -52,17 +52,20 @@ int Gate_Client_Messager::process_block(Block_Buffer &buf) {
 		}
 	}
 
-	if (msg_id >= CLIENT_GAME_MESSAGE_START && msg_id <= CLIENT_GAME_MESSAGE_END) {
-		Block_Buffer player_buf;
-		player_buf.reset();
-		player_buf.make_player_message(msg_id, status, player_cid);
-		player_buf.copy(&buf);
-		player_buf.finish_message();
-		process_game_block(msg_id, player_buf);
+	Perf_Mon perf_mon(msg_id);
+	Block_Buffer player_buf;
+	player_buf.reset();
+	player_buf.make_player_message(msg_id, status, player_cid);
+	player_buf.copy(&buf);
+	player_buf.finish_message();
+
+	if (msg_id >= CLIENT_MASTER_MESSAGE_START && msg_id <= CLIENT_MASTER_MESSAGE_END) {
+		GATE_MANAGER->send_to_master(player_buf);
+	} else if (msg_id >= CLIENT_GAME_MESSAGE_START && msg_id <= CLIENT_GAME_MESSAGE_END) {
+		GATE_MANAGER->send_to_game(player_buf);
 	}
-	else
-	{
-		LOG_INFO("error msg_id:%d", msg_id);
+	else {
+		LOG_ERROR("msg_id:%d error", msg_id);
 	}
 
 	return 0;
@@ -84,11 +87,6 @@ int Gate_Client_Messager::process_gate_block(int cid, int msg_id, Block_Buffer &
 		break;
 	}
 	return ret;
-}
-
-int Gate_Client_Messager::process_game_block(int msg_id, Block_Buffer &buf) {
-	Perf_Mon perf_mon(msg_id);
-	return GATE_MANAGER->send_to_game(buf);
 }
 
 int Gate_Client_Messager::connect_gate(int cid, Block_Buffer &buf) {

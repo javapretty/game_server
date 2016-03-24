@@ -102,7 +102,7 @@ int Game_Inner_Messager::process_loaded_player_data(Block_Buffer &buf) {
 	int gate_cid = logining_it->second.gate_cid;
 	int player_cid = logining_it->second.player_cid;
 	if (gate_cid < 2 || player_cid < 2) {
-		LOG_INFO("gate_cid = %d, player_cid = %d", gate_cid, player_cid);
+		LOG_INFO("player cid error, gate_cid = %d, player_cid = %d, account = %s", gate_cid, player_cid, msg.player_data.player_info.account.c_str());
 		return -1;
 	}
 
@@ -164,11 +164,10 @@ int Game_Inner_Messager::process_success_login(int gate_cid, int player_cid, Pla
 	}
 
 	player->reset();
-	Cid_Info cid_info(gate_cid, 0, player_cid);
-	player->set_cid_info(cid_info);
+	player->set_cid(gate_cid, player_cid);
 	player->load_player(data);
 	player->sign_in(data.player_info.account);
-	GAME_MANAGER->bind_cid_game_player(cid_info, *player);
+	GAME_MANAGER->bind_cid_game_player(gate_cid * 10000 + player_cid, *player);
 	GAME_MANAGER->bind_role_id_game_player(player->player_data().player_info.role_id, *player);
 
 	Player_DB_Cache db_cache;

@@ -13,6 +13,8 @@
 enum Message_Bound {
 	CLIENT_GATE_MESSAGE_START = 100000, 
 	CLIENT_GATE_MESSAGE_END = 109999, 
+	CLIENT_MASTER_MESSAGE_START = 110000, 
+	CLIENT_MASTER_MESSAGE_END = 119999, 
 	CLIENT_GAME_MESSAGE_START = 120000, 
 	CLIENT_GAME_MESSAGE_END = 129999, 
 };
@@ -29,6 +31,14 @@ enum Login_Client_Message {
 	RES_CLIENT_LOGIN = 500001, //登录(返回)
 	RES_CONNECT_GATE = 500002, //客户端登录gate(返回)
 	RES_HEARTBEAT = 500003, //心跳(返回)
+};
+
+enum Client_Master_Message {
+	REQ_SEND_CHAT_INFO = 110001, //发送世界聊天消息
+};
+
+enum Master_Client_Message {
+	RES_SEND_CHAT_INFO = 510001, //发送世界聊天消息(返回)
 };
 
 enum Client_Game_Message {

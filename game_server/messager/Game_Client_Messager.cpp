@@ -85,7 +85,7 @@ int Game_Client_Messager::process_120001(int gate_cid, int player_cid, MSG_12000
 		if (GAME_MANAGER->db_cache()->account_player_cache_map.count(msg.account)) {
 			//登录加载玩家信息，玩家存在，直接从数据库取数据
 			LOG_DEBUG("push_load_account_info, role exist, account=%s",msg.account.c_str());
-			if (! GAME_MANAGER->logining_map().insert(std::make_pair(msg.account, Cid_Info(gate_cid, 0, player_cid))).second) {
+			if (! GAME_MANAGER->logining_map().insert(std::make_pair(msg.account, Cid_Info(gate_cid, player_cid))).second) {
 				LOG_INFO("insert logining_map failure");
 				return -1;
 			}
@@ -119,11 +119,10 @@ int Game_Client_Messager::process_120001(int gate_cid, int player_cid, MSG_12000
 		}
 
 		/// 重复登录
-		if (player_cid != player->cid_info().player_cid) {
-			Cid_Info cid_info(gate_cid, 0, player_cid);
-			player->set_cid_info(cid_info);
+		if (player_cid != player->player_cid()) {
+			player->set_cid(gate_cid, player_cid);
 		} else {
-			LOG_INFO("same cid resigin");
+			LOG_INFO("player login again, account=%s", msg.account.c_str());
 		}
 	}
 	return 0;
@@ -131,8 +130,7 @@ int Game_Client_Messager::process_120001(int gate_cid, int player_cid, MSG_12000
 
 int Game_Client_Messager::process_120002(int gate_cid, int player_cid, MSG_120002 &msg) {
 	if (msg.account.empty() || msg.role_name.empty() || msg.gender > 1) {
-		LOG_INFO("invalid parameter account = [%s], role_name = [%s], gender = %d",
-				msg.account.c_str(), msg.role_name.c_str(), msg.gender);
+		LOG_INFO("invalid parameter account = [%s], role_name = [%s], gender = %d", msg.account.c_str(), msg.role_name.c_str(), msg.gender);
 		return -1;
 	}
 
@@ -144,8 +142,8 @@ int Game_Client_Messager::process_120002(int gate_cid, int player_cid, MSG_12000
 		return GAME_MANAGER->send_to_gate(gate_cid, msg_buf);
 	}
 
-	if (! GAME_MANAGER->logining_map().insert(std::make_pair(msg.account, Cid_Info(gate_cid, 0, player_cid))).second) {
-		LOG_INFO("insert failure");
+	if (! GAME_MANAGER->logining_map().insert(std::make_pair(msg.account, Cid_Info(gate_cid, player_cid))).second) {
+		LOG_INFO("invalid parameter account = [%s], role_name = [%s], gender = %d", msg.account.c_str(), msg.role_name.c_str(), msg.gender);
 	}
 
 	LOG_DEBUG("process_120002, push_create_player_data,account=%s, role_name=%s",msg.account.c_str(), msg.role_name.c_str());
@@ -166,8 +164,8 @@ int Game_Client_Messager::process_120002(int gate_cid, int player_cid, MSG_12000
 }
 
 int Game_Client_Messager::process_140002(int gate_cid, int player_cid) {
-	Cid_Info cid_info(gate_cid, 0, player_cid);
-	Game_Player *player = GAME_MANAGER->find_cid_game_player(cid_info);
+	int cid = gate_cid * 10000 + player_cid;
+	Game_Player *player = GAME_MANAGER->find_cid_game_player(cid);
 	if (player) {
 		player->link_close();
 	}

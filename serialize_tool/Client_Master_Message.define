@@ -1,0 +1,14 @@
+//发送世界聊天
+struct MSG_110001 {
+	int8_t chat_type;				//1.世界聊天 2.私聊 3.帮派聊天 4.队伍聊天
+	std::string chat_content;
+	std::string role_name;	//私聊时候发送对方名字
+};
+
+struct MSG_510001 {
+	int8_t chat_type;
+	std::string chat_content;
+	std::string role_name;
+	int32_t	career;
+	int32_t	gender;
+};

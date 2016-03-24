@@ -71,10 +71,10 @@ int Master_Inner_Messager::process_160001(int game_cid, int player_cid, Block_Bu
 	}
 
 	player->reset();
-	Cid_Info cid_info(0, game_cid, player_cid);
-	player->set_cid_info(cid_info);
-	MASTER_MANAGER->bind_role_id_master_player(msg.player_info.role_id, *player);
+	player->set_cid(0, game_cid, player_cid);
 	player->sign_in(msg.player_info);
+	MASTER_MANAGER->bind_game_cid_master_player(game_cid * 10000 + player_cid, *player);
+	MASTER_MANAGER->bind_role_id_master_player(msg.player_info.role_id, *player);
 	return 0;
 }
 
@@ -88,7 +88,5 @@ int Master_Inner_Messager::process_160002(Block_Buffer &buf) {
 	MASTER_MANAGER->unbind_master_player(*player);
 	player->sign_out();
 	MASTER_MANAGER->push_master_player(player);
-
-	LOG_INFO("process_160002 role sign out role_id = %ld", msg.role_id);
 	return 0;
 }

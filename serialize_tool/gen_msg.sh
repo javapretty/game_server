@@ -3,7 +3,7 @@
 JS_DEFINES_1="Active_Message Client_Game_Message"
 JS_DEFINES_2="Msg_Struct Game_Struct"
 
-CPP_DEFINES_OUTER="Active_Message Client_Game_Message Client_Login_Message Msg_Struct"
+CPP_DEFINES_OUTER="Active_Message Client_Game_Message Client_Login_Message Client_Master_Message Msg_Struct"
 CPP_DEFINES="Game_DB_Message Game_Master_Message Gate_Message Log_Message Game_Struct"
 
 DEFINE_PATH=`pwd`'/'

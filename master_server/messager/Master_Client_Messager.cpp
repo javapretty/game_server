@@ -27,9 +27,11 @@ int Master_Client_Messager::process_block(Block_Buffer &buf) {
 
 	//客户端发到服务器的消息在这里处理
 	Perf_Mon perf_mon(msg_id);
-	int ret = 0;
-	if (ret) {
-		LOG_INFO("error msg buf:%d", msg_id);
+	switch(msg_id) {
+	case REQ_SEND_CHAT_INFO:
+		break;
+	default:
+		LOG_ERROR("msg_id:%d error", msg_id);
 	}
 
 	return 0;

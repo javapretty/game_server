@@ -167,27 +167,27 @@ int Game_Manager::process_list(void) {
 
 void Game_Manager::process_drop_gate_cid(int gate_cid) {
 	for (Game_Player_Cid_Map::iterator iter = player_cid_map_.begin(); iter != player_cid_map_.end(); ) {
-		if (iter->first.gate_cid == gate_cid) {
+		if (iter->second->gate_cid() == gate_cid) {
 			iter->second->link_close();
 			player_cid_map_.erase(iter++);
 		}
 	}
 }
 
-int Game_Manager::bind_cid_game_player(Cid_Info &cid_info, Game_Player &player) {
-	if (! player_cid_map_.insert(std::make_pair(cid_info, &player)).second) {
-		LOG_INFO("insert failure");
+int Game_Manager::bind_cid_game_player(int cid, Game_Player &player) {
+	if (! player_cid_map_.insert(std::make_pair(cid, &player)).second) {
+		LOG_INFO("insert cid player failure");
 	}
 	return 0;
 }
 
-int Game_Manager::unbind_cid_game_player(Cid_Info &cid_info) {
-	player_cid_map_.erase(cid_info);
+int Game_Manager::unbind_cid_game_player(int cid) {
+	player_cid_map_.erase(cid);
 	return 0;
 }
 
-Game_Player* Game_Manager::find_cid_game_player(Cid_Info &cid_info) {
-	Game_Player_Cid_Map::iterator it = player_cid_map_.find(cid_info);
+Game_Player* Game_Manager::find_cid_game_player(int cid) {
+	Game_Player_Cid_Map::iterator it = player_cid_map_.find(cid);
 	if (it != player_cid_map_.end())
 		return it->second;
 	else
@@ -235,7 +235,7 @@ Game_Player *Game_Manager::find_role_name_game_player(std::string &role_name) {
 }
 
 int Game_Manager::unbind_game_player(Game_Player &player) {
-	player_cid_map_.erase(player.cid_info());
+	player_cid_map_.erase(player.gate_cid() * 10000 + player.player_cid());
 	player_role_id_map_.erase(player.player_data().player_info.role_id);
 	player_role_name_map_.erase(player.player_data().player_info.role_name);
 	return 0;
