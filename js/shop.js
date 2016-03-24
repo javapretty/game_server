@@ -10,7 +10,7 @@ function Shop() {
 }
 
 Shop.prototype.init = function(){
-	var copper_shop = this.get_rand_product(shop_base['COPPER_SHOP'].PRODUCTS, 2);
+	var copper_shop = this.get_rand_product(config.shop_json[Shop_Type.COPPER_SHOP].product, 2);
 	copper_shop.shop_type = Shop_Type.COPPER_SHOP;
 	copper_shop.fresh_count = 3;
 	this.shop_info.shop_detail.insert(Shop_Type.COPPER_SHOP, copper_shop);
@@ -59,7 +59,7 @@ Shop.prototype.refresh_by_player = function(buffer){
 	var cost;
 	switch(msg_req.shop_type){
 		case Shop_Type.COPPER_SHOP:
-		cost = shop_base['COPPER_SHOP'].REFRESH_COST[3 - count];
+		cost = config.shop_json[Shop_Type.COPPER_SHOP].refresh_cost[3 - count];
 		if(cost > this.player.bag.bag_info.copper){
 			this.player.cplayer.respond_error_result(Msg_Res.RES_REFRESH_SHOP, Error_Code.ERROR_COPPER_NOT_ENOUGH);
 			return;
@@ -101,7 +101,7 @@ Shop.prototype.buy_product = function(buffer){
 Shop.prototype.refresh_shop = function(shop_type, fresh_count = -1){
 	var shop;
 	if(shop_type == Shop_Type.COPPER_SHOP){
-		shop = this.get_rand_product(shop_base['COPPER_SHOP'].PRODUCTS, 2);
+		shop = this.get_rand_product(config.shop_json[Shop_Type.COPPER_SHOP].product, 2);
 	}
 	shop.shop_type = Shop_Type.COPPER_SHOP;
 	shop.fresh_count = ( fresh_count < 0 ? 3 : fresh_count);

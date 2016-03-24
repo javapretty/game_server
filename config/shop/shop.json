@@ -1,7 +1,7 @@
 {
-	"COPPER_SHOP" : {
-		"REFRESH_COST" : [0, 20, 30],
-		"PRODUCTS" : [
+	"1" : {
+		"refresh_cost" : [0, 20, 30],
+		"product" : [
 			{
 				"product_id" :1001,
 				"item_id" :100000001, 

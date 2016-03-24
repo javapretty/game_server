@@ -56,7 +56,7 @@ Hero.prototype.add_hero_star = function(buffer) {
 		return this.player.cplayer.respond_error_result(Msg_Res.RES_ADD_HERO_STAR, Error_Code.ERROR_CLIENT_PARAM);
 	}
 	
-  	var hero_obj = util.get_json_config('config/hero/hero.json', msg_req.hero_id);
+	var hero_obj = config.hero_json[msg_req.hero_id];
     if (hero_obj == null || hero_detail.level >= hero_obj.star_item_amount.length) {
     	return this.player.cplayer.respond_error_result(Msg_Res.RES_ADD_HERO_STAR, Error_Code.ERROR_CONFIG_NOT_EXIST);
     }
@@ -71,16 +71,16 @@ Hero.prototype.add_hero_star = function(buffer) {
 	var item_array = new Array();
 	item_array.push(item);
   	var result = this.player.bag.bag_erase_item(item_array);
-  if (result != 0) {
+	if (result != 0) {
     	return this.player.cplayer.respond_error_result(Msg_Res.RES_ADD_HERO_STAR, result);
 	}
-  hero_detail.star++;
-  this.refresh_hero_property(hero_detail);
-  this.player.set_data_change(Data_Change.HERO_CHANGE);
+	hero_detail.star++;
+	this.refresh_hero_property(hero_detail);
+	this.player.set_data_change(Data_Change.HERO_CHANGE);
     	
-  var msg_res = new MSG_520301();
-  msg_res.hero_id = msg_req.hero_id;
-  msg_res.star = hero_detail.star;
+	var msg_res = new MSG_520301();
+	msg_res.hero_id = msg_req.hero_id;
+	msg_res.star = hero_detail.star;
 	var buf = pop_buffer();
 	msg_res.serialize(buf);
 	this.player.cplayer.respond_success_result(Msg_Res.RES_ADD_HERO_STAR, buf);
@@ -181,7 +181,7 @@ Hero.prototype.equip_on_off = function(buffer) {
 	
 	if (msg_req.on) {
 		//穿装备
-		var equip_obj = util.get_json_config('config/bag/item.json', msg_req.equip_info.item_id);
+		var equip_obj = config.item_json[msg_req.equip_info.item_id];
 		if (equip_obj == null) {
 			return this.player.cplayer.respond_error_result(Msg_Res.RES_EQUIP_ON_OFF, Error_Code.ERROR_CONFIG_NOT_EXIST);
 		}

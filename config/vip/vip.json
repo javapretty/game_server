@@ -1,6 +1,6 @@
 {	
 	"0" : {
-		"buy_vitality_max" : 1,
+		"max_buy_vitality" : 1,
 		"level_exp" : 50
     }
 }

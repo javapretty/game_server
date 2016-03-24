@@ -10,6 +10,7 @@ require('error.js');
 require('message.js');
 require('struct.js');
 require('msg_struct.js');
+require('config.js');
 require('player.js');
 require('hero.js');
 require('bag.js');
@@ -27,8 +28,9 @@ var player_role_id_map = new Map();
 var timer = new Timer();
 timer.init();
 
-//全局数据对象
-var shop_base = JSON.parse(read_json('config/shop/product.json'));
+//加载配置文件
+var config = new Config();
+config.init();
 
 //执行脚本主循环函数
 main();

@@ -110,9 +110,9 @@ Player.prototype.add_exp = function(exp) {
 	
 	//经验增加升级
 	this.player_info.exp += exp;
-	var max_player_level = util.get_json_config('config/util/param.json', max_player_level);
+	var max_player_level = config.util_json.max_player_level;
 	for (var i = this.player_info.level; i < max_player_level; ++i) {
-		var level_exp = util.get_json_config('config/player/level.json', i).level_exp;
+		var level_exp = config.level_json[i].level_exp;
 		if (this.player_info.exp < level_exp) 
 			break;
 		
@@ -131,11 +131,11 @@ Player.prototype.add_exp = function(exp) {
 }
 	
 Player.prototype.update_vip = function(charge_id) {
-	var charge_exp = util.get_json_config('config/vip/charge.json', charge_id).vip_exp;
+	var charge_exp = config.recharge_json[charge_id].vip_exp;
 	this.player_info.vip_exp += charge_exp;
-	var max_vip_level = util.get_json_config('config/util/param.json', max_vip_level);
+	var max_vip_level = config.util_json.max_vip_level;
 	for (var i = this.player_info.vip_level; i < max_vip_level; ++i) {
-		var level_exp = util.get_json_config('config/vip/vip.json', i).level_exp;
+		var level_exp = config.vip_json[i].level_exp;
 		if (this.player_info.vip_exp < level_exp) 
 			break;
 		
@@ -157,13 +157,17 @@ Player.prototype.buy_vitality = function() {
 	print('buy_vitality, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
 
 	//1.检查可以购买体力次数
-	var max_buy_times = util.get_json_config('config/vip/vip.json', this.player_info.vip_level).buy_vitality_max;
+	var max_buy_times = config.vip_json[this.player_info.vip_level].max_buy_vitality;
 	if (this.player_info.buy_vitality_times >= max_buy_times){
 		return this.cplayer.respond_error_result(Msg_Res.RES_BUY_VITALITY, Error_Code.ERROR_VITALITY_TIMES_NOT_ENOUGH);
 	}
 
 	//2.更新元宝
-	var cost_gold = util.get_json_config('config/util/price.json', this.player_info.buy_vitality_times).vitality;
+	var buy_vitality_gold = config.util_json.buy_vitality_gold;
+	if (buy_vitality_gold == null || this.player_info.buy_vitality_times >= buy_vitality_gold.length) {
+		return this.cplayer.respond_error_result(Msg_Res.RES_BUY_VITALITY, Error_Code.ERROR_CONFIG_NOT_EXIST);
+	}	
+	var cost_gold = buy_vitality_gold[this.player_info.buy_vitality_times];
 	var result = this.bag.bag_sub_money(0, cost_gold);
 	if (result != 0) {
 		return this.cplayer.respond_error_result(Msg_Res.RES_BUY_VITALITY, Error_Code.ERROR_GOLD_NOT_ENOUGH);
@@ -171,7 +175,7 @@ Player.prototype.buy_vitality = function() {
 	
 	//3.更新体力(120应该为配置)
 	this.player_info.buy_vitality_times++;
-	var maxVit = util.get_json_config('config/player/level.json', this.player_info.level).max_vitality;
+	var maxVit = config.level_json[this.player_info.level].max_vitality;
 	this.player_info.vitality = Math.min(Math.max(0, (this.player_info.vitality + 120)), maxVit);
 	
 	//4.返回消息给客户端
