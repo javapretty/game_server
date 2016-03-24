@@ -21,6 +21,20 @@ function Timer() {
 	this.init = function() {
 		//注册玩家定时器，时间间隔500ms，每次到期遍历在线玩家进行处理
 		this.register_timer(500, 0, this.player_handler);
+		this.register_timer(1000 * 60 * 60 * 24, this.get_next_tick(8), this.refresh_shop_handler);
+	}
+
+	//获取当前时间到指定定时时间的间隔(每日)
+	this.get_next_tick = function(hour, min = 0, sec = 0) {
+		var date = new Date();
+		date.setHours(hour);
+		date.setMinutes(min);
+		date.setSeconds(sec);
+		date.setMilliseconds(0);
+		var time = date.getTime() / 1000;
+		var now = util.now_sec();
+		var next_tick = time - now;
+		return next_tick > 0 ? next_tick : (next_tick + 60 * 60 * 24);
 	}
 	
 	this.player_handler = function() {
@@ -30,6 +44,12 @@ function Timer() {
 			value.bag.tick(now);
 			value.hero.tick(now);
 			value.mail.tick(now);
+    	});
+	}
+
+	this.refresh_shop_handler = function() {
+		player_role_id_map.each(function(key,value,index) {
+			value.shop.tick();
     	});
 	}
 }

@@ -69,7 +69,7 @@ Bag.prototype.bag_sub_money = function(copper, gold) {
 	if (this.bag_info.copper < copper) {
 		return Error_Code.ERROR_COPPER_NOT_ENOUGH;
 	}
-	if (this.bag_info.gold < copper) {
+	if (this.bag_info.gold < gold) {
 		return Error_Code.ERROR_GOLD_NOT_ENOUGH;
 	}
 	this.bag_info.copper -= copper;
@@ -83,9 +83,9 @@ Bag.prototype.bag_insert_item = function(item_array) {
 		return Error_Code.ERROR_BAG_FULL;
 	}
 	for (var i = 0; i < item_array.length; ++i) {
-		var item_info = this.bag_info.item_map.get(item_array[i].id);
+		var item_info = this.bag_info.item_map.get(item_array[i].item_id);
 		if (item_info == null) {
-			this.bag_info.item_map.insert(item_array[i].id, item_array[i]);	
+			this.bag_info.item_map.insert(item_array[i].item_id, item_array[i]);	
 		} else {
 			item_info.amount += item_array[i].amount;
 		}	

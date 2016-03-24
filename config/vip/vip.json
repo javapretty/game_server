@@ -1,6 +1,7 @@
 {	
 	"0" : {
 		"max_buy_vitality" : 1,
-		"level_exp" : 50
+		"level_exp" : 50,
+		"refresh_shop_count" : 3
     }
 }
