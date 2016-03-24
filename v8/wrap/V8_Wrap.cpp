@@ -16,7 +16,6 @@
 #include "Game_Server.h"
 #include "Game_Manager.h"
 #include "Game_Timer.h"
-#include "Game_Client_Messager.h"
 
 Local<Context> Create_Context(Isolate* isolate) {
 	Local<ObjectTemplate> global = ObjectTemplate::New(isolate);
@@ -38,8 +37,6 @@ Local<Context> Create_Context(Isolate* isolate) {
 			FunctionTemplate::New(isolate, push_buffer));
 	global->Set(String::NewFromUtf8(isolate, "send_msg_to_db", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, send_msg_to_db));
-	global->Set(String::NewFromUtf8(isolate, "process_login_buffer", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, process_login_buffer));
 	global->Set(String::NewFromUtf8(isolate, "get_client_buffer", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, get_client_buffer));
 	global->Set(String::NewFromUtf8(isolate, "push_client_buffer", NewStringType::kNormal).ToLocalChecked(),
@@ -236,47 +233,8 @@ void send_msg_to_db(const FunctionCallbackInfo<Value>& args) {
 	GAME_MANAGER->send_to_db(*buf);
 }
 
-void process_login_buffer(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 4) {
-		LOG_INFO("process_login_block args error, length: %d\n", args.Length());
-		return;
-	}
-
-	Block_Buffer *buf = unwrap_buffer(args[0]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
-	if (!buf) {
-		return;
-	}
-
-	int gate_cid = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	int player_cid = args[2]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	int msg_id = args[3]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-
-	Perf_Mon perf_mon(msg_id);
-	int ret = 0;
-	switch (msg_id) {
-	case REQ_FETCH_ROLE_INFO: {
-		MSG_120001 msg;
-		if ((ret = msg.deserialize(*buf)) == 0)
-			GAME_CLIENT_MESSAGER->process_120001(gate_cid, player_cid, msg);
-		break;
-	}
-	case REQ_CREATE_ROLE: {
-		MSG_120002 msg;
-		if ((ret = msg.deserialize(*buf)) == 0)
-			GAME_CLIENT_MESSAGER->process_120002(gate_cid, player_cid, msg);
-		break;
-	}
-	case SYNC_GATE_GAME_PLAYER_SIGNOUT: {
-		ret = GAME_CLIENT_MESSAGER->process_140002(gate_cid, player_cid);
-		break;
-	}
-	default:
-		break;
-	}
-}
-
 void get_client_buffer(const FunctionCallbackInfo<Value>& args) {
-	Block_Buffer *buf = GAME_MANAGER->pop_game_gate_data();
+	Block_Buffer *buf = GAME_MANAGER->pop_game_client_data();
 	if (buf) {
 		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
 	} else {

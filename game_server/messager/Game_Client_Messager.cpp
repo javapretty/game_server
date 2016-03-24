@@ -19,6 +19,41 @@ Game_Client_Messager *Game_Client_Messager::instance(void) {
 	return instance_;
 }
 
+//处理登录掉线消息
+int Game_Client_Messager::process_login_buffer(Block_Buffer &buf) {
+	int32_t gate_cid = buf.read_int32();
+	/*int16_t len*/  buf.read_int16();
+	int32_t msg_id = buf.read_int32();
+	/*int32_t status*/  buf.read_int32();
+	int32_t player_cid = buf.read_int32();
+
+	Perf_Mon perf_mon(msg_id);
+	int ret = 0;
+	switch (msg_id) {
+	case REQ_FETCH_ROLE_INFO: {
+		MSG_120001 msg;
+		if ((ret = msg.deserialize(buf)) == 0)
+			process_120001(gate_cid, player_cid, msg);
+		break;
+	}
+	case REQ_CREATE_ROLE: {
+		MSG_120002 msg;
+		if ((ret = msg.deserialize(buf)) == 0)
+			process_120002(gate_cid, player_cid, msg);
+		break;
+	}
+	case SYNC_GATE_GAME_PLAYER_SIGNOUT: {
+		ret = process_140002(gate_cid, player_cid);
+		break;
+	}
+	default:
+		LOG_INFO("msg_id:%d error", msg_id);
+		break;
+	}
+
+	return 0;
+}
+
 int Game_Client_Messager::process_120001(int gate_cid, int player_cid, MSG_120001 &msg) {
 	if (GAME_MANAGER->server_status() != Game_Manager::STATUS_NORMAL) {
 		LOG_INFO("server closing");
