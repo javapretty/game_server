@@ -111,6 +111,19 @@ int Game_Manager::process_list(void) {
 			cid = drop_gate_cid_list_.pop_front();
 			process_drop_gate_cid(cid);
 		}
+		///玩家登录数据
+		if ((buf = player_login_data_list_.pop_front()) != 0) {
+			all_empty = false;
+			if (buf->is_legal()) {
+				cid = buf->peek_int32();
+				GAME_CLIENT_MESSAGER->process_login_buffer(*buf);
+			} else {
+				LOG_INFO("buf.read_index = %ld, buf.write_index = %ld",
+						buf->get_read_idx(), buf->get_write_idx());
+				buf->reset();
+			}
+			GAME_GATE_SERVER->push_block(cid, buf);
+		}
 		/// db-->game
 		if ((buf = game_db_data_list_.pop_front()) != 0) {
 			all_empty = false;

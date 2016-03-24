@@ -10,8 +10,6 @@ void sleep();
 
 //函数说明：发送消息到db_server 	参数：1,buffer对象	返回值：无
 void send_msg_to_db();
-//函数说明：处理登录消息 	参数：1,buffer对象 2,gate_cid 3,player_cid 4,msg_id	返回值：无
-void process_login_buffer();
 //函数说明：获取客户端消息buffer	参数：无	返回值：buffer对象
 void get_client_buffer();
 //函数说明：回收客户端消息buffer	参数：buffer对象	返回值：无

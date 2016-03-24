@@ -62,7 +62,7 @@ public:
 	/// 通信层投递消息到Game_Manager
 	void push_drop_gate_cid(int cid);
 	int push_game_gate_data(Block_Buffer *buf);
-	Block_Buffer* pop_game_gate_data();
+	Block_Buffer* pop_game_client_data();
 	int push_game_db_data(Block_Buffer *buf);
 	int push_game_master_data(Block_Buffer *buf);
 	int push_self_loop_message(Block_Buffer &msg_buf);
@@ -129,7 +129,8 @@ private:
 
 	Data_List loaded_player_data_list_; 			//玩家登录从数据库加载数据
 	Int_List drop_gate_cid_list_;						//掉线gate_cid列表,让通过该gate连接到game的所有玩家掉线
-	Data_List game_gate_data_list_;					///gate-->game
+	Data_List player_login_data_list_;				//玩家登录消息数据
+	Data_List game_client_data_list_;				//玩家逻辑消息数据，发到js处理
 	Data_List game_db_data_list_;						///db-->game
 	Data_List game_master_data_list_;				///master-->game
 	Data_List self_loop_block_list_; 				///self_loop_block_list
@@ -188,12 +189,28 @@ inline void Game_Manager::push_drop_gate_cid(int cid) {
 }
 
 inline int Game_Manager::push_game_gate_data(Block_Buffer *buf) {
-	game_gate_data_list_.push_back(buf);
+	int read_idx = buf->get_read_idx();
+	/*int32_t cid*/ buf->read_int32();
+	/*int16_t len*/ buf->read_int16();
+	int32_t msg_id = buf->read_int32();
+	buf->set_read_idx(read_idx);
+
+	switch (msg_id) {
+	case REQ_FETCH_ROLE_INFO:
+	case REQ_CREATE_ROLE:
+	case SYNC_GATE_GAME_PLAYER_SIGNOUT: {
+		player_login_data_list_.push_back(buf);
+		break;
+	}
+	default : {
+		game_client_data_list_.push_back(buf);
+	}
+	}
 	return 0;
 }
 
-inline Block_Buffer* Game_Manager::pop_game_gate_data() {
-	return game_gate_data_list_.pop_front();
+inline Block_Buffer* Game_Manager::pop_game_client_data() {
+	return game_client_data_list_.pop_front();
 }
 
 inline int Game_Manager::push_game_db_data(Block_Buffer *buf) {
