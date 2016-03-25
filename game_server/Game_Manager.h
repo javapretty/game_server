@@ -47,7 +47,7 @@ public:
 	inline DB_Cache *db_cache(void) { return db_cache_; }
 
 	/// 服务器状态
-	inline int server_status(void) { return server_status_; };
+	inline int server_status(void) { return server_status_; }
 
 	Game_Player *pop_game_player(void);
 	int push_game_player(Game_Player *player);
@@ -100,7 +100,7 @@ public:
 	/// 定时器处理
 	int tick(void);
 	/// 返回上次tick的绝对时间, 最大误差有100毫秒,主要为减少系统调用gettimeofday()调用次数
-	inline const Time_Value &tick_time(void) { return tick_time_; };
+	inline const Time_Value &tick_time(void) { return tick_time_; }
 	int player_tick(Time_Value &now);
 	int server_info_tick(Time_Value &now);
 	int saving_scanner_tick(Time_Value &now);

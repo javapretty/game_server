@@ -17,10 +17,6 @@ Mail.prototype.load_data = function(player, buffer) {
 Mail.prototype.save_data = function(buffer) {
 	this.mail_info.serialize(buffer);
 }
-	
-Mail.prototype.tick = function(now) {
-	
-}
 
 Mail.prototype.fetch_mail_info = function() {
 	print('fetch_mail_info, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " util.now_msec:", util.now_msec());

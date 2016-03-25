@@ -41,7 +41,7 @@ public:
 	void run_handler(void);
 
 	/// 服务器状态
-	inline int server_status(void) { return server_status_; };
+	inline int server_status(void) { return server_status_; }
 
 	int init_gate_ip(void);
 	void get_gate_ip(std::string &account, std::string &ip, int &port);
@@ -80,7 +80,7 @@ public:
 	/// 定时器处理
 	int tick(void);
 	/// 返回上次tick的绝对时间, 最大误差有100毫秒,主要为减少系统调用gettimeofday()调用次数
-	inline const Time_Value &tick_time(void) { return tick_time_; };
+	inline const Time_Value &tick_time(void) { return tick_time_; }
 	int close_list_tick(Time_Value &now);
 	int server_info_tick(Time_Value &now);
 	int player_tick(Time_Value &now);

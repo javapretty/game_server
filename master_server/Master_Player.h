@@ -17,14 +17,14 @@ public:
 	int respond_success_result(int msg_id, Block_Buffer *buf = 0);
 	int respond_error_result(int msg_id, int err, Block_Buffer *buf = 0);
 
-	inline void set_gate_cid(int gate_cid) { gate_cid_ = gate_cid; };
+	inline void set_gate_cid(int gate_cid) { gate_cid_ = gate_cid; }
 	inline int gate_cid(void) { return gate_cid_; }
-	inline void set_game_cid(int game_cid) { game_cid_ = game_cid; };
+	inline void set_game_cid(int game_cid) { game_cid_ = game_cid; }
 	inline int game_cid(void) { return game_cid_; }
-	inline void set_player_cid(int player_cid) { player_cid_ = player_cid; };
+	inline void set_player_cid(int player_cid) { player_cid_ = player_cid; }
 	inline int player_cid(void) { return player_cid_; }
-	inline void set_master_player_info(const Master_Player_Info &player_info) { player_info_ = player_info; };
-	Master_Player_Info const &master_player_info(void) const { return player_info_; };
+	inline void set_master_player_info(const Master_Player_Info &player_info) { player_info_ = player_info; }
+	Master_Player_Info const &master_player_info(void) const { return player_info_; }
 
 	void reset(void);
 	int tick(Time_Value &now);

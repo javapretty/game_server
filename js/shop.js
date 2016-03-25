@@ -27,10 +27,6 @@ Shop.prototype.save_data = function(buffer) {
 	this.shop_info.serialize(buffer);
 }
 
-Shop.prototype.tick = function(now) {
-
-}
-
 Shop.prototype.daily_refresh = function() {
 	this.refresh_shop(Shop_Type.COPPER_SHOP);
 }

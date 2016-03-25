@@ -18,10 +18,6 @@ Bag.prototype.save_data = function(buffer) {
 	this.bag_info.serialize(buffer);
 }
 
-Bag.prototype.tick = function(now) {
-	
-}
-	
 Bag.prototype.fetch_bag_info = function() {
 	print('fetch_bag_info, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " util.now_msec:", util.now_msec());
 	

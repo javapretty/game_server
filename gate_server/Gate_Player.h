@@ -14,10 +14,10 @@ public:
 	Gate_Player(void);
 	virtual ~Gate_Player(void);
 
-	void set_cid(int cid) { cid_ = cid; };
-	int get_cid(void) { return cid_; };
-	void set_account(std::string  &account) { account_ = account; };
-	std::string& get_account(void) { return account_; };
+	void set_cid(int cid) { cid_ = cid; }
+	int get_cid(void) { return cid_; }
+	void set_account(std::string  &account) { account_ = account; }
+	std::string& get_account(void) { return account_; }
 	void reset(void);
 
 	int tick(Time_Value &now);

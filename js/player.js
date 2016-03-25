@@ -100,7 +100,12 @@ Player.prototype.tick = function(now) {
 		this.sync_player_data_tick = now;
 	}
 }
-	
+
+Player.prototype.daily_refresh = function() {
+	this.player_info.buy_vitality_times = 0;
+	this.player_info.exchange_count = 0;
+}
+
 Player.prototype.add_exp = function(exp) {
 	print('add_exp, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " exp:", exp);
 	
@@ -206,8 +211,4 @@ Player.prototype.exchange_money = function(buffer){
 	this.player_info.exchange_count++;
 
 	this.set_data_change(Data_Change.PLAYER_CHANGE);
-}
-
-Player.prototype.daily_refresh = function() {
-	this.player_info.exchange_count = 0;
 }
