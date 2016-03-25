@@ -17,5 +17,5 @@ struct MSG_140100 {
 
 //gate同步玩家上线到master
 struct MSG_140200 {
-	int64_t role_id;
+	Master_Player_Info player_info;
 };

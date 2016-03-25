@@ -53,47 +53,47 @@ void Gate_Manager::run_handler(void) {
 	process_list();
 }
 
-int Gate_Manager::send_to_client(int cid, Block_Buffer &buf) {
-	if (cid < 2) {
-		LOG_INFO("cid = %d", cid);
+int Gate_Manager::send_to_client(int player_cid, Block_Buffer &buf) {
+	if (player_cid < 2) {
+		LOG_INFO("player_cid = %d", player_cid);
 		return -1;
 	}
-	return GATE_CLIENT_SERVER->send_block(cid, buf);
+	return GATE_CLIENT_SERVER->send_block(player_cid, buf);
 }
 
 int Gate_Manager::send_to_game(Block_Buffer &buf) {
-	int cid = GATE_GAME_CONNECTOR->get_cid();
-	if (cid < 2) {
-		LOG_INFO("cid = %d", cid);
+	int game_cid = GATE_GAME_CONNECTOR->get_cid();
+	if (game_cid < 2) {
+		LOG_INFO("game_cid = %d", game_cid);
 		return -1;
 	}
-	return GATE_GAME_CONNECTOR->send_block(cid, buf);
+	return GATE_GAME_CONNECTOR->send_block(game_cid, buf);
 }
 
 int Gate_Manager::send_to_login(Block_Buffer &buf) {
-	int cid = GATE_LOGIN_CONNECTOR->get_cid();
-	if (cid < 2) {
-		LOG_INFO("cid = %d", cid);
+	int login_cid = GATE_LOGIN_CONNECTOR->get_cid();
+	if (login_cid < 2) {
+		LOG_INFO("login_cid = %d", login_cid);
 		return -1;
 	}
-	return GATE_LOGIN_CONNECTOR->send_block(cid, buf);
+	return GATE_LOGIN_CONNECTOR->send_block(login_cid, buf);
 }
 
 int Gate_Manager::send_to_master(Block_Buffer &buf) {
-	int cid = GATE_MASTER_CONNECTOR->get_cid();
-	if (cid < 2) {
-		LOG_INFO("cid = %d", cid);
+	int master_cid = GATE_MASTER_CONNECTOR->get_cid();
+	if (master_cid < 2) {
+		LOG_INFO("master_cid = %d", master_cid);
 		return -1;
 	}
-	return GATE_MASTER_CONNECTOR->send_block(cid, buf);
+	return GATE_MASTER_CONNECTOR->send_block(master_cid, buf);
 }
 
-int Gate_Manager::close_client(int cid) {
-	if (cid >= 2) {
-		Close_Info info(cid, tick_time());
+int Gate_Manager::close_client(int player_cid) {
+	if (player_cid >= 2) {
+		Close_Info info(player_cid, tick_time());
 		close_list_.push_back(info);
 	} else {
-		LOG_TRACE("cid < 2");
+		LOG_TRACE("player_cid < 2");
 	}
 	return 0;
 }

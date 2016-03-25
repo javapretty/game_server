@@ -13,7 +13,7 @@
 #include "Block_Buffer.h"
 
 struct MSG_110001 {
-	int8_t chat_type;	//1
+	int8_t chat_type;	//1世界聊天2私聊3帮派聊天4队伍聊天
 	std::string chat_content;	
 	std::string role_name;	//私聊时候发送对方名字
 

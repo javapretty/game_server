@@ -102,14 +102,14 @@ int Game_Player::sign_in(std::string account) {
 	LOG_DEBUG("player sign in game_server. account=[%s], gate_cid = %d, player_cid = %d, role_id=%ld, name=%s",
 			account.c_str(), gate_cid_, player_cid_, player_data_.player_info.role_id, player_data_.player_info.role_name.c_str());
 
-	respond_role_login();
 	sync_signin_to_master();
+	respond_role_login();
 	return 0;
 }
 
 int Game_Player::sign_out(void) {
-	save_player(true);
 	sync_signout_to_master();
+	save_player(true);
 	reset();
 	GAME_MANAGER->push_block_buffer(read_player_data_buffer_);
 	GAME_MANAGER->push_block_buffer(write_player_data_buffer_);
@@ -150,18 +150,6 @@ int Game_Player::sync_signout_to_master(void) {
 	return GAME_MANAGER->send_to_master(buf);
 }
 
-int Game_Player::tick(Time_Value &now) {
-	if (recycle_tick(now) == 1)
-		return 0;
-
-	if (now - last_save_tick_ > save_interval_) {
-		save_player();
-		last_save_tick_ = now;
-	}
-
-	return 0;
-}
-
 int Game_Player::respond_role_login(void) {
 	MSG_520001 msg;
 	msg.role_info.role_id = player_data_.player_info.role_id;
@@ -187,35 +175,30 @@ int Game_Player::respond_role_login(void) {
 	return 0;
 }
 
-int Game_Player::link_close() {
-	if (recycle_tick_.status_ == Recycle_Tick::RECYCLE) return 0;
+int Game_Player::tick(Time_Value &now) {
+	if (recycle_tick_.status == Recycle_Tick::RECYCLE && now > recycle_tick_.recycle_tick) {
+		LOG_DEBUG("player recycle, role_id:%ld, role_name:%s", player_data_.player_info.role_id, player_data_.player_info.role_name.c_str());
+		GAME_MANAGER->unbind_game_player(*this);
+		sign_out();
+		GAME_MANAGER->push_game_player(this);
+		return 0;
+	}
 
-	this->set_recycle();
+	if (now - last_save_tick_ > save_interval_) {
+		save_player();
+		last_save_tick_ = now;
+	}
+
 	return 0;
 }
 
-void Game_Player::set_recycle(void) {
+int Game_Player::link_close() {
+	if (recycle_tick_.status == Recycle_Tick::RECYCLE)
+		return 0;
+
 	recycle_tick_.set(Recycle_Tick::RECYCLE);
 
 	int cid = gate_cid_ * 10000 + player_cid_;
 	GAME_MANAGER->push_drop_player_cid(cid);
-}
-
-int Game_Player::recycle_status(void) {
-	return recycle_tick_.status_;
-}
-
-int Game_Player::recycle_tick(const Time_Value &now) {
-	int ret = 0;
-	if (now - recycle_tick_.last_tick_ts_ > Recycle_Tick::tick_interval_) {
-		recycle_tick_.last_tick_ts_ = now;
-		if (recycle_tick_.status_ == Recycle_Tick::RECYCLE && now - recycle_tick_.last_change_status_ts_ > Recycle_Tick::recycle_time_) {
-			LOG_DEBUG("game_player recyle, role_id = %ld, role_name = %s", player_data_.player_info.role_id, player_data_.player_info.role_name.c_str());
-			ret = 1;
-			GAME_MANAGER->unbind_game_player(*this);
-			sign_out();
-			GAME_MANAGER->push_game_player(this);
-		}
-	}
-	return ret;
+	return 0;
 }

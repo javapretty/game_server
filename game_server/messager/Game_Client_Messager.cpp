@@ -64,19 +64,13 @@ int Game_Client_Messager::fetch_role_info(int gate_cid, int player_cid, MSG_1200
 	bool validate = false;
 	if (validate && abs(atoi(msg.timestamp.c_str()) - GAME_MANAGER->tick_time().sec()) > 120) {
 		LOG_INFO("login validate timeout account:%s  time:%s", msg.account.c_str(), msg.timestamp.c_str());
-		Block_Buffer msg_buf;
-		msg_buf.make_player_message(ACTIVE_DISCONNECT, ERROR_LOGIN_VERIFY_FAIL, player_cid);
-		msg_buf.finish_message();
-		return GAME_MANAGER->send_to_gate(gate_cid, msg_buf);
+		return GAME_MANAGER->close_client(gate_cid, player_cid, ERROR_LOGIN_VERIFY_FAIL);
     }
 
 	/// 帐号还在登录/登出流程中判断
 	if (GAME_MANAGER->logining_map().count(msg.account) || GAME_MANAGER->saving_map().count(msg.role_id)) {
-		LOG_DEBUG("account has in logining status, account = %s.", msg.account.c_str());
-		Block_Buffer msg_buf;
-		msg_buf.make_player_message(ACTIVE_DISCONNECT, ERROR_DISCONNECT_RELOGIN, player_cid);
-		msg_buf.finish_message();
-		return GAME_MANAGER->send_to_gate(gate_cid, msg_buf);
+		LOG_INFO("account has in logining status, account = %s.", msg.account.c_str());
+		return GAME_MANAGER->close_client(gate_cid, player_cid, ERROR_DISCONNECT_RELOGIN);
 	}
 
 	/// 重复登录判断
@@ -112,10 +106,7 @@ int Game_Client_Messager::fetch_role_info(int gate_cid, int player_cid, MSG_1200
 	} else {
 		/// 回收中处理
 		if (player->recycle_status() == Recycle_Tick::RECYCLE) {
-			Block_Buffer msg_buf;
-			msg_buf.make_player_message(ACTIVE_DISCONNECT, ERROR_DISCONNECT_RECOVERING, player_cid);
-			msg_buf.finish_message();
-			return GAME_MANAGER->send_to_gate(gate_cid, msg_buf);
+			return GAME_MANAGER->close_client(gate_cid, player_cid, ERROR_DISCONNECT_RECOVERING);
 		}
 
 		/// 重复登录
@@ -135,11 +126,8 @@ int Game_Client_Messager::create_role(int gate_cid, int player_cid, MSG_120002 &
 	}
 
 	if (GAME_MANAGER->logining_map().count(msg.account)) {
-		LOG_DEBUG("account has in logining status, account = %s.", msg.account.c_str());
-		Block_Buffer msg_buf;
-		msg_buf.make_player_message(ACTIVE_DISCONNECT, ERROR_DISCONNECT_RELOGIN, player_cid);
-		msg_buf.finish_message();
-		return GAME_MANAGER->send_to_gate(gate_cid, msg_buf);
+		LOG_INFO("account has in logining status, account = %s.", msg.account.c_str());
+		return GAME_MANAGER->close_client(gate_cid, player_cid, ERROR_DISCONNECT_RELOGIN);
 	}
 
 	if (! GAME_MANAGER->logining_map().insert(std::make_pair(msg.account, Cid_Info(gate_cid, player_cid))).second) {

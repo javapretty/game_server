@@ -87,28 +87,18 @@ struct Recycle_Tick {
 		RECYCLE,		/// 回收状态
 	};
 
-	static const Time_Value recycle_time_;
-	static const Time_Value tick_interval_;
-	static const Time_Value session_interval_;
+	int status;
+	Time_Value recycle_tick;
 
-	int status_;
-	Time_Value last_change_status_ts_;
-	Time_Value last_tick_ts_;
-
-	Recycle_Tick(void)
-	: status_(NON_RECYCLE),
-	  last_change_status_ts_(Time_Value::gettimeofday()),
-	  last_tick_ts_(Time_Value::zero)
-	{ }
+	Recycle_Tick(void): status(NON_RECYCLE) {}
 
 	void reset(void) {
 		set(NON_RECYCLE);
-		last_tick_ts_ = Time_Value::zero;
 	}
 
-	void set(int v) {
-		status_ = v;
-		last_change_status_ts_ = Time_Value::gettimeofday();
+	void set(int s) {
+		status = s;
+		recycle_tick = Time_Value::gettimeofday() + Time_Value(2, 0);
 	}
 };
 

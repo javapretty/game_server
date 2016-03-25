@@ -60,11 +60,10 @@ public:
 	int unbind_login_player(Login_Player &player);
 
 	/// 发送数据接口
-	int send_to_client(int cid, Block_Buffer &buf);
-	int send_to_gate(int cid, Block_Buffer &buf);
-
+	int send_to_client(int player_cid, Block_Buffer &buf);
+	int send_to_gate(int gate_cid, Block_Buffer &buf);
 	/// 关闭连接
-	int close_client(int cid);
+	int close_client(int player_cid);
 	/// 主动关闭处理
 	int self_close_process(void);
 

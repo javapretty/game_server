@@ -43,7 +43,7 @@ struct MSG_140100 {
 };
 
 struct MSG_140200 {
-	int64_t role_id;	
+	Master_Player_Info player_info;	
 
 	MSG_140200(void);
 	void serialize(Block_Buffer &buffer) const;

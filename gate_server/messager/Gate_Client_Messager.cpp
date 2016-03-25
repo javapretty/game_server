@@ -35,7 +35,7 @@ int Gate_Client_Messager::process_block(Block_Buffer &buf) {
 
 	Gate_Player *player = 0;
 	if ((player = GATE_MANAGER->find_cid_gate_player(player_cid)) == 0) {
-		LOG_DEBUG("cannot find cid = %d player object. msg_id = %d ", player_cid, msg_id);
+		LOG_DEBUG("cannot find player_cid = %d msg_id = %d ", player_cid, msg_id);
 		return GATE_MANAGER->close_client(player_cid);
 	}
 

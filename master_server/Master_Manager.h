@@ -26,7 +26,8 @@ public:
 	typedef boost::unordered_map<int, Master_Player* > Master_Player_Gate_Cid_Map;
 	//cid = game_cid * 10000 + player_cid
 	typedef boost::unordered_map<int, Master_Player* > Master_Player_Game_Cid_Map;
-	typedef boost::unordered_map<int64_t, Master_Player *> Master_Player_Role_Id_Map;
+	typedef boost::unordered_map<int64_t, Master_Player* > Master_Player_Role_Id_Map;
+	typedef boost::unordered_map<std::string, Master_Player* > Master_Player_Role_Name_Map;
 	typedef boost::unordered_map<int, int> Msg_Count_Map;
 
 public:
@@ -46,8 +47,12 @@ public:
 	int push_master_player(Master_Player *player);
 
 	/// 发送数据接口
-	int send_to_gate(int cid, Block_Buffer &buf);
-	int send_to_game(int cid, Block_Buffer &buf);
+	int send_to_gate(int gate_cid, Block_Buffer &buf);
+	int send_to_game(int game_cid, Block_Buffer &buf);
+	/// 关闭客户端连接
+	int close_client(int gate_cid, int player_cid, int error_code);
+	/// 广播消息给所有在线玩家
+	int boardcast_msg_to_all(Block_Buffer &buf);
 
 	/// 通信层投递消息到Master_Manager
 	int push_master_gate_data(Block_Buffer *buf);
@@ -70,6 +75,10 @@ public:
 	int bind_role_id_master_player(int64_t role_id, Master_Player &player);
 	int unbind_role_id_master_player(int64_t role_id);
 	Master_Player *find_role_id_master_player(int64_t role_id);
+
+	int bind_role_name_master_player(std::string& role_name, Master_Player &player);
+	int unbind_role_name_master_player(std::string& role_name);
+	Master_Player *find_role_name_master_player(std::string& role_name);
 
 	int unbind_master_player(Master_Player &player);
 
@@ -113,6 +122,7 @@ private:
 	Master_Player_Gate_Cid_Map player_gate_cid_map_;
 	Master_Player_Gate_Cid_Map player_game_cid_map_;
 	Master_Player_Role_Id_Map player_role_id_map_;
+	Master_Player_Role_Name_Map player_role_name_map_;
 
 	Tick_Info tick_info_;
 	Time_Value tick_time_;

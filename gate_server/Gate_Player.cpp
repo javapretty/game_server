@@ -19,23 +19,25 @@ void Gate_Player::reset(void) {
 }
 
 int Gate_Player::tick(Time_Value &now) {
-	if (recycle_tick(now) == 1)
-		return 0;
+	if (recycle_tick_.status == Recycle_Tick::RECYCLE && now > recycle_tick_.recycle_tick) {
+		GATE_MANAGER->unbind_gate_player(*this);
+		reset();
+		GATE_MANAGER->push_gate_player(this);
+	}
 
 	return 0;
 }
 
 int Gate_Player::link_close() {
-	if (recycle_tick_.status_ == Recycle_Tick::RECYCLE)
+	if (recycle_tick_.status == Recycle_Tick::RECYCLE)
 		return 0;
 
-	set_recycle();
+	recycle_tick_.set(Recycle_Tick::RECYCLE);
 
 	Block_Buffer buf;
 	buf.make_player_message(SYNC_GATE_GAME_PLAYER_SIGNOUT, 0, cid_);
 	buf.finish_message();
 	GATE_MANAGER->send_to_game(buf);
-
 	return 0;
 }
 
@@ -83,18 +85,4 @@ int Gate_Player::verify_msg_info(uint32_t serial_cipher, uint32_t msg_time_ciphe
 	++msg_info_.msg_interval_count_;
 
 	return 0;
-}
-
-int Gate_Player::recycle_tick(const Time_Value &now) {
-	int ret = 0;
-	if (now - recycle_tick_.last_tick_ts_ > Recycle_Tick::tick_interval_) {
-		recycle_tick_.last_tick_ts_ = now;
-		if (recycle_tick_.status_ == Recycle_Tick::RECYCLE && now - recycle_tick_.last_change_status_ts_ > Recycle_Tick::recycle_time_) {
-			ret = 1;
-			GATE_MANAGER->unbind_gate_player(*this);
-			reset();
-			GATE_MANAGER->push_gate_player(this);
-		}
-	}
-	return ret;
 }

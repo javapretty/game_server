@@ -46,13 +46,12 @@ public:
 	int push_gate_player(Gate_Player *player);
 
 	/// 发送数据接口
-	int send_to_client(int cid, Block_Buffer &buf);
+	int send_to_client(int player_cid, Block_Buffer &buf);
 	int send_to_game(Block_Buffer &buf);
 	int send_to_login(Block_Buffer &buf);
 	int send_to_master(Block_Buffer &buf);
-
-	/// 关闭连接
-	int close_client(int cid);
+	/// 关闭客户端连接
+	int close_client(int player_cid);
 	/// 主动关闭处理
 	int self_close_process(void);
 

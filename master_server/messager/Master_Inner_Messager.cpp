@@ -64,18 +64,30 @@ int Master_Inner_Messager::process_self_loop_block(Block_Buffer &buf) {
 int Master_Inner_Messager::game_master_player_signin(int game_cid, int player_cid, Block_Buffer &buf) {
 	MSG_160000 msg;
 	msg.deserialize(buf);
-	Master_Player *player = MASTER_MANAGER->pop_master_player();
-	if (! player) {
-		LOG_INFO("master_player_pool_.pop() return 0.");
-		return -1;
-	}
+	Master_Player *master_player = MASTER_MANAGER->find_role_id_master_player(msg.player_info.role_id);
+	if (master_player) {
+		LOG_INFO("master player sign in exist, game_cid:%d, playe_cid:%d, role_id:%ld, role_name:%s",
+				game_cid, player_cid, msg.player_info.role_id, msg.player_info.role_name.c_str());
 
-	player->reset();
-	player->set_game_cid(game_cid);
-	player->set_player_cid(player_cid);
-	player->sign_in(msg.player_info);
-	MASTER_MANAGER->bind_game_cid_master_player(game_cid * 10000 + player_cid, *player);
-	MASTER_MANAGER->bind_role_id_master_player(msg.player_info.role_id, *player);
+		master_player->set_game_cid(game_cid);
+		MASTER_MANAGER->bind_game_cid_master_player(game_cid * 10000 + player_cid, *master_player);
+	} else {
+		Master_Player *player = MASTER_MANAGER->pop_master_player();
+		if (! player) {
+			LOG_INFO("master_player_pool_.pop() return 0.");
+			return -1;
+		}
+		LOG_INFO("master player sign in first, game_cid:%d, playe_cid:%d, role_id:%ld, role_name:%s",
+				game_cid, player_cid, msg.player_info.role_id, msg.player_info.role_name.c_str());
+
+		player->reset();
+		player->set_game_cid(game_cid);
+		player->set_player_cid(player_cid);
+		player->set_master_player_info(msg.player_info);
+		MASTER_MANAGER->bind_game_cid_master_player(game_cid * 10000 + player_cid, *player);
+		MASTER_MANAGER->bind_role_id_master_player(msg.player_info.role_id, *player);
+		MASTER_MANAGER->bind_role_name_master_player(msg.player_info.role_name, *player);
+	}
 	return 0;
 }
 
@@ -88,7 +100,7 @@ int Master_Inner_Messager::game_master_player_signout(Block_Buffer &buf) {
 		return -1;
 	}
 	MASTER_MANAGER->unbind_master_player(*player);
-	player->sign_out();
+	player->reset();
 	MASTER_MANAGER->push_master_player(player);
 	return 0;
 }

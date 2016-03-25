@@ -117,29 +117,29 @@ int Login_Manager::unbind_login_player(Login_Player &player) {
 	return 0;
 }
 
-int Login_Manager::send_to_client(int cid, Block_Buffer &buf) {
-	if (cid < 2) {
-		LOG_INFO("cid = %d", cid);
+int Login_Manager::send_to_client(int player_cid, Block_Buffer &buf) {
+	if (player_cid < 2) {
+		LOG_INFO("player_cid = %d", player_cid);
 		return -1;
 	}
-	return LOGIN_CLIENT_SERVER->send_block(cid, buf);
+	return LOGIN_CLIENT_SERVER->send_block(player_cid, buf);
 }
 
-int Login_Manager::send_to_gate(int cid, Block_Buffer &buf){
-	if (cid < 2) {
-			LOG_INFO("cid = %d", cid);
+int Login_Manager::send_to_gate(int gate_cid, Block_Buffer &buf){
+	if (gate_cid < 2) {
+			LOG_INFO("gate_cid = %d", gate_cid);
 			return -1;
 	}
 
-	return LOGIN_GATE_SERVER->send_block(cid, buf);
+	return LOGIN_GATE_SERVER->send_block(gate_cid, buf);
 }
 
-int Login_Manager::close_client(int cid) {
-	if (cid >= 2) {
-		Close_Info info(cid, tick_time());
+int Login_Manager::close_client(int player_cid) {
+	if (player_cid >= 2) {
+		Close_Info info(player_cid, tick_time());
 		close_list_.push_back(info);
 	} else {
-		LOG_TRACE("cid < 2");
+		LOG_TRACE("player_cid < 2");
 	}
 	return 0;
 }
@@ -258,7 +258,7 @@ int Login_Manager::player_tick(Time_Value &now) {
 	Login_Player_Account_Map t_accouont_map(player_account_map_); /// 因为Login_Player::time_up()里有改变player_account_map_的操作, 直接在其上使用迭代器导致迭代器失效core
 	for (Login_Player_Account_Map::iterator it = t_accouont_map.begin(); it != t_accouont_map.end(); ++it) {
 		if (it->second){
-			if (now.sec() - it->second->login_player_info().session_tick > Recycle_Tick::session_interval_.sec()) {
+			if (now.sec() - it->second->login_player_info().session_tick > 30) {
 				LOGIN_CLIENT_SERVER->receive().push_drop(it->second->get_cid());	//断开客户端与login的连接
 				it->second->link_close();
 			}

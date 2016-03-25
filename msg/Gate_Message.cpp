@@ -71,14 +71,14 @@ MSG_140200::MSG_140200(void) {
 }
 
 void MSG_140200::serialize(Block_Buffer &buffer) const {
-	buffer.write_int64(role_id);
+	player_info.serialize(buffer);
 }
 
 int MSG_140200::deserialize(Block_Buffer &buffer) {
-	role_id = buffer.read_int64();
+	player_info.deserialize(buffer);
 	return 0;
 }
 
 void MSG_140200::reset(void) {
-	role_id = 0;
+	player_info.reset();
 }

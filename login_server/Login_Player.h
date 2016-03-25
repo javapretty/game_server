@@ -22,9 +22,6 @@ public:
 
 	void reset(void);
 	int tick(Time_Value &now);
-	void set_recycle(void);
-	int recycle_status(void);
-	int recycle_tick(const Time_Value &now);
 	int link_close(void);
 
 private:
@@ -51,18 +48,11 @@ inline Login_Player_Info const &Login_Player::login_player_info(void) const {
 }
 
 inline int Login_Player::link_close() {
-	if (recycle_tick_.status_ == Recycle_Tick::RECYCLE) return 0;
+	if (recycle_tick_.status == Recycle_Tick::RECYCLE)
+		return 0;
 
-	this->set_recycle();
-	return 0;
-}
-
-inline void Login_Player::set_recycle(void) {
 	recycle_tick_.set(Recycle_Tick::RECYCLE);
-}
-
-inline int Login_Player::recycle_status(void) {
-	return recycle_tick_.status_;
+	return 0;
 }
 
 #endif /* LOGIN_PLAYER_H_ */

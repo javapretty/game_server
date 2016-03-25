@@ -47,20 +47,6 @@ int Master_Player::respond_error_result(int msg_id, int err, Block_Buffer *buf) 
 	}
 }
 
-int Master_Player::sign_in(Master_Player_Info &player_info) {
-	player_info_ = player_info;
-
-	LOG_DEBUG("player sign in master_server. account=[%s], gate_cid=%d, game_cid=%d, player_cid=%d, role_id=%ld, name=%s",
-			player_info_.account.c_str(), gate_cid_, game_cid_, player_cid_, player_info_.role_id, player_info_.role_name.c_str());
-	return 0;
-}
-
-int Master_Player::sign_out(void) {
-	reset();
-
-	return 0;
-}
-
 void Master_Player::reset(void) {
 	gate_cid_ = 0;
 	game_cid_ = 0;
@@ -70,31 +56,52 @@ void Master_Player::reset(void) {
 }
 
 int Master_Player::tick(Time_Value &now) {
-	if (recycle_tick(now) == 1)
-		return 0;
+	if (recycle_tick_.status == Recycle_Tick::RECYCLE && now > recycle_tick_.recycle_tick) {
+		MASTER_MANAGER->unbind_master_player(*this);
+		reset();
+		MASTER_MANAGER->push_master_player(this);
+	}
 
 	return 0;
-}
-
-int Master_Player::recycle_tick(const Time_Value &now) {
-	int ret = 0;
-	if (now - recycle_tick_.last_tick_ts_ > Recycle_Tick::tick_interval_) {
-		recycle_tick_.last_tick_ts_ = now;
-		if (recycle_tick_.status_ == Recycle_Tick::RECYCLE && now - recycle_tick_.last_change_status_ts_ > Recycle_Tick::recycle_time_) {
-			ret = 1;
-			MASTER_MANAGER->unbind_master_player(*this);
-			sign_out();
-			MASTER_MANAGER->push_master_player(this);
-		}
-	}
-	return ret;
 }
 
 int Master_Player::send_chat_info(Block_Buffer &buf) {
 	MSG_110001 msg;
 	msg.deserialize(buf);
 	if (msg.chat_content.length() > 100) {
+		respond_error_result(RES_SEND_CHAT_INFO, ERROR_CLIENT_PARAM);
+	}
 
+	MSG_510001 msg_res;
+	msg_res.chat_type = msg.chat_type;
+	msg_res.chat_content = msg.chat_content;
+	msg_res.role_name = player_info_.role_name;
+	msg_res.gender = player_info_.gender;
+	msg_res.career = player_info_.career;
+	msg_res.vip_level = player_info_.vip_level;
+	Block_Buffer buf_res;
+	buf_res.make_player_message(RES_SEND_CHAT_INFO, 0, player_cid_);
+	msg_res.serialize(buf_res);
+	buf_res.finish_message();
+
+	switch(msg.chat_type) {
+	case 1: {
+		//世界聊天
+		MASTER_MANAGER->boardcast_msg_to_all(buf_res);
+		break;
+	}
+	case 2: {
+		//私密聊天
+		Master_Player *player = MASTER_MANAGER->find_role_name_master_player(msg.role_name);
+		if (!player) {
+			LOG_DEBUG("send private chat, role_name:%s offline", msg.role_name.c_str());
+			return respond_error_result(RES_SEND_CHAT_INFO, ERROR_ROLE_OFFLINE);
+		}
+		MASTER_MANAGER->send_to_gate(player->gate_cid(), buf_res);
+		break;
+	}
+	default:
+		LOG_DEBUG("chat type wrong, role_id:%ld, type:%d", player_info_.role_id, msg.chat_type);
 	}
 
 	return 0;

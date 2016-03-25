@@ -15,12 +15,13 @@ enum Error_Code {
 	ERROR_MSG_COUNT									= 10003,				//消息数量过多
 	ERROR_MSG_SERIAL 								= 10004,				//消息序列号错误
 	ERROR_MSG_TIME 									= 10005,				//消息时间错误
-	ERROR_DISCONNECT_RELOGIN				= 10006,				//账号在其它地方登陆
-	ERROR_DISCONNECT_RECOVERING 			= 10007,				//角色回收中,刷新再试
-	ERROR_DISCONNECT_ACCOUNT 				= 10008,				//账号已被封禁
-	ERROR_DISCONNECT_SELF 					= 10009,				//服务重启中,稍候再试
-	ERROR_REGISTER_VERIFY_FAIL				= 10010,				//注册验证失败
-	ERROR_LOGIN_VERIFY_FAIL					= 10011,				//登录验证失败
+	ERROR_REGISTER_VERIFY_FAIL				= 10006,				//注册验证失败
+	ERROR_LOGIN_VERIFY_FAIL					= 10007,				//登录验证失败
+	ERROR_DISCONNECT_RELOGIN				= 10008,				//账号在其它地方登陆
+	ERROR_DISCONNECT_RECOVERING 			= 10009,				//角色回收中,刷新再试
+	ERROR_DISCONNECT_ACCOUNT 				= 10010,				//账号已被封禁
+	ERROR_DISCONNECT_SELF 					= 10011,				//服务重启中,稍候再试
+	ERROR_DISCONNECT_MASTER 				= 10012,				//玩家未登陆到master服务器
 
 	ERROR_CLIENT_OPERATE 						= 10050,				//客户端非法操作
 	ERROR_CLIENT_PARAM 							= 10051,				//客户端参数错误

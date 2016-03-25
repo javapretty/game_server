@@ -6,10 +6,6 @@
 #include "Public_Struct.h"
 #include "DB_Operator.h"
 
-const Time_Value Recycle_Tick::recycle_time_ = Time_Value(2, 0);
-const Time_Value Recycle_Tick::tick_interval_ = Time_Value(2, 0);
-const Time_Value Recycle_Tick::session_interval_ = Time_Value(30, 0);
-
 Player_Data::Player_Data(void) { reset(); }
 
 int Player_Data::serialize(Block_Buffer &buffer) const {

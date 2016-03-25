@@ -55,11 +55,7 @@ void get_player_by_cid(const FunctionCallbackInfo<Value>& args) {
 	} else {
 		//设置对象为空
 		args.GetReturnValue().SetNull();
-
-		Block_Buffer msg_buf;
-		msg_buf.make_player_message(ACTIVE_DISCONNECT, ERROR_CLIENT_PARAM, player_cid);
-		msg_buf.finish_message();
-		GAME_MANAGER->send_to_gate(gate_cid, msg_buf);
+		GAME_MANAGER->close_client(gate_cid, player_cid, ERROR_CLIENT_PARAM);
 	}
 }
 

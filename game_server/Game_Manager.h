@@ -55,9 +55,11 @@ public:
 	int push_block_buffer(Block_Buffer *buf);
 
 	/// 发送数据接口
-	int send_to_gate(int cid, Block_Buffer &buf);
+	int send_to_gate(int gate_cid, Block_Buffer &buf);
 	int send_to_master(Block_Buffer &buf);
 	int send_to_db(Block_Buffer &buf);
+	/// 关闭客户端连接
+	int close_client(int gate_cid, int player_cid, int error_code);
 
 	/// 通信层投递消息到Game_Manager
 	void push_drop_gate_cid(int cid);

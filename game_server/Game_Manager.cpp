@@ -59,30 +59,37 @@ int Game_Manager::load_db_cache(void) {
 	return 0;
 }
 
-int Game_Manager::send_to_gate(int cid, Block_Buffer &buf) {
-	if (cid < 2) {
-		LOG_INFO("cid = %d", cid);
+int Game_Manager::send_to_gate(int gate_cid, Block_Buffer &buf) {
+	if (gate_cid < 2) {
+		LOG_INFO("gate_cid = %d", gate_cid);
 		return -1;
 	}
-	return GAME_GATE_SERVER->send_block(cid, buf);
+	return GAME_GATE_SERVER->send_block(gate_cid, buf);
 }
 
 int Game_Manager::send_to_master(Block_Buffer &buf) {
-	int cid = GAME_MASTER_CONNECTOR->get_cid();
-	if (cid < 2) {
-		LOG_INFO("cid = %d", cid);
+	int master_cid = GAME_MASTER_CONNECTOR->get_cid();
+	if (master_cid < 2) {
+		LOG_INFO("master_cid = %d", master_cid);
 		return -1;
 	}
-	return GAME_MASTER_CONNECTOR->send_block(cid, buf);
+	return GAME_MASTER_CONNECTOR->send_block(master_cid, buf);
 }
 
 int Game_Manager::send_to_db(Block_Buffer &buf) {
-	int cid = GAME_DB_CONNECTOR->get_cid();
-	if (cid < 2) {
-		LOG_INFO("cid = %d", cid);
+	int db_cid = GAME_DB_CONNECTOR->get_cid();
+	if (db_cid < 2) {
+		LOG_INFO("db_cid = %d", db_cid);
 		return -1;
 	}
-	return GAME_DB_CONNECTOR->send_block(cid, buf);
+	return GAME_DB_CONNECTOR->send_block(db_cid, buf);
+}
+
+int Game_Manager::close_client(int gate_cid, int player_cid, int error_code) {
+	Block_Buffer buf;
+	buf.make_player_message(ACTIVE_DISCONNECT, error_code, player_cid);
+	buf.finish_message();
+	return send_to_gate(gate_cid, buf);
 }
 
 int Game_Manager::process_list(void) {

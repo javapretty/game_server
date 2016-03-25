@@ -22,9 +22,6 @@ public:
 
 	int tick(Time_Value &now);
 	int link_close(void);
-	void set_recycle(void);
-	int recycle_status(void);
-	int recycle_tick(const Time_Value &now);
 
 	/// 验证包序列和时间戳
 	/// 返回0为验证通过, -1操作过于频繁, -2包序号错, -3包时间戳错
@@ -37,14 +34,5 @@ private:
 	Msg_Info msg_info_;
 	Recycle_Tick recycle_tick_;
 };
-
-////////////////////////////////////////////////////////////////////////////////
-inline void Gate_Player::set_recycle(void) {
-	recycle_tick_.set(Recycle_Tick::RECYCLE);
-}
-
-inline int Gate_Player::recycle_status(void) {
-	return recycle_tick_.status_;
-}
 
 #endif /* GATE_PLAYER_H_ */

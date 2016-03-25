@@ -17,22 +17,10 @@ void Login_Player::reset(void) {
 }
 
 int Login_Player::tick(Time_Value &now) {
-	if (recycle_tick(now) == 1)
-		return 0;
-
-	return 0;
-}
-
-int Login_Player::recycle_tick(const Time_Value &now) {
-	int ret = 0;
-	if (now - recycle_tick_.last_tick_ts_ > Recycle_Tick::tick_interval_) {
-		recycle_tick_.last_tick_ts_ = now;
-		if (recycle_tick_.status_ == Recycle_Tick::RECYCLE && now - recycle_tick_.last_change_status_ts_ > Recycle_Tick::recycle_time_) {
-			ret = 1;
-			LOGIN_MANAGER->unbind_login_player(*this);
-			reset();
-			LOGIN_MANAGER->push_login_player(this);
-		}
+	if (recycle_tick_.status == Recycle_Tick::RECYCLE && now > recycle_tick_.recycle_tick) {
+		LOGIN_MANAGER->unbind_login_player(*this);
+		reset();
+		LOGIN_MANAGER->push_login_player(this);
 	}
-	return ret;
+	return 0;
 }

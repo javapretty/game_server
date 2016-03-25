@@ -25,13 +25,21 @@ int Master_Client_Messager::process_block(Block_Buffer &buf) {
 	/*int32_t status*/ buf.read_int32();
 	int32_t player_cid = buf.read_int32();
 
+	if (msg_id == SYNC_GATE_MASTER_PLAYER_SIGNIN) {
+		return gate_master_player_signin(gate_cid, player_cid, buf);
+	}
+
+	Master_Player *player = 0;
+	if ((player = MASTER_MANAGER->find_gate_cid_master_player(gate_cid * 10000 + player_cid)) == 0) {
+		LOG_DEBUG("cannot find gate_cid = %d, player_cid = %d msg_id = %d ", gate_cid, player_cid, msg_id);
+		return MASTER_MANAGER->close_client(gate_cid, player_cid, ERROR_DISCONNECT_MASTER);
+	}
+
 	//客户端发到服务器的消息在这里处理
 	Perf_Mon perf_mon(msg_id);
 	switch(msg_id) {
-	case SYNC_GATE_MASTER_PLAYER_SIGNIN:
-		gate_master_player_signin(gate_cid, player_cid, buf);
-		break;
 	case REQ_SEND_CHAT_INFO:
+		player->send_chat_info(buf);
 		break;
 	default:
 		LOG_ERROR("msg_id:%d error", msg_id);
@@ -43,14 +51,29 @@ int Master_Client_Messager::process_block(Block_Buffer &buf) {
 int Master_Client_Messager::gate_master_player_signin(int gate_cid, int player_cid, Block_Buffer &buf) {
 	MSG_140200 msg;
 	msg.deserialize(buf);
-	Master_Player *player = MASTER_MANAGER->find_role_id_master_player(msg.role_id);
-	if (!player) {
-		LOG_INFO("can't find role_id:%ld master player", msg.role_id);
-		return -1;
-	}
+	Master_Player *master_player = MASTER_MANAGER->find_role_id_master_player(msg.player_info.role_id);
+	if (master_player) {
+		LOG_INFO("master player sign in exist, gate_cid:%d, playe_cid:%d, role_id:%ld, role_name:%s",
+				gate_cid, player_cid, msg.player_info.role_id, msg.player_info.role_name.c_str());
 
-	LOG_INFO("player signin master from gate success, role_id:%ld gate_cid:%d, player_cid:%d", msg.role_id, gate_cid, player_cid);
-	player->set_gate_cid(gate_cid);
-	MASTER_MANAGER->bind_gate_cid_master_player(gate_cid * 10000 + player_cid, *player);
+		master_player->set_gate_cid(gate_cid);
+		MASTER_MANAGER->bind_gate_cid_master_player(gate_cid * 10000 + player_cid, *master_player);
+	} else {
+		Master_Player *player = MASTER_MANAGER->pop_master_player();
+		if (! player) {
+			LOG_INFO("master_player_pool_.pop() return 0.");
+			return -1;
+		}
+		LOG_INFO("master player sign in first, gate_cid:%d, playe_cid:%d, role_id:%ld, role_name:%s",
+				gate_cid, player_cid, msg.player_info.role_id, msg.player_info.role_name.c_str());
+
+		player->reset();
+		player->set_gate_cid(gate_cid);
+		player->set_player_cid(player_cid);
+		player->set_master_player_info(msg.player_info);
+		MASTER_MANAGER->bind_gate_cid_master_player(gate_cid * 10000 + player_cid, *player);
+		MASTER_MANAGER->bind_role_id_master_player(msg.player_info.role_id, *player);
+		MASTER_MANAGER->bind_role_name_master_player(msg.player_info.role_name, *player);
+	}
 	return 0;
 }

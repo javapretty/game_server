@@ -26,14 +26,8 @@ public:
 	inline void set_master_player_info(const Master_Player_Info &player_info) { player_info_ = player_info; };
 	Master_Player_Info const &master_player_info(void) const { return player_info_; };
 
-	int sign_in(Master_Player_Info &player_info);
-	int sign_out(void);
 	void reset(void);
-
 	int tick(Time_Value &now);
-	void set_recycle(void);
-	int recycle_status(void);
-	int recycle_tick(const Time_Value &now);
 	int link_close(void);
 
 	//聊天功能
@@ -49,18 +43,11 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////
 inline int Master_Player::link_close() {
-	if (recycle_tick_.status_ == Recycle_Tick::RECYCLE) return 0;
+	if (recycle_tick_.status == Recycle_Tick::RECYCLE)
+		return 0;
 
-	this->set_recycle();
-	return 0;
-}
-
-inline void Master_Player::set_recycle(void) {
 	recycle_tick_.set(Recycle_Tick::RECYCLE);
-}
-
-inline int Master_Player::recycle_status(void) {
-	return recycle_tick_.status_;
+	return 0;
 }
 
 #endif /* MASTER_PLAYER_H_ */

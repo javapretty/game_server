@@ -37,14 +37,11 @@ public:
 
 	int sync_signin_to_master(void);
 	int sync_signout_to_master(void);
+	int respond_role_login(void);
 
 	int tick(Time_Value &now);
 	int link_close(void);
-	void set_recycle(void);
-	int recycle_status(void);
-	int recycle_tick(const Time_Value &now);
-
-	int respond_role_login(void);
+	int recycle_status(void) { return recycle_tick_.status; }
 
 private:
 	int gate_cid_;			//gate连接game的cid
