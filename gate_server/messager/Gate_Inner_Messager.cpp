@@ -74,8 +74,14 @@ int Gate_Inner_Messager::process_game_block(Block_Buffer &buf) {
 		if (player) {
 			MSG_520001 msg;
 			msg.deserialize(buf);
-			player->set_role_id(msg.role_info.role_id);
-			player->set_account(msg.role_info.account);
+			//玩家登录game成功，发送消息通知master
+			MSG_140200 msg_master;
+			msg_master.role_id = msg.role_info.role_id;
+			Block_Buffer master_buf;
+			master_buf.make_player_message(SYNC_GATE_MASTER_PLAYER_SIGNIN, 0, player_cid);
+			msg_master.serialize(master_buf);
+			master_buf.finish_message();
+			GATE_MANAGER->send_to_master(master_buf);
 		}
 	} else if (msg_id == ACTIVE_DISCONNECT) {
 		GATE_MANAGER->close_client(player_cid);

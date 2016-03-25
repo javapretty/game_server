@@ -127,11 +127,14 @@ void Game_Player::reset(void) {
 int Game_Player::sync_signin_to_master(void) {
 	Block_Buffer buf;
 	buf.make_player_message(SYNC_GAME_MASTER_PLYAER_SIGNIN, 0, player_cid_);
-	MSG_160001 msg;
+	MSG_160000 msg;
 	msg.player_info.role_id = player_data_.player_info.role_id;
 	msg.player_info.account = player_data_.player_info.account;
 	msg.player_info.role_name = player_data_.player_info.role_name;
 	msg.player_info.level = player_data_.player_info.level;
+	msg.player_info.gender = player_data_.player_info.gender;
+	msg.player_info.career = player_data_.player_info.career;
+	msg.player_info.vip_level = player_data_.player_info.vip_level;
 	msg.serialize(buf);
 	buf.finish_message();
 	return GAME_MANAGER->send_to_master(buf);
@@ -140,7 +143,7 @@ int Game_Player::sync_signin_to_master(void) {
 int Game_Player::sync_signout_to_master(void) {
 	Block_Buffer buf;
 	buf.make_player_message(SYNC_GAME_MASTER_PLAYER_SIGNOUT, 0, player_cid_);
-	MSG_160002 msg;
+	MSG_160001 msg;
 	msg.role_id = player_data_.player_info.role_id;
 	msg.serialize(buf);
 	buf.finish_message();

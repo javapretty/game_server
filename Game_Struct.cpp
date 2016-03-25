@@ -119,26 +119,6 @@ void Login_Player_Info::reset(void) {
 	session_tick = 0;
 }
 
-Gate_Player_Info::Gate_Player_Info(void) {
-	reset();
-}
-
-void Gate_Player_Info::serialize(Block_Buffer &buffer) const {
-	buffer.write_int64(role_id);
-	buffer.write_string(account);
-}
-
-int Gate_Player_Info::deserialize(Block_Buffer &buffer) {
-	role_id = buffer.read_int64();
-	account = buffer.read_string();
-	return 0;
-}
-
-void Gate_Player_Info::reset(void) {
-	role_id = 0;
-	account.clear();
-}
-
 Master_Player_Info::Master_Player_Info(void) {
 	reset();
 }
@@ -148,6 +128,9 @@ void Master_Player_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_string(account);
 	buffer.write_string(role_name);
 	buffer.write_int32(level);
+	buffer.write_int32(gender);
+	buffer.write_int32(career);
+	buffer.write_int32(vip_level);
 }
 
 int Master_Player_Info::deserialize(Block_Buffer &buffer) {
@@ -155,6 +138,9 @@ int Master_Player_Info::deserialize(Block_Buffer &buffer) {
 	account = buffer.read_string();
 	role_name = buffer.read_string();
 	level = buffer.read_int32();
+	gender = buffer.read_int32();
+	career = buffer.read_int32();
+	vip_level = buffer.read_int32();
 	return 0;
 }
 
@@ -163,6 +149,9 @@ void Master_Player_Info::reset(void) {
 	account.clear();
 	role_name.clear();
 	level = 0;
+	gender = 0;
+	career = 0;
+	vip_level = 0;
 }
 
 Player_Info::Player_Info(void) {

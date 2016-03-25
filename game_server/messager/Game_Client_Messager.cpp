@@ -33,17 +33,17 @@ int Game_Client_Messager::process_login_buffer(Block_Buffer &buf) {
 	case REQ_FETCH_ROLE_INFO: {
 		MSG_120001 msg;
 		if ((ret = msg.deserialize(buf)) == 0)
-			process_120001(gate_cid, player_cid, msg);
+			fetch_role_info(gate_cid, player_cid, msg);
 		break;
 	}
 	case REQ_CREATE_ROLE: {
 		MSG_120002 msg;
 		if ((ret = msg.deserialize(buf)) == 0)
-			process_120002(gate_cid, player_cid, msg);
+			create_role(gate_cid, player_cid, msg);
 		break;
 	}
 	case SYNC_GATE_GAME_PLAYER_SIGNOUT: {
-		ret = process_140002(gate_cid, player_cid);
+		ret = gate_game_player_signout(gate_cid, player_cid);
 		break;
 	}
 	default:
@@ -54,7 +54,7 @@ int Game_Client_Messager::process_login_buffer(Block_Buffer &buf) {
 	return 0;
 }
 
-int Game_Client_Messager::process_120001(int gate_cid, int player_cid, MSG_120001 &msg) {
+int Game_Client_Messager::fetch_role_info(int gate_cid, int player_cid, MSG_120001 &msg) {
 	if (GAME_MANAGER->server_status() != Game_Manager::STATUS_NORMAL) {
 		LOG_INFO("server closing");
 		return -1;
@@ -128,7 +128,7 @@ int Game_Client_Messager::process_120001(int gate_cid, int player_cid, MSG_12000
 	return 0;
 }
 
-int Game_Client_Messager::process_120002(int gate_cid, int player_cid, MSG_120002 &msg) {
+int Game_Client_Messager::create_role(int gate_cid, int player_cid, MSG_120002 &msg) {
 	if (msg.account.empty() || msg.role_name.empty() || msg.gender > 1) {
 		LOG_INFO("invalid parameter account = [%s], role_name = [%s], gender = %d", msg.account.c_str(), msg.role_name.c_str(), msg.gender);
 		return -1;
@@ -163,7 +163,7 @@ int Game_Client_Messager::process_120002(int gate_cid, int player_cid, MSG_12000
 	return 0;
 }
 
-int Game_Client_Messager::process_140002(int gate_cid, int player_cid) {
+int Game_Client_Messager::gate_game_player_signout(int gate_cid, int player_cid) {
 	int cid = gate_cid * 10000 + player_cid;
 	Game_Player *player = GAME_MANAGER->find_cid_game_player(cid);
 	if (player) {

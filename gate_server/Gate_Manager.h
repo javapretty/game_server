@@ -72,9 +72,11 @@ public:
 	int bind_cid_gate_player(int cid, Gate_Player &player);
 	int unbind_cid_gate_player(int cid);
 	Gate_Player *find_cid_gate_player(int cid);
+
 	int bind_account_gate_player(std::string& account, Gate_Player &player);
 	int unbind_account_gate_player(std::string& account);
 	Gate_Player *find_account_gate_player(std::string& account);
+
 	int unbind_gate_player(Gate_Player &player);
 
 	/// 定时器处理

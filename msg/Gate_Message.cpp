@@ -51,3 +51,34 @@ int MSG_140001::deserialize(Block_Buffer &buffer) {
 void MSG_140001::reset(void) {
 	account.clear();
 }
+
+MSG_140100::MSG_140100(void) {
+	reset();
+}
+
+void MSG_140100::serialize(Block_Buffer &buffer) const {
+}
+
+int MSG_140100::deserialize(Block_Buffer &buffer) {
+	return 0;
+}
+
+void MSG_140100::reset(void) {
+}
+
+MSG_140200::MSG_140200(void) {
+	reset();
+}
+
+void MSG_140200::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(role_id);
+}
+
+int MSG_140200::deserialize(Block_Buffer &buffer) {
+	role_id = buffer.read_int64();
+	return 0;
+}
+
+void MSG_140200::reset(void) {
+	role_id = 0;
+}

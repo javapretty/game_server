@@ -13,9 +13,9 @@ Gate_Player::~Gate_Player(void) { }
 
 void Gate_Player::reset(void) {
 	cid_ = 0;
+	account_.clear();
 	msg_info_.reset();
 	recycle_tick_.reset();
-	player_info_.reset();
 }
 
 int Gate_Player::tick(Time_Value &now) {
@@ -41,7 +41,7 @@ int Gate_Player::link_close() {
 
 int Gate_Player::verify_msg_info(uint32_t serial_cipher, uint32_t msg_time_cipher) {
 	if (! msg_info_.is_inited) {
-		msg_info_.hash_key = elf_hash(player_info_.account.c_str(), player_info_.account.length());
+		msg_info_.hash_key = elf_hash(account_.c_str(), account_.length());
 	}
 	uint32_t serial = serial_cipher ^ msg_info_.hash_key;
 	uint32_t msg_time = msg_time_cipher ^ serial_cipher;
@@ -92,7 +92,6 @@ int Gate_Player::recycle_tick(const Time_Value &now) {
 		if (recycle_tick_.status_ == Recycle_Tick::RECYCLE && now - recycle_tick_.last_change_status_ts_ > Recycle_Tick::recycle_time_) {
 			ret = 1;
 			GATE_MANAGER->unbind_gate_player(*this);
-			GATE_MANAGER->unbind_account_gate_player(this->player_info_.account);
 			reset();
 			GATE_MANAGER->push_gate_player(this);
 		}

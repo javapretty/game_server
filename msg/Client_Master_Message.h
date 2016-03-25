@@ -27,8 +27,9 @@ struct MSG_510001 {
 	int8_t chat_type;	
 	std::string chat_content;	
 	std::string role_name;	
-	int32_t career;	
 	int32_t gender;	
+	int32_t career;	
+	int32_t vip_level;	
 
 	MSG_510001(void);
 	void serialize(Block_Buffer &buffer) const;

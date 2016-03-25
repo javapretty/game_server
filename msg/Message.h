@@ -88,7 +88,8 @@ enum Game_Client_Message {
 enum Gate_Message {
 	SYNC_GATE_LOGIN_PLAYER_ACCOUNT = 140000, //gate校验玩家账户、session
 	SYNC_LOGIN_GATE_PLAYER_ACCOUNT = 140001, //login返回session校验结果
-	SYNC_GATE_GAME_PLAYER_SIGNOUT = 140002, //gate同步玩家掉线到game
+	SYNC_GATE_GAME_PLAYER_SIGNOUT = 140100, //gate同步玩家下线到game
+	SYNC_GATE_MASTER_PLAYER_SIGNIN = 140200, //gate同步玩家上线到master
 };
 
 enum Game_DB_Message {
@@ -107,8 +108,8 @@ enum DB_Game_Message {
 };
 
 enum Game_Master_Message {
-	SYNC_GAME_MASTER_PLYAER_SIGNIN = 160001, //同步玩家登录消息到master
-	SYNC_GAME_MASTER_PLAYER_SIGNOUT = 160002, //同步玩家离线消息到master
+	SYNC_GAME_MASTER_PLYAER_SIGNIN = 160000, //game同步玩家上线到master
+	SYNC_GAME_MASTER_PLAYER_SIGNOUT = 160001, //game同步玩家下线到master
 };
 
 enum LOG_Message {

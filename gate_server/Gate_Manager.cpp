@@ -221,14 +221,7 @@ int Gate_Manager::bind_cid_gate_player(int cid, Gate_Player &player) {
 }
 
 int Gate_Manager::unbind_cid_gate_player(int cid) {
-	if (cid < 2) {
-		LOG_TRACE("cid = %d", cid);
-		return -1;
-	}
-	if (player_cid_map_.erase(cid) == 0) {
-		LOG_TRACE("erase cid = %d return 0", cid);
-		return -1;
-	}
+	player_cid_map_.erase(cid);
 	return 0;
 }
 
@@ -240,11 +233,6 @@ Gate_Player *Gate_Manager::find_cid_gate_player(int cid) {
 		return 0;
 }
 
-int Gate_Manager::unbind_gate_player(Gate_Player &player) {
-	unbind_cid_gate_player(player.get_cid());
-	return 0;
-}
-
 int Gate_Manager::bind_account_gate_player(std::string& account, Gate_Player &player){
 	if (! player_account_map_.insert(std::make_pair(account, &player)).second) {
 			LOG_TRACE("insert failure");
@@ -253,10 +241,7 @@ int Gate_Manager::bind_account_gate_player(std::string& account, Gate_Player &pl
 }
 
 int Gate_Manager::unbind_account_gate_player(std::string& account){
-	if (player_account_map_.erase(account) == 0) {
-				LOG_TRACE("erase account = %s return 0", account.c_str());
-				return -1;
-	}
+	player_account_map_.erase(account);
 	return 0;
 }
 
@@ -266,6 +251,12 @@ Gate_Player *Gate_Manager::find_account_gate_player(std::string& account){
 		return it->second;
 	else
 		return 0;
+}
+
+int Gate_Manager::unbind_gate_player(Gate_Player &player) {
+	player_cid_map_.erase(player.get_cid());
+	player_account_map_.erase(player.get_account());
+	return 0;
 }
 
 int Gate_Manager::tick(void) {

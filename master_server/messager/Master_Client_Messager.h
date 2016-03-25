@@ -16,6 +16,9 @@ public:
 
 	int process_block(Block_Buffer &buf);
 
+	//gate通知master玩家上线
+	int gate_master_player_signin(int gate_cid, int player_cid, Block_Buffer &buf);
+
 private:
 	Master_Client_Messager(void);
 	virtual ~Master_Client_Messager(void);

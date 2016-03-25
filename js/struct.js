@@ -351,26 +351,14 @@ Login_Player_Info.prototype.deserialize = function(buffer) {
 	this.session_tick = buffer.read_int64();
 }
 
-function Gate_Player_Info() {
-	this.role_id = 0;
-	this.account = ""
-}
-
-Gate_Player_Info.prototype.serialize = function(buffer) {
-	buffer.write_int64(this.role_id);
-	buffer.write_string(this.account);
-}
-
-Gate_Player_Info.prototype.deserialize = function(buffer) {
-	this.role_id = buffer.read_int64();
-	this.account = buffer.read_string();
-}
-
 function Master_Player_Info() {
 	this.role_id = 0;
 	this.account = ""
 	this.role_name = ""
 	this.level = 0;
+	this.gender = 0;
+	this.career = 0;
+	this.vip_level = 0;
 }
 
 Master_Player_Info.prototype.serialize = function(buffer) {
@@ -378,6 +366,9 @@ Master_Player_Info.prototype.serialize = function(buffer) {
 	buffer.write_string(this.account);
 	buffer.write_string(this.role_name);
 	buffer.write_int32(this.level);
+	buffer.write_int32(this.gender);
+	buffer.write_int32(this.career);
+	buffer.write_int32(this.vip_level);
 }
 
 Master_Player_Info.prototype.deserialize = function(buffer) {
@@ -385,6 +376,9 @@ Master_Player_Info.prototype.deserialize = function(buffer) {
 	this.account = buffer.read_string();
 	this.role_name = buffer.read_string();
 	this.level = buffer.read_int32();
+	this.gender = buffer.read_int32();
+	this.career = buffer.read_int32();
+	this.vip_level = buffer.read_int32();
 }
 
 function Player_Info() {

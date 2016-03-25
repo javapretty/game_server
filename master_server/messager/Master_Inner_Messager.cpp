@@ -29,11 +29,11 @@ int Master_Inner_Messager::process_game_block(Block_Buffer &buf) {
 	Perf_Mon perf_mon(msg_id);
 	switch (msg_id) {
 	case SYNC_GAME_MASTER_PLYAER_SIGNIN: {
-		process_160001(game_cid, player_cid, buf);
+		game_master_player_signin(game_cid, player_cid, buf);
 		break;
 	}
 	case SYNC_GAME_MASTER_PLAYER_SIGNOUT: {
-		process_160002(buf);
+		game_master_player_signout(buf);
 		break;
 	}
 	default:
@@ -61,8 +61,8 @@ int Master_Inner_Messager::process_self_loop_block(Block_Buffer &buf) {
 	return 0;
 }
 
-int Master_Inner_Messager::process_160001(int game_cid, int player_cid, Block_Buffer &buf) {
-	MSG_160001 msg;
+int Master_Inner_Messager::game_master_player_signin(int game_cid, int player_cid, Block_Buffer &buf) {
+	MSG_160000 msg;
 	msg.deserialize(buf);
 	Master_Player *player = MASTER_MANAGER->pop_master_player();
 	if (! player) {
@@ -71,19 +71,21 @@ int Master_Inner_Messager::process_160001(int game_cid, int player_cid, Block_Bu
 	}
 
 	player->reset();
-	player->set_cid(0, game_cid, player_cid);
+	player->set_game_cid(game_cid);
+	player->set_player_cid(player_cid);
 	player->sign_in(msg.player_info);
 	MASTER_MANAGER->bind_game_cid_master_player(game_cid * 10000 + player_cid, *player);
 	MASTER_MANAGER->bind_role_id_master_player(msg.player_info.role_id, *player);
 	return 0;
 }
 
-int Master_Inner_Messager::process_160002(Block_Buffer &buf) {
-	MSG_160002 msg;
+int Master_Inner_Messager::game_master_player_signout(Block_Buffer &buf) {
+	MSG_160001 msg;
 	msg.deserialize(buf);
 	Master_Player *player = MASTER_MANAGER->find_role_id_master_player(msg.role_id);
 	if (!player) {
-		LOG_INFO("process_160002 can't find role_id = %ld", msg.role_id);
+		LOG_INFO("can't find role_id:%ld master player", msg.role_id);
+		return -1;
 	}
 	MASTER_MANAGER->unbind_master_player(*player);
 	player->sign_out();
