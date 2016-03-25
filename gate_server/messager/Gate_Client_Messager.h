@@ -14,7 +14,6 @@ public:
 
 	int process_block(Block_Buffer &buf);
 	int process_gate_block(int cid, int msg_id, Block_Buffer &buf);
-	int process_game_block(int msg_id, Block_Buffer &buf);
 
 	int connect_gate(int cid, Block_Buffer &buf);
 	int refresh_heartbeat(int cid, Block_Buffer &buf);

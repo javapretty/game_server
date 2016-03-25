@@ -1,17 +1,17 @@
 /*
-*	ÃèÊö£ºÅäÖÃ¹ÜÀíÄ£¿é
-*	×÷Õß£ºÕÅÑÇÀÚ
-*	Ê±¼ä£º2016/03/24
+*	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¹ï¿½ï¿½ï¿½Ä£ï¿½ï¿½
+*	ï¿½ï¿½ï¿½ß£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+*	Ê±ï¿½ä£º2016/03/24
 */
 
 function Config() {
-	this.item_json = null;			//µÀ¾ßÅäÖÃ
-	this.hero_json = null;			//Ó¢ĞÛÅäÖÃ
-	this.level_json = null;			//Íæ¼ÒµÈ¼¶Ïà¹ØÅäÖÃ
-	this.util_json = null;			//¹«¹²×ÛºÏÅäÖÃ
-	this.shop_json = null;			//ÉÌµêÅäÖÃ
-	this.vip_json = null;				//vipÅäÖÃ
-	this.recharge_json = null;		//³äÖµÏà¹ØÅäÖÃ
+	this.item_json = null;			//é“å…·é…ç½®
+	this.hero_json = null;			//è‹±é›„é…ç½®
+	this.level_json = null;			//ç©å®¶ç­‰çº§ç›¸å…³é…ç½®
+	this.util_json = null;			//å…¬å…±ç»¼åˆé…ç½®
+	this.shop_json = null;			//å•†åº—é…ç½®
+	this.vip_json = null;				//vipé…ç½®
+	this.recharge_json = null;		//å……å€¼ç›¸å…³é…ç½®
 	
 	this.init = function() {
 		try {

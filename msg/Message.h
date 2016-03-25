@@ -13,6 +13,8 @@
 enum Message_Bound {
 	CLIENT_GATE_MESSAGE_START = 100000, 
 	CLIENT_GATE_MESSAGE_END = 109999, 
+	CLIENT_MASTER_MESSAGE_START = 110000, 
+	CLIENT_MASTER_MESSAGE_END = 119999, 
 	CLIENT_GAME_MESSAGE_START = 120000, 
 	CLIENT_GAME_MESSAGE_END = 129999, 
 };
@@ -29,6 +31,14 @@ enum Login_Client_Message {
 	RES_CLIENT_LOGIN = 500001, //登录(返回)
 	RES_CONNECT_GATE = 500002, //客户端登录gate(返回)
 	RES_HEARTBEAT = 500003, //心跳(返回)
+};
+
+enum Client_Master_Message {
+	REQ_SEND_CHAT_INFO = 110001, //发送世界聊天消息
+};
+
+enum Master_Client_Message {
+	RES_SEND_CHAT_INFO = 510001, //发送世界聊天消息(返回)
 };
 
 enum Client_Game_Message {
@@ -80,7 +90,8 @@ enum Game_Client_Message {
 enum Gate_Message {
 	SYNC_GATE_LOGIN_PLAYER_ACCOUNT = 140000, //gate校验玩家账户、session
 	SYNC_LOGIN_GATE_PLAYER_ACCOUNT = 140001, //login返回session校验结果
-	SYNC_GATE_GAME_PLAYER_SIGNOUT = 140002, //gate同步玩家掉线到game
+	SYNC_GATE_GAME_PLAYER_SIGNOUT = 140100, //gate同步玩家下线到game
+	SYNC_GATE_MASTER_PLAYER_SIGNIN = 140200, //gate同步玩家上线到master
 };
 
 enum Game_DB_Message {
@@ -99,8 +110,8 @@ enum DB_Game_Message {
 };
 
 enum Game_Master_Message {
-	SYNC_GAME_MASTER_PLYAER_SIGNIN = 160001, //同步玩家登录消息到master
-	SYNC_GAME_MASTER_PLAYER_SIGNOUT = 160002, //同步玩家离线消息到master
+	SYNC_GAME_MASTER_PLYAER_SIGNIN = 160000, //game同步玩家上线到master
+	SYNC_GAME_MASTER_PLAYER_SIGNOUT = 160001, //game同步玩家下线到master
 };
 
 enum LOG_Message {

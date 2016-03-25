@@ -22,6 +22,10 @@ public:
 	typedef Object_Pool<Master_Player, Spin_Lock> Master_Player_Pool;
 	typedef Block_List<Thread_Mutex> Data_List;
 
+	//cid = gate_cid * 10000 + player_cid
+	typedef boost::unordered_map<int, Master_Player* > Master_Player_Gate_Cid_Map;
+	//cid = game_cid * 10000 + player_cid
+	typedef boost::unordered_map<int, Master_Player* > Master_Player_Game_Cid_Map;
 	typedef boost::unordered_map<int64_t, Master_Player *> Master_Player_Role_Id_Map;
 	typedef boost::unordered_map<int, int> Msg_Count_Map;
 
@@ -53,9 +57,20 @@ public:
 	/// 消息处理
 	int process_list();
 
+	//cid = gate_cid * 10000 + player_cid
+	int bind_gate_cid_master_player(int cid, Master_Player &player);
+	int unbind_gate_cid_master_player(int cid);
+	Master_Player *find_gate_cid_master_player(int cid);
+
+	//cid = game_cid * 10000 + player_cid
+	int bind_game_cid_master_player(int cid, Master_Player &player);
+	int unbind_game_cid_master_player(int cid);
+	Master_Player *find_game_cid_master_player(int cid);
+
 	int bind_role_id_master_player(int64_t role_id, Master_Player &player);
 	int unbind_role_id_master_player(int64_t role_id);
 	Master_Player *find_role_id_master_player(int64_t role_id);
+
 	int unbind_master_player(Master_Player &player);
 
 	/// 定时器处理
@@ -95,7 +110,9 @@ private:
 	Server_Info master_gate_server_info_;
 	Server_Info master_game_server_info_;
 
-	Master_Player_Role_Id_Map player_role_id_map_; /// role_id - Master_Player map
+	Master_Player_Gate_Cid_Map player_gate_cid_map_;
+	Master_Player_Gate_Cid_Map player_game_cid_map_;
+	Master_Player_Role_Id_Map player_role_id_map_;
 
 	Tick_Info tick_info_;
 	Time_Value tick_time_;

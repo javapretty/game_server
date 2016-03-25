@@ -108,6 +108,46 @@ int Master_Manager::process_list(void) {
 	return 0;
 }
 
+int Master_Manager::bind_gate_cid_master_player(int cid, Master_Player &player) {
+	if (! player_gate_cid_map_.insert(std::make_pair(cid, &player)).second) {
+		LOG_INFO("insert cid player failure");
+	}
+	return 0;
+}
+
+int Master_Manager::unbind_gate_cid_master_player(int cid) {
+	player_gate_cid_map_.erase(cid);
+	return 0;
+}
+
+Master_Player* Master_Manager::find_gate_cid_master_player(int cid) {
+	Master_Player_Gate_Cid_Map::iterator it = player_gate_cid_map_.find(cid);
+	if (it != player_gate_cid_map_.end())
+		return it->second;
+	else
+		return 0;
+}
+
+int Master_Manager::bind_game_cid_master_player(int cid, Master_Player &player) {
+	if (! player_game_cid_map_.insert(std::make_pair(cid, &player)).second) {
+		LOG_INFO("insert cid player failure");
+	}
+	return 0;
+}
+
+int Master_Manager::unbind_game_cid_master_player(int cid) {
+	player_game_cid_map_.erase(cid);
+	return 0;
+}
+
+Master_Player* Master_Manager::find_game_cid_master_player(int cid) {
+	Master_Player_Game_Cid_Map::iterator it = player_game_cid_map_.find(cid);
+	if (it != player_game_cid_map_.end())
+		return it->second;
+	else
+		return 0;
+}
+
 int Master_Manager::bind_role_id_master_player(int64_t role_id, Master_Player &player) {
 	if (! player_role_id_map_.insert(std::make_pair(role_id, &player)).second) {
 		LOG_TRACE("insert failure");
@@ -129,6 +169,8 @@ Master_Player *Master_Manager::find_role_id_master_player(int64_t role_id) {
 }
 
 int Master_Manager::unbind_master_player(Master_Player &player) {
+	player_gate_cid_map_.erase(player.gate_cid() * 10000 + player.player_cid());
+	player_game_cid_map_.erase(player.game_cid() * 10000 + player.player_cid());
 	player_role_id_map_.erase(player.master_player_info().role_id);
 	return 0;
 }

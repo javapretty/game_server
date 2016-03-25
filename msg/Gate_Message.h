@@ -34,4 +34,21 @@ struct MSG_140001 {
 	void reset(void);
 };
 
+struct MSG_140100 {
+
+	MSG_140100(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+
+struct MSG_140200 {
+	int64_t role_id;	
+
+	MSG_140200(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+
 #endif

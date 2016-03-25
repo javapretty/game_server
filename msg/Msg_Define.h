@@ -13,6 +13,7 @@
 #include "Message.h"
 #include "Active_Message.h"
 #include "Client_Login_Message.h"
+#include "Client_Master_Message.h"
 #include "Client_Game_Message.h"
 #include "Game_DB_Message.h"
 #include "Game_Master_Message.h"

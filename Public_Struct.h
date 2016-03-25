@@ -13,31 +13,12 @@
 #include "Game_Struct.h"
 
 struct Cid_Info {
-	int32_t gate_cid;			//gate连接game,master的cid
-	int32_t game_cid;			//game连接master的cid
-	int32_t player_cid;		//player连接gate的cid
+	int gate_cid;
+	int player_cid;
 
-	Cid_Info(void) : gate_cid(0), game_cid(0), player_cid(0) {};
-	Cid_Info(int32_t gate_cid_, int32_t game_cid_, int32_t player_cid_) : gate_cid(gate_cid_), game_cid(game_cid_), player_cid(player_cid_) {};
-
-	void reset(void) {
-		gate_cid = -1;
-		game_cid = -1;
-		player_cid = -1;
-	}
-
-	bool operator==(const Cid_Info &cid_info) const {
-		return gate_cid == cid_info.gate_cid && game_cid == cid_info.game_cid && player_cid == cid_info.player_cid;
-	}
+	Cid_Info(void) : gate_cid(0), player_cid(0) {}
+	Cid_Info(int gate_cid_, int player_cid_) : gate_cid(gate_cid_), player_cid(player_cid_) {};
 };
-
-inline std::size_t hash_value(const Cid_Info &cid_info) {
-    std::size_t seed = 0;
-    boost::hash_combine(seed, cid_info.gate_cid);
-    boost::hash_combine(seed, cid_info.game_cid);
-    boost::hash_combine(seed, cid_info.player_cid);
-    return seed;
-}
 
 struct Saving_Info {
 	int64_t role_id;		// 角色

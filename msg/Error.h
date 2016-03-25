@@ -28,6 +28,7 @@ enum Error_Code {
 
 	ERROR_ROLE_NOT_EXIST 						= 10100,				//角色不存在
 	ERROR_ROLE_NAME_EXIST 					= 10101,				//角色名已存在
+	ERROR_ROLE_OFFLINE 							= 10102,				//玩家已离线
 };
 
 #endif /* _ERRCODE_H_ */

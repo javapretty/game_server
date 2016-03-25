@@ -63,21 +63,14 @@ struct Login_Player_Info {
 	void reset(void);
 };
 
-struct Gate_Player_Info {
-	int64_t role_id;	
-	std::string account;	
-
-	Gate_Player_Info(void);
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-};
-
 struct Master_Player_Info {
 	int64_t role_id;	
 	std::string account;	
 	std::string role_name;	
 	int32_t level;	
+	int32_t gender;	//0(女),1(男)
+	int32_t career;	//职业1-3
+	int32_t vip_level;	//vip等级
 
 	Master_Player_Info(void);
 	void serialize(Block_Buffer &buffer) const;

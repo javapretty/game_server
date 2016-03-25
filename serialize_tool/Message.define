@@ -1,9 +1,10 @@
 /*消息ID说明
 100000-109999		Client--->Login,Gate
-110000-119999  	Client--->Chat
+110000-119999  	Client--->Master
 120000-129999		Client--->Game
-130000-139999		Client--->Master
-140000-149999		Login,Game,Master,Chat<--->Gate
+140000-140099		Gate<--->Login
+140100-140199		Gate<--->Game
+140200-140299		Gate<--->Master
 150000-159999  Game<--->DB
 160000-169999		Game<--->Master
 170000-179999		Master<--->DB
@@ -12,58 +13,67 @@
 300000-309999		ActiveMessage			服务器发到客户端主动消息
 400000-499999		InnerMessage			服务器内部消息
 500000-500999		Login,Gate->Client
+510000-519999		Master->Client
 520000-529999		Game->Client
-530000-539999		Master->Client
-540000-549999	
 550000-559999		DB-->Game
 */
 
 enum Message_Bound {
 	CLIENT_GATE_MESSAGE_START 					= 100000,
 	CLIENT_GATE_MESSAGE_END 					= 109999,
+	CLIENT_MASTER_MESSAGE_START 				= 110000,
+	CLIENT_MASTER_MESSAGE_END 					= 119999,
 	CLIENT_GAME_MESSAGE_START 					= 120000,
 	CLIENT_GAME_MESSAGE_END 					= 129999,
 };
 
 enum Client_Login_Message {
-	REQ_CLIENT_REGISTER 							= 	100000,  //注册
-	REQ_CLIENT_LOGIN 									= 	100001,  //登录
-	REQ_CONNECT_GATE									=	100002,	//客户端登录gate
-	REQ_HEARTBEAT 										=	100003,	//心跳
+	REQ_CLIENT_REGISTER 						= 100000,  //注册
+	REQ_CLIENT_LOGIN 							= 100001,  //登录
+	REQ_CONNECT_GATE							=	100002,	//客户端登录gate
+	REQ_HEARTBEAT 								=	100003,	//心跳
 };
 
 enum Login_Client_Message {
-	RES_CLIENT_REGISTER                = 500000,  //注册(返回)
-	RES_CLIENT_LOGIN                 	= 500001,  //登录(返回)
-	RES_CONNECT_GATE									= 500002,	//客户端登录gate(返回)
-	RES_HEARTBEAT 										= 	500003,	//心跳(返回)
+	RES_CLIENT_REGISTER                			= 500000,  //注册(返回)
+	RES_CLIENT_LOGIN                 			= 500001,  //登录(返回)
+	RES_CONNECT_GATE							= 500002,	//客户端登录gate(返回)
+	RES_HEARTBEAT 								= 	500003,	//心跳(返回)
+};
+
+enum Client_Master_Message {
+	REQ_SEND_CHAT_INFO 						= 110001,  //发送世界聊天消息
+};
+
+enum Master_Client_Message {
+	RES_SEND_CHAT_INFO                			= 510001,  //发送世界聊天消息(返回)
 };
 
 enum Client_Game_Message {
-	REQ_FETCH_ROLE_INFO								=	120001,	//获取角色信息
-	REQ_CREATE_ROLE 									= 	120002,	//创建角色
-	REQ_BUY_VITALITY									= 120003,	//购买体力
+	REQ_FETCH_ROLE_INFO							=	120001,	//获取角色信息
+	REQ_CREATE_ROLE 							= 	120002,	//创建角色
+	REQ_BUY_VITALITY							= 120003,	//购买体力
 	REQ_EXCHANGE_MONEY									= 120004,	//兑换聚宝盆
 
-	REQ_FETCH_BAG_INFO 								= 120100,	//获取背包信息
-	REQ_USE_ITEM 											= 120101,	//使用物品
-	REQ_SELL_ITEM 										= 120102,	//出售物品
+	REQ_FETCH_BAG_INFO 							= 120100,	//获取背包信息
+	REQ_USE_ITEM 								= 120101,	//使用物品
+	REQ_SELL_ITEM 								= 120102,	//出售物品
 
-	REQ_FETCH_MAIL_INFO 							= 120200,	//获取邮件信息
-	REQ_PICKUP_MAIL 									= 120201,	//收取附件和金钱
-	REQ_DEL_MAIL 											= 120202,	//删除邮件
-	REQ_SEND_MAIL 										= 120203,	//发送邮件
+	REQ_FETCH_MAIL_INFO 						= 120200,	//获取邮件信息
+	REQ_PICKUP_MAIL 							= 120201,	//收取附件和金钱
+	REQ_DEL_MAIL 								= 120202,	//删除邮件
+	REQ_SEND_MAIL 								= 120203,	//发送邮件
 
-	REQ_FETCH_HERO_INFO								=	120300,	//获取英雄信息
-	REQ_ADD_HERO_STAR									=	120301,	//提高英雄星级
-	REQ_ADD_HERO_QUALITY							= 120302,	//提高英雄品质
-	REQ_ADD_EQUIP_LEVEL								= 120303,	//提高英雄装备等级
-	REQ_EQUIP_ON_OFF									=	120304,	//英雄装备穿脱
-	REQ_ADD_SKILL_LEVEL								= 120305,	//提高英雄技能等级
+	REQ_FETCH_HERO_INFO							=	120300,	//获取英雄信息
+	REQ_ADD_HERO_STAR							=	120301,	//提高英雄星级
+	REQ_ADD_HERO_QUALITY						= 120302,	//提高英雄品质
+	REQ_ADD_EQUIP_LEVEL							= 120303,	//提高英雄装备等级
+	REQ_EQUIP_ON_OFF							=	120304,	//英雄装备穿脱
+	REQ_ADD_SKILL_LEVEL							= 120305,	//提高英雄技能等级
 	
 	REQ_FETCH_SHOP_INFO								= 120400,	//拉取商店信息
-	REQ_BUY_PRODUCT								= 120401,	//购买物品
-	REQ_REFRESH_SHOP								= 120402,	//刷新商店
+	REQ_BUY_PRODUCT										= 120401,	//购买物品
+	REQ_REFRESH_SHOP									= 120402,	//刷新商店
 };
 
 enum Game_Client_Message {
@@ -89,15 +99,18 @@ enum Game_Client_Message {
 	RES_ADD_SKILL_LEVEL								= 520305,	//提高英雄技能等级(返回)
 	
 	RES_FETCH_SHOP_INFO								= 520400,	//拉取商店信息(返回)
-	RES_BUY_PRODUCT								= 520401,	//购买物品(返回)
-	RES_REFRESH_SHOP								= 520402,	//刷新商店(返回)
+	RES_BUY_PRODUCT										= 520401,	//购买物品(返回)
+	RES_REFRESH_SHOP									= 520402,	//刷新商店(返回)
 };
 
-//此次包含login,game,chat,master与gate通信的消息
+//内部消息命名说明：SYNC_源服务器名_目的服务器名_消息名
 enum Gate_Message {
 	SYNC_GATE_LOGIN_PLAYER_ACCOUNT     = 140000,  //gate校验玩家账户、session
 	SYNC_LOGIN_GATE_PLAYER_ACCOUNT     = 140001,  //login返回session校验结果
-	SYNC_GATE_GAME_PLAYER_SIGNOUT 			= 	140002,	//gate同步玩家掉线到game
+	
+	SYNC_GATE_GAME_PLAYER_SIGNOUT 			= 	140100,	//gate同步玩家下线到game
+	
+	SYNC_GATE_MASTER_PLAYER_SIGNIN			=	140200,	//gate同步玩家上线到master
 };
 
 enum Game_DB_Message {
@@ -116,8 +129,8 @@ enum DB_Game_Message {
 };
 
 enum Game_Master_Message {
-	SYNC_GAME_MASTER_PLYAER_SIGNIN			=	160001,	//同步玩家登录消息到master
-	SYNC_GAME_MASTER_PLAYER_SIGNOUT		=	160002,	//同步玩家离线消息到master
+	SYNC_GAME_MASTER_PLYAER_SIGNIN			=	160000,	//game同步玩家上线到master
+	SYNC_GAME_MASTER_PLAYER_SIGNOUT		=	160001,	//game同步玩家下线到master
 };
 
 enum LOG_Message {

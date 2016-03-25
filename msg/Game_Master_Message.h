@@ -13,19 +13,19 @@
 #include "Block_Buffer.h"
 #include "Public_Struct.h"
 
-struct MSG_160001 {
+struct MSG_160000 {
 	Master_Player_Info player_info;	
 
-	MSG_160001(void);
+	MSG_160000(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 
-struct MSG_160002 {
+struct MSG_160001 {
 	int64_t role_id;	
 
-	MSG_160002(void);
+	MSG_160001(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

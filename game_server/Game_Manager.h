@@ -25,8 +25,8 @@ public:
 	typedef boost::unordered_map<std::string, Cid_Info> Logining_Map;
 	typedef boost::unordered_map<int64_t, Saving_Info> Saving_Map;
 
-	//通过某个gate连接到game的玩家放到同map内,该map用player_cid和gate_cid作为key
-	typedef boost::unordered_map<Cid_Info, Game_Player* > Game_Player_Cid_Map;
+	//cid = gate_cid * 10000 + player_cid
+	typedef boost::unordered_map<int, Game_Player* > Game_Player_Cid_Map;
 	typedef boost::unordered_map<int64_t, Game_Player* > Game_Player_Role_Id_Map;
 	typedef boost::unordered_map<std::string, Game_Player* > Game_Player_Role_Name_Map;
 	typedef boost::unordered_map<int, int> Msg_Count_Map;
@@ -75,10 +75,10 @@ public:
 	int process_list();
 	void process_drop_gate_cid(int gate_cid);
 
-	//通过player_cid和gate_cid双重定位到玩家
-	int bind_cid_game_player(Cid_Info &cid_info, Game_Player &player);
-	int unbind_cid_game_player(Cid_Info &cid_info);
-	Game_Player* find_cid_game_player(Cid_Info &cid_info);
+	//cid = gate_cid * 10000 + player_cid
+	int bind_cid_game_player(int cid, Game_Player &player);
+	int unbind_cid_game_player(int cid);
+	Game_Player* find_cid_game_player(int cid);
 
 	//通过role_id定位玩家
 	int bind_role_id_game_player(int64_t role_id, Game_Player &player);

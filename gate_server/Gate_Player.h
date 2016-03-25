@@ -14,10 +14,10 @@ public:
 	Gate_Player(void);
 	virtual ~Gate_Player(void);
 
-	void set_cid(int cid);
-	int get_cid(void);
-	void set_account(std::string  & account);
-	void set_role_id(int64_t role_id);
+	void set_cid(int cid) { cid_ = cid; };
+	int get_cid(void) { return cid_; };
+	void set_account(std::string  &account) { account_ = account; };
+	std::string& get_account(void) { return account_; };
 	void reset(void);
 
 	int tick(Time_Value &now);
@@ -33,28 +33,12 @@ public:
 
 private:
 	int cid_;		//client和gate连接的cid
+	std::string account_;
 	Msg_Info msg_info_;
 	Recycle_Tick recycle_tick_;
-	Gate_Player_Info player_info_;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-inline void Gate_Player::set_cid(int cid) {
-	cid_ = cid;
-}
-
-inline int Gate_Player::get_cid(void) {
-	return cid_;
-}
-
-inline void Gate_Player::set_account(std::string &account) {
-	player_info_.account = account;
-}
-
-inline void Gate_Player::set_role_id(int64_t role_id) {
-	player_info_.role_id = role_id;
-}
-
 inline void Gate_Player::set_recycle(void) {
 	recycle_tick_.set(Recycle_Tick::RECYCLE);
 }
@@ -62,6 +46,5 @@ inline void Gate_Player::set_recycle(void) {
 inline int Gate_Player::recycle_status(void) {
 	return recycle_tick_.status_;
 }
-
 
 #endif /* GATE_PLAYER_H_ */

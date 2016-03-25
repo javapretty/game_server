@@ -3,11 +3,11 @@
 
 Robot:（测试机器人）
 1、实现注册登录流程
-2、与服务器正常通信，实现客户端逻辑
+2、实现客户端逻辑，测试服务器功能
 
 LoginServer:
 客户端发送账号密码到LoginServer，LoginServer去AccountDb验证，验证失败断开连接，验证成功，则生成session，
-根据玩家账号hash和gate在线人数选择gate，发送给客户端
+根据玩家账号hash和gate在线人数选择gateIp,gatePort，发送给客户端
 
 GateServer:
 接受客户端发过来的连接，向LoginServer进行session验证，同步在线玩家数量到LoginServer，转发消息到Game，Master
@@ -21,10 +21,13 @@ GameServer:
 6、怪物AI模块
 7、游戏逻辑
 
+V8:
+V8管理模块，集成V8引擎，执行js代码，编写游戏逻辑
+
 MasterServer：
 1、管理GameServer，玩家在GameServer间跳转
 2、存储在线玩家数据，进行相关校验验证，存储每个玩家对应的gameserver
-3、存储公共数据，例如公会，好友信息
+3、存储公共数据，例如帮派，好友，邮件，聊天，组队
    
 DbServer：
 1、建立mongodb相关驱动和接口
@@ -33,9 +36,3 @@ DbServer：
 LogServer:
 1、实现写日志文件相关接口
 2、实现写Mysql操作流水相关接口
-
-LogClient:
-实现写日志相关接口，可供所有服务器调用
-
-V8:
-将V8引擎集成到项目中，V8执行环境，暴露C++接口给js，通过js编写游戏逻辑

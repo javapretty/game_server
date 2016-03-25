@@ -15,7 +15,9 @@ public:
 	static Master_Client_Messager *instance(void);
 
 	int process_block(Block_Buffer &buf);
-	int process_init_block(int gate_cid, int player_cid, int msg_id, int status, Block_Buffer &buf);
+
+	//gate通知master玩家上线
+	int gate_master_player_signin(int gate_cid, int player_cid, Block_Buffer &buf);
 
 private:
 	Master_Client_Messager(void);
