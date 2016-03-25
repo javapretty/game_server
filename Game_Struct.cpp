@@ -190,6 +190,7 @@ void Player_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(charge_gold);
 	buffer.write_int32(skill_point);
 	buffer.write_int64(recover_skill_time);
+	buffer.write_int32(exchange_count);
 }
 
 int Player_Info::deserialize(Block_Buffer &buffer) {
@@ -213,6 +214,7 @@ int Player_Info::deserialize(Block_Buffer &buffer) {
 	charge_gold = buffer.read_int32();
 	skill_point = buffer.read_int32();
 	recover_skill_time = buffer.read_int64();
+	exchange_count = buffer.read_int32();
 	return 0;
 }
 
@@ -237,6 +239,7 @@ void Player_Info::reset(void) {
 	charge_gold = 0;
 	skill_point = 0;
 	recover_skill_time = 0;
+	exchange_count = 0;
 }
 
 Hero_Info::Hero_Info(void) {

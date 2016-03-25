@@ -185,3 +185,29 @@ Player.prototype.buy_vitality = function() {
 	push_buffer(buf);
 	this.set_data_change(Data_Change.PLAYER_CHANGE);
 }
+
+Player.prototype.exchange_money = function(buffer){
+	print('exchange_money, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
+	
+	var msg_req = new MSG_120004();
+	msg_req.deserialize(buffer);
+	
+	//检查是否还有剩余次数
+	if(this.player_info.exchange_count >= config.vip_json[this.player_info.vip_level].exchange_count)
+		return this.cplayer.respond_error_result(Msg_Res.RES_EXCHANGE_MONEY, Error_Code.ERROR_EXCHANGE_COUNT_NOT_ENOUGH);
+	
+	//元宝是否足够
+	var error = this.bag.bag_sub_money(0, msg_req.money);
+	if(error != 0)
+		return this.cplayer.respond_error_result(Msg_Res.RES_EXCHANGE_MONEY, error);
+	
+	var add_copper = config.util_json['exchange_rate'] * msg_req.money;
+	this.bag.bag_add_money(add_copper, 0);
+	this.player_info.exchange_count++;
+
+	this.set_data_change(Data_Change.PLAYER_CHANGE);
+}
+
+Player.prototype.daily_refresh = function() {
+	this.player_info.exchange_count = 0;
+}

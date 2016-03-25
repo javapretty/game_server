@@ -26,4 +26,5 @@ if (typeof Error_Code == "undefined") {
 	Error_Code.ERROR_PRODUCT_NOT_EXIST						= 10205;				//商品不存在
 	Error_Code.ERROR_PRODUCT_NOT_ENOUGH						= 10206;				//商品数量不足
 	Error_Code.ERROR_REFRESH_NOT_ENOUGH						= 10207;				//商店刷新次数耗尽
+	Error_Code.ERROR_EXCHANGE_COUNT_NOT_ENOUGH				= 10208;				//兑换元宝次数耗尽
 }

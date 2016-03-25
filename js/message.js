@@ -12,6 +12,7 @@ if (typeof Msg_Req == "undefined") {
 	Msg_Req.REQ_FETCH_ROLE_INFO = 120001; //获取角色信息
 	Msg_Req.REQ_CREATE_ROLE = 120002; //创建角色
 	Msg_Req.REQ_BUY_VITALITY = 120003; //购买体力
+	Msg_Req.REQ_EXCHANGE_MONEY = 120004; //兑换聚宝盆
 	Msg_Req.REQ_FETCH_BAG_INFO = 120100; //获取背包信息
 	Msg_Req.REQ_USE_ITEM = 120101; //使用物品
 	Msg_Req.REQ_SELL_ITEM = 120102; //出售物品
@@ -35,6 +36,7 @@ if (typeof Msg_Res == "undefined") {
 	Msg_Res.RES_FETCH_ROLE_INFO = 520001; //获取角色信息(返回)
 	Msg_Res.RES_CREATE_ROLE = 520002; //创建角色(返回)
 	Msg_Res.RES_BUY_VITALITY = 520003; //购买体力(返回)
+	Msg_Res.RES_EXCHANGE_MONEY = 520004; //兑换聚宝盆(返回)
 	Msg_Res.RES_FETCH_BAG_INFO = 520100; //获取背包信息(返回)
 	Msg_Res.RES_USE_ITEM = 520101; //使用物品(返回)
 	Msg_Res.RES_SELL_ITEM = 520102; //出售物品(返回)

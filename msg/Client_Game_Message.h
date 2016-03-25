@@ -75,6 +75,23 @@ struct MSG_520003 {
 	void reset(void);
 };
 
+struct MSG_120004 {
+	int32_t money;	
+
+	MSG_120004(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+
+struct MSG_520004 {
+
+	MSG_520004(void);
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+};
+
 struct MSG_120100 {
 
 	MSG_120100(void);

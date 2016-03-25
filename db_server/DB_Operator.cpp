@@ -292,6 +292,7 @@ int DB_Operator::load_player_info(int64_t role_id, Player_Info &player_info) {
 		player_info.charge_gold = res["charge_gold"].numberInt();
 		player_info.skill_point = res["skill_point"].numberInt();
 		player_info.recover_skill_time = res["recover_skill_time"].numberLong();
+		player_info.exchange_count = res["exchange_count"].numberInt();
 		return 0;
 	} else {
 		return -1;
@@ -319,7 +320,8 @@ int DB_Operator::save_player_info(int64_t role_id, Player_Info &player_info) {
 			<< "vip_exp" << player_info.vip_exp
 			<< "charge_gold" << player_info.charge_gold
 			<< "skill_point" << player_info.skill_point
-			<< "recover_skill_time" << (long long int)player_info.recover_skill_time;
+			<< "recover_skill_time" << (long long int)player_info.recover_skill_time
+			<< "exchange_count" << player_info.exchange_count;
 
 	CACHED_CONNECTION.update("mmo.role", MONGO_QUERY("role_id" << (long long int)role_id),
 			BSON("$set" << builder.obj()), true);

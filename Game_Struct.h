@@ -106,6 +106,7 @@ struct Player_Info {
 	int32_t charge_gold;	//总共充值的元宝数
 	int32_t skill_point;	//技能点
 	int64_t recover_skill_time;	//回复技能点时间
+	int32_t exchange_count;	//聚宝盆兑换剩余次数
 
 	Player_Info(void);
 	void serialize(Block_Buffer &buffer) const;

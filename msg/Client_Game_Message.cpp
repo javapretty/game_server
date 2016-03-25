@@ -135,6 +135,37 @@ void MSG_520003::reset(void) {
 	vitality = 0;
 }
 
+MSG_120004::MSG_120004(void) {
+	reset();
+}
+
+void MSG_120004::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(money);
+}
+
+int MSG_120004::deserialize(Block_Buffer &buffer) {
+	money = buffer.read_int32();
+	return 0;
+}
+
+void MSG_120004::reset(void) {
+	money = 0;
+}
+
+MSG_520004::MSG_520004(void) {
+	reset();
+}
+
+void MSG_520004::serialize(Block_Buffer &buffer) const {
+}
+
+int MSG_520004::deserialize(Block_Buffer &buffer) {
+	return 0;
+}
+
+void MSG_520004::reset(void) {
+}
+
 MSG_120100::MSG_120100(void) {
 	reset();
 }
