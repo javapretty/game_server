@@ -402,6 +402,7 @@ function Player_Info() {
 	this.charge_gold = 0;
 	this.skill_point = 0;
 	this.recover_skill_time = 0;
+	this.exchange_count = 0;
 }
 
 Player_Info.prototype.serialize = function(buffer) {
@@ -425,6 +426,7 @@ Player_Info.prototype.serialize = function(buffer) {
 	buffer.write_int32(this.charge_gold);
 	buffer.write_int32(this.skill_point);
 	buffer.write_int64(this.recover_skill_time);
+	buffer.write_int32(this.exchange_count);
 }
 
 Player_Info.prototype.deserialize = function(buffer) {
@@ -448,6 +450,7 @@ Player_Info.prototype.deserialize = function(buffer) {
 	this.charge_gold = buffer.read_int32();
 	this.skill_point = buffer.read_int32();
 	this.recover_skill_time = buffer.read_int64();
+	this.exchange_count = buffer.read_int32();
 }
 
 function Hero_Info() {

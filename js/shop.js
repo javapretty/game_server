@@ -12,7 +12,6 @@ function Shop() {
 Shop.prototype.init = function(){
 	var copper_shop = this.get_rand_product(config.shop_json[Shop_Type.COPPER_SHOP].product, 2);
 	copper_shop.shop_type = Shop_Type.COPPER_SHOP;
-	copper_shop.fresh_count = 3;
 	this.shop_info.shop_detail.insert(Shop_Type.COPPER_SHOP, copper_shop);
 }
 	
@@ -28,7 +27,11 @@ Shop.prototype.save_data = function(buffer) {
 	this.shop_info.serialize(buffer);
 }
 
-Shop.prototype.tick = function() {
+Shop.prototype.tick = function(now) {
+
+}
+
+Shop.prototype.daily_refresh = function() {
 	this.refresh_shop(Shop_Type.COPPER_SHOP);
 }
 	
@@ -52,12 +55,12 @@ Shop.prototype.refresh_by_player = function(buffer){
 	var msg_req = new MSG_120402();
 	msg_req.deserialize(buffer);
 	var count = this.shop_info.shop_detail.get(msg_req.shop_type).fresh_count;
-	if(count <= 0){
+	var max_count = config.vip_json[this.player.player_info.vip_level]['refresh_shop_count'];
+	if(count >= max_count){
 		this.player.cplayer.respond_error_result(Msg_Res.RES_REFRESH_SHOP, Error_Code.ERROR_REFRESH_NOT_ENOUGH);
 		return;
 	}
-	var max_count = config.vip_json[this.player.player_info.vip_level]['refresh_count'];
-	var cost = config.shop_json[msg_req.shop_type].refresh_cost[max_count - count];
+	var cost = config.shop_json[msg_req.shop_type].refresh_cost[count];
 	var error = 0;
 	if(msg_req.shop_type == Shop_Type.COPPER_SHOP)
 		error = this.player.bag.bag_sub_money(cost, 0);
@@ -65,7 +68,7 @@ Shop.prototype.refresh_by_player = function(buffer){
 		this.player.cplayer.respond_error_result(Msg_Res.RES_REFRESH_SHOP, error);
 		return;
 	}
-	this.refresh_shop(msg_req.shop_type, count - 1);
+	this.refresh_shop(msg_req.shop_type, count + 1);
 	
 	this.player.set_data_change(Data_Change.SHOP_CHANGE);
 }
@@ -73,7 +76,7 @@ Shop.prototype.refresh_by_player = function(buffer){
 Shop.prototype.refresh_shop = function(shop_type, fresh_count = -1){
 	var shop = this.get_rand_product(config.shop_json[shop_type].product, 2);
 	shop.shop_type = shop_type;
-	shop.fresh_count = ( fresh_count < 0 ? config.vip_json[this.player.player_info.vip_level]['refresh_count'] : fresh_count);
+	shop.fresh_count = ( fresh_count < 0 ? 0 : fresh_count);
 	this.shop_info.shop_detail.remove(shop_type);
 	this.shop_info.shop_detail.insert(shop_type, shop);
 }

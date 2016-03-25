@@ -33,6 +33,14 @@ struct MSG_520003 {
 	int32_t vitality;
 };
 
+//聚宝盆兑换铜币
+struct MSG_120004 {
+	int32_t money;
+};
+
+struct MSG_520004 {
+};
+
 //获取背包信息
 struct MSG_120100 {
 };

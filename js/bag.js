@@ -59,6 +59,9 @@ Bag.prototype.sell_item = function(buffer) {
 }
 	
 Bag.prototype.bag_add_money = function(copper, gold) {
+	if(!util.is_number(copper) || !util.is_number(gold)){
+		return Error_Code.ERROR_CLIENT_PARAM;
+	}
 	this.bag_info.copper += copper;
 	this.bag_info.gold += gold;
 	this.bag_active_money();
@@ -66,6 +69,9 @@ Bag.prototype.bag_add_money = function(copper, gold) {
 }
 	
 Bag.prototype.bag_sub_money = function(copper, gold) {
+	if(!util.is_number(copper) || !util.is_number(gold)){
+		return Error_Code.ERROR_CLIENT_PARAM;
+	}
 	if (this.bag_info.copper < copper) {
 		return Error_Code.ERROR_COPPER_NOT_ENOUGH;
 	}

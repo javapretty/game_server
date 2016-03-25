@@ -228,6 +228,27 @@ MSG_520003.prototype.deserialize = function(buffer) {
 	this.vitality = buffer.read_int32();
 }
 
+function MSG_120004() {
+	this.money = 0;
+}
+
+MSG_120004.prototype.serialize = function(buffer) {
+	buffer.write_int32(this.money);
+}
+
+MSG_120004.prototype.deserialize = function(buffer) {
+	this.money = buffer.read_int32();
+}
+
+function MSG_520004() {
+}
+
+MSG_520004.prototype.serialize = function(buffer) {
+}
+
+MSG_520004.prototype.deserialize = function(buffer) {
+}
+
 function MSG_120100() {
 }
 

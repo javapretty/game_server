@@ -1,5 +1,7 @@
 {
 	"buy_vitality_gold" : [30,50,80,100],
 	"max_player_level" : 90,
-	"max_vip_level": 2
+	"max_vip_level"	: 2,
+	"exchange_rate" : 10,
+	"daily_refresh_time" : 8
 }

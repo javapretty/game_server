@@ -24,13 +24,14 @@ var player_cid_map = new Map();
 //role_id---player 全局玩家对象
 var player_role_id_map = new Map();
 
+//加载配置文件
+var config = new Config();
+config.init();
+
 //定时器管理器
 var timer = new Timer();
 timer.init();
 
-//加载配置文件
-var config = new Config();
-config.init();
 
 //执行脚本主循环函数
 main();
@@ -102,6 +103,9 @@ function process_client_buffer(buffer) {
 	case Msg_Req.REQ_BUY_VITALITY:
 		player.buy_vitality();
 		break;	
+	case Msg_Req.REQ_EXCHANGE_MONEY:
+		player.exchange_money(buffer);
+		break;
 	case Msg_Req.REQ_FETCH_BAG_INFO:
 		player.bag.fetch_bag_info();
 		break;
