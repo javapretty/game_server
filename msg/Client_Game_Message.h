@@ -76,7 +76,6 @@ struct MSG_520003 {
 };
 
 struct MSG_120004 {
-	int32_t money;	
 
 	MSG_120004(void);
 	void serialize(Block_Buffer &buffer) const;
@@ -85,6 +84,7 @@ struct MSG_120004 {
 };
 
 struct MSG_520004 {
+	int32_t copper;	
 
 	MSG_520004(void);
 	void serialize(Block_Buffer &buffer) const;
