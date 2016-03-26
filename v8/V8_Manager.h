@@ -28,26 +28,54 @@ class ArrayBufferAllocator : public ArrayBuffer::Allocator {
 
 class V8_Manager: public Thread {
 public:
-	static V8_Manager *instance(void);
-	void run_handler(void);
-	int init(int server_type);
-	int fini(void);
-
-	int js_load_player_data(Block_Buffer *buf);
-
-private:
 	V8_Manager(void);
 	virtual ~V8_Manager(void);
-	V8_Manager(const V8_Manager &);
-	const V8_Manager &operator=(const V8_Manager &);
+
+	int init(int server_type);	//初始化v8虚拟机
+	int fini(void);
 
 private:
 	static V8_Manager *instance_;
 	Platform* platform_;
+	Isolate::CreateParams create_params_;
 	Isolate* isolate_;
 	Global<Context> context_;
 };
 
-#define V8_MANAGER V8_Manager::instance()
+///////////////////////////////////////////////////////////////////////////////
+class Game_V8_Manager: public V8_Manager {
+public:
+	static Game_V8_Manager *instance(void);
+	virtual void run_handler(void);
+
+private:
+	Game_V8_Manager(void);
+	virtual ~Game_V8_Manager(void);
+	Game_V8_Manager(const Game_V8_Manager &);
+	const Game_V8_Manager &operator=(const Game_V8_Manager &);
+
+private:
+	static Game_V8_Manager *instance_;
+};
+
+#define GAME_V8_MANAGER Game_V8_Manager::instance()
+
+//////////////////////////////////////////////////////////////////////////////////////
+class Master_V8_Manager: public V8_Manager {
+public:
+	static Master_V8_Manager *instance(void);
+	virtual void run_handler(void);
+
+private:
+	Master_V8_Manager(void);
+	virtual ~Master_V8_Manager(void);
+	Master_V8_Manager(const Master_V8_Manager &);
+	const Master_V8_Manager &operator=(const Master_V8_Manager &);
+
+private:
+	static Master_V8_Manager *instance_;
+};
+
+#define MASTER_V8_MANAGER Master_V8_Manager::instance()
 
 #endif /* V8_MANAGER_H_ */

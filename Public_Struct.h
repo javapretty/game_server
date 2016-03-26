@@ -12,11 +12,6 @@
 #include "Misc.h"
 #include "Game_Struct.h"
 
-enum Server_Type {
-	GAME_SERVER = 1,
-	MASTER_SERVER = 2,
-};
-
 struct Cid_Info {
 	int gate_cid;
 	int player_cid;

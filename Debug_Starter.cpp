@@ -228,8 +228,8 @@ int Debug_Starter::start(int argc, char *argv[]) {
 	}
 	GATE_MASTER_CONNECTOR->thr_create();
 
-	V8_MANAGER->thr_create();			///v8引擎
-	V8_MANAGER->init(GAME_SERVER);
+	GAME_V8_MANAGER->thr_create();				//game server v8 engine
+	MASTER_V8_MANAGER->thr_create();			//master server v8 engine
 
 	return server_reactor_->loop();
 }
