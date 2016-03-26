@@ -64,6 +64,10 @@ int Master_Manager::close_client(int gate_cid, int player_cid, int error_code) {
 	return send_to_gate(gate_cid, buf);
 }
 
+int Master_Manager::self_close_process(void) {
+	return 0;
+}
+
 int Master_Manager::boardcast_msg_to_all(Block_Buffer &buf) {
 	for (Master_Player_Role_Id_Map::iterator iter = player_role_id_map_.begin(); iter != player_role_id_map_.end(); ++iter) {
 		if (iter->second) {

@@ -51,6 +51,9 @@ public:
 	int send_to_game(int game_cid, Block_Buffer &buf);
 	/// 关闭客户端连接
 	int close_client(int gate_cid, int player_cid, int error_code);
+	/// 主动关闭处理
+	int self_close_process(void);
+
 	/// 广播消息给所有在线玩家
 	int boardcast_msg_to_all(Block_Buffer &buf);
 

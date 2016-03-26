@@ -91,6 +91,10 @@ int Game_Manager::close_client(int gate_cid, int player_cid, int error_code) {
 	return send_to_gate(gate_cid, buf);
 }
 
+int Game_Manager::self_close_process(void) {
+	return 0;
+}
+
 int Game_Manager::process_list(void) {
 	int32_t cid = 0;
 	Block_Buffer *buf = 0;

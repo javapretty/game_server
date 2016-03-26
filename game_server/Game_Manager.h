@@ -60,6 +60,8 @@ public:
 	int send_to_db(Block_Buffer &buf);
 	/// 关闭客户端连接
 	int close_client(int gate_cid, int player_cid, int error_code);
+	/// 主动关闭处理
+	int self_close_process(void);
 
 	/// 通信层投递消息到Game_Manager
 	void push_drop_gate_cid(int cid);
