@@ -115,7 +115,7 @@ Mail.prototype.send_mail = function(buffer) {
 	if (receiver_id == this.player.player_info.role_id || msg_req.mail_detail.mail_title.length > 64 || msg_req.mail_detail.mail_content.length > 512)
 		return this.player.cplayer.respond_error_result(Msg_Res.RES_SEND_MAIL, Error_Code.ERROR_CLIENT_PARAM);
 	
-	var result = this.player.bag.bag_add_money(msg_req.mail_detail.copper, msg_req.mail_detail.gold);
+	var result = this.player.bag.bag_sub_money(msg_req.mail_detail.copper, msg_req.mail_detail.gold);
 	if (result != 0) {
 		return this.player.cplayer.respond_error_result(Msg_Res.RES_SEND_MAIL, result);
 	}

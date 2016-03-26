@@ -3,9 +3,8 @@
  *      Author: zhangyalei
  */
 
-#include "HotUpdate.h"
-#include "Server_Config.h"
 #include "Common_Func.h"
+#include "Server_Config.h"
 #include "Master_Manager.h"
 #include "Master_Timer.h"
 #include "Master_Server.h"
@@ -34,7 +33,6 @@ int Master_Manager::init(void) {
 	MASTER_INNER_MESSAGER;					/// 内部消息处理
 	MASTER_CLIENT_MESSAGER;					/// 外部消息处理
 	MASTER_TIMER->thr_create();			///	定时器
-	HOT_UPDATE->thr_create();			/// 配制动态更新
 
 	return 0;
 }

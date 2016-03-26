@@ -1,5 +1,5 @@
 /*
-*	描述：脚本主循环
+*	描述：game_server服务器脚本
 *	作者：张亚磊
 *	时间：2016/02/24
 */
@@ -11,12 +11,12 @@ require('message.js');
 require('struct.js');
 require('msg_struct.js');
 require('config.js');
-require('player.js');
+require('util.js');
+require('timer.js');
+require('game_player.js');
 require('hero.js');
 require('bag.js');
 require('mail.js');
-require('util.js');
-require('timer.js');
 require('shop.js');
 
 //cid----player  全局玩家对象
@@ -31,7 +31,6 @@ config.init();
 //定时器管理器
 var timer = new Timer();
 timer.init();
-
 
 //执行脚本主循环函数
 main();

@@ -4,10 +4,9 @@
  */
 
 #include "Common_Func.h"
-#include "Game_Manager.h"
-#include "Game_Timer.h"
-#include "HotUpdate.h"
 #include "Server_Config.h"
+#include "Game_Timer.h"
+#include "Game_Manager.h"
 #include "Game_Server.h"
 #include "Game_Connector.h"
 #include "Game_Client_Messager.h"
@@ -37,9 +36,9 @@ const int32_t Game_Manager::saving_player_time = 20;
 int Game_Manager::init(void) {
 	tick_time_ = Time_Value::gettimeofday();
 
-	GAME_INNER_MESSAGER;					/// 内部消息处理
-	GAME_CLIENT_MESSAGER;					/// 外部消息处理
-	GAME_TIMER->thr_create();			///	定时器
+	GAME_INNER_MESSAGER;					///内部消息处理
+	GAME_CLIENT_MESSAGER;					///外部消息处理
+	GAME_TIMER->thr_create();			///定时器
 
 	if ((db_cache_ = new DB_Cache) == 0) {
 		LOG_FATAL("new DB_Cache return 0.");

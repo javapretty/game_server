@@ -11,6 +11,7 @@
 #include "Epoll_Watcher.h"
 #include "Block_Buffer.h"
 #include "Priority_Queue.h"
+#include "List.h"
 
 struct V8_Timer_Handler {
 	int timer_id; 				//js层定时器编号

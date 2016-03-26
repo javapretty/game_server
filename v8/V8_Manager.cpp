@@ -5,9 +5,12 @@
  *      Author: zhangyalei
  */
 
+#include "Log.h"
 #include "V8_Manager.h"
 #include "V8_Wrap.h"
 #include "Buffer_Wrap.h"
+#include "Server_Config.h"
+#include "Public_Struct.h"
 
 V8_Manager::V8_Manager(void):platform_(nullptr), isolate_(nullptr) { }
 
@@ -21,11 +24,9 @@ V8_Manager *V8_Manager::instance(void) {
 	return instance_;
 }
 
-void V8_Manager::run_handler(void) {
-	init();
-}
+void V8_Manager::run_handler(void) { }
 
-int V8_Manager::init(void) {
+int V8_Manager::init(int server_type) {
 	//初始化V8
 	V8::InitializeICU();
 	V8::InitializeExternalStartupData("");
@@ -45,8 +46,15 @@ int V8_Manager::init(void) {
 	context_.Reset(isolate_, context);
 	//进入V8执行环境内部
 	Context::Scope context_scope(context);
-	Run_Script(isolate_, "js/server.js");
-
+	//根据不同的服务器加载不同的脚本
+	const Json::Value &server_misc = SERVER_CONFIG->server_misc();
+	if (server_type == GAME_SERVER) {
+		Run_Script(isolate_, server_misc["game_server_js_path"].asCString());
+	} else if (server_type == MASTER_SERVER) {
+		Run_Script(isolate_, server_misc["master_server_js_path"].asCString());
+	} else {
+		LOG_FATAL("server_type:%d error", server_type);
+	}
 	return 0;
 }
 

@@ -30,7 +30,7 @@ class V8_Manager: public Thread {
 public:
 	static V8_Manager *instance(void);
 	void run_handler(void);
-	int init(void);
+	int init(int server_type);
 	int fini(void);
 
 	int js_load_player_data(Block_Buffer *buf);
