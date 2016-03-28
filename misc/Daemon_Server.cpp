@@ -37,7 +37,7 @@ struct option Daemon_Server::long_options[] = {
 		{"master",	no_argument,		0,	'e'},
 		{"game",		no_argument,		0,	'f'},
 		{"gate",		no_argument,		0,	'g'},
-		{"label",	no_argument,		0,	'h'},
+		{"label",	required_argument,		0,	'h'},
 		{0, 0, 0, 0}
 };
 
@@ -102,11 +102,19 @@ int Daemon_Server::parse_cmd_arguments(int argc, char *argv[]) {
 			switch_gate_server = true;
 			break;
 		}
+		case 'h': { /// label
+			server_label_ = optarg;
+			break;
+		}
 		default: {
 			switch_daemon_server = true;
 			break;
 		}
 		}
+	}
+
+	if (! (switch_daemon_server || switch_log_server || switch_db_server || switch_login_server || switch_gate_server || switch_game_server || switch_master_server)) {
+		switch_daemon_server = true;
 	}
 
 	if (switch_daemon_server)
@@ -129,11 +137,6 @@ int Daemon_Server::parse_cmd_arguments(int argc, char *argv[]) {
 
 	if (switch_gate_server)
 		run_gate_server();
-
-	if (! (switch_daemon_server || switch_log_server || switch_db_server || switch_login_server || switch_gate_server || switch_game_server || switch_master_server)) {
-		usage();
-		exit(1);
-	}
 
 	return 0;
 }
@@ -187,7 +190,6 @@ int Daemon_Server::fork_exec_log_server(void) {
 	std::stringstream execname_stream;
 	execname_stream << exec_name_ << " --log " << "--label=" << server_label_;
 	fork_exec_args(execname_stream.str().c_str(), Log::LOG_LOG_SERVER);
-	sleep(1); /// wait for log server started
 	return 0;
 }
 
@@ -300,10 +302,10 @@ void Daemon_Server::record_pid_file(void) {
 }
 
 void Daemon_Server::run_daemon_server(void) {
-	if (daemon(1, 0) != 0) {
-		LOG_FATAL("daemon return != 0");
-	}
-	record_pid_file();
+	//if (daemon(1, 0) != 0) {
+	//	LOG_FATAL("daemon return != 0");
+	//}
+	//record_pid_file();
 
 	/// start log server
 	fork_exec_log_server();
@@ -326,26 +328,30 @@ void Daemon_Server::run_daemon_server(void) {
 
 void Daemon_Server::run_log_server(void) {
 	DAEMON_LOG->start_server();
+	DAEMON_LOG->start_client();
 }
 
 void Daemon_Server::run_db_server(void) {
 	DAEMON_DB->start_server();
+	DAEMON_DB->start_client();
 }
 
 void Daemon_Server::run_login_server(void) {
 	DAEMON_LOGIN->start_server();
+	DAEMON_LOGIN->start_client();
 }
 
 void Daemon_Server::run_master_server(void) {
 	DAEMON_MASTER->start_server();
+	DAEMON_MASTER->start_client();
 }
 
 void Daemon_Server::run_game_server(void) {
 	DAEMON_GAME->start_server();
+	DAEMON_GAME->start_client();
 }
 
 void Daemon_Server::run_gate_server(void) {
 	DAEMON_GATE->start_server();
-	DAEMON_GAME->start_client();
-	DAEMON_MASTER->start_client();
+	DAEMON_GATE->start_client();
 }

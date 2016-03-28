@@ -9,6 +9,7 @@
 #define DAEMON_H_
 
 #include "Event_Handler.h"
+#include "Public_Struct.h"
 
 class Epoll_Watcher;
 class Daemon: public Event_Handler {
@@ -16,8 +17,7 @@ public:
 	Daemon(int type);
 	virtual ~Daemon(void);
 
-	void start_server(void);
-	void start_client(void);
+	void loop(void);
 
 	virtual int handle_timeout(const Time_Value &tv);
 	virtual int start_log_client(void);
@@ -25,6 +25,7 @@ public:
 protected:
 	int type_;
 	Epoll_Watcher *watcher_;
+	Server_Conf server_conf_;
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -91,25 +92,25 @@ private:
 #define DAEMON_LOGIN Daemon_Login::instance()
 
 /////////////////////////////////////////////////////////////////////
-class Daemon_Gate: public Daemon {
+class Daemon_Master: public Daemon {
 public:
-	static Daemon_Gate *instance(void);
+	static Daemon_Master *instance(void);
 	static void destroy(void);
 
 	void start_server(void);
 	void start_client(void);
 
 private:
-	Daemon_Gate(void);
-	virtual ~Daemon_Gate(void);
-	Daemon_Gate(const Daemon_Gate &);
-	const Daemon_Gate &operator=(const Daemon_Gate &);
+	Daemon_Master(void);
+	virtual ~Daemon_Master(void);
+	Daemon_Master(const Daemon_Master &);
+	const Daemon_Master &operator=(const Daemon_Master &);
 
 private:
-	static Daemon_Gate *instance_;
+	static Daemon_Master *instance_;
 };
 
-#define DAEMON_GATE Daemon_Gate::instance()
+#define DAEMON_MASTER Daemon_Master::instance()
 
 /////////////////////////////////////////////////////////////////////
 class Daemon_Game: public Daemon {
@@ -133,24 +134,24 @@ private:
 #define DAEMON_GAME Daemon_Game::instance()
 
 /////////////////////////////////////////////////////////////////////
-class Daemon_Master: public Daemon {
+class Daemon_Gate: public Daemon {
 public:
-	static Daemon_Master *instance(void);
+	static Daemon_Gate *instance(void);
 	static void destroy(void);
 
 	void start_server(void);
 	void start_client(void);
 
 private:
-	Daemon_Master(void);
-	virtual ~Daemon_Master(void);
-	Daemon_Master(const Daemon_Master &);
-	const Daemon_Master &operator=(const Daemon_Master &);
+	Daemon_Gate(void);
+	virtual ~Daemon_Gate(void);
+	Daemon_Gate(const Daemon_Gate &);
+	const Daemon_Gate &operator=(const Daemon_Gate &);
 
 private:
-	static Daemon_Master *instance_;
+	static Daemon_Gate *instance_;
 };
 
-#define DAEMON_MASTER Daemon_Master::instance()
+#define DAEMON_GATE Daemon_Gate::instance()
 
 #endif /* DAEMON_H_ */

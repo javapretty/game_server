@@ -12,6 +12,25 @@
 #include "Misc.h"
 #include "Game_Struct.h"
 
+struct Server_Conf {
+	Time_Value server_sleep_time;
+	Time_Value receive_timeout;
+	Time_Value server_send_interval;
+	Time_Value connect_send_interval;
+
+	std::string server_ip;
+	int log_port;
+	int db_port;
+	int login_client_port;
+	int login_gate_port;
+	int master_gate_port;
+	int master_game_port;
+	int game_gate_port;
+	int gate_client_port;
+
+	void init_server_conf(void);
+};
+
 struct Cid_Info {
 	int gate_cid;
 	int player_cid;
