@@ -154,11 +154,11 @@ void Master_Player_Info::reset(void) {
 	vip_level = 0;
 }
 
-Player_Info::Player_Info(void) {
+Game_Player_Info::Game_Player_Info(void) {
 	reset();
 }
 
-void Player_Info::serialize(Block_Buffer &buffer) const {
+void Game_Player_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int64(role_id);
 	buffer.write_string(account);
 	buffer.write_string(role_name);
@@ -182,7 +182,7 @@ void Player_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(exchange_count);
 }
 
-int Player_Info::deserialize(Block_Buffer &buffer) {
+int Game_Player_Info::deserialize(Block_Buffer &buffer) {
 	role_id = buffer.read_int64();
 	account = buffer.read_string();
 	role_name = buffer.read_string();
@@ -207,7 +207,7 @@ int Player_Info::deserialize(Block_Buffer &buffer) {
 	return 0;
 }
 
-void Player_Info::reset(void) {
+void Game_Player_Info::reset(void) {
 	role_id = 0;
 	account.clear();
 	role_name.clear();

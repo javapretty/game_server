@@ -4,12 +4,12 @@
 *	时间：2016/02/24
 */
 
-function Player() {
+function Game_Player() {
 	this.sync_player_data_tick = util.now_sec();
 	this.cid = 0;
 	this.cplayer = null;
 	this.change_module = new Array();
-	this.player_info = new Player_Info();
+	this.player_info = new Game_Player_Info();
 	this.hero = new Hero();
 	this.bag = new Bag();
 	this.mail = new Mail();
@@ -17,7 +17,7 @@ function Player() {
 }
 
 	//玩家上线，加载数据
-Player.prototype.load_player_data = function(buffer) {
+Game_Player.prototype.load_player_data = function(buffer) {
 	if (buffer == null) {
 		return;
 	}
@@ -40,20 +40,20 @@ Player.prototype.load_player_data = function(buffer) {
 	this.cid = gate_cid * 10000 + player_cid;
 	this.cplayer = get_player_by_cid(gate_cid, player_cid);
 	
-	player_cid_map.insert(this.cid, this);
-	player_role_id_map.insert(this.player_info.role_id, this);
+	game_player_cid_map.insert(this.cid, this);
+	game_player_role_id_map.insert(this.player_info.role_id, this);
 }
 	
 //玩家离线，保存数据
-Player.prototype.save_player_data = function() {
+Game_Player.prototype.save_player_data = function() {
 	print('------save_data,role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name);
 	
 	this.sync_player_data();
-	player_cid_map.remove(this.cid);
-	player_role_id_map.remove(this.player_info.role_id);
+	game_player_cid_map.remove(this.cid);
+	game_player_role_id_map.remove(this.player_info.role_id);
 }
 
-Player.prototype.sync_player_data = function() {
+Game_Player.prototype.sync_player_data = function() {
 	var buffer = this.cplayer.get_player_data_buffer();
 	if (buffer == null) {
 		return;
@@ -72,7 +72,7 @@ Player.prototype.sync_player_data = function() {
 	this.shop.save_data(buffer);
 }
 	
-Player.prototype.set_data_change = function(change_id) {
+Game_Player.prototype.set_data_change = function(change_id) {
 	var exist = false;
 	for (var i = 0; i < this.change_module.length; ++i) {
 		if (this.change_module[i] == change_id) {
@@ -85,7 +85,7 @@ Player.prototype.set_data_change = function(change_id) {
 	}
 }
 	
-Player.prototype.tick = function(now) {
+Game_Player.prototype.tick = function(now) {
 	//技能点回复，五分钟回复一点
 	if (this.player_info.skill_point < 10) {
 		if (now - this.player_info.recover_skill_time >= 300) {
@@ -101,12 +101,12 @@ Player.prototype.tick = function(now) {
 	}
 }
 
-Player.prototype.daily_refresh = function() {
+Game_Player.prototype.daily_refresh = function() {
 	this.player_info.buy_vitality_times = 0;
 	this.player_info.exchange_count = 0;
 }
 
-Player.prototype.add_exp = function(exp) {
+Game_Player.prototype.add_exp = function(exp) {
 	print('add_exp, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " exp:", exp);
 	
 	if (exp <= 0) {
@@ -135,7 +135,7 @@ Player.prototype.add_exp = function(exp) {
 	this.set_data_change(Data_Change.PLAYER_CHANGE);
 }
 	
-Player.prototype.update_vip = function(charge_id) {
+Game_Player.prototype.update_vip = function(charge_id) {
 	var charge_exp = config.recharge_json[charge_id].vip_exp;
 	this.player_info.vip_exp += charge_exp;
 	var max_vip_level = config.util_json.max_vip_level;
@@ -158,7 +158,7 @@ Player.prototype.update_vip = function(charge_id) {
 	this.set_data_change(Data_Change.PLAYER_CHANGE);
 }
 	
-Player.prototype.buy_vitality = function() {
+Game_Player.prototype.buy_vitality = function() {
 	print('buy_vitality, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
 
 	//1.检查可以购买体力次数
@@ -191,7 +191,7 @@ Player.prototype.buy_vitality = function() {
 	this.set_data_change(Data_Change.PLAYER_CHANGE);
 }
 
-Player.prototype.exchange_money = function(buffer){
+Game_Player.prototype.exchange_money = function(buffer){
 	print('exchange_money, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
 	
 	//检查是否还有剩余次数

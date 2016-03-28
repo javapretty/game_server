@@ -188,7 +188,7 @@ int DB_Operator::load_db_cache(int cid) {
 	return 0;
 }
 
-int64_t DB_Operator::create_init_player(Player_Info &player_info) {
+int64_t DB_Operator::create_init_player(Game_Player_Info &player_info) {
 #ifdef LOCAL_DEBUG
 	player_info.agent_num = player_info.agent_num ? player_info.agent_num : 1;
 	player_info.server_num = player_info.server_num ? player_info.server_num : 1;
@@ -263,7 +263,7 @@ int64_t DB_Operator::get_role_id(const std::string &account, const int agent_num
 }
 
 /////////////////// Base Info DB Operator ///////////////////
-int DB_Operator::load_player_info(int64_t role_id, Player_Info &player_info) {
+int DB_Operator::load_player_info(int64_t role_id, Game_Player_Info &player_info) {
 	BSONObj res = CACHED_CONNECTION.findOne("mmo.role", MONGO_QUERY("role_id" << (long long int)role_id));
 	if (! res.isEmpty()) {
 		player_info.role_id = res["role_id"].numberLong();
@@ -299,7 +299,7 @@ int DB_Operator::load_player_info(int64_t role_id, Player_Info &player_info) {
 	}
 }
 
-int DB_Operator::save_player_info(int64_t role_id, Player_Info &player_info) {
+int DB_Operator::save_player_info(int64_t role_id, Game_Player_Info &player_info) {
 	BSONObjBuilder builder;
 	builder << "role_id" << (long long int)player_info.role_id
 			<< "account" << player_info.account

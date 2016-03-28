@@ -143,7 +143,7 @@ struct Player_Data {
 	int8_t status;
 	std::vector<int32_t> change_module;
 
-	Player_Info player_info;
+	Game_Player_Info player_info;
 	Hero_Info hero_info;
 	Bag_Info bag_info;
 	Mail_Info mail_info;

@@ -381,7 +381,7 @@ Master_Player_Info.prototype.deserialize = function(buffer) {
 	this.vip_level = buffer.read_int32();
 }
 
-function Player_Info() {
+function Game_Player_Info() {
 	this.role_id = 0;
 	this.account = ""
 	this.role_name = ""
@@ -405,7 +405,7 @@ function Player_Info() {
 	this.exchange_count = 0;
 }
 
-Player_Info.prototype.serialize = function(buffer) {
+Game_Player_Info.prototype.serialize = function(buffer) {
 	buffer.write_int64(this.role_id);
 	buffer.write_string(this.account);
 	buffer.write_string(this.role_name);
@@ -429,7 +429,7 @@ Player_Info.prototype.serialize = function(buffer) {
 	buffer.write_int32(this.exchange_count);
 }
 
-Player_Info.prototype.deserialize = function(buffer) {
+Game_Player_Info.prototype.deserialize = function(buffer) {
 	this.role_id = buffer.read_int64();
 	this.account = buffer.read_string();
 	this.role_name = buffer.read_string();

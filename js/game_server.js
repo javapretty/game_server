@@ -19,10 +19,10 @@ require('bag.js');
 require('mail.js');
 require('shop.js');
 
-//cid----player  全局玩家对象
-var player_cid_map = new Map();
-//role_id---player 全局玩家对象
-var player_role_id_map = new Map();
+//cid----game game_player  全局玩家对象
+var game_player_cid_map = new Map();
+//role_id---game game_player 全局玩家对象
+var game_player_role_id_map = new Map();
 
 //加载配置文件
 var config = new Config();
@@ -50,17 +50,17 @@ function main() {
 		buffer = get_load_player_data();
 		if (buffer != null) {
 			all_empty = false;
-			var player = new Player();
-			player.load_player_data(buffer);
+			var game_player = new Game_Player();
+			game_player.load_player_data(buffer);
 		}
 	
 		//获得下线玩家的cid
 		var cid = get_drop_player_cid();
 		if (cid > 0) {
 			all_empty = false;
-			var player = player_cid_map.get(cid);
-			if (player) {
-				player.save_player_data();
+			var game_player = game_player_cid_map.get(cid);
+			if (game_player) {
+				game_player.save_player_data();
 			}
 		}
 	
@@ -92,66 +92,66 @@ function process_client_buffer(buffer) {
 	var player_cid = buffer.read_int32();
 	
 	var cid = gate_cid * 10000 + player_cid;
-	var player = player_cid_map.get(cid);
-	if (!player) {
-		print('player not exist, gate_cid:', gate_cid, " player_cid:", player_cid, " msg_id:", msg_id);
+	var game_player = game_player_cid_map.get(cid);
+	if (!game_player) {
+		print('game_player not exist, gate_cid:', gate_cid, " player_cid:", player_cid, " msg_id:", msg_id);
 		return push_client_buffer(gate_cid, buffer);
 	}
 	
 	switch(msg_id) {
 	case Msg_Req.REQ_BUY_VITALITY:
-		player.buy_vitality();
+		game_player.buy_vitality();
 		break;	
 	case Msg_Req.REQ_EXCHANGE_MONEY:
-		player.exchange_money(buffer);
+		game_player.exchange_money(buffer);
 		break;
 	case Msg_Req.REQ_FETCH_BAG_INFO:
-		player.bag.fetch_bag_info();
+		game_player.bag.fetch_bag_info();
 		break;
 	case Msg_Req.REQ_USE_ITEM:
-		player.bag.use_item(buffer);
+		game_player.bag.use_item(buffer);
 		break;
 	case Msg_Req.REQ_SELL_ITEM:
-		player.bag.sell_item(buffer);
+		game_player.bag.sell_item(buffer);
 		break
 	case Msg_Req.REQ_FETCH_MAIL_INFO:
-		player.mail.fetch_mail_info();
+		game_player.mail.fetch_mail_info();
 		break;
 	case Msg_Req.REQ_PICKUP_MAIL:
-		player.mail.pickup_mail(buffer);
+		game_player.mail.pickup_mail(buffer);
 		break;
 	case Msg_Req.REQ_DEL_MAIL:
-		player.mail.delete_mail(buffer);
+		game_player.mail.delete_mail(buffer);
 		break;
 	case Msg_Req.REQ_SEND_MAIL:
-		player.mail.send_mail(buffer);
+		game_player.mail.send_mail(buffer);
 		break;
 	case Msg_Req.REQ_FETCH_HERO_INFO:
-		player.hero.fetch_hero_info(buffer);
+		game_player.hero.fetch_hero_info(buffer);
 		break;
 	case Msg_Req.REQ_ADD_HERO_STAR:
-		player.hero.add_hero_star(buffer);
+		game_player.hero.add_hero_star(buffer);
 		break;
 	case Msg_Req.REQ_ADD_HERO_QUALITY:
-		player.hero.add_hero_quality(buffer);
+		game_player.hero.add_hero_quality(buffer);
 		break;
 	case Msg_Req.REQ_ADD_EQUIP_LEVEL:
-		player.hero.add_equip_level(buffer);
+		game_player.hero.add_equip_level(buffer);
 		break;
 	case Msg_Req.REQ_EQUIP_ON_OFF:
-		player.hero.equip_on_off(buffer);
+		game_player.hero.equip_on_off(buffer);
 		break;
 	case Msg_Req.REQ_ADD_SKILL_LEVEL:
-		player.hero.add_skill_level(buffer);
+		game_player.hero.add_skill_level(buffer);
 		break;
 	case Msg_Req.REQ_FETCH_SHOP_INFO:
-		player.shop.fetch_shop_info(buffer);
+		game_player.shop.fetch_shop_info(buffer);
 		break;
 	case Msg_Req.REQ_BUY_PRODUCT:
-		player.shop.buy_product(buffer);
+		game_player.shop.buy_product(buffer);
 		break;
 	case Msg_Req.REQ_REFRESH_SHOP:
-		player.shop.refresh_by_player(buffer);
+		game_player.shop.refresh_by_player(buffer);
 		break;
 	default:
 		print("Can not find the msg_id:", msg_id);

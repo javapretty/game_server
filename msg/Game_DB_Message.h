@@ -49,7 +49,7 @@ struct MSG_550001 {
 };
 
 struct MSG_150002 {
-	Player_Info player_info;	
+	Game_Player_Info player_info;	
 
 	MSG_150002(void);
 	void serialize(Block_Buffer &buffer) const;

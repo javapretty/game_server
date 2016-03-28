@@ -18,7 +18,7 @@ struct MSG_550001 {
 
 //创建玩家
 struct MSG_150002 {
-	Player_Info player_info;
+	Game_Player_Info player_info;
 };
 
 struct MSG_550002 {

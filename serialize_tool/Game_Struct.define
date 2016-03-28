@@ -38,7 +38,7 @@ struct Master_Player_Info {
 	int32_t vip_level;					//vip等级
 };
 
-struct Player_Info {
+struct Game_Player_Info {
 	int64_t role_id;						//玩家id
 	std::string account;				//玩家账号名
 	std::string role_name;			//玩家名字

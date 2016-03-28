@@ -125,7 +125,7 @@ int DB_Worker::process_load_player(int cid, Account_Info &account_info) {
 	return 0;
 }
 
-int DB_Worker::process_create_player(int cid, Player_Info &player_info) {
+int DB_Worker::process_create_player(int cid, Game_Player_Info &player_info) {
 	MSG_550002 msg;
 	if (CACHED_INSTANCE->create_init_player(player_info) < 0) {
 		msg.player_data.status = Player_Data::ROLE_HAS_EXIST;

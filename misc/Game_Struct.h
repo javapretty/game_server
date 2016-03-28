@@ -78,7 +78,7 @@ struct Master_Player_Info {
 	void reset(void);
 };
 
-struct Player_Info {
+struct Game_Player_Info {
 	int64_t role_id;	//玩家id
 	std::string account;	//玩家账号名
 	std::string role_name;	//玩家名字
@@ -101,7 +101,7 @@ struct Player_Info {
 	int64_t recover_skill_time;	//回复技能点时间
 	int32_t exchange_count;	//聚宝盆兑换剩余次数
 
-	Player_Info(void);
+	Game_Player_Info(void);
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

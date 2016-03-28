@@ -13,3 +13,4 @@ require('msg_struct.js');
 require('config.js');
 require('util.js');
 require('timer.js');
+require('master_player.js');

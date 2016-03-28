@@ -301,9 +301,9 @@ void Daemon_Server::record_pid_file(void) {
 }
 
 void Daemon_Server::run_daemon_server(void) {
-	if (daemon(1, 0) != 0) {
-		LOG_FATAL("daemon return != 0");
-	}
+	//if (daemon(1, 0) != 0) {
+	//	LOG_FATAL("daemon return != 0");
+	//}
 	//record_pid_file();
 
 	/// start log server

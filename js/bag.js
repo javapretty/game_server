@@ -5,12 +5,12 @@
 */
 
 function Bag() {
-	this.player = null;
+	this.game_player = null;
 	this.bag_info = new Bag_Info();
 }
 	
-Bag.prototype.load_data = function(player, buffer) {
-	this.player = player;
+Bag.prototype.load_data = function(game_player, buffer) {
+	this.game_player = game_player;
 	this.bag_info.deserialize(buffer);
 }
 	
@@ -19,7 +19,7 @@ Bag.prototype.save_data = function(buffer) {
 }
 
 Bag.prototype.fetch_bag_info = function() {
-	print('fetch_bag_info, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " util.now_msec:", util.now_msec());
+	print('fetch_bag_info, role_id:', this.game_player.player_info.role_id, " role_name:", this.game_player.player_info.role_name, " util.now_msec:", util.now_msec());
 	
 	var msg_res = new MSG_520100();
 	this.bag_info.item_map.each(function(key,value,index) {
@@ -28,30 +28,30 @@ Bag.prototype.fetch_bag_info = function() {
     	
 	var buf = pop_buffer();
 	msg_res.serialize(buf);
-	this.player.cplayer.respond_success_result(Msg_Res.RES_FETCH_BAG_INFO, buf);
+	this.game_player.cplayer.respond_success_result(Msg_Res.RES_FETCH_BAG_INFO, buf);
 	push_buffer(buf);
 }
 	
 Bag.prototype.use_item = function(buffer) {
-	print('use_item, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " util.now_msec:", util.now_msec());
+	print('use_item, role_id:', this.game_player.player_info.role_id, " role_name:", this.game_player.player_info.role_name, " util.now_msec:", util.now_msec());
 	
 	var msg_req = new MSG_120101();
 	msg_req.deserialize(buffer);
 	var item_array = new Array();
 	item_array.push(msg_req.item);
 	var result = this.bag_erase_item(item_array);
-	this.player.cplayer.respond_error_result(Msg_Res.RES_USE_ITEM, result);
+	this.game_player.cplayer.respond_error_result(Msg_Res.RES_USE_ITEM, result);
 }
 	
 Bag.prototype.sell_item = function(buffer) {
-	print('sell_item, role_id:', this.player.player_info.role_id, " role_name:", this.player.player_info.role_name, " util.now_msec:", util.now_msec());
+	print('sell_item, role_id:', this.game_player.player_info.role_id, " role_name:", this.game_player.player_info.role_name, " util.now_msec:", util.now_msec());
 	
 	var msg_req = new MSG_120102();
 	msg_req.deserialize(buffer);
 	var item_array = new Array();
 	item_array.push(msg_req.item);
 	var result = this.bag_erase_item(item_array);
-	this.player.cplayer.respond_error_result(Msg_Res.RES_SELL_ITEM, result);
+	this.game_player.cplayer.respond_error_result(Msg_Res.RES_SELL_ITEM, result);
 }
 	
 Bag.prototype.bag_add_money = function(copper, gold) {
@@ -128,9 +128,9 @@ Bag.prototype.bag_active_money = function() {
 	
 	var buf = pop_buffer();
 	msg_active.serialize(buf);
-	this.player.cplayer.respond_success_result(Msg_Active.ACTIVE_MONEY_INFO, buf);
+	this.game_player.cplayer.respond_success_result(Msg_Active.ACTIVE_MONEY_INFO, buf);
 	push_buffer(buf);
-	this.player.set_data_change(Data_Change.BAG_CHANGE);
+	this.game_player.set_data_change(Data_Change.BAG_CHANGE);
 }
 	
 Bag.prototype.bag_active_item = function() {
@@ -141,7 +141,7 @@ Bag.prototype.bag_active_item = function() {
     	
 	var buf = pop_buffer();
 	msg_active.serialize(buf);
-	this.player.cplayer.respond_success_result(Msg_Active.ACTIVE_ITEM_INFO, buf);
+	this.game_player.cplayer.respond_success_result(Msg_Active.ACTIVE_ITEM_INFO, buf);
 	push_buffer(buf);
-	this.player.set_data_change(Data_Change.BAG_CHANGE);
+	this.game_player.set_data_change(Data_Change.BAG_CHANGE);
 }
