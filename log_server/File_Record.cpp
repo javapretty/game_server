@@ -36,24 +36,32 @@ int File_Record::make_log_filepath(File_Info &file_info) {
 	file_info.file_path.clear();
 
 	switch (file_info.type) {
-	case Log::LOG_LOGIN: {
-		file_info.file_path.append("./log/login-");
+	case Log::LOG_MISC: {
+		file_info.file_path.append("./log/misc-");
 		break;
 	}
-	case Log::LOG_GATE: {
-		file_info.file_path.append("./log/gate-");
+	case Log::LOG_LOG_SERVER: {
+		file_info.file_path.append("./log/logserver-");
 		break;
 	}
-	case Log::LOG_GAME: {
-		file_info.file_path.append("./log/game");
+	case Log::LOG_DB_SERVER: {
+		file_info.file_path.append("./log/dbserver-");
 		break;
 	}
-	case Log::LOG_MASTER: {
-		file_info.file_path.append("./log/master-");
+	case Log::LOG_LOGIN_SERVER: {
+		file_info.file_path.append("./log/loginserver-");
 		break;
 	}
-	case Log::LOG_DB: {
-		file_info.file_path.append("./log/db-");
+	case Log::LOG_MASTER_SERVER: {
+		file_info.file_path.append("./log/masterserver-");
+		break;
+	}
+	case Log::LOG_GAME_SERVER: {
+		file_info.file_path.append("./log/gameserver-");
+		break;
+	}
+	case Log::LOG_GATE_SERVER: {
+		file_info.file_path.append("./log/gateserver-");
 		break;
 	}
 	default: {

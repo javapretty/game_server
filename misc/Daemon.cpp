@@ -51,19 +51,19 @@ int Daemon::handle_timeout(const Time_Value &tv) {
 	if (ppid == 1) {
 		watcher_->remove(this);
 		switch (type_) {
-		case Daemon_Server::EN_LOGIN_SERVER: {
+		case Log::LOG_LOGIN_SERVER: {
 			LOGIN_MANAGER->self_close_process();
 			break;
 		}
-		case Daemon_Server::EN_GATE_SERVER: {
+		case Log::LOG_GATE_SERVER: {
 			GATE_MANAGER->self_close_process();
 			break;
 		}
-		case Daemon_Server::EN_GAME_SERVER: {
+		case Log::LOG_GAME_SERVER: {
 			GAME_MANAGER->self_close_process();
 			break;
 		}
-		case Daemon_Server::EN_MASTER_SERVER: {
+		case Log::LOG_MASTER_SERVER: {
 			MASTER_MANAGER->self_close_process();
 			break;
 		}
@@ -95,7 +95,7 @@ int Daemon::start_log_client(void) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 Daemon_Log::Daemon_Log(void)
-: Daemon(Daemon_Server::EN_LOG_SERVER)
+: Daemon(Log::LOG_LOG_SERVER)
 { }
 
 Daemon_Log::~Daemon_Log(void) { }
@@ -116,6 +116,8 @@ void Daemon_Log::destroy(void) {
 }
 
 void Daemon_Log::start_server(void) {
+	Log::instance()->set_log_type(Log::LOG_LOG_SERVER);
+
 	/// start log_server
 	const Json::Value &server_conf = SERVER_CONFIG->server_conf();
 	Time_Value recv_timeout(server_conf["recv_timeout"].asInt(), 0);
@@ -141,7 +143,7 @@ void Daemon_Log::start_client(void) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 Daemon_DB::Daemon_DB(void)
-: Daemon(Daemon_Server::EN_DB_SERVER)
+: Daemon(Log::LOG_DB_SERVER)
 { }
 
 Daemon_DB::~Daemon_DB(void) { }
@@ -163,7 +165,7 @@ void Daemon_DB::destroy(void) {
 
 void Daemon_DB::start_server(void) {
 	/// start log client
-	Log::instance()->set_log_type(Log::LOG_DB);
+	Log::instance()->set_log_type(Log::LOG_DB_SERVER);
 	start_log_client();
 
 	/// start db_server
@@ -191,7 +193,7 @@ void Daemon_DB::start_client(void) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 Daemon_Login::Daemon_Login(void)
-: Daemon(Daemon_Server::EN_LOGIN_SERVER)
+: Daemon(Log::LOG_LOGIN_SERVER)
 { }
 
 Daemon_Login::~Daemon_Login(void) { }
@@ -213,7 +215,7 @@ void Daemon_Login::destroy(void) {
 
 void Daemon_Login::start_server(void) {
 	/// start log client
-	Log::instance()->set_log_type(Log::LOG_LOGIN);
+	Log::instance()->set_log_type(Log::LOG_LOGIN_SERVER);
 	start_log_client();
 
 	/// start logic_server
@@ -249,7 +251,7 @@ void Daemon_Login::start_client(void) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 Daemon_Gate::Daemon_Gate(void)
-: Daemon(Daemon_Server::EN_GATE_SERVER)
+: Daemon(Log::LOG_GATE_SERVER)
 { }
 
 Daemon_Gate::~Daemon_Gate(void) { }
@@ -271,7 +273,7 @@ void Daemon_Gate::destroy(void) {
 
 void Daemon_Gate::start_server(void) {
 	/// start log client
-	Log::instance()->set_log_type(Log::LOG_GATE);
+	Log::instance()->set_log_type(Log::LOG_GATE_SERVER);
 	start_log_client();
 
 	/// start gate_server
@@ -331,7 +333,7 @@ void Daemon_Gate::start_client(void) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 Daemon_Game::Daemon_Game(void)
-: Daemon(Daemon_Server::EN_GAME_SERVER)
+: Daemon(Log::LOG_GAME_SERVER)
 { }
 
 Daemon_Game::~Daemon_Game(void) { }
@@ -353,7 +355,7 @@ void Daemon_Game::destroy(void) {
 
 void Daemon_Game::start_server(void) {
 	/// start log client
-	Log::instance()->set_log_type(Log::LOG_GAME);
+	Log::instance()->set_log_type(Log::LOG_GAME_SERVER);
 	start_log_client();
 
 	/// start game_server
@@ -407,7 +409,7 @@ void Daemon_Game::start_client(void) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 Daemon_Master::Daemon_Master(void)
-: Daemon(Daemon_Server::EN_MASTER_SERVER)
+: Daemon(Log::LOG_MASTER_SERVER)
 { }
 
 Daemon_Master::~Daemon_Master(void) { }
@@ -429,7 +431,7 @@ void Daemon_Master::destroy(void) {
 
 void Daemon_Master::start_server(void) {
 	/// start log client
-	Log::instance()->set_log_type(Log::LOG_MASTER);
+	Log::instance()->set_log_type(Log::LOG_MASTER_SERVER);
 	start_log_client();
 
 	/// start gate_server

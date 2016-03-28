@@ -18,15 +18,6 @@ class Daemon_Server {
 	typedef boost::unordered_map<int, int> Int_Int_Map;
 
 public:
-	enum {
-		EN_LOG_SERVER = 1,
-		EN_DB_SERVER,
-		EN_LOGIN_SERVER,
-		EN_MASTER_SERVER,
-		EN_GAME_SERVER,
-		EN_GATE_SERVER,
-	};
-
 	const static int max_core_dump_num = 2500;
 
 	static Daemon_Server *instance(void);

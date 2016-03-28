@@ -27,8 +27,9 @@ int V8_Manager::init(int server_type) {
 
 	//初始化v8虚拟机
 	ArrayBufferAllocator allocator;
-	create_params_.array_buffer_allocator = &allocator;
-	isolate_ = Isolate::New(create_params_);
+	Isolate::CreateParams create_params;
+	create_params.array_buffer_allocator = &allocator;
+	isolate_ = Isolate::New(create_params);
 	//进入v8的Isolate内部，才能使用V8引擎
 	Isolate::Scope isolate_scope(isolate_);
 	//创建V8执行环境

@@ -37,7 +37,6 @@ public:
 private:
 	static V8_Manager *instance_;
 	Platform* platform_;
-	Isolate::CreateParams create_params_;
 	Isolate* isolate_;
 	Global<Context> context_;
 };

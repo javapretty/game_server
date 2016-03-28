@@ -190,43 +190,43 @@ int Daemon_Server::fork_exec_args(const char *exec_str, int server_type) {
 int Daemon_Server::fork_exec_log_server(void) {
 	std::stringstream execname_stream;
 	execname_stream << exec_name_ << " --log " << "--label=" << server_label_;
-	fork_exec_args(execname_stream.str().c_str(), EN_LOG_SERVER);
-	sleep(2); /// wait for log server started
+	fork_exec_args(execname_stream.str().c_str(), Log::LOG_LOG_SERVER);
+	sleep(1); /// wait for log server started
 	return 0;
 }
 
 int Daemon_Server::fork_exec_db_server(void) {
 	std::stringstream execname_stream;
 	execname_stream << exec_name_ << " --db " << "--label=" << server_label_;
-	fork_exec_args(execname_stream.str().c_str(), EN_DB_SERVER);
+	fork_exec_args(execname_stream.str().c_str(), Log::LOG_DB_SERVER);
 	return 0;
 }
 
 int Daemon_Server::fork_exec_login_server(void){
 	std::stringstream execname_stream;
 	execname_stream << exec_name_ << " --login " <<"--label=" << server_label_;
-	fork_exec_args(execname_stream.str().c_str(), EN_LOGIN_SERVER);
+	fork_exec_args(execname_stream.str().c_str(), Log::LOG_LOGIN_SERVER);
 	return 0;
 }
 
 int Daemon_Server::fork_exec_master_server(void) {
 	std::stringstream execname_stream;
 	execname_stream << exec_name_ << " --master " << "--label=" << server_label_;
-	fork_exec_args(execname_stream.str().c_str(), EN_MASTER_SERVER);
+	fork_exec_args(execname_stream.str().c_str(), Log::LOG_MASTER_SERVER);
 	return 0;
 }
 
 int Daemon_Server::fork_exec_game_server(void) {
 	std::stringstream execname_stream;
 	execname_stream << exec_name_ << " --game " << "--label=" << server_label_;
-	fork_exec_args(execname_stream.str().c_str(), EN_GAME_SERVER);
+	fork_exec_args(execname_stream.str().c_str(), Log::LOG_GAME_SERVER);
 	return 0;
 }
 
 int Daemon_Server::fork_exec_gate_server(void) {
 	std::stringstream execname_stream;
 	execname_stream << exec_name_ << " --gate " << "--label=" << server_label_;
-	fork_exec_args(execname_stream.str().c_str(), EN_GATE_SERVER);
+	fork_exec_args(execname_stream.str().c_str(), Log::LOG_GATE_SERVER);
 	return 0;
 }
 
@@ -259,27 +259,27 @@ void Daemon_Server::restart_process(int pid) {
 	}
 
 	switch (it->second) {
-	case EN_LOG_SERVER: {
+	case Log::LOG_LOG_SERVER: {
 		fork_exec_log_server();
 		break;
 	}
-	case EN_DB_SERVER: {
+	case Log::LOG_DB_SERVER: {
 		fork_exec_db_server();
 		break;
 	}
-	case EN_LOGIN_SERVER: {
+	case Log::LOG_LOGIN_SERVER: {
 		fork_exec_db_server();
 		break;
 	}
-	case EN_MASTER_SERVER: {
+	case Log::LOG_MASTER_SERVER: {
 		fork_exec_master_server();
 		break;
 	}
-	case EN_GAME_SERVER: {
+	case Log::LOG_GAME_SERVER: {
 		fork_exec_game_server();
 		break;
 	}
-	case EN_GATE_SERVER: {
+	case Log::LOG_GATE_SERVER: {
 		fork_exec_gate_server();
 		break;
 	}
