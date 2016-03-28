@@ -176,8 +176,7 @@ int Daemon_Server::fork_exec_args(const char *exec_str, int server_type) {
 		return -1;
 	} else if (pid == 0) { /// child
 		if (execvp(pathname, (char* const*)&*vargv.begin()) < 0) {
-			LOG_INFO("execl");
-			LOG_FATAL();
+			LOG_FATAL("execvp %s error", pathname);
 		}
 	} else { /// parent
 		daemon_map_.insert(std::make_pair(pid, server_type));
@@ -302,9 +301,9 @@ void Daemon_Server::record_pid_file(void) {
 }
 
 void Daemon_Server::run_daemon_server(void) {
-	//if (daemon(1, 0) != 0) {
-	//	LOG_FATAL("daemon return != 0");
-	//}
+	if (daemon(1, 0) != 0) {
+		LOG_FATAL("daemon return != 0");
+	}
 	//record_pid_file();
 
 	/// start log server
