@@ -59,7 +59,6 @@ private:
 	static std::string exec_name_;
 	static Daemon_Server *instance_;
 	static struct option long_options[];
-
 	std::string server_label_;
 
 	Int_Int_Map daemon_map_;

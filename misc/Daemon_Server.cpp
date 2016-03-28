@@ -51,7 +51,7 @@ int Daemon_Server::init(int argc, char *argv[]) {
 	if ((wait_watcher_ = new Epoll_Watcher) == 0) {
 		LOG_FATAL("new Epoll_Watcher return 0");
 	}
-	server_label_ = "null";
+	server_label_ = SERVER_CONFIG->server_misc()["server_label"].asString();
 	return 0;
 }
 
@@ -100,10 +100,6 @@ int Daemon_Server::parse_cmd_arguments(int argc, char *argv[]) {
 		}
 		case 'g': { /// gate server
 			switch_gate_server = true;
-			break;
-		}
-		case 'h': { /// label
-			server_label_ = optarg;
 			break;
 		}
 		default: {
@@ -329,32 +325,26 @@ void Daemon_Server::run_daemon_server(void) {
 }
 
 void Daemon_Server::run_log_server(void) {
-	SERVER_CONFIG;
 	DAEMON_LOG->start_server();
 }
 
 void Daemon_Server::run_db_server(void) {
-	SERVER_CONFIG;
 	DAEMON_DB->start_server();
 }
 
 void Daemon_Server::run_login_server(void) {
-	SERVER_CONFIG;
 	DAEMON_LOGIN->start_server();
 }
 
 void Daemon_Server::run_master_server(void) {
-	SERVER_CONFIG;
 	DAEMON_MASTER->start_server();
 }
 
 void Daemon_Server::run_game_server(void) {
-	SERVER_CONFIG;
 	DAEMON_GAME->start_server();
 }
 
 void Daemon_Server::run_gate_server(void) {
-	SERVER_CONFIG;
 	DAEMON_GATE->start_server();
 	DAEMON_GAME->start_client();
 	DAEMON_MASTER->start_client();

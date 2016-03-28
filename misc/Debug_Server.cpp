@@ -1,5 +1,5 @@
 /*
- * Debug_Starter.cpp
+ * Debug_Server.cpp
  *
  *  Created on: Dec 24, 2015
  *      Author: zhangyalei
@@ -7,7 +7,6 @@
 
 #include <unistd.h>
 #include "Lib_Log.h"
-#include "Debug_Starter.h"
 #include "Epoll_Watcher.h"
 #include "Server_Config.h"
 #include "DB_Server.h"
@@ -26,30 +25,31 @@
 #include "Gate_Connector.h"
 #include "Gate_Manager.h"
 #include "V8_Manager.h"
+#include "Debug_Server.h"
 
-Debug_Starter::Debug_Starter(void)
+Debug_Server::Debug_Server(void)
 : server_reactor_(0),
   is_register_(false)
 { }
 
-Debug_Starter::~Debug_Starter(void) { }
+Debug_Server::~Debug_Server(void) { }
 
-Debug_Starter *Debug_Starter::instance_;
+Debug_Server *Debug_Server::instance_;
 
-Debug_Starter *Debug_Starter::instance(void) {
+Debug_Server *Debug_Server::instance(void) {
     if (! instance_)
-        instance_ = new Debug_Starter();
+        instance_ = new Debug_Server();
     return instance_;
 }
 
-void Debug_Starter::destroy(void) {
+void Debug_Server::destroy(void) {
 	if (instance_) {
 		delete instance_;
 		instance_ = 0;
 	}
 }
 
-int Debug_Starter::init(int argc, char *argv[]) {
+int Debug_Server::init(int argc, char *argv[]) {
 	if (! server_reactor_) {
 		server_reactor_ = new Epoll_Watcher();
 	}
@@ -61,7 +61,7 @@ int Debug_Starter::init(int argc, char *argv[]) {
 	return 0;
 }
 
-int Debug_Starter::fini(void) {
+int Debug_Server::fini(void) {
 	if (is_register_) {
 		server_reactor_->remove(this);
 		is_register_ = false;
@@ -73,8 +73,7 @@ int Debug_Starter::fini(void) {
 	return 0;
 }
 
-int Debug_Starter::start(int argc, char *argv[]) {
-	SERVER_CONFIG->load_server_config();
+int Debug_Server::start(int argc, char *argv[]) {
 	const Json::Value &server_conf = SERVER_CONFIG->server_conf();
 	Lib_Log::instance()->set_file_switcher(server_conf["lib_log_switcher"].asInt());
 	Log::instance()->set_file_switcher(server_conf["server_log_switcher"].asInt());
@@ -232,8 +231,4 @@ int Debug_Starter::start(int argc, char *argv[]) {
 	MASTER_V8_MANAGER->thr_create();			//master server v8 engine
 
 	return server_reactor_->loop();
-}
-
-int Debug_Starter::handle_timeout(const Time_Value &tv) {
-	return 0;
 }

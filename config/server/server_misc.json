@@ -1,5 +1,6 @@
 {
-	"game_server_label" : "226-test", /// 服标识, 用于一机多服情况标识
+	"server_type" : 1,			//1.多线程模式 2.多进程模式
+	"server_label" : "test", //服务器标识
 	"game_open_time" : 1381370400,
 	"gate_md5_key" : "",
 	"agent_num" : 100,
