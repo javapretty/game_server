@@ -40,10 +40,10 @@ void Check_Account::release_mysql_conn() {
 //注册
 int Check_Account::client_register(std::string& account, std::string& password){
 	int ret = 0;
-	try{
+	try {
 		std::string sql_query = "insert into account_info values (\'" + account + "\', \'" +  password +"\')";
 		ret = mysql_db_conn_->Execute(sql_query.c_str());
-	}catch(sql::SQLException &e){
+	} catch(sql::SQLException &e){
 		int err_code = e.getErrorCode();
 		LOG_DEBUG("SQLException, MySQL Error Code = %d, SQLState = [%s], [%s]", err_code, e.getSQLState().c_str(), e.what());
 		ret = -1;
@@ -55,7 +55,7 @@ int Check_Account::client_register(std::string& account, std::string& password){
 //登录
 int Check_Account::client_login(std::string& account, std::string& password){
 	int ret = 0;
-	try{
+	try {
 		std::string sql_query = "select count(1) from account_info where account = \'" + account + "\' and password = \'" + password + "\'";
 		sql::ResultSet* res = mysql_db_conn_->ExecuteQuery(sql_query.c_str());
 		int cnt = 0;
@@ -67,7 +67,7 @@ int Check_Account::client_login(std::string& account, std::string& password){
 		if (cnt <= 0){
 			ret = -1;
 		}
-	}catch(sql::SQLException &e){
+	} catch(sql::SQLException &e){
 		int err_code = e.getErrorCode();
 		LOG_DEBUG("SQLException, MySQL Error Code = %d, SQLState = [%s], [%s]", err_code, e.getSQLState().c_str(), e.what());
 		ret = -1;

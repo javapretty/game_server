@@ -104,7 +104,7 @@ int Login_Manager::unbind_cid_login_player(int cid) {
 }
 
 Login_Player *Login_Manager::find_cid_login_player(int cid) {
-	Login_Player_Map::iterator it = player_cid_map_.find(cid);
+	Login_Player_Cid_Map::iterator it = player_cid_map_.find(cid);
 	if (it != player_cid_map_.end())
 		return it->second;
 	else
@@ -140,6 +140,33 @@ int Login_Manager::close_client(int player_cid) {
 		close_list_.push_back(info);
 	} else {
 		LOG_TRACE("player_cid < 2");
+	}
+	return 0;
+}
+
+int Login_Manager::self_close_process(void) {
+	server_status_ = STATUS_CLOSING;
+
+	Block_Buffer buf;
+	buf.make_inner_message(ACTIVE_DISCONNECT, ERROR_DISCONNECT_SELF);
+	buf.finish_message();
+	for (Login_Player_Cid_Map::iterator iter = player_cid_map_.begin(); iter != player_cid_map_.end(); ++iter) {
+		LOGIN_MANAGER->send_to_client(iter->first, buf);
+	}
+	//等待服务器通知客户端完毕
+	sleep(2);
+
+	//关闭客户端连接
+	for (Login_Player_Cid_Map::iterator iter = player_cid_map_.begin(); iter != player_cid_map_.end(); ++iter) {
+		iter->second->link_close();
+	}
+
+	int i = 0;
+	while (++i < 60) {
+		sleep(1);
+		LOG_DEBUG("login server has user:%d", player_cid_map_.size());
+		if (player_cid_map_.size() == 0)
+			break;
 	}
 	return 0;
 }
@@ -203,12 +230,6 @@ void Login_Manager::process_drop_cid(int cid) {
 	if (player) {
 		player->link_close();
 	}
-}
-
-
-int Login_Manager::self_close_process(void) {
-	server_status_ = STATUS_CLOSING;
-	return 0;
 }
 
 int Login_Manager::tick(void) {

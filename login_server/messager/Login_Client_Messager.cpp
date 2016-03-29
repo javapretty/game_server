@@ -54,6 +54,10 @@ int Login_Client_Messager::client_register(int cid, int msg_id, Block_Buffer &bu
 	MSG_100000 msg;
 	msg.deserialize(buf);
 	int status = LOGIN_MANAGER->check_account().client_register(msg.account, msg.password);
+	if (status != 0) {
+		//注册失败说明玩家已经注册，直接登录
+		status = LOGIN_MANAGER->check_account().client_login(msg.account, msg.password);
+	}
 	if (status == 0){
 		//success
 		MSG_500000 res_msg;
@@ -107,9 +111,9 @@ int Login_Client_Messager::client_login(int cid, int msg_id, Block_Buffer &buf) 
 
 	MSG_100001 msg;
 	msg.deserialize(buf);
-	Login_Player *player = 0;
-	int status = 0;
-	if ((player = LOGIN_MANAGER->find_account_login_player(msg.account)) == 0 && (status = LOGIN_MANAGER->check_account().client_login(msg.account, msg.password) == 0))
+	Login_Player *player = LOGIN_MANAGER->find_account_login_player(msg.account);
+	int status = LOGIN_MANAGER->check_account().client_login(msg.account, msg.password);
+	if (!player && !status)
 	{
 		MSG_500001 res_msg;
 		res_msg.reset();

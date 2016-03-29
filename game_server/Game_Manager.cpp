@@ -92,6 +92,21 @@ int Game_Manager::close_client(int gate_cid, int player_cid, int error_code) {
 }
 
 int Game_Manager::self_close_process(void) {
+	server_status_ = STATUS_CLOSING;
+
+	//关闭客户端连接
+	for (Game_Player_Cid_Map::iterator iter = player_cid_map_.begin(); iter != player_cid_map_.end(); ++iter) {
+		iter->second->link_close();
+	}
+
+	int i = 0;
+	while (++i < 60) {
+		sleep(1);
+		LOG_DEBUG("game server has user:%d", player_cid_map_.size());
+		if (player_cid_map_.size() == 0)
+			break;
+	}
+
 	return 0;
 }
 

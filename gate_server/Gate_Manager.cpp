@@ -202,9 +202,9 @@ int Gate_Manager::self_close_process(void) {
 	}
 
 	int i = 0;
-	while (++i < 30) {
+	while (++i < 60) {
 		sleep(1);
-		LOG_DEBUG("has user:%d", player_cid_map_.size());
+		LOG_DEBUG("gate server has user:%d", player_cid_map_.size());
 		if (player_cid_map_.size() == 0)
 			break;
 	}

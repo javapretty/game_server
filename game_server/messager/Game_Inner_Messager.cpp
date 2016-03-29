@@ -90,6 +90,7 @@ int Game_Inner_Messager::process_load_db_cache(Block_Buffer &buf) {
 	LOG_DEBUG("load_db_cache success, role count:%d", msg.db_cache_vec.size());
 	return 0;
 }
+
 int Game_Inner_Messager::process_loaded_player_data(Block_Buffer &buf) {
 	MSG_550001 msg;
 	msg.deserialize(buf);

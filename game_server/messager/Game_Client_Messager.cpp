@@ -56,7 +56,7 @@ int Game_Client_Messager::process_login_buffer(Block_Buffer &buf) {
 
 int Game_Client_Messager::fetch_role_info(int gate_cid, int player_cid, MSG_120001 &msg) {
 	if (GAME_MANAGER->server_status() != Game_Manager::STATUS_NORMAL) {
-		LOG_INFO("server closing");
+		LOG_INFO("server status closing");
 		return -1;
 	}
 
@@ -78,7 +78,7 @@ int Game_Client_Messager::fetch_role_info(int gate_cid, int player_cid, MSG_1200
 	if (! player) {
 		if (GAME_MANAGER->db_cache()->account_player_cache_map.count(msg.account)) {
 			//登录加载玩家信息，玩家存在，直接从数据库取数据
-			LOG_DEBUG("push_load_account_info, role exist, account=%s",msg.account.c_str());
+			LOG_DEBUG("role exist, load player info from db, account=%s",msg.account.c_str());
 			if (! GAME_MANAGER->logining_map().insert(std::make_pair(msg.account, Cid_Info(gate_cid, player_cid))).second) {
 				LOG_INFO("insert logining_map failure");
 				return -1;
@@ -94,7 +94,7 @@ int Game_Client_Messager::fetch_role_info(int gate_cid, int player_cid, MSG_1200
 			GAME_MANAGER->send_to_db(msg_buf);
 		} else {
 			//登录加载玩家信息，玩家不存在，返回客户端创建玩家
-			LOG_DEBUG("push_load_account_info, role not exist, create role, account=%s",msg.account.c_str());
+			LOG_DEBUG("role not exist, need create role, account=%s",msg.account.c_str());
 			Block_Buffer res_buf;
 			res_buf.make_player_message(RES_FETCH_ROLE_INFO, ERROR_ROLE_NOT_EXIST, player_cid);
 			MSG_520001 res_msg;

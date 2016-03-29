@@ -27,7 +27,7 @@ public:
 
 	typedef Object_Pool<Login_Player, Spin_Lock> Login_Player_Pool;
 	typedef List<int, Thread_Mutex> Int_List;
-	typedef boost::unordered_map<int, Login_Player *> Login_Player_Map;
+	typedef boost::unordered_map<int, Login_Player *> Login_Player_Cid_Map;
 	typedef boost::unordered_map<std::string, Login_Player *> Login_Player_Account_Map;
 
 public:
@@ -49,6 +49,7 @@ public:
 	Login_Player *pop_login_player(void);
 	int push_login_player(Login_Player *player);
 
+	////////////////////////////////////////////////////////////////////////////
 	int bind_account_login_player(std::string& account, Login_Player *player);
 	int unbind_account_login_player(std::string& account);
 	Login_Player *find_account_login_player(std::string& account) ;
@@ -132,7 +133,7 @@ private:
 	Ip_Vec gate_ip_vec_;
 	Check_Account check_account_;
 
-	Login_Player_Map player_cid_map_; /// cid - Login_Player map
+	Login_Player_Cid_Map player_cid_map_; /// cid - Login_Player map
 	Login_Player_Account_Map player_account_map_; /// role_id - Login_Player map
 };
 
