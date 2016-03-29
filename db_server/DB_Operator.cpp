@@ -38,7 +38,7 @@ DBClientConnection &DB_Operator::connection(void) {
 		std::stringstream host_stream;
 		const Json::Value &mongodb_server = SERVER_CONFIG->server_misc()["mongodb_server"];
 		if (mongodb_server == Json::Value::null) {
-			LOG_FATAL("cannot find mongodb_server");
+			LOG_FATAL("server_misc config cannot find mongodb_server");
 		}
 		host_stream << (mongodb_server["ip"].asString());
 		if (mongodb_server.isMember("port")) {
@@ -59,16 +59,16 @@ int DB_Operator::init(void) {
 
 	/// 初始化agent_num_,server_num_和server_map_
 	server_map_.clear();
-	const Json::Value &servers_config = SERVER_CONFIG->server_list();
-	if (servers_config == Json::Value::null || servers_config["server_list"].size() == 0) {
-		LOG_FATAL("configure file error");
+	const Json::Value &server_config = SERVER_CONFIG->server_list();
+	if (server_config == Json::Value::null || server_config["server_list"].size() == 0) {
+		LOG_FATAL("server_list config error");
 	}
 
 	int agent = 0;
 	int server = 0;
-	for (uint i = 0; i < servers_config["server_list"].size(); ++i) {
-		agent = servers_config["server_list"][i]["agent_num"].asInt();
-		server = servers_config["server_list"][i]["server_num"].asInt();
+	for (uint i = 0; i < server_config["server_list"].size(); ++i) {
+		agent = server_config["server_list"][i]["agent_num"].asInt();
+		server = server_config["server_list"][i]["server_num"].asInt();
 		if (agent < 100 || agent > 999 || server < 1000 || server > 9999) {
 			continue;
 		}
@@ -93,8 +93,8 @@ int DB_Operator::init(void) {
 	for (Int_IntSet_Map::const_iterator it = server_map_.begin(); it != server_map_.end(); ++it) {
 		server_amount += it->second.size();
 	}
-	if (server_amount != servers_config["server_list"].size()) {
-		LOG_FATAL("server_list is error.");
+	if (server_amount != server_config["server_list"].size()) {
+		LOG_FATAL("server_list config error.");
 	}
 
 	if (agent_num_ < 100 || agent_num_ > 999 || server_num_ < 1000 || server_num_ > 9999) {

@@ -61,7 +61,7 @@ int Run_Script(Isolate* isolate, const char* file_path) {
 	HandleScope handle_scope(isolate);
 	Local<String> source;
 	if (!Read_File(isolate, file_path).ToLocal(&source)) {
-		LOG_INFO("read script:%s error\n", file_path);
+		LOG_ERROR("read script:%s error\n", file_path);
 		return -1;
 	}
 
@@ -115,8 +115,6 @@ void Report_Exception(Isolate* isolate, TryCatch* try_catch,  const char* file_p
   const char* exception_string = ToCString(exception);
   Local<Message> message = try_catch->Message();
   if (message.IsEmpty()) {
-    // V8 didn't provide any extra information about this error; just
-    // print the exception.
 	  	LOG_ERROR("%s\n", exception_string);
   } else {
     // Print (filename):(line number): (message).
@@ -148,20 +146,20 @@ void Report_Exception(Isolate* isolate, TryCatch* try_catch,  const char* file_p
 
 void read_json(const FunctionCallbackInfo<Value>& args) {
   if (args.Length() != 1) {
-	  LOG_FATAL("read_json args error, length: %d\n", args.Length());
+	  LOG_FATAL("read_json fatal, args length: %d\n", args.Length());
 	  args.GetReturnValue().SetNull();
     return;
   	}
   String::Utf8Value file(args[0]);
   if (*file == NULL) {
-	  LOG_FATAL("read_json, file is null\n");
+	  LOG_FATAL("read_json fatal, file is null\n");
 	  	args.GetReturnValue().SetNull();
     return;
   	}
 
   Local<String> source;
   if (!Read_File(args.GetIsolate(), *file).ToLocal(&source)) {
-	  LOG_INFO("read_file:%s error\n", *file);
+	  LOG_ERROR("read_file:%s fail\n", *file);
 	  	args.GetReturnValue().SetNull();
     return;
   	}
@@ -170,7 +168,7 @@ void read_json(const FunctionCallbackInfo<Value>& args) {
 
 void require(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 1) {
-		LOG_INFO("require args error, length: %d\n", args.Length());
+		LOG_ERROR("require args error, length: %d\n", args.Length());
 		return ;
 	}
 
@@ -203,14 +201,14 @@ void sleep(const FunctionCallbackInfo<Value>& args) {
 
 void register_timer(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 3) {
-			LOG_INFO("register timer args error, length: %d\n", args.Length());
+			LOG_ERROR("register timer args error, length: %d\n", args.Length());
 			return;
 	}
 
 	int timer_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int interval = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int first_tick_internal = args[2]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	LOG_INFO("register_timer,timer_id:%d, interval:%dms, first_tick_internal:%ds\n", timer_id, interval, first_tick_internal);
+	LOG_ERROR("register_timer,timer_id:%d, interval:%dms, first_tick_internal:%ds\n", timer_id, interval, first_tick_internal);
 	GAME_TIMER->register_v8_handler(timer_id, interval, first_tick_internal);
 }
 
@@ -221,7 +219,7 @@ void get_timer_id(const FunctionCallbackInfo<Value>& args) {
 
 void send_msg_to_db(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 1) {
-		LOG_INFO("process_login_block args error, length: %d\n", args.Length());
+		LOG_ERROR("process_login_block args error, length: %d\n", args.Length());
 		return;
 	}
 
@@ -245,7 +243,7 @@ void get_client_buffer(const FunctionCallbackInfo<Value>& args) {
 
 void push_client_buffer(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 2) {
-		LOG_INFO("push_buffer args error, length: %d\n", args.Length());
+		LOG_ERROR("push_buffer args error, length: %d\n", args.Length());
 		return;
 	}
 

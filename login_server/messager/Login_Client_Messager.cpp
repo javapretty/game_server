@@ -39,7 +39,7 @@ int Login_Client_Messager::process_block(Block_Buffer &buf) {
 			break;
 	}
 	default:	{
-		LOG_INFO("error msg_id:%d", msg_id);
+		LOG_ERROR("error msg_id:%d", msg_id);
 		break;
 	}
 	}
@@ -70,8 +70,8 @@ int Login_Client_Messager::client_register(int cid, int msg_id, Block_Buffer &bu
 
 		Login_Player *player = LOGIN_MANAGER->pop_login_player();
 		if (! player) {
-				LOG_INFO("login_player_pool_.pop() return 0.");
-				return -1;
+			LOG_INFO("login_player_pool_ pop error");
+			return -1;
 		}
 
 		player->reset();
@@ -123,8 +123,8 @@ int Login_Client_Messager::client_login(int cid, int msg_id, Block_Buffer &buf) 
 		player = LOGIN_MANAGER->pop_login_player();
 
 		if (! player) {
-				LOG_INFO("login_player_pool_.pop() return 0.");
-				return -1;
+			LOG_INFO("login_player_pool_.pop error");
+			return -1;
 		}
 
 		player->reset();

@@ -150,7 +150,7 @@ int Game_Inner_Messager::process_loaded_player_data(Block_Buffer &buf) {
 		break;
 	}
 	default: {
-		LOG_INFO("unknow status = %d.", msg.player_data.status);
+		LOG_INFO("player_data status:%d error", msg.player_data.status);
 	}
 	}
 
@@ -160,7 +160,7 @@ int Game_Inner_Messager::process_loaded_player_data(Block_Buffer &buf) {
 int Game_Inner_Messager::process_success_login(int gate_cid, int player_cid, Player_Data &data) {
 	Game_Player *player = GAME_MANAGER->pop_game_player();
 	if (! player) {
-		LOG_INFO("game_player_pool_.pop() return 0.");
+		LOG_ERROR("game_player_pool_ pop error");
 		return -1;
 	}
 

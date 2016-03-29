@@ -107,8 +107,7 @@ int Master_Manager::process_list(void) {
 				cid = buf->peek_int32();
 				MASTER_INNER_MESSAGER->process_game_block(*buf);
 			} else {
-				LOG_INFO("buf.read_index = %ld, buf.write_index = %ld",
-						buf->get_read_idx(), buf->get_write_idx());
+				LOG_ERROR("buf.read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
 				buf->reset();
 			}
 			MASTER_GAME_SERVER->push_block(cid, buf);
@@ -120,8 +119,7 @@ int Master_Manager::process_list(void) {
 				cid = buf->peek_int32();
 				MASTER_CLIENT_MESSAGER->process_block(*buf);
 			} else {
-				LOG_INFO("buf read_index = %ld, buf.write_index = %ld",
-						buf->get_read_idx(), buf->get_write_idx());
+				LOG_ERROR("buf read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
 				buf->reset();
 			}
 			MASTER_GATE_SERVER->push_block(cid, buf);
@@ -143,7 +141,7 @@ int Master_Manager::process_list(void) {
 
 int Master_Manager::bind_gate_cid_master_player(int cid, Master_Player &player) {
 	if (! player_gate_cid_map_.insert(std::make_pair(cid, &player)).second) {
-		LOG_INFO("insert cid player failure");
+		LOG_ERROR("insert gate cid master player fail, cid:%d, role_id:%ld", cid, player.master_player_info().role_id);
 	}
 	return 0;
 }
@@ -163,7 +161,7 @@ Master_Player* Master_Manager::find_gate_cid_master_player(int cid) {
 
 int Master_Manager::bind_game_cid_master_player(int cid, Master_Player &player) {
 	if (! player_game_cid_map_.insert(std::make_pair(cid, &player)).second) {
-		LOG_INFO("insert cid player failure");
+		LOG_ERROR("insert game cid master player fail, cid:%d, role_id:%ld", cid, player.master_player_info().role_id);
 	}
 	return 0;
 }
@@ -183,7 +181,7 @@ Master_Player* Master_Manager::find_game_cid_master_player(int cid) {
 
 int Master_Manager::bind_role_id_master_player(int64_t role_id, Master_Player &player) {
 	if (! player_role_id_map_.insert(std::make_pair(role_id, &player)).second) {
-		LOG_TRACE("insert failure");
+		LOG_ERROR("insert role id master player fail, role_id:%ld", role_id);
 	}
 	return 0;
 }
@@ -203,7 +201,7 @@ Master_Player *Master_Manager::find_role_id_master_player(int64_t role_id) {
 
 int Master_Manager::bind_role_name_master_player(std::string &role_name, Master_Player &player) {
 	if (! player_role_name_map_.insert(std::make_pair(role_name, &player)).second) {
-		LOG_TRACE("insert failure");
+		LOG_ERROR("insert role name master player fail, role_id:%ld, role_name:%s", player.master_player_info().role_id, role_name.c_str());
 	}
 	return 0;
 }
@@ -278,14 +276,11 @@ void Master_Manager::get_server_info(Block_Buffer &buf) {
 }
 
 void Master_Manager::object_pool_size(void) {
-	LOG_DEBUG("Master_Manager Object_Pool Size ==============================================================");
-	LOG_DEBUG("block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
-	LOG_DEBUG("master_player_pool_ free = %d, used = %d", master_player_pool_.free_obj_list_size(), master_player_pool_.used_obj_list_size());
+	LOG_DEBUG("master block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
+	LOG_DEBUG("master player_pool_ free = %d, used = %d", master_player_pool_.free_obj_list_size(), master_player_pool_.used_obj_list_size());
 }
 
 void Master_Manager::free_cache(void) {
-	LOG_DEBUG("REQ_FREE_CACHE");
-
 	Log::instance()->free_cache();
 	MASTER_GATE_SERVER->free_cache();
 	MASTER_GAME_SERVER->free_cache();

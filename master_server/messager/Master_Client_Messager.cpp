@@ -61,9 +61,10 @@ int Master_Client_Messager::gate_master_player_signin(int gate_cid, int player_c
 	} else {
 		Master_Player *player = MASTER_MANAGER->pop_master_player();
 		if (! player) {
-			LOG_INFO("master_player_pool_.pop() return 0.");
+			LOG_ERROR("master_player_pool_ pop error");
 			return -1;
 		}
+
 		LOG_INFO("master player sign in first, gate_cid:%d, playe_cid:%d, role_id:%ld, role_name:%s",
 				gate_cid, player_cid, msg.player_info.role_id, msg.player_info.role_name.c_str());
 

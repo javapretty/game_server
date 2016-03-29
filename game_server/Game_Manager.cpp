@@ -41,7 +41,7 @@ int Game_Manager::init(void) {
 	GAME_TIMER->thr_create();			///定时器
 
 	if ((db_cache_ = new DB_Cache) == 0) {
-		LOG_FATAL("new DB_Cache return 0.");
+		LOG_FATAL("new DB_Cache fatal");
 	}
 	return 0;
 }
@@ -124,8 +124,7 @@ int Game_Manager::process_list(void) {
 				cid = buf->peek_int32();
 				GAME_INNER_MESSAGER->process_db_block(*buf);
 			} else {
-				LOG_INFO("buf.read_index = %ld, buf.write_index = %ld",
-						buf->get_read_idx(), buf->get_write_idx());
+				LOG_ERROR("buf.read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
 				buf->reset();
 			}
 			GAME_DB_CONNECTOR->push_block(cid, buf);
@@ -143,8 +142,7 @@ int Game_Manager::process_list(void) {
 				cid = buf->peek_int32();
 				GAME_CLIENT_MESSAGER->process_login_buffer(*buf);
 			} else {
-				LOG_INFO("buf.read_index = %ld, buf.write_index = %ld",
-						buf->get_read_idx(), buf->get_write_idx());
+				LOG_ERROR("buf.read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
 				buf->reset();
 			}
 			GAME_GATE_SERVER->push_block(cid, buf);
@@ -156,8 +154,7 @@ int Game_Manager::process_list(void) {
 				cid = buf->peek_int32();
 				GAME_INNER_MESSAGER->process_db_block(*buf);
 			} else {
-				LOG_INFO("buf.read_index = %ld, buf.write_index = %ld",
-						buf->get_read_idx(), buf->get_write_idx());
+				LOG_ERROR("buf.read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
 				buf->reset();
 			}
 			GAME_DB_CONNECTOR->push_block(cid, buf);
@@ -169,8 +166,7 @@ int Game_Manager::process_list(void) {
 				cid = buf->peek_int32();
 				GAME_INNER_MESSAGER->process_master_block(*buf);
 			} else {
-				LOG_INFO("buf.read_index = %ld, buf.write_index = %ld",
-						buf->get_read_idx(), buf->get_write_idx());
+				LOG_ERROR("buf.read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
 				buf->reset();
 			}
 			GAME_MASTER_CONNECTOR->push_block(cid, buf);
@@ -201,7 +197,7 @@ void Game_Manager::process_drop_gate_cid(int gate_cid) {
 
 int Game_Manager::bind_cid_game_player(int cid, Game_Player &player) {
 	if (! player_cid_map_.insert(std::make_pair(cid, &player)).second) {
-		LOG_INFO("insert cid player failure");
+		LOG_INFO("insert cid game player fail, cid:%d, role_id:%ld", cid, player.player_data().player_info.role_id);
 	}
 	return 0;
 }
@@ -221,7 +217,7 @@ Game_Player* Game_Manager::find_cid_game_player(int cid) {
 
 int Game_Manager::bind_role_id_game_player(int64_t role_id, Game_Player &player) {
 	if (! player_role_id_map_.insert(std::make_pair(role_id, &player)).second) {
-		LOG_INFO("insert failure");
+		LOG_INFO("insert role id game player fail, role_id:%ld", role_id);
 	}
 	return 0;
 }
@@ -241,7 +237,7 @@ Game_Player *Game_Manager::find_role_id_game_player(int64_t role_id) {
 
 int Game_Manager::bind_role_name_game_player(std::string &role_name, Game_Player &player) {
 	if (! player_role_name_map_.insert(std::make_pair(role_name, &player)).second) {
-		LOG_INFO("insert failure");
+		LOG_INFO("insert role name game player fail, role_id:%ld, role_name:%s", player.player_data().player_info.role_id, role_name.c_str());
 	}
 	return 0;
 }
@@ -331,14 +327,11 @@ void Game_Manager::get_server_info(Block_Buffer &buf) {
 }
 
 void Game_Manager::object_pool_size(void) {
-	LOG_DEBUG("Game_Manager Object_Pool Size ==============================================================");
-	LOG_DEBUG("block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
-	LOG_DEBUG("game_player_pool_ free = %d, used = %d", game_player_pool_.free_obj_list_size(), game_player_pool_.used_obj_list_size());
+	LOG_DEBUG("game block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
+	LOG_DEBUG("game player_pool_ free = %d, used = %d", game_player_pool_.free_obj_list_size(), game_player_pool_.used_obj_list_size());
 }
 
 void Game_Manager::free_cache(void) {
-	LOG_DEBUG("REQ_FREE_CACHE");
-
 	GAME_GATE_SERVER->free_cache();
 	GAME_DB_CONNECTOR->free_cache();
 	GAME_MASTER_CONNECTOR->free_cache();

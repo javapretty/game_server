@@ -50,7 +50,7 @@ void Login_Manager::run_handler(void) {
 int Login_Manager::init_gate_ip(void) {
 	const Json::Value &server_misc = SERVER_CONFIG->server_misc();
 	if (server_misc == Json::Value::null) {
-		LOG_FATAL("configure file error.");
+		LOG_FATAL("server_misc config error");
 		return -1;
 	}
 
@@ -74,7 +74,7 @@ void Login_Manager::get_gate_ip(std::string &account, std::string &ip, int &port
 
 int Login_Manager::bind_account_login_player(std::string& account, Login_Player *player) {
 	if (! player_account_map_.insert(std::make_pair(account, player)).second) {
-		LOG_INFO("insert failure");
+		LOG_ERROR("insert account login player fail, account:%s, role_id:%ld", account.c_str());
 	}
 	return 0;
 }
@@ -94,7 +94,7 @@ Login_Player *Login_Manager::find_account_login_player(std::string& account) {
 
 int Login_Manager::bind_cid_login_player(int cid, Login_Player *player) {
 	if (! player_cid_map_.insert(std::make_pair(cid, player)).second) {
-		LOG_TRACE("insert failure");
+		LOG_ERROR("insert cid login player fail, cid:%d", cid);
 	}
 	return 0;
 }
@@ -186,8 +186,7 @@ int Login_Manager::process_list(void) {
 				cid = buf->peek_int32();
 				LOGIN_CLIENT_MESSAGER->process_block(*buf);
 			} else {
-				LOG_INFO("buf.read_index = %ld, buf.write_index = %ld",
-						buf->get_read_idx(), buf->get_write_idx());
+				LOG_ERROR("buf.read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
 				buf->reset();
 			}
 			LOGIN_CLIENT_SERVER->push_block(cid, buf);
@@ -199,8 +198,7 @@ int Login_Manager::process_list(void) {
 				cid = buf->peek_int32();
 				LOGIN_INNER_MESSAGER->process_gate_block(*buf);
 			} else {
-				LOG_INFO("buf.read_index = %ld, buf.write_index = %ld",
-						buf->get_read_idx(), buf->get_write_idx());
+				LOG_ERROR("buf.read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
 				buf->reset();
 			}
 			LOGIN_GATE_SERVER->push_block(cid, buf);
@@ -304,13 +302,10 @@ void Login_Manager::get_server_info(Block_Buffer &buf) {
 }
 
 void Login_Manager::object_pool_size(void) {
-	LOG_DEBUG("Login_Mangager Object_Pool Size ==============================================================");
-	LOG_DEBUG("block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
+	LOG_DEBUG("login block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
 }
 
 void Login_Manager::free_cache(void) {
-	LOG_DEBUG("REQ_FREE_CACHE");
-
 	LOGIN_CLIENT_SERVER->free_cache();
 	LOGIN_GATE_SERVER->free_cache();
 
@@ -328,7 +323,7 @@ void Login_Manager::print_msg_count(void) {
 int Login_Manager::connect_mysql_db() {
 	const Json::Value &server_misc = SERVER_CONFIG->server_misc();
 	if (server_misc == Json::Value::null) {
-		LOG_FATAL("server_misc is null");
+		LOG_FATAL("server_misc config error");
 	}
 	std::string mysql_ip(server_misc["mysql_server"]["ip"].asString());
 	int mysql_port = server_misc["mysql_server"]["port"].asInt();
@@ -349,7 +344,8 @@ int Login_Manager::client_register(std::string& account, std::string& password){
 		ret = mysql_db_conn_->Execute(sql_query.c_str());
 	} catch(sql::SQLException &e){
 		int err_code = e.getErrorCode();
-		LOG_DEBUG("SQLException, MySQL Error Code = %d, SQLState = [%s], [%s]", err_code, e.getSQLState().c_str(), e.what());
+		LOG_ERROR("SQLException, MySQL Error Code = %d, SQLState = %s,%s, account = %s, password = %s",
+				err_code, e.getSQLState().c_str(), e.what(), account.c_str(), password.c_str());
 		ret = -1;
 	}
 
@@ -372,7 +368,8 @@ int Login_Manager::client_login(std::string& account, std::string& password){
 		}
 	} catch(sql::SQLException &e){
 		int err_code = e.getErrorCode();
-		LOG_DEBUG("SQLException, MySQL Error Code = %d, SQLState = [%s], [%s]", err_code, e.getSQLState().c_str(), e.what());
+		LOG_ERROR("SQLException, MySQL Error Code = %d, SQLState = %s,%s, account = %s, password = %s",
+				err_code, e.getSQLState().c_str(), e.what(), account.c_str(), password.c_str());
 		ret = -1;
 	}
 

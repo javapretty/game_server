@@ -278,7 +278,7 @@ inline void Game_Manager::set_msg_count_onoff(int v) {
 	if (v == 0 || v == 1) {
 		msg_count_onoff_ = v;
 	} else {
-		LOG_INFO("error value v = %d", v);
+		LOG_ERROR("error value v = %d", v);
 	}
 }
 

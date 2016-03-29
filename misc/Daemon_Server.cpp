@@ -49,7 +49,7 @@ Daemon_Server *Daemon_Server::instance(void) {
 
 int Daemon_Server::init(int argc, char *argv[]) {
 	if ((wait_watcher_ = new Epoll_Watcher) == 0) {
-		LOG_FATAL("new Epoll_Watcher return 0");
+		LOG_FATAL("new Epoll_Watcher fatal");
 	}
 	server_label_ = SERVER_CONFIG->server_misc()["server_label"].asString();
 	return 0;
@@ -172,11 +172,10 @@ int Daemon_Server::fork_exec_args(const char *exec_str, int server_type) {
 
 	pid_t pid = fork();
 	if (pid < 0) {
-		LOG_INFO("fork");
-		return -1;
+		LOG_FATAL("fork fatal, pid:%d", pid);
 	} else if (pid == 0) { /// child
 		if (execvp(pathname, (char* const*)&*vargv.begin()) < 0) {
-			LOG_FATAL("execvp %s error", pathname);
+			LOG_FATAL("execvp %s fatal", pathname);
 		}
 	} else { /// parent
 		daemon_map_.insert(std::make_pair(pid, server_type));
@@ -232,7 +231,7 @@ void Daemon_Server::sigcld_handle(int signo) {
 	signal(SIGCHLD, sigcld_handle);
 	pid_t pid = wait(NULL);
 	if (pid < 0) {
-		LOG_INFO("wait error");
+		LOG_ERROR("wait error, pid:%d", pid);
 	}
 	DAEMON_SERVER->restart_process(pid);
 }
@@ -281,7 +280,7 @@ void Daemon_Server::restart_process(int pid) {
 		break;
 	}
 	default: {
-		LOG_INFO("unknow server type, server_type = %d.", it->second);
+		LOG_ERROR("server type:%d error", it->second);
 		break;
 	}
 	}
@@ -291,7 +290,7 @@ void Daemon_Server::restart_process(int pid) {
 void Daemon_Server::record_pid_file(void) {
 	FILE *fp = fopen("./daemon.pid", "w");
 	if (! fp) {
-		LOG_INFO("fopen");
+		LOG_ERROR("fopen daemon.pid error");
 		return;
 	}
 	char pid_str[128] = {0};
@@ -302,7 +301,7 @@ void Daemon_Server::record_pid_file(void) {
 
 void Daemon_Server::run_daemon_server(void) {
 	//if (daemon(1, 0) != 0) {
-	//	LOG_FATAL("daemon return != 0");
+	//	LOG_FATAL("daemon fatal");
 	//}
 	//record_pid_file();
 

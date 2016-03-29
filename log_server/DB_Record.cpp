@@ -75,7 +75,7 @@ void DB_Record::mysql_err_handler(void) {
 void DB_Record::generate_mysql_err_file(void) {
 	FILE *fp = fopen("./mysql_err", "w");
 	if (! fp) {
-		LOG_ERROR("fopen");
+		LOG_ERROR("fopen mysql_err error");
 		return;
 	}
 	fclose(fp);
@@ -88,10 +88,9 @@ int DB_Record::execute_collector(Data_Collector &collector) {
 	try {
 		LOG_DEBUG("execute SQL=[%s]", collector.sql_str_.c_str());
 		mysql_db_conn_->Execute(collector.sql_str_.c_str());
-
 	} catch (sql::SQLException &e) {
 		int err_code = e.getErrorCode();
-		LOG_INFO("SQLException, MySQL Error Code = %d, SQLState = [%s], [%s]", err_code, e.getSQLState().c_str(), e.what());
+		LOG_ERROR("SQLException, MySQL Error Code = %d, SQLState = [%s], [%s]", err_code, e.getSQLState().c_str(), e.what());
 		mysql_err_handler();
 		process_mysql_errcode(err_code);
 		return -1;

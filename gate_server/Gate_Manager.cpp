@@ -117,8 +117,7 @@ int Gate_Manager::process_list(void) {
 				cid = buf->peek_int32();
 				GATE_CLIENT_MESSAGER->process_block(*buf);
 			} else {
-				LOG_INFO("buf.read_index = %ld, buf.write_index = %ld",
-						buf->get_read_idx(), buf->get_write_idx());
+				LOG_ERROR("buf.read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
 				buf->reset();
 			}
 			GATE_CLIENT_SERVER->push_block(cid, buf);
@@ -138,8 +137,7 @@ int Gate_Manager::process_list(void) {
 				cid = buf->peek_int32();
 				GATE_INNER_MESSAGER->process_login_block(*buf);
 			} else {
-				LOG_INFO("buf.read_index = %ld, buf.write_index = %ld",
-						buf->get_read_idx(), buf->get_write_idx());
+				LOG_ERROR("buf.read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
 				buf->reset();
 			}
 			GATE_LOGIN_CONNECTOR->push_block(cid, buf);
@@ -151,8 +149,7 @@ int Gate_Manager::process_list(void) {
 				cid = buf->peek_int32();
 				GATE_INNER_MESSAGER->process_game_block(*buf);
 			} else {
-				LOG_INFO("buf.read_index = %ld, buf.write_index = %ld",
-						buf->get_read_idx(), buf->get_write_idx());
+				LOG_ERROR("buf.read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
 				buf->reset();
 			}
 			GATE_GAME_CONNECTOR->push_block(cid, buf);
@@ -164,8 +161,7 @@ int Gate_Manager::process_list(void) {
 				cid = buf->peek_int32();
 				GATE_INNER_MESSAGER->process_master_block(*buf);
 			} else {
-				LOG_INFO("buf.read_index = %ld, buf.write_index = %ld",
-						buf->get_read_idx(), buf->get_write_idx());
+				LOG_ERROR("buf.read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
 				buf->reset();
 			}
 			GATE_MASTER_CONNECTOR->push_block(cid, buf);
@@ -214,7 +210,7 @@ int Gate_Manager::self_close_process(void) {
 
 int Gate_Manager::bind_cid_gate_player(int cid, Gate_Player &player) {
 	if (! player_cid_map_.insert(std::make_pair(cid, &player)).second) {
-		LOG_TRACE("insert failure");
+		LOG_ERROR("insert cid gate player error, cid:%d, account:%s", cid, player.get_account().c_str());
 	}
 	return 0;
 }
@@ -234,7 +230,7 @@ Gate_Player *Gate_Manager::find_cid_gate_player(int cid) {
 
 int Gate_Manager::bind_account_gate_player(std::string& account, Gate_Player &player){
 	if (! player_account_map_.insert(std::make_pair(account, &player)).second) {
-			LOG_TRACE("insert failure");
+		LOG_ERROR("insert cid gate player error, account:%s", account.c_str());
 	}
 	return 0;
 }
@@ -322,21 +318,18 @@ void Gate_Manager::get_server_info(Block_Buffer &buf) {
 void Gate_Manager::get_server_ip_port(int player_cid, std::string &ip, int &port) {
 	Svc* svc = GATE_CLIENT_SERVER->find_svc(player_cid);
 	if (!svc) {
-		LOG_DEBUG("get_server_ip_port wrong, cid:%d", player_cid);
+		LOG_DEBUG("get_server_ip_port error, cid:%d", player_cid);
 		return;
 	}
 	svc->get_local_addr(ip, port);
 }
 
 void Gate_Manager::object_pool_size(void) {
-	LOG_DEBUG("Gate_Manager Object_Pool Size ==============================================================");
-	LOG_DEBUG("block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
-	LOG_DEBUG("gate_player_pool_ free = %d, used = %d", gate_player_pool_.free_obj_list_size(), gate_player_pool_.used_obj_list_size());
+	LOG_DEBUG("gate block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
+	LOG_DEBUG("gate player_pool_ free = %d, used = %d", gate_player_pool_.free_obj_list_size(), gate_player_pool_.used_obj_list_size());
 }
 
 void Gate_Manager::free_cache(void) {
-	LOG_DEBUG("REQ_FREE_CACHE");
-
 	GATE_CLIENT_SERVER->free_cache();
 	GATE_LOGIN_CONNECTOR->free_cache();
 	GATE_GAME_CONNECTOR->free_cache();

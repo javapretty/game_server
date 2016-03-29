@@ -143,7 +143,7 @@ int Debug_Server::start(int argc, char *argv[]) {
 	LOG_CONNECTOR->init();
 	LOG_CONNECTOR->start();
 	if ((cid = LOG_CONNECTOR->connect_server())< 2) {
-		LOG_FATAL("log_connector fail cid:%d,port:%d", cid, server_conf_.log_port);
+		LOG_FATAL("log_connector fatal cid:%d,port:%d", cid, server_conf_.log_port);
 	}
 	LOG_CONNECTOR->thr_create();
 
@@ -152,7 +152,7 @@ int Debug_Server::start(int argc, char *argv[]) {
 	GAME_DB_CONNECTOR->init();
 	GAME_DB_CONNECTOR->start();
 	if ((cid = GAME_DB_CONNECTOR->connect_server()) < 2) {
-		LOG_FATAL("game_db_connector fail cid:%d,port:%d", cid, server_conf_.db_port);
+		LOG_FATAL("game_db_connector fatal cid:%d,port:%d", cid, server_conf_.db_port);
 	}
 	GAME_DB_CONNECTOR->thr_create();
 	//加载DB缓存数据
@@ -163,7 +163,7 @@ int Debug_Server::start(int argc, char *argv[]) {
 	GAME_MASTER_CONNECTOR->init();
 	GAME_MASTER_CONNECTOR->start();
 	if ((cid = GAME_MASTER_CONNECTOR->connect_server()) < 2) {
-		LOG_FATAL("game_master_connector fail cid:%d,port:%d", cid, server_conf_.master_game_port);
+		LOG_FATAL("game_master_connector fatal cid:%d,port:%d", cid, server_conf_.master_game_port);
 	}
 	GAME_MASTER_CONNECTOR->thr_create();
 
@@ -172,7 +172,7 @@ int Debug_Server::start(int argc, char *argv[]) {
 	GATE_LOGIN_CONNECTOR->init();
 	GATE_LOGIN_CONNECTOR->start();
 	if ((cid = GATE_LOGIN_CONNECTOR->connect_server()) < 2) {
-		LOG_FATAL("gate_login_connector fail cid:%d,port:%d", cid, server_conf_.login_gate_port);
+		LOG_FATAL("gate_login_connector fatal cid:%d,port:%d", cid, server_conf_.login_gate_port);
 	}
 	GATE_LOGIN_CONNECTOR->thr_create();
 
@@ -181,7 +181,7 @@ int Debug_Server::start(int argc, char *argv[]) {
 	GATE_GAME_CONNECTOR->init();
 	GATE_GAME_CONNECTOR->start();
 	if ((cid = GATE_GAME_CONNECTOR->connect_server()) < 2) {
-		LOG_FATAL("gate_game_connector fail cid:%d,port:%d", cid, server_conf_.game_gate_port);
+		LOG_FATAL("gate_game_connector fatal cid:%d,port:%d", cid, server_conf_.game_gate_port);
 	}
 	GATE_GAME_CONNECTOR->thr_create();
 
@@ -190,7 +190,7 @@ int Debug_Server::start(int argc, char *argv[]) {
 	GATE_MASTER_CONNECTOR->init();
 	GATE_MASTER_CONNECTOR->start();
 	if ((cid = GATE_MASTER_CONNECTOR->connect_server()) < 2) {
-		LOG_FATAL("gate_master_connector fail cid:%d,port:%d", cid, server_conf_.master_gate_port);
+		LOG_FATAL("gate_master_connector fatal cid:%d,port:%d", cid, server_conf_.master_gate_port);
 	}
 	GATE_MASTER_CONNECTOR->thr_create();
 

@@ -47,7 +47,7 @@ int Game_Client_Messager::process_login_buffer(Block_Buffer &buf) {
 		break;
 	}
 	default:
-		LOG_INFO("msg_id:%d error", msg_id);
+		LOG_ERROR("msg_id:%d error", msg_id);
 		break;
 	}
 

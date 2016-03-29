@@ -45,7 +45,7 @@ int V8_Manager::init(int server_type) {
 	} else if (server_type == 2) {
 		Run_Script(isolate_, server_misc["master_server_js_path"].asCString());
 	} else {
-		LOG_FATAL("server_type:%d error", server_type);
+		LOG_FATAL("server_type:%d fatal", server_type);
 	}
 	return 0;
 }

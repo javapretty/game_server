@@ -121,7 +121,7 @@ void pop_buffer(const FunctionCallbackInfo<Value>& args) {
 
 void push_buffer(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 1) {
-		LOG_INFO("push_buffer args error, length: %d\n", args.Length());
+		LOG_ERROR("push_buffer args error, length: %d\n", args.Length());
 		return;
 	}
 
@@ -131,18 +131,16 @@ void push_buffer(const FunctionCallbackInfo<Value>& args) {
 	}
 }
 
-void buffer_reset(const FunctionCallbackInfo<Value>& args)
-{
+void buffer_reset(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		buf->reset();
 	}
 }
 
-void make_inner_message(const FunctionCallbackInfo<Value>& args)
-{
+void make_inner_message(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 1) {
-		LOG_INFO("make_inner_message args error, length: %d\n", args.Length());
+		LOG_ERROR("make_inner_message args error, length: %d\n", args.Length());
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
@@ -152,10 +150,9 @@ void make_inner_message(const FunctionCallbackInfo<Value>& args)
 	}
 }
 
-void make_player_message(const FunctionCallbackInfo<Value>& args)
-{
+void make_player_message(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 3) {
-		LOG_INFO("make_player_message args error, length: %d\n", args.Length());
+		LOG_ERROR("make_player_message args error, length: %d\n", args.Length());
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
@@ -167,16 +164,14 @@ void make_player_message(const FunctionCallbackInfo<Value>& args)
 	}
 }
 
-void finish_message(const FunctionCallbackInfo<Value>& args)
-{
+void finish_message(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		buf->finish_message();
 	}
 }
 
-void read_int8(const FunctionCallbackInfo<Value>& args)
-{
+void read_int8(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		args.GetReturnValue().Set(buf->read_int8());
@@ -185,8 +180,7 @@ void read_int8(const FunctionCallbackInfo<Value>& args)
 	}
 }
 
-void read_int16(const FunctionCallbackInfo<Value>& args)
-{
+void read_int16(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		args.GetReturnValue().Set(buf->read_int16());
@@ -195,8 +189,7 @@ void read_int16(const FunctionCallbackInfo<Value>& args)
 	}
 }
 
-void read_int32(const FunctionCallbackInfo<Value>& args)
-{
+void read_int32(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		args.GetReturnValue().Set(buf->read_int32());
@@ -205,8 +198,7 @@ void read_int32(const FunctionCallbackInfo<Value>& args)
 	}
 }
 
-void read_int64(const FunctionCallbackInfo<Value>& args)
-{
+void read_int64(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		double value = buf->read_int64();
@@ -216,8 +208,7 @@ void read_int64(const FunctionCallbackInfo<Value>& args)
 	}
 }
 
-void read_uint8(const FunctionCallbackInfo<Value>& args)
-{
+void read_uint8(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		args.GetReturnValue().Set(buf->read_uint8());
@@ -226,8 +217,7 @@ void read_uint8(const FunctionCallbackInfo<Value>& args)
 	}
 }
 
-void read_uint16(const FunctionCallbackInfo<Value>& args)
-{
+void read_uint16(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		args.GetReturnValue().Set(buf->read_uint16());
@@ -236,8 +226,7 @@ void read_uint16(const FunctionCallbackInfo<Value>& args)
 	}
 }
 
-void read_uint32(const FunctionCallbackInfo<Value>& args)
-{
+void read_uint32(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		args.GetReturnValue().Set(buf->read_uint32());
@@ -246,8 +235,7 @@ void read_uint32(const FunctionCallbackInfo<Value>& args)
 	}
 }
 
-void read_uint64(const FunctionCallbackInfo<Value>& args)
-{
+void read_uint64(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		double value = buf->read_uint64();
@@ -257,8 +245,7 @@ void read_uint64(const FunctionCallbackInfo<Value>& args)
 	}
 }
 
-void read_double(const FunctionCallbackInfo<Value>& args)
-{
+void read_double(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		double value = buf->read_double();
@@ -268,8 +255,7 @@ void read_double(const FunctionCallbackInfo<Value>& args)
 	}
 }
 
-void read_bool(const FunctionCallbackInfo<Value>& args)
-{
+void read_bool(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		bool value = buf->read_bool();
@@ -279,8 +265,7 @@ void read_bool(const FunctionCallbackInfo<Value>& args)
 	}
 }
 
-void read_string(const FunctionCallbackInfo<Value>& args)
-{
+void read_string(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		std::string str = buf->read_string();
@@ -291,10 +276,9 @@ void read_string(const FunctionCallbackInfo<Value>& args)
 	}
 }
 
-void write_int8(const FunctionCallbackInfo<Value>& args)
-{
+void write_int8(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 1) {
-		LOG_INFO("write_int8 args error, length: %d\n", args.Length());
+		LOG_ERROR("write_int8 args error, length: %d\n", args.Length());
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
@@ -304,10 +288,9 @@ void write_int8(const FunctionCallbackInfo<Value>& args)
 	}
 }
 
-void write_int16(const FunctionCallbackInfo<Value>& args)
-{
+void write_int16(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 1) {
-		LOG_INFO("write_int16 args error, length: %d\n", args.Length());
+		LOG_ERROR("write_int16 args error, length: %d\n", args.Length());
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
@@ -317,10 +300,9 @@ void write_int16(const FunctionCallbackInfo<Value>& args)
 	}
 }
 
-void write_int32(const FunctionCallbackInfo<Value>& args)
-{
+void write_int32(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 1) {
-		LOG_INFO("write_int32 args error, length: %d\n", args.Length());
+		LOG_ERROR("write_int32 args error, length: %d\n", args.Length());
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
@@ -330,10 +312,9 @@ void write_int32(const FunctionCallbackInfo<Value>& args)
 	}
 }
 
-void write_int64(const FunctionCallbackInfo<Value>& args)
-{
+void write_int64(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 1) {
-		LOG_INFO("write_int64 args error, length: %d\n", args.Length());
+		LOG_ERROR("write_int64 args error, length: %d\n", args.Length());
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
@@ -343,10 +324,9 @@ void write_int64(const FunctionCallbackInfo<Value>& args)
 	}
 }
 
-void write_uint8(const FunctionCallbackInfo<Value>& args)
-{
+void write_uint8(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 1) {
-		LOG_INFO("write_int8 args error, length: %d\n", args.Length());
+		LOG_ERROR("write_int8 args error, length: %d\n", args.Length());
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
@@ -356,10 +336,9 @@ void write_uint8(const FunctionCallbackInfo<Value>& args)
 	}
 }
 
-void write_uint16(const FunctionCallbackInfo<Value>& args)
-{
+void write_uint16(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 1) {
-		LOG_INFO("write_int16 args error, length: %d\n", args.Length());
+		LOG_ERROR("write_int16 args error, length: %d\n", args.Length());
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
@@ -369,10 +348,9 @@ void write_uint16(const FunctionCallbackInfo<Value>& args)
 	}
 }
 
-void write_uint32(const FunctionCallbackInfo<Value>& args)
-{
+void write_uint32(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 1) {
-		LOG_INFO("write_int32 args error, length: %d\n", args.Length());
+		LOG_ERROR("write_int32 args error, length: %d\n", args.Length());
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
@@ -382,10 +360,9 @@ void write_uint32(const FunctionCallbackInfo<Value>& args)
 	}
 }
 
-void write_uint64(const FunctionCallbackInfo<Value>& args)
-{
+void write_uint64(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 1) {
-		LOG_INFO("write_int64 args error, length: %d\n", args.Length());
+		LOG_ERROR("write_int64 args error, length: %d\n", args.Length());
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
@@ -395,10 +372,9 @@ void write_uint64(const FunctionCallbackInfo<Value>& args)
 	}
 }
 
-void write_double(const FunctionCallbackInfo<Value>& args)
-{
+void write_double(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 1) {
-		LOG_INFO("write_double args error, length: %d\n", args.Length());
+		LOG_ERROR("write_double args error, length: %d\n", args.Length());
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
@@ -408,10 +384,9 @@ void write_double(const FunctionCallbackInfo<Value>& args)
 	}
 }
 
-void write_bool(const FunctionCallbackInfo<Value>& args)
-{
+void write_bool(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 1) {
-		LOG_INFO("write_double args error, length: %d\n", args.Length());
+		LOG_ERROR("write_double args error, length: %d\n", args.Length());
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
@@ -421,10 +396,9 @@ void write_bool(const FunctionCallbackInfo<Value>& args)
 	}
 }
 
-void write_string(const FunctionCallbackInfo<Value>& args)
-{
+void write_string(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 1) {
-		LOG_INFO("write_string args error, length: %d\n", args.Length());
+		LOG_ERROR("write_string args error, length: %d\n", args.Length());
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());

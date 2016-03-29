@@ -45,7 +45,7 @@ int DB_Manager::init(void) {
 	DB_Worker *worker = 0;
 	for (int i = 0; i < work_num_; ++i) {
 		if ((worker = db_worker_pool_.pop()) == 0) {
-			LOG_INFO("db_worker_pool_.pop() return 0.");
+			LOG_FATAL("db_worker_pool_ pop fatal");
 			continue;
 		}
 		db_worker_vec_.push_back(worker);
@@ -88,7 +88,6 @@ int DB_Manager::push_data_block(Block_Buffer *buf) {
 
 	LOG_DEBUG("push db message load_player_num_=%d, create_player_num_=%d, save_player_num_=%d",
 			load_player_num_, create_player_num_, save_player_num_);
-
 	return 0;
 }
 

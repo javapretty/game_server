@@ -69,14 +69,14 @@ int Gate_Player::verify_msg_info(uint32_t serial_cipher, uint32_t msg_time_ciphe
 
 	///判断包的序号
 	if (serial <= msg_info_.msg_serial || serial - msg_info_.msg_serial > static_cast<uint32_t>(10)) {
-		LOG_INFO("serial = %d, msg_detail_.msg_serial = %d", serial, msg_info_.msg_serial);
+		LOG_ERROR("serial = %d, msg_detail_.msg_serial = %d error", serial, msg_info_.msg_serial);
 		return ERROR_MSG_SERIAL;
 	}
 
 	/// 判断包时间戳
 	Time_Value msg_time_tv(msg_time, 0);
 	if (std::abs(msg_time - msg_info_.msg_timestamp.sec()) > 900) {
-		LOG_INFO("msg_time = %d, msg_timestamp = %d", msg_time, msg_info_.msg_timestamp.sec());
+		LOG_ERROR("msg_time = %d, msg_timestamp = %d error", msg_time, msg_info_.msg_timestamp.sec());
 		return ERROR_MSG_TIME;
 	}
 

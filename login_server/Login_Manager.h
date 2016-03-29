@@ -166,7 +166,7 @@ inline int Login_Manager::push_login_gate_data(Block_Buffer *buf) {
 inline int Login_Manager::push_self_loop_message(Block_Buffer &msg_buf) {
 	Block_Buffer *buf = block_pool_.pop();
 	if (! buf) {
-		LOG_INFO("block_pool_.pop return 0");
+		LOG_ERROR("block_pool_ pop error");
 		return -1;
 	}
 	buf->reset();
@@ -179,7 +179,7 @@ inline void Login_Manager::set_msg_count_onoff(int v) {
 	if (v == 0 || v == 1) {
 		msg_count_onoff_ = v;
 	} else {
-		LOG_INFO("error value v = %d", v);
+		LOG_ERROR("error value v = %d", v);
 	}
 }
 

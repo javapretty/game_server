@@ -30,7 +30,7 @@ int Game_Player::respond_error_result(int msg_id, int err, Block_Buffer *buf) {
 	} else {
 		size_t head_len = sizeof(int16_t) + 3 * sizeof(int32_t); ///len(int16_t), msg_id(int32_t), status(int32_t), player_cid(int32_t)
 		if ((size_t)buf->get_read_idx() < head_len) {
-			LOG_INFO("Block_Buffer space error !");
+			LOG_ERROR("Block_Buffer space error, msg_id:%d", msg_id);
 			return 0;
 		}
 
