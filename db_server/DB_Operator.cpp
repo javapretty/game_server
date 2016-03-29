@@ -555,7 +555,7 @@ int DB_Operator::load_shop_info(int64_t role_id, Shop_Info &shop_info) {
 			BSONObj obj = iter.next().embeddedObject();
 			Shop_Detail shop_detail;
 			shop_detail.shop_type = obj["shop_type"].numberInt();
-			shop_detail.fresh_count = obj["fresh_count"].numberInt();
+			shop_detail.refresh_count = obj["refresh_count"].numberInt();
 
 			BSONObj shop_obj = res.getObjectField("products");
 			BSONObjIterator iter(shop_obj);
@@ -590,7 +590,7 @@ int DB_Operator::save_shop_info(int64_t role_id, Shop_Info &shop_info) {
 		}
 
 		shop_vec.push_back(BSON("shop_type" << iter->second.shop_type
-				<< "fresh_count" << iter->second.fresh_count
+				<< "refresh_count" << iter->second.refresh_count
 				<< "products" << product_vec));
 	}
 

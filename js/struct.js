@@ -228,13 +228,13 @@ Product_Info.prototype.deserialize = function(buffer) {
 
 function Shop_Detail() {
 	this.shop_type = 0;
-	this.fresh_count = 0;
+	this.refresh_count = 0;
 	this.products = new Array();
 }
 
 Shop_Detail.prototype.serialize = function(buffer) {
 	buffer.write_int32(this.shop_type);
-	buffer.write_int32(this.fresh_count);
+	buffer.write_int32(this.refresh_count);
 	var len = this.products.length;
 	buffer.write_uint16(len);
 	for(var i = 0; i < len; ++i) {
@@ -244,7 +244,7 @@ Shop_Detail.prototype.serialize = function(buffer) {
 
 Shop_Detail.prototype.deserialize = function(buffer) {
 	this.shop_type = buffer.read_int32();
-	this.fresh_count = buffer.read_int32();
+	this.refresh_count = buffer.read_int32();
 	var len = buffer.read_uint16();
 	for(var i = 0; i < len; ++i) {
 		var products_v = new Product_Info();

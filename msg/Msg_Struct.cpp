@@ -264,7 +264,7 @@ Shop_Detail::Shop_Detail(void) {
 
 void Shop_Detail::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(shop_type);
-	buffer.write_int32(fresh_count);
+	buffer.write_int32(refresh_count);
 	uint16_t products_size = products.size();
 	buffer.write_uint16(products_size);
 	for(uint16_t i = 0; i < products_size; ++i) {
@@ -274,7 +274,7 @@ void Shop_Detail::serialize(Block_Buffer &buffer) const {
 
 int Shop_Detail::deserialize(Block_Buffer &buffer) {
 	shop_type = buffer.read_int32();
-	fresh_count = buffer.read_int32();
+	refresh_count = buffer.read_int32();
 	uint16_t products_size = buffer.read_uint16();
 	Product_Info products_v;
 	for(uint16_t i = 0; i < products_size; ++i) {
@@ -286,6 +286,6 @@ int Shop_Detail::deserialize(Block_Buffer &buffer) {
 
 void Shop_Detail::reset(void) {
 	shop_type = 0;
-	fresh_count = 0;
+	refresh_count = 0;
 	products.clear();
 }

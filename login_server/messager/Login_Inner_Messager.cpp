@@ -65,18 +65,16 @@ int Login_Inner_Messager::process_140000(int gate_cid, int32_t player_cid, MSG_1
 	Block_Buffer gate_buf;
 
 	Login_Player *player = 0;
-	//session check ok
 	if ((player = LOGIN_MANAGER->find_account_login_player(msg.account)) != 0
 			&& player->login_player_info().session == msg.session
 			&& player->login_player_info().gate_ip == msg.gate_ip
 			&& player->login_player_info().gate_port == msg.gate_port) {
+
 		gate_buf.make_player_message(SYNC_LOGIN_GATE_PLAYER_ACCOUNT, 0, player_cid);
 		LOGIN_MANAGER->close_client(player->get_cid());
-	}
-	//session check error
-	else
-	{
-		LOG_DEBUG("login check session wrong, gate_cid:%d, player_cid:%d",gate_cid, player_cid);
+	} else {
+		LOG_DEBUG("login check session wrong, session:%s, account:%s, gate_ip:%s, gate_port:%d, gate_cid:%d, player_cid:%d",
+				msg.session.c_str(), msg.account.c_str(), msg.gate_ip.c_str(), msg.gate_port, gate_cid, player_cid);
 		gate_buf.make_player_message(SYNC_LOGIN_GATE_PLAYER_ACCOUNT, ERROR_CLIENT_SESSION, player_cid);
 	}
 	MSG_140001 gate_msg;

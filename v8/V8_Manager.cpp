@@ -91,5 +91,5 @@ Master_V8_Manager *Master_V8_Manager::instance(void) {
 }
 
 void Master_V8_Manager::run_handler(void) {
-	init(2);
+	//init(2);
 }

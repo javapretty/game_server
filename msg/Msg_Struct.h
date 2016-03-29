@@ -106,7 +106,7 @@ struct Product_Info {
 
 struct Shop_Detail {
 	int32_t shop_type;	//商店类型，1是铜币，2是金币
-	int32_t fresh_count;	
+	int32_t refresh_count;	
 	std::vector<Product_Info> products;	
 
 	Shop_Detail(void);

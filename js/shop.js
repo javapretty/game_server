@@ -50,7 +50,7 @@ Shop.prototype.refresh_by_player = function(buffer){
 	
 	var msg_req = new MSG_120402();
 	msg_req.deserialize(buffer);
-	var count = this.shop_info.shop_detail.get(msg_req.shop_type).fresh_count;
+	var count = this.shop_info.shop_detail.get(msg_req.shop_type).refresh_count;
 	var max_count = config.vip_json[this.game_player.player_info.vip_level]['refresh_shop_count'];
 	if(count >= max_count){
 		this.game_player.cplayer.respond_error_result(Msg_Res.RES_REFRESH_SHOP, Error_Code.ERROR_REFRESH_NOT_ENOUGH);
@@ -69,10 +69,10 @@ Shop.prototype.refresh_by_player = function(buffer){
 	this.game_player.set_data_change(Data_Change.SHOP_CHANGE);
 }
 
-Shop.prototype.refresh_shop = function(shop_type, fresh_count = -1){
+Shop.prototype.refresh_shop = function(shop_type, refresh_count = -1){
 	var shop = this.get_rand_product(config.shop_json[shop_type].product, 2);
 	shop.shop_type = shop_type;
-	shop.fresh_count = ( fresh_count < 0 ? 0 : fresh_count);
+	shop.refresh_count = ( refresh_count < 0 ? 0 : refresh_count);
 	this.shop_info.shop_detail.remove(shop_type);
 	this.shop_info.shop_detail.insert(shop_type, shop);
 }
