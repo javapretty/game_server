@@ -61,6 +61,7 @@ public:
 
 	int load_shop_info(int64_t role_id, Shop_Info &shop_info);
 	int save_shop_info(int64_t role_id, Shop_Info &shop_info);
+
 private:
 	DB_Operator(void);
 	virtual ~DB_Operator(void);
@@ -73,10 +74,10 @@ private:
 	Connection_Map connection_map_;
 	MUTEX connection_map_lock_;
 
-	int agent_num_; /// 代理编号
-	int server_num_; /// 服编号
-	Int_IntSet_Map server_map_;			/// 代理-服编号
-	int64_t agent_and_server_prefix_;	/// 根据服编号跟代理编号生成的前缀
+	int agent_num_; 									//代理编号
+	int server_num_; 									//服编号
+	Int_IntSet_Map server_map_;				//代理-服编号
+	int64_t agent_and_server_prefix_;	//根据服编号跟代理编号生成的前缀
 	int64_t min_server_diff_key_;
 	int64_t max_server_diff_key_;
 };

@@ -59,50 +59,38 @@ int DB_Operator::init(void) {
 
 	/// 初始化agent_num_,server_num_和server_map_
 	server_map_.clear();
-	const Json::Value &server_config = SERVER_CONFIG->server_list();
-	if (server_config == Json::Value::null || server_config["server_list"].size() == 0) {
+	const Json::Value &server_misc = SERVER_CONFIG->server_misc();
+	const Json::Value &server_list = server_misc["server_list"];
+	if (server_misc == Json::Value::null || server_list == Json::Value::null || server_list.size() == 0) {
 		LOG_FATAL("server_list config error");
 	}
 
-	int agent = 0;
-	int server = 0;
-	for (uint i = 0; i < server_config["server_list"].size(); ++i) {
-		agent = server_config["server_list"][i]["agent_num"].asInt();
-		server = server_config["server_list"][i]["server_num"].asInt();
-		if (agent < 100 || agent > 999 || server < 1000 || server > 9999) {
-			continue;
+	for (uint i = 0; i < server_list.size(); ++i) {
+		int agent_num = server_list[i]["agent_num"].asInt();
+		int server_num = server_list[i]["server_num"].asInt();
+		if (agent_num < 1 || agent_num > 999 || server_num < 1 || server_num > 9999) {
+			LOG_FATAL("agent_num = %d, server_num = %d, config error", agent_num, server_num);
+			return -1;
 		}
 
-		if (agent_num_ == 0 || server_num_ == 0) {
-			agent_num_ = agent;
-			server_num_ = server;
-		}
-
-		Int_IntSet_Map::iterator it = server_map_.find(agent);
+		Int_IntSet_Map::iterator it = server_map_.find(agent_num);
 		if (it == server_map_.end()) {
 			Int_Set server_set;
 			server_set.clear();
-			server_set.insert(server);
-			server_map_.insert(std::make_pair(agent, server_set));
+			server_set.insert(server_num);
+			server_map_.insert(std::make_pair(agent_num, server_set));
 		} else {
-			it->second.insert(server);
+			it->second.insert(server_num);
 		}
 	}
 
-	uint server_amount = 0;
-	for (Int_IntSet_Map::const_iterator it = server_map_.begin(); it != server_map_.end(); ++it) {
-		server_amount += it->second.size();
+	agent_num_ = server_misc["agent_num"].asInt();
+	server_num_ = server_misc["server_num"].asInt();
+	if (agent_num_ < 1 || agent_num_ > 999 || server_num_ < 1 || server_num_ > 9999) {
+		LOG_FATAL("agent_num = %d, server_num = %d, config error", agent_num_, server_num_);
+		return -1;
 	}
-	if (server_amount != server_config["server_list"].size()) {
-		LOG_FATAL("server_list config error.");
-	}
-
-	if (agent_num_ < 100 || agent_num_ > 999 || server_num_ < 1000 || server_num_ > 9999) {
-		LOG_FATAL("agent_num_ = %d, server_num_ = %d", agent_num_, server_num_);
-	}
-	int64_t agent_l = agent_num_ * 10000000000000L;
-	int64_t server_l = server_num_ * 1000000000L;
-	agent_and_server_prefix_ = agent_l + server_l;
+	agent_and_server_prefix_ = agent_num_ * 10000000000000L + server_num_ * 1000000000L;
 	min_server_diff_key_ = agent_and_server_prefix_ + 1;
 	max_server_diff_key_ = agent_and_server_prefix_ + 999999999L;
 
@@ -140,8 +128,8 @@ int DB_Operator::create_index(void) {
 		CACHED_CONNECTION.createIndex("mmo.mail", BSON("role_id" << 1));
 	}
 	{ // shop index
-			CACHED_CONNECTION.createIndex("mmo.shop", BSON("role_id" << 1));
-		}
+		CACHED_CONNECTION.createIndex("mmo.shop", BSON("role_id" << 1));
+	}
 	return 0;
 }
 
@@ -189,28 +177,29 @@ int DB_Operator::load_db_cache(int cid) {
 }
 
 int64_t DB_Operator::create_init_player(Game_Player_Info &player_info) {
-#ifdef LOCAL_DEBUG
 	player_info.agent_num = player_info.agent_num ? player_info.agent_num : 1;
 	player_info.server_num = player_info.server_num ? player_info.server_num : 1;
 
-#else
 	Int_IntSet_Map::const_iterator it = server_map_.find(player_info.agent_num);
 	if (it == server_map_.end()) {
-		LOG_INFO("player_info.agent_num = [%d] is not find.", player_info.agent_num);
+		LOG_INFO("player_info.agent_num = %d not exist, account = %s", player_info.agent_num, player_info.account.c_str());
 		return -1;
 	}
 	if (it->second.count(player_info.server_num) == 0) {
-		LOG_INFO("player_info.server_num = [%d] is not find.", player_info.server_num);
+		LOG_INFO("player_info.server_num = %d not exist, account = %s", player_info.server_num, player_info.account.c_str());
 		return -1;
 	}
-#endif
+	if (player_info.agent_num != agent_num_ || player_info.server_num != server_num_) {
+		LOG_INFO("player_info.agent = %d server_num = %d account = %s error, login wrong server", player_info.agent_num, player_info.server_num, player_info.account.c_str());
+		return -1;
+	}
 
 	BSONObj fields = BSON("account" << 1 << "role_id" << 1 << "role_name" << 1);
 	BSONObj res = CACHED_CONNECTION.findOne("mmo.role",
 			MONGO_QUERY("role_name" << player_info.role_name), &fields);
 
-	if (res.isEmpty() == false) {
-		LOG_INFO("role_name = [%s] has already existed.", player_info.role_name.c_str());
+	if (!res.isEmpty()) {
+		LOG_INFO("role_name = %s has existed.", player_info.role_name.c_str());
 		return -1;
 	}
 

@@ -11,7 +11,6 @@
 #include "DB_Operator.h"
 
 DB_Manager::DB_Manager(void) :
-	work_num_(0),
 	load_player_num_(0),
 	create_player_num_(0),
 	save_player_num_(0),
@@ -36,14 +35,9 @@ void DB_Manager::destroy(void) {
 
 int DB_Manager::init(void) {
 	CACHED_INSTANCE->init();
-#ifdef LOCAL_DEBUG
-	DB_MANAGER->set(3);
-#else
-	DB_MANAGER->set(get_hash_table_size(10));
-#endif
 
 	DB_Worker *worker = 0;
-	for (int i = 0; i < work_num_; ++i) {
+	for (int i = 0; i < 10; ++i) {
 		if ((worker = db_worker_pool_.pop()) == 0) {
 			LOG_FATAL("db_worker_pool_ pop fatal");
 			continue;
@@ -70,19 +64,19 @@ int DB_Manager::push_data_block(Block_Buffer *buf) {
 
 	switch (msg_id) {
 	case SYNC_GAME_DB_LOAD_PLAYER_INFO: {
-		db_worker_vec_[load_player_num_++ % db_worker_vec_.size()]->push_load_player(buf);
+		db_worker_vec_[load_player_num_++ % 10]->push_load_player(buf);
 		break;
 	}
 	case SYNC_GAME_DB_CREATE_PLAYER: {
-		db_worker_vec_[create_player_num_++ % db_worker_vec_.size()]->push_create_player(buf);
+		db_worker_vec_[create_player_num_++ % 10]->push_create_player(buf);
 		break;
 	}
 	case SYNC_GAME_DB_SAVE_PLAYER_INFO: {
-		db_worker_vec_[save_player_num_++ % db_worker_vec_.size()]->push_save_player(buf);
+		db_worker_vec_[save_player_num_++ % 10]->push_save_player(buf);
 		break;
 	}
 	default : {
-		db_worker_vec_[db_data_num_++ % db_worker_vec_.size()]->push_data_block(buf);
+		db_worker_vec_[db_data_num_++ % 10]->push_data_block(buf);
 	}
 	}
 

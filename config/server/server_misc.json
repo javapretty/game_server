@@ -3,8 +3,8 @@
 	"server_label" : "test", //服务器标识
 	"game_open_time" : 1381370400,
 	"gate_md5_key" : "",
-	"agent_num" : 100,
-	"server_num" : 1000,
+	"agent_num" : 1,				//本服平台编号
+	"server_num" : 1,				//本服服编号
 	"game_server_js_path" : "js/game_server.js",
 	"master_server_js_path" : "js/master_server.js",
 	"mongodb_server" : {
@@ -30,6 +30,13 @@
 			"ip" : "127.0.0.1",
 			"port" : 7507
 		}
-    }
+    },
+    //平台编号和服编号
+  "server_list" : [
+        {
+			"agent_num" : 1,			//平台编号
+       "server_num" : 1			//服编号
+        }
+    ]
 }
 

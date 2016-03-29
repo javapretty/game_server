@@ -23,7 +23,6 @@ public:
 	static DB_Manager *instance(void);
 	static void destroy(void);
 
-	int set(int num);
 	int init(void);
 	int start(void);
 
@@ -41,7 +40,6 @@ private:
 
 private:
 	static DB_Manager *instance_;
-	int work_num_;							//db工作线程数量
 	int load_player_num_;				//加载数据的玩家数量
 	int create_player_num_;			//创建的玩家数量
 	int save_player_num_;				//保存数据的玩家数量
@@ -54,12 +52,6 @@ private:
 #define DB_MANAGER DB_Manager::instance()
 
 ////////////////////////////////////////////////////////////////////////////////
-
-inline int DB_Manager::set(int num) {
-	work_num_ = num;
-	return 0;
-}
-
 inline void DB_Manager::object_pool_size(void) {
 	LOG_INFO("db_worker_pool_ free = %d, used = %d", db_worker_pool_.free_obj_list_size(), db_worker_pool_.used_obj_list_size());
 }

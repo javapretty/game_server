@@ -26,10 +26,6 @@ void Server_Config::load_server_config(void) {
 		load_json_file(path.c_str(), server_config_.server_conf.get_cur_json());
 	}
 	{
-		std::string path("./config/server/server_list.json");
-		load_json_file(path.c_str(), server_config_.server_list.get_cur_json());
-	}
-	{
 		std::string path("./config/server/server_misc.json");
 		load_json_file(path.c_str(), server_config_.server_misc.get_cur_json());
 	}
@@ -37,10 +33,6 @@ void Server_Config::load_server_config(void) {
 
 const Json::Value &Server_Config::server_conf(void) {
 	return get_json_value_with_rlock(server_config_.lock, server_config_.server_conf);
-}
-
-const Json::Value &Server_Config::server_list(void) {
-	return get_json_value_with_rlock(server_config_.lock, server_config_.server_list);
 }
 
 const Json::Value &Server_Config::server_misc(void) {
