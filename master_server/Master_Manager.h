@@ -15,7 +15,6 @@
 #include "Object_Pool.h"
 #include "Master_Player.h"
 
-
 class Master_Manager: public Thread {
 public:
 	typedef Object_Pool<Block_Buffer, Thread_Mutex> Block_Pool;

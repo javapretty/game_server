@@ -13,9 +13,8 @@
 #include "List.h"
 #include "Block_List.h"
 #include "Object_Pool.h"
-#include "Check_Account.h"
+#include "Mysql_Conn.h"
 #include "Login_Player.h"
-
 
 class Login_Manager: public Thread {
 public:
@@ -97,7 +96,9 @@ public:
 	void inner_msg_count(Block_Buffer &buf);
 	void inner_msg_count(int msg_id);
 
-	Check_Account &check_account(void);
+	int connect_mysql_db();
+	int client_register(std::string& account, std::string& password);
+	int client_login(std::string& account, std::string& password);
 
 private:
 	Login_Manager(void);
@@ -109,7 +110,9 @@ private:
 	static Login_Manager *instance_;
 
 	Block_Pool block_pool_;
+	Login_Player_Pool login_player_pool_;
 
+	Int_List drop_cid_list_;
 	Data_List login_client_data_list_;				///client-->login
 	Data_List login_gate_data_list_;		///login-->connector
 	Data_List self_loop_block_list_; 				/// self_loop_block_list
@@ -118,8 +121,8 @@ private:
 	Server_Info login_client_server_info_;
 	Server_Info login_gate_server_info_;
 
-	Login_Player_Pool login_player_pool_;
-	Int_List drop_cid_list_;
+	Login_Player_Cid_Map player_cid_map_; /// cid - Login_Player map
+	Login_Player_Account_Map player_account_map_; /// role_id - Login_Player map
 
 	Tick_Info tick_info_;
 	Time_Value tick_time_;
@@ -131,10 +134,8 @@ private:
 	Msg_Count_Map inner_msg_count_map_;
 
 	Ip_Vec gate_ip_vec_;
-	Check_Account check_account_;
 
-	Login_Player_Cid_Map player_cid_map_; /// cid - Login_Player map
-	Login_Player_Account_Map player_account_map_; /// role_id - Login_Player map
+	Mysql_DB_Conn* mysql_db_conn_;
 };
 
 #define LOGIN_MANAGER Login_Manager::instance()
@@ -199,10 +200,6 @@ inline void Login_Manager::inner_msg_count(int msg_id) {
 	if (msg_count_onoff_) {
 		++(inner_msg_count_map_[static_cast<int>(msg_id)]);
 	}
-}
-
-inline Check_Account &Login_Manager::check_account(void) {
-	return check_account_;
 }
 
 #endif /* LOGIN_MANAGER_H_ */

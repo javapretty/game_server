@@ -12,13 +12,14 @@
 #include "Login_Inner_Messager.h"
 
 Login_Manager::Login_Manager(void):
-	server_status_(STATUS_NORMAL),
-  msg_count_onoff_(true),
   player_cid_map_(get_hash_table_size(12000)) ,
-  player_account_map_(get_hash_table_size(12000)) {}
+  player_account_map_(get_hash_table_size(12000)),
+	server_status_(STATUS_NORMAL),
+	msg_count_onoff_(true),
+  mysql_db_conn_(NULL) {}
 
 Login_Manager::~Login_Manager(void) {
-	check_account_.release_mysql_conn();
+	MYSQL_DB_MANAGER->RelDBConn(mysql_db_conn_);
 }
 
 Login_Manager *Login_Manager::instance_;
@@ -36,7 +37,7 @@ int Login_Manager::init(void) {
 	LOGIN_INNER_MESSAGER;					/// 内部消息处理
 	LOGIN_CLIENT_MESSAGER;					/// 外部消息处理
 	LOGIN_TIMER->thr_create();
-	check_account_.connect_mysql_db();
+	connect_mysql_db();
 	init_gate_ip();
 
 	return 0;
@@ -279,7 +280,7 @@ int Login_Manager::player_tick(Time_Value &now) {
 	Login_Player_Account_Map t_accouont_map(player_account_map_); /// 因为Login_Player::time_up()里有改变player_account_map_的操作, 直接在其上使用迭代器导致迭代器失效core
 	for (Login_Player_Account_Map::iterator it = t_accouont_map.begin(); it != t_accouont_map.end(); ++it) {
 		if (it->second){
-			if (now.sec() - it->second->login_player_info().session_tick > 30) {
+			if (now.sec() - it->second->login_player_info().session_tick > 10) {
 				LOGIN_CLIENT_SERVER->receive().push_drop(it->second->get_cid());	//断开客户端与login的连接
 				it->second->link_close();
 			}
@@ -324,3 +325,56 @@ void Login_Manager::print_msg_count(void) {
 	LOG_INFO("inner_msg_count_map_.size = %d\n%s\n", inner_msg_count_map_.size(), stream.str().c_str());
 }
 
+int Login_Manager::connect_mysql_db() {
+	const Json::Value &server_misc = SERVER_CONFIG->server_misc();
+	if (server_misc == Json::Value::null) {
+		LOG_FATAL("server_misc is null");
+	}
+	std::string mysql_ip(server_misc["mysql_server"]["ip"].asString());
+	int mysql_port = server_misc["mysql_server"]["port"].asInt();
+	std::string mysql_user(server_misc["mysql_server"]["user"].asString());
+	std::string mysql_pw(server_misc["mysql_server"]["password"].asString());
+	std::string db_name("account");
+	std::string pool_name("account_pool");
+
+	MYSQL_DB_MANAGER->Init(mysql_ip, mysql_port, mysql_user, mysql_pw, db_name, pool_name, 16);
+	mysql_db_conn_ = MYSQL_DB_MANAGER->GetDBConn(pool_name);
+	return 0;
+}
+
+int Login_Manager::client_register(std::string& account, std::string& password){
+	int ret = 0;
+	try {
+		std::string sql_query = "insert into account_info values (\'" + account + "\', \'" +  password +"\')";
+		ret = mysql_db_conn_->Execute(sql_query.c_str());
+	} catch(sql::SQLException &e){
+		int err_code = e.getErrorCode();
+		LOG_DEBUG("SQLException, MySQL Error Code = %d, SQLState = [%s], [%s]", err_code, e.getSQLState().c_str(), e.what());
+		ret = -1;
+	}
+
+	return ret;
+}
+
+int Login_Manager::client_login(std::string& account, std::string& password){
+	int ret = 0;
+	try {
+		std::string sql_query = "select count(1) from account_info where account = \'" + account + "\' and password = \'" + password + "\'";
+		sql::ResultSet* res = mysql_db_conn_->ExecuteQuery(sql_query.c_str());
+		int cnt = 0;
+		while (res->next()) {
+			cnt = res->getInt(1);
+		}
+		delete res;
+
+		if (cnt <= 0){
+			ret = -1;
+		}
+	} catch(sql::SQLException &e){
+		int err_code = e.getErrorCode();
+		LOG_DEBUG("SQLException, MySQL Error Code = %d, SQLState = [%s], [%s]", err_code, e.getSQLState().c_str(), e.what());
+		ret = -1;
+	}
+
+	return ret;
+}

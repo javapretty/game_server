@@ -109,9 +109,9 @@ int Gate_Client_Messager::connect_gate(int cid, Block_Buffer &buf) {
 	//重复登录
 	else
 	{
-		LOG_DEBUG("connect_gate, repeat login, cid:%d, account:%s, session:%s", cid, msg.account.c_str(), msg.session.c_str());
+		LOG_DEBUG("connect_gate, repeat connect, cid:%d, account:%s, session:%s", cid, msg.account.c_str(), msg.session.c_str());
 		Block_Buffer res_buf;
-		res_buf.make_inner_message(RES_CLIENT_LOGIN, ERROR_LOGIN_VERIFY_FAIL);
+		res_buf.make_inner_message(RES_CONNECT_GATE, ERROR_DISCONNECT_RELOGIN);
 		res_buf.finish_message();
 		GATE_MANAGER->send_to_client(cid, res_buf);
 		GATE_MANAGER->close_client(cid);

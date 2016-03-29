@@ -69,7 +69,7 @@ int Login_Inner_Messager::process_140000(int gate_cid, int32_t player_cid, MSG_1
 			&& player->login_player_info().session == msg.session
 			&& player->login_player_info().gate_ip == msg.gate_ip
 			&& player->login_player_info().gate_port == msg.gate_port) {
-
+		//验证玩家session成功，关闭玩家与login的连接，开启玩家与gate的连接
 		gate_buf.make_player_message(SYNC_LOGIN_GATE_PLAYER_ACCOUNT, 0, player_cid);
 		LOGIN_MANAGER->close_client(player->get_cid());
 	} else {

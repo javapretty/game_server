@@ -1,5 +1,5 @@
 {
-	"server_type" : 1,			//1.多线程模式 2.多进程模式
+	"server_type" : 2,			//1.多线程模式 2.多进程模式
 	"server_label" : "test", //服务器标识
 	"game_open_time" : 1381370400,
 	"gate_md5_key" : "",
