@@ -31,6 +31,19 @@ struct Server_Conf {
 	void init_server_conf(void);
 };
 
+struct V8_Timer_Handler {
+	int timer_id; 				//js层定时器编号
+	int interval; 				//定时时间间隔(毫秒为单位)
+	Time_Value next_tick;	//下一次执行时间
+};
+
+class V8_Timer_Compare {
+public:
+	inline bool operator()(V8_Timer_Handler *t1, V8_Timer_Handler *t2) {
+		return t1->next_tick > t2->next_tick;
+	}
+};
+
 struct Cid_Info {
 	int gate_cid;
 	int player_cid;

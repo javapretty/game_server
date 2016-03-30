@@ -71,7 +71,7 @@ void send_game_buffer_to_db(const FunctionCallbackInfo<Value>& args) {
 	GAME_MANAGER->send_to_db(*buf);
 }
 
-void get_game_client_buffer(const FunctionCallbackInfo<Value>& args) {
+void pop_game_client_buffer(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = GAME_MANAGER->pop_game_client_data();
 	if (buf) {
 		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
@@ -156,12 +156,12 @@ void register_master_timer(const FunctionCallbackInfo<Value>& args) {
 	int timer_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int interval = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int first_tick_internal = args[2]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	LOG_ERROR("register_timer,timer_id:%d, interval:%dms, first_tick_internal:%ds\n", timer_id, interval, first_tick_internal);
-	GAME_TIMER->register_v8_handler(timer_id, interval, first_tick_internal);
+	LOG_ERROR("register_master_timer,timer_id:%d, interval:%dms, first_tick_internal:%ds\n", timer_id, interval, first_tick_internal);
+	MASTER_TIMER->register_v8_handler(timer_id, interval, first_tick_internal);
 }
 
 void get_master_timer_id(const FunctionCallbackInfo<Value>& args) {
-	int timer_id = GAME_TIMER->pop_v8_timer();
+	int timer_id = MASTER_TIMER->pop_v8_timer();
 	args.GetReturnValue().Set(timer_id);
 }
 
@@ -202,8 +202,8 @@ void send_master_buffer_to_db(const FunctionCallbackInfo<Value>& args) {
 	GAME_MANAGER->send_to_db(*buf);
 }
 
-void get_master_client_buffer(const FunctionCallbackInfo<Value>& args) {
-	Block_Buffer *buf = GAME_MANAGER->pop_game_client_data();
+void pop_master_client_buffer(const FunctionCallbackInfo<Value>& args) {
+	Block_Buffer *buf = MASTER_MANAGER->pop_master_client_data();
 	if (buf) {
 		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
 	} else {
@@ -221,7 +221,7 @@ void push_master_client_buffer(const FunctionCallbackInfo<Value>& args) {
 	int cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	Block_Buffer *buf= unwrap_buffer(args[1]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
 	if (buf) {
-		GAME_GATE_SERVER->push_block(cid, buf);
+		MASTER_GATE_SERVER->push_block(cid, buf);
 	}
 }
 

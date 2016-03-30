@@ -36,7 +36,7 @@ Game_Player.prototype.load_player_data = function(buffer) {
 	this.mail.load_data(this, buffer);
 	this.shop.load_data(this, buffer);
 	
-	print('------load_data,status:', status, ' role_id:', this.player_info.role_id, ' role_name:', this.player_info.role_name);
+	print('------game_player load_data, role_id:', this.player_info.role_id, ' role_name:', this.player_info.role_name);
 	this.cid = gate_cid * 10000 + player_cid;
 	this.cplayer = get_game_player_by_cid(gate_cid, player_cid);
 	
@@ -46,7 +46,7 @@ Game_Player.prototype.load_player_data = function(buffer) {
 	
 //玩家离线，保存数据
 Game_Player.prototype.save_player_data = function() {
-	print('------save_data,role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name);
+	print('------game_player save_data,role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name);
 	
 	this.sync_player_data();
 	game_player_cid_map.remove(this.cid);

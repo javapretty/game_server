@@ -14,6 +14,7 @@
 #include "Block_List.h"
 #include "Object_Pool.h"
 #include "Master_Player.h"
+#include "Msg_Define.h"
 
 class Master_Manager: public Thread {
 public:
@@ -61,6 +62,7 @@ public:
 
 	/// 通信层投递消息到Master_Manager
 	int push_master_gate_data(Block_Buffer *buf);
+	Block_Buffer* pop_master_client_data();
 	int push_master_game_data(Block_Buffer *buf);
 	int push_self_loop_message(Block_Buffer &msg_buf);
 
@@ -122,7 +124,8 @@ private:
 	Block_Pool block_pool_;
 	Master_Player_Pool master_player_pool_;
 
-	Data_List master_gate_data_list_;			//gate-->master
+	Data_List player_login_data_list_;			//gate-->master玩家登录消息数据
+	Data_List master_client_data_list_;		//玩家逻辑消息数据，发到js处理
 	Data_List master_game_data_list_;			//game-->master
 	Data_List self_loop_block_list_; 			//self_loop_block_list
 
@@ -167,8 +170,27 @@ inline int Master_Manager::push_block_buffer(Block_Buffer *buf) {
 }
 
 inline int Master_Manager::push_master_gate_data(Block_Buffer *buf) {
-	master_gate_data_list_.push_back(buf);
+	int read_idx = buf->get_read_idx();
+	/*int32_t cid*/ buf->read_int32();
+	/*int16_t len*/ buf->read_int16();
+	int32_t msg_id = buf->read_int32();
+	buf->set_read_idx(read_idx);
+
+	switch (msg_id) {
+	case SYNC_GATE_MASTER_PLAYER_SIGNIN: {
+		player_login_data_list_.push_back(buf);
+		break;
+	}
+	default : {
+		master_client_data_list_.push_back(buf);
+		break;
+	}
+	}
 	return 0;
+}
+
+inline Block_Buffer* Master_Manager::pop_master_client_data() {
+	return master_client_data_list_.pop_front();
 }
 
 inline int Master_Manager::push_master_game_data(Block_Buffer *buf) {

@@ -12,19 +12,7 @@
 #include "Block_Buffer.h"
 #include "Priority_Queue.h"
 #include "List.h"
-
-struct V8_Timer_Handler {
-	int timer_id; 				//js层定时器编号
-	int interval; 				//定时时间间隔(毫秒为单位)
-	Time_Value next_tick;	//下一次执行时间
-};
-
-class V8_Timer_Compare {
-public:
-	inline bool operator()(V8_Timer_Handler *t1, V8_Timer_Handler *t2) {
-		return t1->next_tick > t2->next_tick;
-	}
-};
+#include "Public_Struct.h"
 
 class Game_Timer_Handler: public Event_Handler {
 public:

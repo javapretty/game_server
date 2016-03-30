@@ -8,6 +8,24 @@
 #include "Game_Manager.h"
 #include "Game_Timer.h"
 
+Game_Timer_Handler::Game_Timer_Handler(void) {
+	init_tick_msg_buf();
+}
+
+Game_Timer_Handler::~Game_Timer_Handler(void) { }
+
+void Game_Timer_Handler::init_tick_msg_buf(void) {
+	tick_msg_buf_.reset();
+	tick_msg_buf_.make_inner_message(SYNC_INNER_TIMER_TICK);
+	tick_msg_buf_.finish_message();
+}
+
+int Game_Timer_Handler::handle_timeout(const Time_Value &tv) {
+	GAME_MANAGER->push_self_loop_message(tick_msg_buf_);
+	GAME_TIMER->v8_tick(tv);
+	return 0;
+}
+
 Game_Timer::Game_Timer(void) { }
 
 Game_Timer::~Game_Timer(void) { }
@@ -50,23 +68,5 @@ int Game_Timer::v8_tick(const Time_Value &now){
 		handler->next_tick += Time_Value(handler->interval / 1000, handler->interval % 1000 * 1000);
 		v8_timer_queue_.push(handler);
 	}
-	return 0;
-}
-
-Game_Timer_Handler::Game_Timer_Handler(void) {
-	init_tick_msg_buf();
-}
-
-Game_Timer_Handler::~Game_Timer_Handler(void) { }
-
-void Game_Timer_Handler::init_tick_msg_buf(void) {
-	tick_msg_buf_.reset();
-	tick_msg_buf_.make_inner_message(SYNC_INNER_TIMER_TICK);
-	tick_msg_buf_.finish_message();
-}
-
-int Game_Timer_Handler::handle_timeout(const Time_Value &tv) {
-	GAME_MANAGER->push_self_loop_message(tick_msg_buf_);
-	GAME_TIMER->v8_tick(tv);
 	return 0;
 }

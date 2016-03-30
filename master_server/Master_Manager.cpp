@@ -113,7 +113,7 @@ int Master_Manager::process_list(void) {
 			MASTER_GAME_SERVER->push_block(cid, buf);
 		}
 		/// gate-->master
-		if ((buf = master_gate_data_list_.pop_front()) != 0) {
+		if ((buf = player_login_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
 				cid = buf->peek_int32();

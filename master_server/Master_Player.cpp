@@ -99,6 +99,17 @@ int Master_Player::tick(Time_Value &now) {
 	return 0;
 }
 
+int Master_Player::link_close() {
+	if (recycle_tick_.status == Recycle_Tick::RECYCLE)
+		return 0;
+
+	recycle_tick_.set(Recycle_Tick::RECYCLE);
+
+	int cid = gate_cid_ * 10000 + player_cid_;
+	MASTER_MANAGER->push_drop_player_cid(cid);
+	return 0;
+}
+
 int Master_Player::send_chat_info(Block_Buffer &buf) {
 	MSG_110001 msg;
 	msg.deserialize(buf);

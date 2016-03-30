@@ -4,6 +4,12 @@
 *	时间：2016/02/24
 */
 
+if (typeof Server_Type == "undefined") {
+	var Server_Type = {};
+	Server_Type.GAME_SERVER = 1;
+	Server_Type.MASTER_SERVER = 2;
+}
+
 if (typeof Data_Change == "undefined") {
 	var Data_Change = {};
 	Data_Change.PLAYER_CHANGE = 1;

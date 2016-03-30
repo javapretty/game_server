@@ -7,6 +7,24 @@
 #include "Master_Timer.h"
 #include "Msg_Define.h"
 
+Master_Timer_Handler::Master_Timer_Handler(void) {
+	init_tick_msg_buf();
+}
+
+Master_Timer_Handler::~Master_Timer_Handler(void) { }
+
+void Master_Timer_Handler::init_tick_msg_buf(void) {
+	tick_msg_buf_.reset();
+	tick_msg_buf_.make_inner_message(SYNC_INNER_TIMER_TICK);
+	tick_msg_buf_.finish_message();
+}
+
+int Master_Timer_Handler::handle_timeout(const Time_Value &tv) {
+	MASTER_MANAGER->push_self_loop_message(tick_msg_buf_);
+	MASTER_TIMER->v8_tick(tv);
+	return 0;
+}
+
 Master_Timer::Master_Timer(void) { }
 
 Master_Timer::~Master_Timer(void) { }
@@ -33,18 +51,21 @@ void Master_Timer::register_handler(void) {
 	watcher_.add(&timer_handler_, Epoll_Watcher::EVENT_TIMEOUT, &timeout_tv);
 }
 
-Master_Timer_Handler::Master_Timer_Handler(void) {
-	init_tick_msg_buf();
+void Master_Timer::register_v8_handler(int timer_id, int internal, int first_tick_internal) {
+	V8_Timer_Handler *handler = v8_timer_pool_.pop();
+	handler->timer_id = timer_id;
+	handler->interval = internal;
+	handler->next_tick = Time_Value::gettimeofday() + Time_Value(first_tick_internal);
+	v8_timer_queue_.push(handler);
 }
 
-Master_Timer_Handler::~Master_Timer_Handler(void) { }
-
-void Master_Timer_Handler::init_tick_msg_buf(void) {
-	tick_msg_buf_.reset();
-	tick_msg_buf_.make_inner_message(SYNC_INNER_TIMER_TICK);
-	tick_msg_buf_.finish_message();
-}
-
-int Master_Timer_Handler::handle_timeout(const Time_Value &tv) {
-	return MASTER_MANAGER->push_self_loop_message(tick_msg_buf_);
+int Master_Timer::v8_tick(const Time_Value &now){
+	while(!v8_timer_queue_.empty() && (now > v8_timer_queue_.top()->next_tick)) {
+		V8_Timer_Handler *handler = v8_timer_queue_.top();
+		v8_timer_queue_.pop();
+		v8_timer_list_.push_back(handler->timer_id);
+		handler->next_tick += Time_Value(handler->interval / 1000, handler->interval % 1000 * 1000);
+		v8_timer_queue_.push(handler);
+	}
+	return 0;
 }

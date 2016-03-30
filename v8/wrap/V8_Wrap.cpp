@@ -45,8 +45,8 @@ Local<Context> Create_Context(Isolate* isolate) {
 	global->Set(String::NewFromUtf8(isolate, "send_game_buffer_to_db", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, send_game_buffer_to_db));
 
-	global->Set(String::NewFromUtf8(isolate, "get_game_client_buffer", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, get_game_client_buffer));
+	global->Set(String::NewFromUtf8(isolate, "pop_game_client_buffer", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, pop_game_client_buffer));
 
 	global->Set(String::NewFromUtf8(isolate, "push_game_client_buffer", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, push_game_client_buffer));
@@ -73,8 +73,8 @@ Local<Context> Create_Context(Isolate* isolate) {
 	global->Set(String::NewFromUtf8(isolate, "send_master_buffer_to_db", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, send_master_buffer_to_db));
 
-	global->Set(String::NewFromUtf8(isolate, "get_master_client_buffer", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, get_master_client_buffer));
+	global->Set(String::NewFromUtf8(isolate, "pop_master_client_buffer", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, pop_master_client_buffer));
 
 	global->Set(String::NewFromUtf8(isolate, "push_master_client_buffer", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, push_master_client_buffer));

@@ -19,9 +19,9 @@ require('bag.js');
 require('mail.js');
 require('shop.js');
 
-//cid----game game_player  全局玩家对象
+//cid----game_player  全局玩家对象
 var game_player_cid_map = new Map();
-//role_id---game game_player 全局玩家对象
+//role_id---game_player 全局玩家对象
 var game_player_role_id_map = new Map();
 
 //加载配置文件
@@ -30,7 +30,7 @@ config.init();
 
 //定时器管理器
 var timer = new Timer();
-timer.init();
+timer.init(Server_Type.GAME_SERVER);
 
 //执行脚本主循环函数
 main();
@@ -40,7 +40,7 @@ function main() {
 		var all_empty = true;
 		
 		//获得客户端消息
-		var buffer = get_game_client_buffer();
+		var buffer = pop_game_client_buffer();
 		if (buffer != null) {
 			all_empty = false;
 			process_game_client_buffer(buffer);
@@ -71,7 +71,7 @@ function main() {
 				break;
 	
 			all_empty = false;
-			var timer_handler = timer.get_timer_handler(timer_id);
+			var timer_handler = timer.get_game_timer_handler(timer_id);
 			if (timer_handler != null) {
 				timer_handler();
 			}
@@ -154,7 +154,7 @@ function process_game_client_buffer(buffer) {
 		game_player.shop.refresh_by_player(buffer);
 		break;
 	default:
-		print("Can not find the msg_id:", msg_id);
+		print('msg_id not exist, gate_cid:', gate_cid, " player_cid:", player_cid, " msg_id:", msg_id);print("can not find the msg_id:", msg_id);
 		break;
 	}
 	push_game_client_buffer(gate_cid, buffer);

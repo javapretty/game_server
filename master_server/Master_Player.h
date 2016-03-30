@@ -49,13 +49,4 @@ private:
 	Recycle_Tick recycle_tick_;
 };
 
-////////////////////////////////////////////////////////////////////////////////
-inline int Master_Player::link_close() {
-	if (recycle_tick_.status == Recycle_Tick::RECYCLE)
-		return 0;
-
-	recycle_tick_.set(Recycle_Tick::RECYCLE);
-	return 0;
-}
-
 #endif /* MASTER_PLAYER_H_ */
