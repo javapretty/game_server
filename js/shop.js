@@ -39,10 +39,10 @@ Shop.prototype.fetch_shop_info = function(buffer){
 	var msg_res = new MSG_520400();
 	msg_res.shop = this.shop_info.shop_detail.get(msg_req.shop_type);
 	
-	var buf = pop_buffer();
+	var buf = pop_game_buffer();
 	msg_res.serialize(buf);
 	this.game_player.cplayer.respond_success_result(Msg_Res.RES_FETCH_SHOP_INFO, buf);
-	push_buffer(buf);
+	push_game_buffer(buf);
 }
 	
 Shop.prototype.refresh_by_player = function(buffer){

@@ -71,10 +71,11 @@ public:
 	int push_game_master_data(Block_Buffer *buf);
 	int push_self_loop_message(Block_Buffer &msg_buf);
 
-	int push_player_data(Block_Buffer *buf);
-	Block_Buffer* pop_player_data(void);
+	int push_player_load_data_buffer(Block_Buffer *buf);
+	Block_Buffer* pop_player_load_data_buffer(void);
 	int push_drop_player_cid(int cid);
 	int pop_drop_player_cid(void);
+
 	/// 消息处理
 	int process_list();
 	void process_drop_gate_cid(int gate_cid);
@@ -253,12 +254,12 @@ inline int Game_Manager::push_self_loop_message(Block_Buffer &msg_buf) {
 	return 0;
 }
 
-inline int Game_Manager::push_player_data(Block_Buffer *buf) {
+inline int Game_Manager::push_player_load_data_buffer(Block_Buffer *buf) {
 	player_data_list_.push_back(buf);
 	return 0;
 }
 
-inline Block_Buffer* Game_Manager::pop_player_data(void) {
+inline Block_Buffer* Game_Manager::pop_player_load_data_buffer(void) {
 	return player_data_list_.pop_front();
 }
 

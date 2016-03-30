@@ -26,10 +26,10 @@ Bag.prototype.fetch_bag_info = function() {
 		msg_res.item_info.push(value);
     });
     	
-	var buf = pop_buffer();
+	var buf = pop_game_buffer();
 	msg_res.serialize(buf);
 	this.game_player.cplayer.respond_success_result(Msg_Res.RES_FETCH_BAG_INFO, buf);
-	push_buffer(buf);
+	push_game_buffer(buf);
 }
 	
 Bag.prototype.use_item = function(buffer) {
@@ -126,10 +126,10 @@ Bag.prototype.bag_active_money = function() {
 	msg_active.copper = this.bag_info.copper;
 	msg_active.gold = this.bag_info.gold;
 	
-	var buf = pop_buffer();
+	var buf = pop_game_buffer();
 	msg_active.serialize(buf);
 	this.game_player.cplayer.respond_success_result(Msg_Active.ACTIVE_MONEY_INFO, buf);
-	push_buffer(buf);
+	push_game_buffer(buf);
 	this.game_player.set_data_change(Data_Change.BAG_CHANGE);
 }
 	
@@ -139,9 +139,9 @@ Bag.prototype.bag_active_item = function() {
 		msg_active.item_info.push(value);
     });
     	
-	var buf = pop_buffer();
+	var buf = pop_game_buffer();
 	msg_active.serialize(buf);
 	this.game_player.cplayer.respond_success_result(Msg_Active.ACTIVE_ITEM_INFO, buf);
-	push_buffer(buf);
+	push_game_buffer(buf);
 	this.game_player.set_data_change(Data_Change.BAG_CHANGE);
 }

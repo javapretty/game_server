@@ -7,8 +7,7 @@
 
 #include "V8_Wrap.h"
 #include "Buffer_Wrap.h"
-#include "Game_Manager.h"
-
+#include "Log.h"
 
 Local<Object> wrap_buffer(Isolate* isolate, Block_Buffer *buf) {
 	EscapableHandleScope handle_scope(isolate);
@@ -106,29 +105,6 @@ Block_Buffer *unwrap_buffer(Local<Object> obj) {
 	Local<External> field = Local<External>::Cast(obj->GetInternalField(0));
 	void* ptr = field->Value();
 	return static_cast<Block_Buffer*>(ptr);
-}
-
-void pop_buffer(const FunctionCallbackInfo<Value>& args) {
-	Block_Buffer *buf = GAME_MANAGER->pop_block_buffer();
-	if (buf) {
-		buf->reset();
-		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
-	} else {
-		//设置对象为空
-		args.GetReturnValue().SetNull();
-	}
-}
-
-void push_buffer(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 1) {
-		LOG_ERROR("push_buffer args error, length: %d\n", args.Length());
-		return;
-	}
-
-	Block_Buffer *buf= unwrap_buffer(args[0]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
-	if (buf) {
-		GAME_MANAGER->push_block_buffer(buf);
-	}
 }
 
 void buffer_reset(const FunctionCallbackInfo<Value>& args) {

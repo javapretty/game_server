@@ -26,10 +26,10 @@ Mail.prototype.fetch_mail_info = function() {
 		msg_res.mail_info.push(value);
     });
     	
-	var buf = pop_buffer();
+	var buf = pop_game_buffer();
 	msg_res.serialize(buf);
 	this.game_player.cplayer.respond_success_result(Msg_Res.RES_FETCH_MAIL_INFO, buf);
-	push_buffer(buf);
+	push_game_buffer(buf);
 }
 
 Mail.prototype.pickup_mail = function(buffer) {
@@ -58,10 +58,10 @@ Mail.prototype.pickup_mail = function(buffer) {
 		}
 	}
 	
-	var buf = pop_buffer();
+	var buf = pop_game_buffer();
 	msg_res.serialize(buf);
 	this.game_player.cplayer.respond_success_result(Msg_Res.RES_PICKUP_MAIL, buf);
-	push_buffer(buf);
+	push_game_buffer(buf);
 	
 	this.game_player.set_data_change(Data_Change.MAIL_CHANGE);
 }
@@ -94,10 +94,10 @@ Mail.prototype.delete_mail = function(buffer) {
 		}
 	}
 	
-	var buf = pop_buffer();
+	var buf = pop_game_buffer();
 	msg_res.serialize(buf);
 	this.game_player.cplayer.respond_success_result(Msg_Res.RES_DEL_MAIL, buf);
-	push_buffer(buf);
+	push_game_buffer(buf);
 	
 	this.game_player.set_data_change(Data_Change.MAIL_CHANGE);
 }
@@ -107,7 +107,7 @@ Mail.prototype.send_mail = function(buffer) {
 	
 	var msg_req = new MSG_120203();
 	msg_req.deserialize(buffer);	
-	var receiver = get_player_by_name(msg_req.receiver_name);
+	var receiver = get_game_player_by_name(msg_req.receiver_name);
 	if (receiver == null) {
 		return this.game_player.cplayer.respond_error_result(Msg_Res.RES_SEND_MAIL, Error_Code.ERROR_ROLE_NOT_EXIST);
 	}
@@ -160,19 +160,19 @@ Mail.prototype.send_mail_inner = function(receiver_id, mail_detail) {
 
 		var msg_active = new MSG_300200();
 		msg_active.mail_info.push(mail_detail);
-		var buf = pop_buffer();
+		var buf = pop_game_buffer();
 		msg_active.serialize(buf);
 		receiver.cplayer.respond_success_result(Msg_Active.ACTIVE_MAIL_INFO, buf);
-		push_buffer(buf);
+		push_game_buffer(buf);
 		
 		receiver.set_data_change(Data_Change.MAIL_CHANGE);
 	} else {
-		var buf = pop_buffer();
+		var buf = pop_game_buffer();
 		buf.make_inner_message(Msg_Db.SYNC_GAME_DB_SAVE_MAIL_INFO);
 		buf.write_int64(receiver_id);
 		mail_detail.serialize(buf);
 		buf.finish_message();
-		send_msg_to_db(buf);
-		push_buffer(buf);
+		send_game_buffer_to_db(buf);
+		push_game_buffer(buf);
 	}
 }

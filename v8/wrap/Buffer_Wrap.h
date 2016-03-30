@@ -9,18 +9,13 @@
 #define BLOCK_WRAP_H_
 
 #include "include/v8.h"
-#include "include/libplatform/libplatform.h"
+#include "Block_Buffer.h"
 
-class Block_Buffer;
 using namespace v8;
 
 Local<Object> wrap_buffer(Isolate* isolate, Block_Buffer *buf);
 Block_Buffer *unwrap_buffer(Local<Object> obj);
 
-//函数说明：新建buffer	参数：无	返回值：buffer对象
-void pop_buffer(const FunctionCallbackInfo<Value>& args);
-//函数说明：回收buffer	参数：1,buffer	返回值：无
-void push_buffer(const FunctionCallbackInfo<Value>& args);
 //函数说明：重置buffer	参数：无	返回值：无
 void buffer_reset(const FunctionCallbackInfo<Value>& args);
 //函数说明：生成服务器内部消息buffer	参数：1,msg_id	返回值：无

@@ -40,10 +40,10 @@ Hero.prototype.fetch_hero_info = function() {
 	this.hero_info.hero_map.each(function(key,value,index) {
 		msg_res.hero_info.push(value);
     });
-    var buf = pop_buffer();
+    var buf = pop_game_buffer();
     msg_res.serialize(buf);
 	this.game_player.cplayer.respond_success_result(Msg_Res.RES_FETCH_HERO_INFO, buf);
-	push_buffer(buf);
+	push_game_buffer(buf);
 }
 	
 Hero.prototype.add_hero_star = function(buffer) {
@@ -81,10 +81,10 @@ Hero.prototype.add_hero_star = function(buffer) {
 	var msg_res = new MSG_520301();
 	msg_res.hero_id = msg_req.hero_id;
 	msg_res.star = hero_detail.star;
-	var buf = pop_buffer();
+	var buf = pop_game_buffer();
 	msg_res.serialize(buf);
 	this.game_player.cplayer.respond_success_result(Msg_Res.RES_ADD_HERO_STAR, buf);
-	push_buffer(buf);
+	push_game_buffer(buf);
 }
 	
 Hero.prototype.add_hero_quality = function(buffer) {
@@ -118,10 +118,10 @@ Hero.prototype.add_hero_quality = function(buffer) {
 	var msg_res = new MSG_520302();
 	msg_res.hero_id = msg_req.hero_id;
 	msg_res.quality = hero_detail.quality;
-	var buf = pop_buffer();
+	var buf = pop_game_buffer();
 	msg_res.serialize(buf);
 	this.game_player.cplayer.respond_success_result(Msg_Res.RES_ADD_HERO_QUALITY, buf);
-	push_buffer(buf);
+	push_game_buffer(buf);
 }
 	
 Hero.prototype.add_equip_level = function(buffer) {
@@ -163,10 +163,10 @@ Hero.prototype.add_equip_level = function(buffer) {
 	msg_res.equip_index = msg_req.equip_index;
 	msg_res.equip_level = equip.level;
 	msg_res.equip_exp = equip.exp;
-	var buf = pop_buffer();
+	var buf = pop_game_buffer();
 	msg_res.serialize(buf);
 	this.game_player.cplayer.respond_success_result(Msg_Res.RES_ADD_EQUIP_LEVEL, buf);
-	push_buffer(buf);
+	push_game_buffer(buf);
 }
 	
 Hero.prototype.equip_on_off = function(buffer) {
@@ -215,10 +215,10 @@ Hero.prototype.equip_on_off = function(buffer) {
 	msg_res.hero_id = msg_req.hero_id;
 	msg_res.on = msg_req.on;
 	msg_res.item_info = msg_req.item_info;
-	var buf = pop_buffer();
+	var buf = pop_game_buffer();
 	msg_res.serialize(buf);
 	this.game_player.cplayer.respond_success_result(Msg_Res.RES_EQUIP_ON_OFF, buf);
-	push_buffer(buf);
+	push_game_buffer(buf);
 }
 	
 Hero.prototype.add_skill_level = function(buffer) {
@@ -247,10 +247,10 @@ Hero.prototype.add_skill_level = function(buffer) {
 	var msg_res = new MSG_520305();
 	msg_res.hero_id = msg_req.hero_id;
 	msg_res.skill_id = msg_req.skill_id + 1;
-	var buf = pop_buffer();
+	var buf = pop_game_buffer();
 	msg_res.serialize(buf);
 	this.game_player.cplayer.respond_success_result(Msg_Res.RES_ADD_SKILL_LEVEL, buf);
-	push_buffer(buf);
+	push_game_buffer(buf);
 }
 	
 Hero.prototype.refresh_hero_property = function(hero_detail) {
@@ -258,8 +258,8 @@ Hero.prototype.refresh_hero_property = function(hero_detail) {
 	
 	var msg_active = new MSG_300300();
 	msg_active.property_info = hero_detail.property;
-	var buf = pop_buffer();
+	var buf = pop_game_buffer();
 	msg_active.serialize(buf);
 	this.game_player.cplayer.respond_success_result(Msg_Active.ACTIVE_PROPERTY_INFO, buf);
-	push_buffer(buf);
+	push_game_buffer(buf);
 }

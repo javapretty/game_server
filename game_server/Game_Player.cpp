@@ -9,8 +9,8 @@
 Game_Player::Game_Player(void):
 	gate_cid_(0),
 	player_cid_(0),
-  read_player_data_buffer_(0),
-  write_player_data_buffer_(0)
+  load_player_data_buffer_(0),
+  save_player_data_buffer_(0)
 { }
 
 Game_Player::~Game_Player(void) { }
@@ -58,19 +58,19 @@ int Game_Player::load_player(Player_Data &player_data) {
 	GAME_MANAGER->logining_map().erase(player_data.player_info.account);
 	player_data_ = player_data;
 
-	read_player_data_buffer_ = GAME_MANAGER->pop_block_buffer();
-	write_player_data_buffer_ = GAME_MANAGER->pop_block_buffer();
-	read_player_data_buffer_->write_int32(gate_cid_);
-	read_player_data_buffer_->write_int32(player_cid_);
-	player_data_.serialize(*read_player_data_buffer_);
-	GAME_MANAGER->push_player_data(read_player_data_buffer_);
+	load_player_data_buffer_ = GAME_MANAGER->pop_block_buffer();
+	save_player_data_buffer_ = GAME_MANAGER->pop_block_buffer();
+	load_player_data_buffer_->write_int32(gate_cid_);
+	load_player_data_buffer_->write_int32(player_cid_);
+	player_data_.serialize(*load_player_data_buffer_);
+	GAME_MANAGER->push_player_load_data_buffer(load_player_data_buffer_);
 	return 0;
 }
 
 int Game_Player::save_player(bool is_logout) {
 	//js端写入值后，反序列化获取值
-	if (write_player_data_buffer_->readable_bytes() > 0) {
-		player_data_.deserialize(*write_player_data_buffer_);
+	if (save_player_data_buffer_->readable_bytes() > 0) {
+		player_data_.deserialize(*save_player_data_buffer_);
 	}
 
 	if (is_logout) {
@@ -98,9 +98,9 @@ int Game_Player::save_player(bool is_logout) {
 	return 0;
 }
 
-int Game_Player::sign_in(std::string account) {
+int Game_Player::sign_in() {
 	LOG_DEBUG("player sign in game_server. account=[%s], gate_cid = %d, player_cid = %d, role_id=%ld, name=%s",
-			account.c_str(), gate_cid_, player_cid_, player_data_.player_info.role_id, player_data_.player_info.role_name.c_str());
+			player_data_.player_info.account.c_str(), gate_cid_, player_cid_, player_data_.player_info.role_id, player_data_.player_info.role_name.c_str());
 
 	sync_signin_to_master();
 	respond_role_login();
@@ -111,8 +111,8 @@ int Game_Player::sign_out(void) {
 	sync_signout_to_master();
 	save_player(true);
 	reset();
-	GAME_MANAGER->push_block_buffer(read_player_data_buffer_);
-	GAME_MANAGER->push_block_buffer(write_player_data_buffer_);
+	GAME_MANAGER->push_block_buffer(load_player_data_buffer_);
+	GAME_MANAGER->push_block_buffer(save_player_data_buffer_);
 	return 0;
 }
 

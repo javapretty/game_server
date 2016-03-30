@@ -40,14 +40,14 @@ function main() {
 		var all_empty = true;
 		
 		//获得客户端消息
-		var buffer = get_client_buffer();
+		var buffer = get_game_client_buffer();
 		if (buffer != null) {
 			all_empty = false;
-			process_client_buffer(buffer);
+			process_game_client_buffer(buffer);
 		}
 	
 		//获得上线玩家的信息
-		buffer = get_load_player_data();
+		buffer = get_game_player_load_data_buffer();
 		if (buffer != null) {
 			all_empty = false;
 			var game_player = new Game_Player();
@@ -55,7 +55,7 @@ function main() {
 		}
 	
 		//获得下线玩家的cid
-		var cid = get_drop_player_cid();
+		var cid = get_drop_game_player_cid();
 		if (cid > 0) {
 			all_empty = false;
 			var game_player = game_player_cid_map.get(cid);
@@ -66,7 +66,7 @@ function main() {
 	
 		//处理定时器消息
 		while(true) {
-			var timer_id = get_timer_id();
+			var timer_id = get_game_timer_id();
 			if (timer_id == 0)
 				break;
 	
@@ -84,7 +84,7 @@ function main() {
 	}	
 }
 
-function process_client_buffer(buffer) {
+function process_game_client_buffer(buffer) {
 	var gate_cid = buffer.read_int32();
 	var len = buffer.read_int16();
 	var msg_id = buffer.read_int32();
@@ -95,7 +95,7 @@ function process_client_buffer(buffer) {
 	var game_player = game_player_cid_map.get(cid);
 	if (!game_player) {
 		print('game_player not exist, gate_cid:', gate_cid, " player_cid:", player_cid, " msg_id:", msg_id);
-		return push_client_buffer(gate_cid, buffer);
+		return push_game_client_buffer(gate_cid, buffer);
 	}
 	
 	switch(msg_id) {
@@ -157,5 +157,5 @@ function process_client_buffer(buffer) {
 		print("Can not find the msg_id:", msg_id);
 		break;
 	}
-	push_client_buffer(gate_cid, buffer);
+	push_game_client_buffer(gate_cid, buffer);
 }

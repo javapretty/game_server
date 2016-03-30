@@ -65,13 +65,11 @@ int Master_Client_Messager::gate_master_player_signin(int gate_cid, int player_c
 			return -1;
 		}
 
-		LOG_INFO("master player sign in first, gate_cid:%d, playe_cid:%d, role_id:%ld, role_name:%s",
-				gate_cid, player_cid, msg.player_info.role_id, msg.player_info.role_name.c_str());
-
 		player->reset();
 		player->set_gate_cid(gate_cid);
 		player->set_player_cid(player_cid);
-		player->set_master_player_info(msg.player_info);
+		player->load_player(msg.player_info);
+		player->sign_in();
 		MASTER_MANAGER->bind_gate_cid_master_player(gate_cid * 10000 + player_cid, *player);
 		MASTER_MANAGER->bind_role_id_master_player(msg.player_info.role_id, *player);
 		MASTER_MANAGER->bind_role_name_master_player(msg.player_info.role_name, *player);

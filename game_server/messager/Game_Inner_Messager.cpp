@@ -167,7 +167,7 @@ int Game_Inner_Messager::process_success_login(int gate_cid, int player_cid, Pla
 	player->reset();
 	player->set_cid(gate_cid, player_cid);
 	player->load_player(data);
-	player->sign_in(data.player_info.account);
+	player->sign_in();
 	GAME_MANAGER->bind_cid_game_player(gate_cid * 10000 + player_cid, *player);
 	GAME_MANAGER->bind_role_id_game_player(player->player_data().player_info.role_id, *player);
 

@@ -20,6 +20,7 @@ public:
 	typedef Object_Pool<Block_Buffer, Thread_Mutex> Block_Pool;
 	typedef Object_Pool<Master_Player, Spin_Lock> Master_Player_Pool;
 	typedef Block_List<Thread_Mutex> Data_List;
+	typedef List<int, Thread_Mutex> Int_List;
 
 	//cid = gate_cid * 10000 + player_cid
 	typedef boost::unordered_map<int, Master_Player* > Master_Player_Gate_Cid_Map;
@@ -44,6 +45,8 @@ public:
 
 	Master_Player *pop_master_player(void);
 	int push_master_player(Master_Player *player);
+	Block_Buffer *pop_block_buffer(void);
+	int push_block_buffer(Block_Buffer *buf);
 
 	/// 发送数据接口
 	int send_to_gate(int gate_cid, Block_Buffer &buf);
@@ -60,6 +63,11 @@ public:
 	int push_master_gate_data(Block_Buffer *buf);
 	int push_master_game_data(Block_Buffer *buf);
 	int push_self_loop_message(Block_Buffer &msg_buf);
+
+	int push_player_load_data_buffer(Block_Buffer *buf);
+	Block_Buffer* pop_player_load_data_buffer(void);
+	int push_drop_player_cid(int cid);
+	int pop_drop_player_cid(void);
 
 	/// 消息处理
 	int process_list();
@@ -118,6 +126,9 @@ private:
 	Data_List master_game_data_list_;			//game-->master
 	Data_List self_loop_block_list_; 			//self_loop_block_list
 
+	Data_List player_data_list_; 					//玩家数据,传送给js层
+	Int_List drop_player_cid_list_;				//掉线的玩家cid列表
+
 	Server_Info master_gate_server_info_;
 	Server_Info master_game_server_info_;
 
@@ -147,6 +158,14 @@ inline int Master_Manager::push_master_player(Master_Player *player) {
 	return master_player_pool_.push(player);
 }
 
+inline Block_Buffer *Master_Manager::pop_block_buffer(void) {
+	return block_pool_.pop();
+}
+
+inline int Master_Manager::push_block_buffer(Block_Buffer *buf) {
+	return block_pool_.push(buf);
+}
+
 inline int Master_Manager::push_master_gate_data(Block_Buffer *buf) {
 	master_gate_data_list_.push_back(buf);
 	return 0;
@@ -167,6 +186,27 @@ inline int Master_Manager::push_self_loop_message(Block_Buffer &msg_buf) {
 	buf->copy(&msg_buf);
 	self_loop_block_list_.push_back(buf);
 	return 0;
+}
+
+inline int Master_Manager::push_player_load_data_buffer(Block_Buffer *buf) {
+	player_data_list_.push_back(buf);
+	return 0;
+}
+
+inline Block_Buffer* Master_Manager::pop_player_load_data_buffer(void) {
+	return player_data_list_.pop_front();
+}
+
+inline int Master_Manager::push_drop_player_cid(int cid) {
+	drop_player_cid_list_.push_back(cid);
+	return 0;
+}
+
+inline int Master_Manager::pop_drop_player_cid(void) {
+	if (drop_player_cid_list_.empty()) {
+		return 0;
+	}
+	return drop_player_cid_list_.pop_front();
 }
 
 inline void Master_Manager::set_msg_count_onoff(int v) {

@@ -16,7 +16,7 @@ function Game_Player() {
 	this.shop = new Shop();
 }
 
-	//玩家上线，加载数据
+//玩家上线，加载数据
 Game_Player.prototype.load_player_data = function(buffer) {
 	if (buffer == null) {
 		return;
@@ -38,7 +38,7 @@ Game_Player.prototype.load_player_data = function(buffer) {
 	
 	print('------load_data,status:', status, ' role_id:', this.player_info.role_id, ' role_name:', this.player_info.role_name);
 	this.cid = gate_cid * 10000 + player_cid;
-	this.cplayer = get_player_by_cid(gate_cid, player_cid);
+	this.cplayer = get_game_player_by_cid(gate_cid, player_cid);
 	
 	game_player_cid_map.insert(this.cid, this);
 	game_player_role_id_map.insert(this.player_info.role_id, this);
@@ -54,7 +54,7 @@ Game_Player.prototype.save_player_data = function() {
 }
 
 Game_Player.prototype.sync_player_data = function() {
-	var buffer = this.cplayer.get_player_data_buffer();
+	var buffer = this.cplayer.get_save_data_buffer();
 	if (buffer == null) {
 		return;
 	}
@@ -128,10 +128,10 @@ Game_Player.prototype.add_exp = function(exp) {
 	var msg_active = new MSG_300001();
 	msg_active.player_level = this.player_info.level;
 	msg_active.player_exp = this.player_info.exp;
-	var buf = pop_buffer();
+	var buf = pop_game_buffer();
 	msg_active.serialize(buf);
 	this.cplayer.respond_success_result(Msg_Active.ACTIVE_PLAYER_INFO, buf);
-	push_buffer(buf);
+	push_game_buffer(buf);
 	this.set_data_change(Data_Change.PLAYER_CHANGE);
 }
 	
@@ -151,10 +151,10 @@ Game_Player.prototype.update_vip = function(charge_id) {
 	var msg_active = new MSG_300002();
 	msg_active.vip_level = this.player_info.vip_level;
 	msg_active.vip_exp = this.player_info.vip_exp;
-	var buf = pop_buffer();
+	var buf = pop_game_buffer();
 	msg_active.serialize(buf);
 	this.cplayer.respond_success_result(Msg_Active.ACTIVE_VIP_INFO, buf);
-	push_buffer(buf);
+	push_game_buffer(buf);
 	this.set_data_change(Data_Change.PLAYER_CHANGE);
 }
 	
@@ -184,10 +184,10 @@ Game_Player.prototype.buy_vitality = function() {
 	this.player_info.vitality = Math.min(Math.max(0, (this.player_info.vitality + 120)), maxVit);
 	
 	//4.返回消息给客户端
-	var buf = pop_buffer();
+	var buf = pop_game_buffer();
 	buf.write_int32(this.player_info.vitality);
 	this.cplayer.respond_success_result(Msg_Res.RES_BUY_VITALITY, buf);
-	push_buffer(buf);
+	push_game_buffer(buf);
 	this.set_data_change(Data_Change.PLAYER_CHANGE);
 }
 
@@ -217,10 +217,10 @@ Game_Player.prototype.exchange_money = function(buffer){
 	this.player_info.exchange_count++;
 
 	//返回消息给客户端
-	var buf = pop_buffer();
+	var buf = pop_game_buffer();
 	msg_res.serialize(buf);
 	this.cplayer.respond_success_result(Msg_Res.RES_EXCHANGE_MONEY, buf);
-	push_buffer(buf);
+	push_game_buffer(buf);
 	
 	this.set_data_change(Data_Change.PLAYER_CHANGE);
 }

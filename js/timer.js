@@ -9,7 +9,7 @@ function Timer() {
 	var timer_id = 1;
 	
 	this.register_timer = function(interval, next_tick, handler) {
-		register_timer(timer_id, interval, next_tick);
+		register_game_timer(timer_id, interval, next_tick);
 		timer_map.insert(timer_id, handler);
 		timer_id++;
 	}

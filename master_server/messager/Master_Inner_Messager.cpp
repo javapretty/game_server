@@ -78,13 +78,11 @@ int Master_Inner_Messager::game_master_player_signin(int game_cid, int player_ci
 			return -1;
 		}
 
-		LOG_INFO("master player sign in first, game_cid:%d, playe_cid:%d, role_id:%ld, role_name:%s",
-				game_cid, player_cid, msg.player_info.role_id, msg.player_info.role_name.c_str());
-
 		player->reset();
 		player->set_game_cid(game_cid);
 		player->set_player_cid(player_cid);
-		player->set_master_player_info(msg.player_info);
+		player->load_player(msg.player_info);
+		player->sign_in();
 		MASTER_MANAGER->bind_game_cid_master_player(game_cid * 10000 + player_cid, *player);
 		MASTER_MANAGER->bind_role_id_master_player(msg.player_info.role_id, *player);
 		MASTER_MANAGER->bind_role_name_master_player(msg.player_info.role_name, *player);
