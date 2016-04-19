@@ -21,11 +21,13 @@ void Server_Conf::init_server_conf(void) {
 	server_ip = "127.0.0.1";
 	log_port = server_conf["log_server"]["port"].asInt();
 	db_port = server_conf["db_server"]["port"].asInt();
+	login_client_network_protocol = server_conf["login_server"]["client_network_protocol"].asInt();
 	login_client_port = server_conf["login_server"]["client_port"].asInt();
 	login_gate_port = server_conf["login_server"]["gate_port"].asInt();
 	master_gate_port = server_conf["master_server"]["gate_port"].asInt();
 	master_game_port = server_conf["master_server"]["game_port"].asInt();
 	game_gate_port = server_conf["game_server"]["gate_port"].asInt();
+	gate_client_network_protocol = server_conf["gate_server"]["client_network_protocol"].asInt();
 	gate_client_port = server_conf["gate_server"]["client_port"].asInt();
 }
 

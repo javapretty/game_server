@@ -21,11 +21,13 @@ struct Server_Conf {
 	std::string server_ip;
 	int log_port;
 	int db_port;
+	int login_client_network_protocol;
 	int login_client_port;
 	int login_gate_port;
 	int master_gate_port;
 	int master_game_port;
 	int game_gate_port;
+	int gate_client_network_protocol;
 	int gate_client_port;
 
 	void init_server_conf(void);
