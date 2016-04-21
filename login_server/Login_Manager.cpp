@@ -279,6 +279,7 @@ int Login_Manager::player_tick(Time_Value &now) {
 	for (Login_Player_Account_Map::iterator it = t_accouont_map.begin(); it != t_accouont_map.end(); ++it) {
 		if (it->second){
 			if (now.sec() - it->second->login_player_info().session_tick > 10) {
+				LOG_INFO("client drop from login, cid:%d, account:%s", it->second->get_cid(), it->second->login_player_info().account.c_str());
 				LOGIN_CLIENT_SERVER->receive().push_drop(it->second->get_cid());	//断开客户端与login的连接
 				it->second->link_close();
 			}

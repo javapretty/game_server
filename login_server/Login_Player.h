@@ -52,6 +52,8 @@ inline int Login_Player::link_close() {
 		return 0;
 
 	recycle_tick_.set(Recycle_Tick::RECYCLE);
+	//修改session_tick的值，防止login_manager对同一个链接重复push_drop
+	player_info_.session_tick += 10;
 	return 0;
 }
 
