@@ -29,18 +29,18 @@ Local<Context> Create_Context(Isolate* isolate) {
 	global->Set(String::NewFromUtf8(isolate, "sleep", NewStringType::kNormal).ToLocalChecked(),
 		FunctionTemplate::New(isolate, sleep));
 
-	global->Set(String::NewFromUtf8(isolate, "pop_game_buffer", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, pop_game_buffer));
-
-	global->Set(String::NewFromUtf8(isolate, "push_game_buffer", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, push_game_buffer));
-
 	//////////////////////////////////GameServer相关函数////////////////////////////////
 	global->Set(String::NewFromUtf8(isolate, "register_game_timer", NewStringType::kNormal).ToLocalChecked(),
 					FunctionTemplate::New(isolate, register_game_timer));
 
 	global->Set(String::NewFromUtf8(isolate, "get_game_timer_id", NewStringType::kNormal).ToLocalChecked(),
 				FunctionTemplate::New(isolate, get_game_timer_id));
+
+	global->Set(String::NewFromUtf8(isolate, "pop_game_buffer", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, pop_game_buffer));
+
+	global->Set(String::NewFromUtf8(isolate, "push_game_buffer", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, push_game_buffer));
 
 	global->Set(String::NewFromUtf8(isolate, "send_game_buffer_to_db", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, send_game_buffer_to_db));
@@ -69,6 +69,12 @@ Local<Context> Create_Context(Isolate* isolate) {
 
 	global->Set(String::NewFromUtf8(isolate, "get_master_timer_id", NewStringType::kNormal).ToLocalChecked(),
 				FunctionTemplate::New(isolate, get_master_timer_id));
+
+	global->Set(String::NewFromUtf8(isolate, "pop_master_buffer", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, pop_master_buffer));
+
+	global->Set(String::NewFromUtf8(isolate, "push_master_buffer", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, push_master_buffer));
 
 	global->Set(String::NewFromUtf8(isolate, "send_master_buffer_to_db", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, send_master_buffer_to_db));

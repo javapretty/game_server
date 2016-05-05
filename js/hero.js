@@ -42,7 +42,7 @@ Hero.prototype.fetch_hero_info = function() {
     });
     var buf = pop_game_buffer();
     msg_res.serialize(buf);
-	this.game_player.cplayer.respond_success_result(Msg_Res.RES_FETCH_HERO_INFO, buf);
+	this.game_player.cplayer.respond_success_result(Msg_GC.RES_FETCH_HERO_INFO, buf);
 	push_game_buffer(buf);
 }
 	
@@ -53,16 +53,16 @@ Hero.prototype.add_hero_star = function(buffer) {
 	msg_req.deserialize(buffer); 
 	var hero_detail = this.hero_info.hero_map.get(msg_req.hero_id);
 	if (hero_detail == null) {
-		return this.game_player.cplayer.respond_error_result(Msg_Res.RES_ADD_HERO_STAR, Error_Code.ERROR_CLIENT_PARAM);
+		return this.game_player.cplayer.respond_error_result(Msg_GC.RES_ADD_HERO_STAR, Error_Code.ERROR_CLIENT_PARAM);
 	}
 	
 	var hero_obj = config.hero_json[msg_req.hero_id];
     if (hero_obj == null || hero_detail.level >= hero_obj.star_item_amount.length) {
-    	return this.game_player.cplayer.respond_error_result(Msg_Res.RES_ADD_HERO_STAR, Error_Code.ERROR_CONFIG_NOT_EXIST);
+    	return this.game_player.cplayer.respond_error_result(Msg_GC.RES_ADD_HERO_STAR, Error_Code.ERROR_CONFIG_NOT_EXIST);
     }
     	
     if (hero_detail.level == hero_obj.star_item_amount.length) {
-    	return this.game_player.cplayer.respond_error_result(Msg_Res.RES_ADD_HERO_STAR, Error_Code.ERROR_CLIENT_OPERATE);
+    	return this.game_player.cplayer.respond_error_result(Msg_GC.RES_ADD_HERO_STAR, Error_Code.ERROR_CLIENT_OPERATE);
     }
     	
 	var item = new Item_Info();
@@ -72,7 +72,7 @@ Hero.prototype.add_hero_star = function(buffer) {
 	item_array.push(item);
   	var result = this.game_player.bag.bag_erase_item(item_array);
 	if (result != 0) {
-    	return this.game_player.cplayer.respond_error_result(Msg_Res.RES_ADD_HERO_STAR, result);
+    	return this.game_player.cplayer.respond_error_result(Msg_GC.RES_ADD_HERO_STAR, result);
 	}
 	hero_detail.star++;
 	this.refresh_hero_property(hero_detail);
@@ -83,7 +83,7 @@ Hero.prototype.add_hero_star = function(buffer) {
 	msg_res.star = hero_detail.star;
 	var buf = pop_game_buffer();
 	msg_res.serialize(buf);
-	this.game_player.cplayer.respond_success_result(Msg_Res.RES_ADD_HERO_STAR, buf);
+	this.game_player.cplayer.respond_success_result(Msg_GC.RES_ADD_HERO_STAR, buf);
 	push_game_buffer(buf);
 }
 	
@@ -94,7 +94,7 @@ Hero.prototype.add_hero_quality = function(buffer) {
 	msg_req.deserialize(buffer); 
 	var hero_detail = this.hero_info.hero_map.get(msg_req.hero_id);
 	if (hero_detail == null) {
-		return this.game_player.cplayer.respond_error_result(Msg_Res.RES_ADD_HERO_QUALITY, Error_Code.ERROR_CLIENT_PARAM);
+		return this.game_player.cplayer.respond_error_result(Msg_GC.RES_ADD_HERO_QUALITY, Error_Code.ERROR_CLIENT_PARAM);
 	}
 	
 	var can_add = true;
@@ -105,7 +105,7 @@ Hero.prototype.add_hero_quality = function(buffer) {
 		}
 	}
 	if (!can_add) {
-		return this.game_player.cplayer.respond_error_result(Msg_Res.RES_ADD_HERO_QUALITY, Error_Code.ERROR_CLIENT_OPERATE);
+		return this.game_player.cplayer.respond_error_result(Msg_GC.RES_ADD_HERO_QUALITY, Error_Code.ERROR_CLIENT_OPERATE);
 	}
 	//英雄突破，装备清零
 	for (var i = 0; i < hero_detail.equip_info.length; ++i) {
@@ -120,7 +120,7 @@ Hero.prototype.add_hero_quality = function(buffer) {
 	msg_res.quality = hero_detail.quality;
 	var buf = pop_game_buffer();
 	msg_res.serialize(buf);
-	this.game_player.cplayer.respond_success_result(Msg_Res.RES_ADD_HERO_QUALITY, buf);
+	this.game_player.cplayer.respond_success_result(Msg_GC.RES_ADD_HERO_QUALITY, buf);
 	push_game_buffer(buf);
 }
 	
@@ -131,7 +131,7 @@ Hero.prototype.add_equip_level = function(buffer) {
 	msg_req.deserialize(buffer); 
 	var hero_detail = this.hero_info.hero_map.get(msg_req.hero_id);
 	if (hero_detail == null || msg_req.equip_index < 0 || msg_req.equip_index >= hero_detail.equip_info.length) {
-		return this.game_player.cplayer.respond_error_result(Msg_Res.RES_ADD_EQUIP_LEVEL, Error_Code.ERROR_CLIENT_PARAM);
+		return this.game_player.cplayer.respond_error_result(Msg_GC.RES_ADD_EQUIP_LEVEL, Error_Code.ERROR_CLIENT_PARAM);
 	}
 	
 	var equip = hero_detail.equip_info[msg_req.equip_index];
@@ -139,12 +139,12 @@ Hero.prototype.add_equip_level = function(buffer) {
 	var json_obj = JSON.parse(json_str);
   	var equip_obj = json_obj[equip.item_id];
     if (equip_obj == null || equip.level >= equip_obj.level_exp.length) {
-		return this.game_player.cplayer.respond_error_result(Msg_Res.RES_ADD_EQUIP_LEVEL, Error_Code.ERROR_CONFIG_NOT_EXIST);
+		return this.game_player.cplayer.respond_error_result(Msg_GC.RES_ADD_EQUIP_LEVEL, Error_Code.ERROR_CONFIG_NOT_EXIST);
     }
     	
     var result = this.game_player.bag.bag_erase_item(msg_req.item_info);
 	if (result != 0) {
-		return this.game_player.cplayer.respond_error_result(Msg_Res.RES_ADD_EQUIP_LEVEL, result);
+		return this.game_player.cplayer.respond_error_result(Msg_GC.RES_ADD_EQUIP_LEVEL, result);
 	}
     	
     //增加经验升级
@@ -165,7 +165,7 @@ Hero.prototype.add_equip_level = function(buffer) {
 	msg_res.equip_exp = equip.exp;
 	var buf = pop_game_buffer();
 	msg_res.serialize(buf);
-	this.game_player.cplayer.respond_success_result(Msg_Res.RES_ADD_EQUIP_LEVEL, buf);
+	this.game_player.cplayer.respond_success_result(Msg_GC.RES_ADD_EQUIP_LEVEL, buf);
 	push_game_buffer(buf);
 }
 	
@@ -176,25 +176,25 @@ Hero.prototype.equip_on_off = function(buffer) {
 	msg_req.deserialize(buffer); 
 	var hero_detail = this.hero_info.hero_map.get(msg_req.hero_id);
 	if (hero_detail == null || msg_req.equip_index < 0 || msg_req.equip_index >= hero_detail.equip_info.length) {
-		return this.game_player.cplayer.respond_error_result(Msg_Res.RES_EQUIP_ON_OFF, Error_Code.ERROR_CLIENT_PARAM);
+		return this.game_player.cplayer.respond_error_result(Msg_GC.RES_EQUIP_ON_OFF, Error_Code.ERROR_CLIENT_PARAM);
 	}
 	
 	if (msg_req.on) {
 		//穿装备
 		var equip_obj = config.item_json[msg_req.equip_info.item_id];
 		if (equip_obj == null) {
-			return this.game_player.cplayer.respond_error_result(Msg_Res.RES_EQUIP_ON_OFF, Error_Code.ERROR_CONFIG_NOT_EXIST);
+			return this.game_player.cplayer.respond_error_result(Msg_GC.RES_EQUIP_ON_OFF, Error_Code.ERROR_CONFIG_NOT_EXIST);
 		}
 		//判断装备等级，部位
 		if (equip_obj.level > hero_detail.level || equip_obj.part != msg_req.equip_index) {
-			return this.game_player.cplayer.respond_error_result(Msg_Res.RES_EQUIP_ON_OFF, Error_Code.ERROR_CLIENT_OPERATE);
+			return this.game_player.cplayer.respond_error_result(Msg_GC.RES_EQUIP_ON_OFF, Error_Code.ERROR_CLIENT_OPERATE);
 		}
 		
 		var item_array = new Array();
 		item_array.push(msg_req.equip_info);
 		var result = this.game_player.bag.bag_erase_item(item_array);
 		if (result != 0) {
-			return this.game_player.cplayer.respond_error_result(Msg_Res.RES_EQUIP_ON_OFF, result);
+			return this.game_player.cplayer.respond_error_result(Msg_GC.RES_EQUIP_ON_OFF, result);
 		}
 		
 		hero_detail.equip_info[msg_req.equip_index] = msg_req.equip_info;
@@ -204,7 +204,7 @@ Hero.prototype.equip_on_off = function(buffer) {
 		item_array.push(hero_detail.equip_info[msg_req.equip_index]);
 		var result = this.game_player.bag.bag_insert_item(item_array);
 		if (result != 0) {
-			return this.game_player.cplayer.respond_error_result(Msg_Res.RES_EQUIP_ON_OFF, result);
+			return this.game_player.cplayer.respond_error_result(Msg_GC.RES_EQUIP_ON_OFF, result);
 		}
 		hero_detail.equip_info[msg_req.equip_index] = new Item_Info();
 	}
@@ -217,7 +217,7 @@ Hero.prototype.equip_on_off = function(buffer) {
 	msg_res.item_info = msg_req.item_info;
 	var buf = pop_game_buffer();
 	msg_res.serialize(buf);
-	this.game_player.cplayer.respond_success_result(Msg_Res.RES_EQUIP_ON_OFF, buf);
+	this.game_player.cplayer.respond_success_result(Msg_GC.RES_EQUIP_ON_OFF, buf);
 	push_game_buffer(buf);
 }
 	
@@ -225,14 +225,14 @@ Hero.prototype.add_skill_level = function(buffer) {
 	print('add_skill_level, role_id:', this.game_player.player_info.role_id, " role_name:", this.game_player.player_info.role_name, " util.now_msec:", util.now_msec());
 	
 	if (this.game_player.player_info.skill_point <= 0) {
-		return this.game_player.cplayer.respond_error_result(Msg_Res.RES_ADD_SKILL_LEVEL, Error_Code.ERROR_SKILL_POINT_NOT_ENOUGH);
+		return this.game_player.cplayer.respond_error_result(Msg_GC.RES_ADD_SKILL_LEVEL, Error_Code.ERROR_SKILL_POINT_NOT_ENOUGH);
 	}
 	
 	var msg_req = new MSG_120305();
 	msg_req.deserialize(buffer); 
 	var hero_detail = this.hero_info.hero_map.get(msg_req.hero_id);
 	if (hero_detail == null) {
-		return this.game_player.cplayer.respond_error_result(Msg_Res.RES_ADD_SKILL_LEVEL, Error_Code.ERROR_CLIENT_PARAM);
+		return this.game_player.cplayer.respond_error_result(Msg_GC.RES_ADD_SKILL_LEVEL, Error_Code.ERROR_CLIENT_PARAM);
 	}
 	
 	for (var i = 0; i < hero_detail.skill_info.length; ++i) {
@@ -249,7 +249,7 @@ Hero.prototype.add_skill_level = function(buffer) {
 	msg_res.skill_id = msg_req.skill_id + 1;
 	var buf = pop_game_buffer();
 	msg_res.serialize(buf);
-	this.game_player.cplayer.respond_success_result(Msg_Res.RES_ADD_SKILL_LEVEL, buf);
+	this.game_player.cplayer.respond_success_result(Msg_GC.RES_ADD_SKILL_LEVEL, buf);
 	push_game_buffer(buf);
 }
 	

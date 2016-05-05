@@ -4,52 +4,78 @@
 * [Version 1.3]
 */
 
-if (typeof Msg_Req == "undefined") {
-	var Msg_Req = {};
-	Msg_Req.REQ_FETCH_ROLE_INFO = 120001; //获取角色信息
-	Msg_Req.REQ_CREATE_ROLE = 120002; //创建角色
-	Msg_Req.REQ_BUY_VITALITY = 120003; //购买体力
-	Msg_Req.REQ_EXCHANGE_MONEY = 120004; //兑换聚宝盆
-	Msg_Req.REQ_FETCH_BAG_INFO = 120100; //获取背包信息
-	Msg_Req.REQ_USE_ITEM = 120101; //使用物品
-	Msg_Req.REQ_SELL_ITEM = 120102; //出售物品
-	Msg_Req.REQ_FETCH_MAIL_INFO = 120200; //获取邮件信息
-	Msg_Req.REQ_PICKUP_MAIL = 120201; //收取附件和金钱
-	Msg_Req.REQ_DEL_MAIL = 120202; //删除邮件
-	Msg_Req.REQ_SEND_MAIL = 120203; //发送邮件
-	Msg_Req.REQ_FETCH_HERO_INFO = 120300; //获取英雄信息
-	Msg_Req.REQ_ADD_HERO_STAR = 120301; //提高英雄星级
-	Msg_Req.REQ_ADD_HERO_QUALITY = 120302; //提高英雄品质
-	Msg_Req.REQ_ADD_EQUIP_LEVEL = 120303; //提高英雄装备等级
-	Msg_Req.REQ_EQUIP_ON_OFF = 120304; //英雄装备穿脱
-	Msg_Req.REQ_ADD_SKILL_LEVEL = 120305; //提高英雄技能等级
-	Msg_Req.REQ_FETCH_SHOP_INFO = 120400; //拉取商店信息
-	Msg_Req.REQ_BUY_PRODUCT = 120401; //购买物品
-	Msg_Req.REQ_REFRESH_SHOP = 120402; //刷新商店
+if (typeof Msg_CL == "undefined") {
+	var Msg_CL = {};
+	Msg_CL.REQ_CLIENT_REGISTER = 100000; //注册
+	Msg_CL.REQ_CLIENT_LOGIN = 100001; //登录
+	Msg_CL.REQ_CONNECT_GATE = 100002; //客户端登录gate
+	Msg_CL.REQ_HEARTBEAT = 100003; //心跳
 }
 
-if (typeof Msg_Res == "undefined") {
-	var Msg_Res = {};
-	Msg_Res.RES_FETCH_ROLE_INFO = 520001; //获取角色信息(返回)
-	Msg_Res.RES_CREATE_ROLE = 520002; //创建角色(返回)
-	Msg_Res.RES_BUY_VITALITY = 520003; //购买体力(返回)
-	Msg_Res.RES_EXCHANGE_MONEY = 520004; //兑换聚宝盆(返回)
-	Msg_Res.RES_FETCH_BAG_INFO = 520100; //获取背包信息(返回)
-	Msg_Res.RES_USE_ITEM = 520101; //使用物品(返回)
-	Msg_Res.RES_SELL_ITEM = 520102; //出售物品(返回)
-	Msg_Res.RES_FETCH_MAIL_INFO = 520200; //获取邮件信息(返回)
-	Msg_Res.RES_PICKUP_MAIL = 520201; //收取附件(返回)
-	Msg_Res.RES_DEL_MAIL = 520202; //删除邮件(返回)
-	Msg_Res.RES_SEND_MAIL = 520203; //发送邮件(返回)
-	Msg_Res.RES_FETCH_HERO_INFO = 520300; //获取英雄信息(返回)
-	Msg_Res.RES_ADD_HERO_STAR = 520301; //提高英雄星级(返回)
-	Msg_Res.RES_ADD_HERO_QUALITY = 520302; //提高英雄品质(返回)
-	Msg_Res.RES_ADD_EQUIP_LEVEL = 520303; //提高英雄装备等级(返回)
-	Msg_Res.RES_EQUIP_ON_OFF = 520304; //英雄装备穿脱(返回)
-	Msg_Res.RES_ADD_SKILL_LEVEL = 520305; //提高英雄技能等级(返回)
-	Msg_Res.RES_FETCH_SHOP_INFO = 520400; //拉取商店信息(返回)
-	Msg_Res.RES_BUY_PRODUCT = 520401; //购买物品(返回)
-	Msg_Res.RES_REFRESH_SHOP = 520402; //刷新商店(返回)
+if (typeof Msg_LC == "undefined") {
+	var Msg_LC = {};
+	Msg_LC.RES_CLIENT_REGISTER = 500000; //注册(返回)
+	Msg_LC.RES_CLIENT_LOGIN = 500001; //登录(返回)
+	Msg_LC.RES_CONNECT_GATE = 500002; //客户端登录gate(返回)
+	Msg_LC.RES_HEARTBEAT = 500003; //心跳(返回)
+}
+
+if (typeof Msg_CM == "undefined") {
+	var Msg_CM = {};
+	Msg_CM.REQ_SEND_CHAT_INFO = 110001; //发送世界聊天消息
+}
+
+if (typeof Msg_MC == "undefined") {
+	var Msg_MC = {};
+	Msg_MC.RES_SEND_CHAT_INFO = 510001; //发送世界聊天消息(返回)
+}
+
+if (typeof Msg_CG == "undefined") {
+	var Msg_CG = {};
+	Msg_CG.REQ_FETCH_ROLE_INFO = 120001; //获取角色信息
+	Msg_CG.REQ_CREATE_ROLE = 120002; //创建角色
+	Msg_CG.REQ_BUY_VITALITY = 120003; //购买体力
+	Msg_CG.REQ_EXCHANGE_MONEY = 120004; //兑换聚宝盆
+	Msg_CG.REQ_FETCH_BAG_INFO = 120100; //获取背包信息
+	Msg_CG.REQ_USE_ITEM = 120101; //使用物品
+	Msg_CG.REQ_SELL_ITEM = 120102; //出售物品
+	Msg_CG.REQ_FETCH_MAIL_INFO = 120200; //获取邮件信息
+	Msg_CG.REQ_PICKUP_MAIL = 120201; //收取附件和金钱
+	Msg_CG.REQ_DEL_MAIL = 120202; //删除邮件
+	Msg_CG.REQ_SEND_MAIL = 120203; //发送邮件
+	Msg_CG.REQ_FETCH_HERO_INFO = 120300; //获取英雄信息
+	Msg_CG.REQ_ADD_HERO_STAR = 120301; //提高英雄星级
+	Msg_CG.REQ_ADD_HERO_QUALITY = 120302; //提高英雄品质
+	Msg_CG.REQ_ADD_EQUIP_LEVEL = 120303; //提高英雄装备等级
+	Msg_CG.REQ_EQUIP_ON_OFF = 120304; //英雄装备穿脱
+	Msg_CG.REQ_ADD_SKILL_LEVEL = 120305; //提高英雄技能等级
+	Msg_CG.REQ_FETCH_SHOP_INFO = 120400; //拉取商店信息
+	Msg_CG.REQ_BUY_PRODUCT = 120401; //购买物品
+	Msg_CG.REQ_REFRESH_SHOP = 120402; //刷新商店
+}
+
+if (typeof Msg_GC == "undefined") {
+	var Msg_GC = {};
+	Msg_GC.RES_FETCH_ROLE_INFO = 520001; //获取角色信息(返回)
+	Msg_GC.RES_CREATE_ROLE = 520002; //创建角色(返回)
+	Msg_GC.RES_BUY_VITALITY = 520003; //购买体力(返回)
+	Msg_GC.RES_EXCHANGE_MONEY = 520004; //兑换聚宝盆(返回)
+	Msg_GC.RES_FETCH_BAG_INFO = 520100; //获取背包信息(返回)
+	Msg_GC.RES_USE_ITEM = 520101; //使用物品(返回)
+	Msg_GC.RES_SELL_ITEM = 520102; //出售物品(返回)
+	Msg_GC.RES_FETCH_MAIL_INFO = 520200; //获取邮件信息(返回)
+	Msg_GC.RES_PICKUP_MAIL = 520201; //收取附件(返回)
+	Msg_GC.RES_DEL_MAIL = 520202; //删除邮件(返回)
+	Msg_GC.RES_SEND_MAIL = 520203; //发送邮件(返回)
+	Msg_GC.RES_FETCH_HERO_INFO = 520300; //获取英雄信息(返回)
+	Msg_GC.RES_ADD_HERO_STAR = 520301; //提高英雄星级(返回)
+	Msg_GC.RES_ADD_HERO_QUALITY = 520302; //提高英雄品质(返回)
+	Msg_GC.RES_ADD_EQUIP_LEVEL = 520303; //提高英雄装备等级(返回)
+	Msg_GC.RES_EQUIP_ON_OFF = 520304; //英雄装备穿脱(返回)
+	Msg_GC.RES_ADD_SKILL_LEVEL = 520305; //提高英雄技能等级(返回)
+	Msg_GC.RES_FETCH_SHOP_INFO = 520400; //拉取商店信息(返回)
+	Msg_GC.RES_BUY_PRODUCT = 520401; //购买物品(返回)
+	Msg_GC.RES_REFRESH_SHOP = 520402; //刷新商店(返回)
 }
 
 if (typeof Msg_Db == "undefined") {

@@ -95,7 +95,7 @@ function process_master_client_buffer(buffer) {
 	}
 	
 	switch(msg_id) {
-	case Msg_Req.REQ_SEND_CHAT_INFO:
+	case Msg_CM.REQ_SEND_CHAT_INFO:
 		master_player.send_chat_info(buffer);
 		break;
 	default:

@@ -74,7 +74,7 @@ int Game_Player::save_player(bool is_logout) {
 	}
 
 	if (is_logout) {
-		player_data_.status = Player_Data_Ctl::ROLE_SAVE_OFFLINE;
+		player_data_.status = ROLE_SAVE_OFFLINE;
 		player_data_.player_info.last_sign_out_time = GAME_MANAGER->tick_time().sec();
 	} else {
 		if (player_data_.change_module.size() <= 0) {

@@ -164,18 +164,18 @@ Game_Player.prototype.buy_vitality = function() {
 	//1.检查可以购买体力次数
 	var max_buy_times = config.vip_json[this.player_info.vip_level].max_buy_vitality;
 	if (this.player_info.buy_vitality_times >= max_buy_times){
-		return this.cplayer.respond_error_result(Msg_Res.RES_BUY_VITALITY, Error_Code.ERROR_VITALITY_TIMES_NOT_ENOUGH);
+		return this.cplayer.respond_error_result(Msg_GC.RES_BUY_VITALITY, Error_Code.ERROR_VITALITY_TIMES_NOT_ENOUGH);
 	}
 
 	//2.更新元宝
 	var buy_vitality_gold = config.util_json.buy_vitality_gold;
 	if (buy_vitality_gold == null || this.player_info.buy_vitality_times >= buy_vitality_gold.length) {
-		return this.cplayer.respond_error_result(Msg_Res.RES_BUY_VITALITY, Error_Code.ERROR_CONFIG_NOT_EXIST);
+		return this.cplayer.respond_error_result(Msg_GC.RES_BUY_VITALITY, Error_Code.ERROR_CONFIG_NOT_EXIST);
 	}	
 	var cost_gold = buy_vitality_gold[this.player_info.buy_vitality_times];
 	var result = this.bag.bag_sub_money(0, cost_gold);
 	if (result != 0) {
-		return this.cplayer.respond_error_result(Msg_Res.RES_BUY_VITALITY, Error_Code.ERROR_GOLD_NOT_ENOUGH);
+		return this.cplayer.respond_error_result(Msg_GC.RES_BUY_VITALITY, Error_Code.ERROR_GOLD_NOT_ENOUGH);
 	}
 	
 	//3.更新体力(120应该为配置)
@@ -186,7 +186,7 @@ Game_Player.prototype.buy_vitality = function() {
 	//4.返回消息给客户端
 	var buf = pop_game_buffer();
 	buf.write_int32(this.player_info.vitality);
-	this.cplayer.respond_success_result(Msg_Res.RES_BUY_VITALITY, buf);
+	this.cplayer.respond_success_result(Msg_GC.RES_BUY_VITALITY, buf);
 	push_game_buffer(buf);
 	this.set_data_change(Data_Change.PLAYER_CHANGE);
 }
@@ -196,13 +196,13 @@ Game_Player.prototype.exchange_money = function(buffer){
 	
 	//检查是否还有剩余次数
 	if(this.player_info.exchange_count >= config.vip_json[this.player_info.vip_level].exchange_count)
-		return this.cplayer.respond_error_result(Msg_Res.RES_EXCHANGE_MONEY, Error_Code.ERROR_EXCHANGE_COUNT_NOT_ENOUGH);
+		return this.cplayer.respond_error_result(Msg_GC.RES_EXCHANGE_MONEY, Error_Code.ERROR_EXCHANGE_COUNT_NOT_ENOUGH);
 	
 	var cost = config.util_json.exchange_array[this.player_info.exchange_count].gold;
 	//元宝是否足够
 	var error = this.bag.bag_sub_money(0, cost);
 	if(error != 0)
-		return this.cplayer.respond_error_result(Msg_Res.RES_EXCHANGE_MONEY, error);
+		return this.cplayer.respond_error_result(Msg_GC.RES_EXCHANGE_MONEY, error);
 	
 	var add_copper = config.util_json.exchange_array[this.player_info.exchange_count].copper;
 	var msg_res = new MSG_520004();
@@ -219,7 +219,7 @@ Game_Player.prototype.exchange_money = function(buffer){
 	//返回消息给客户端
 	var buf = pop_game_buffer();
 	msg_res.serialize(buf);
-	this.cplayer.respond_success_result(Msg_Res.RES_EXCHANGE_MONEY, buf);
+	this.cplayer.respond_success_result(Msg_GC.RES_EXCHANGE_MONEY, buf);
 	push_game_buffer(buf);
 	
 	this.set_data_change(Data_Change.PLAYER_CHANGE);

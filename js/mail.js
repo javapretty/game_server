@@ -28,7 +28,7 @@ Mail.prototype.fetch_mail_info = function() {
     	
 	var buf = pop_game_buffer();
 	msg_res.serialize(buf);
-	this.game_player.cplayer.respond_success_result(Msg_Res.RES_FETCH_MAIL_INFO, buf);
+	this.game_player.cplayer.respond_success_result(Msg_GC.RES_FETCH_MAIL_INFO, buf);
 	push_game_buffer(buf);
 }
 
@@ -49,7 +49,7 @@ Mail.prototype.pickup_mail = function(buffer) {
 	} else {
 		var mail_detail = this.mail_info.mail_map.get(msg_req.mail_id);
 		if (mail_detail == null) {
-			return this.game_player.cplayer.respond_error_result(Msg_Res.RES_PICKUP_MAIL, Error_Code.ERROR_CLIENT_PARAM);
+			return this.game_player.cplayer.respond_error_result(Msg_GC.RES_PICKUP_MAIL, Error_Code.ERROR_CLIENT_PARAM);
 		}
 		
 		var result = this.pickup_item_money(value);
@@ -60,7 +60,7 @@ Mail.prototype.pickup_mail = function(buffer) {
 	
 	var buf = pop_game_buffer();
 	msg_res.serialize(buf);
-	this.game_player.cplayer.respond_success_result(Msg_Res.RES_PICKUP_MAIL, buf);
+	this.game_player.cplayer.respond_success_result(Msg_GC.RES_PICKUP_MAIL, buf);
 	push_game_buffer(buf);
 	
 	this.game_player.set_data_change(Data_Change.MAIL_CHANGE);
@@ -84,7 +84,7 @@ Mail.prototype.delete_mail = function(buffer) {
 	} else {
 		var mail_detail = this.mail_info.mail_map.get(msg_req.mail_id);
 		if (mail_detail == null) {
-			return this.game_player.cplayer.respond_error_result(Msg_Res.RES_DEL_MAIL, Error_Code.ERROR_CLIENT_PARAM);
+			return this.game_player.cplayer.respond_error_result(Msg_GC.RES_DEL_MAIL, Error_Code.ERROR_CLIENT_PARAM);
 		}
 		
 		var result = this.pickup_item_money(value);
@@ -96,7 +96,7 @@ Mail.prototype.delete_mail = function(buffer) {
 	
 	var buf = pop_game_buffer();
 	msg_res.serialize(buf);
-	this.game_player.cplayer.respond_success_result(Msg_Res.RES_DEL_MAIL, buf);
+	this.game_player.cplayer.respond_success_result(Msg_GC.RES_DEL_MAIL, buf);
 	push_game_buffer(buf);
 	
 	this.game_player.set_data_change(Data_Change.MAIL_CHANGE);
@@ -109,19 +109,19 @@ Mail.prototype.send_mail = function(buffer) {
 	msg_req.deserialize(buffer);	
 	var receiver = get_game_player_by_name(msg_req.receiver_name);
 	if (receiver == null) {
-		return this.game_player.cplayer.respond_error_result(Msg_Res.RES_SEND_MAIL, Error_Code.ERROR_ROLE_NOT_EXIST);
+		return this.game_player.cplayer.respond_error_result(Msg_GC.RES_SEND_MAIL, Error_Code.ERROR_ROLE_NOT_EXIST);
 	}
 	var receiver_id = receiver.role_id();
 	if (receiver_id == this.game_player.player_info.role_id || msg_req.mail_detail.mail_title.length > 64 || msg_req.mail_detail.mail_content.length > 512)
-		return this.game_player.cplayer.respond_error_result(Msg_Res.RES_SEND_MAIL, Error_Code.ERROR_CLIENT_PARAM);
+		return this.game_player.cplayer.respond_error_result(Msg_GC.RES_SEND_MAIL, Error_Code.ERROR_CLIENT_PARAM);
 	
 	var result = this.game_player.bag.bag_sub_money(msg_req.mail_detail.copper, msg_req.mail_detail.gold);
 	if (result != 0) {
-		return this.game_player.cplayer.respond_error_result(Msg_Res.RES_SEND_MAIL, result);
+		return this.game_player.cplayer.respond_error_result(Msg_GC.RES_SEND_MAIL, result);
 	}
 
 	var result = this.send_mail_inner(receiver_id, msg_req.mail_detail);
-	this.game_player.cplayer.respond_error_result(Msg_Res.RES_SEND_MAIL, result);
+	this.game_player.cplayer.respond_error_result(Msg_GC.RES_SEND_MAIL, result);
 }
 	
 Mail.prototype.pickup_item_money = function(mail_detail) {	

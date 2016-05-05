@@ -80,7 +80,7 @@ int Debug_Server::start(int argc, char *argv[]) {
 	DB_MANAGER->start();
 
 	/// Login Client Server
-	LOGIN_CLIENT_SERVER->set(server_conf_.login_client_port, server_conf_.receive_timeout, server_conf_.server_send_interval, (SVC_PROTO)server_conf_.login_client_network_protocol);
+	LOGIN_CLIENT_SERVER->set(server_conf_.login_client_port, server_conf_.receive_timeout, server_conf_.server_send_interval, server_conf_.login_client_network_protocol);
 	LOGIN_CLIENT_SERVER->init();
 	LOGIN_CLIENT_SERVER->start();
 	LOGIN_CLIENT_SERVER->thr_create();
@@ -124,7 +124,7 @@ int Debug_Server::start(int argc, char *argv[]) {
 	GAME_MANAGER->thr_create();
 
 	/// Gate Client Server
-	GATE_CLIENT_SERVER->set(server_conf_.gate_client_port, server_conf_.receive_timeout, server_conf_.server_send_interval, (SVC_PROTO)server_conf_.gate_client_network_protocol);
+	GATE_CLIENT_SERVER->set(server_conf_.gate_client_port, server_conf_.receive_timeout, server_conf_.server_send_interval, server_conf_.gate_client_network_protocol);
 	GATE_CLIENT_SERVER->init();
 	GATE_CLIENT_SERVER->start();
 	GATE_CLIENT_SERVER->thr_create();

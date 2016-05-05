@@ -28,7 +28,7 @@ Bag.prototype.fetch_bag_info = function() {
     	
 	var buf = pop_game_buffer();
 	msg_res.serialize(buf);
-	this.game_player.cplayer.respond_success_result(Msg_Res.RES_FETCH_BAG_INFO, buf);
+	this.game_player.cplayer.respond_success_result(Msg_GC.RES_FETCH_BAG_INFO, buf);
 	push_game_buffer(buf);
 }
 	
@@ -40,7 +40,7 @@ Bag.prototype.use_item = function(buffer) {
 	var item_array = new Array();
 	item_array.push(msg_req.item);
 	var result = this.bag_erase_item(item_array);
-	this.game_player.cplayer.respond_error_result(Msg_Res.RES_USE_ITEM, result);
+	this.game_player.cplayer.respond_error_result(Msg_GC.RES_USE_ITEM, result);
 }
 	
 Bag.prototype.sell_item = function(buffer) {
@@ -51,7 +51,7 @@ Bag.prototype.sell_item = function(buffer) {
 	var item_array = new Array();
 	item_array.push(msg_req.item);
 	var result = this.bag_erase_item(item_array);
-	this.game_player.cplayer.respond_error_result(Msg_Res.RES_SELL_ITEM, result);
+	this.game_player.cplayer.respond_error_result(Msg_GC.RES_SELL_ITEM, result);
 }
 	
 Bag.prototype.bag_add_money = function(copper, gold) {

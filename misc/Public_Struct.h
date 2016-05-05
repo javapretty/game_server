@@ -10,7 +10,15 @@
 #include "boost/unordered_map.hpp"
 #include "Time_Value.h"
 #include "Misc.h"
-#include "../msg/Server_Message.h"
+#include "Server_Message.h"
+
+enum	 {
+	SUCCESS_LOADED = 1,			/// 加载成功
+	SUCCESS_CREATED,		/// 创建成功
+	ROLE_NOT_EXIST,			/// 角色不存在
+	ROLE_HAS_EXIST,			///	角色已经存在
+	ROLE_SAVE_OFFLINE,	/// 角色下线保存
+};
 
 struct Server_Conf {
 	Time_Value server_sleep_time;
@@ -134,36 +142,6 @@ struct Recycle_Tick {
 		status = s;
 		recycle_tick = Time_Value::gettimeofday() + Time_Value(2, 0);
 	}
-};
-
-struct Player_Data_Ctl {
-	enum	 {
-		NULL_STATUS = 0,
-		SUCCESS_LOADED,			/// 加载成功
-		SUCCESS_CREATED,		/// 创建成功
-		ROLE_NOT_EXIST,			/// 角色不存在
-		ROLE_HAS_EXIST,			///	角色已经存在
-		ROLE_SAVE_OFFLINE,	/// 角色下线保存
-	};
-
-	enum {
-		PLAYER_CHANGE = 1,
-		HERO_CHANGE,
-		BAG_CHANGE,
-		MAIL_CHANGE,
-		SHOP_CHANGE,
-		CHANGE_END
-	};
-
-	Player_Data *player_data;
-
-	Player_Data_Ctl(Player_Data *play_data);
-	int serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	int load(int64_t role_id);
-	int save(void);
-	void reset(void);
-	void set_all_change(bool is_change);
 };
 
 struct DB_Cache {

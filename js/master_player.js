@@ -60,10 +60,12 @@ Master_Player.prototype.daily_refresh = function() {
 }
 
 Master_Player.prototype.send_chat_info = function(buffer) {
+	print('send_chat_info, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
+
 	var msg_req = new MSG_110001();
 	msg_req.deserialize(buffer);
-	if (msg_req.chat_content.length() > 100) {
-		return this.cplayer.respond_error_result(Msg_Res.RES_SEND_CHAT_INFO, Error_Code.ERROR_CLIENT_PARAM);
+	if (msg_req.chat_content.length > 100) {
+		return this.cplayer.respond_error_result(Msg_MC.RES_SEND_CHAT_INFO, Error_Code.ERROR_CLIENT_PARAM);
 	}
 	
 	var msg_res = new MSG_510001();
@@ -77,11 +79,11 @@ Master_Player.prototype.send_chat_info = function(buffer) {
 	var buf = pop_master_buffer();
 	msg_res.serialize(buf);
 	
-	switch(msg.chat_type) {
+	switch(msg_req.chat_type) {
 	case 1: {
 		//世界聊天
 		master_player_cid_map.each(function(key,value,index) {
-			value.cplayer.respond_success_result(Msg_Res.RES_SEND_CHAT_INFO, buf);
+			value.cplayer.respond_success_result(Msg_MC.RES_SEND_CHAT_INFO, buf);
    		});
 		break;
 	}
@@ -89,9 +91,9 @@ Master_Player.prototype.send_chat_info = function(buffer) {
 		//私密聊天
 		var player = get_master_player_by_name(msg_req.role_name);
 		if (!player) {
-			return this.cplayer.respond_error_result(Msg_Res.RES_SEND_CHAT_INFO, Error_Code.ERROR_ROLE_OFFLINE);
+			return this.cplayer.respond_error_result(Msg_MC.RES_SEND_CHAT_INFO, Error_Code.ERROR_ROLE_OFFLINE);
 		}
-		player.cplayer.respond_success_result(Msg_Res.RES_SEND_CHAT_INFO, buf);
+		player.cplayer.respond_success_result(Msg_MC.RES_SEND_CHAT_INFO, buf);
 		break;
 	}
 	default:

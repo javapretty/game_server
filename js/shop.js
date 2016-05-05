@@ -41,7 +41,7 @@ Shop.prototype.fetch_shop_info = function(buffer){
 	
 	var buf = pop_game_buffer();
 	msg_res.serialize(buf);
-	this.game_player.cplayer.respond_success_result(Msg_Res.RES_FETCH_SHOP_INFO, buf);
+	this.game_player.cplayer.respond_success_result(Msg_GC.RES_FETCH_SHOP_INFO, buf);
 	push_game_buffer(buf);
 }
 	
@@ -53,7 +53,7 @@ Shop.prototype.refresh_by_player = function(buffer){
 	var count = this.shop_info.shop_detail.get(msg_req.shop_type).refresh_count;
 	var max_count = config.vip_json[this.game_player.player_info.vip_level]['refresh_shop_count'];
 	if(count >= max_count){
-		this.game_player.cplayer.respond_error_result(Msg_Res.RES_REFRESH_SHOP, Error_Code.ERROR_REFRESH_NOT_ENOUGH);
+		this.game_player.cplayer.respond_error_result(Msg_GC.RES_REFRESH_SHOP, Error_Code.ERROR_REFRESH_NOT_ENOUGH);
 		return;
 	}
 	var cost = config.shop_json[msg_req.shop_type].refresh_cost[count];
@@ -61,7 +61,7 @@ Shop.prototype.refresh_by_player = function(buffer){
 	if(msg_req.shop_type == Shop_Type.COPPER_SHOP)
 		error = this.game_player.bag.bag_sub_money(cost, 0);
 	if(error != 0){
-		this.game_player.cplayer.respond_error_result(Msg_Res.RES_REFRESH_SHOP, error);
+		this.game_player.cplayer.respond_error_result(Msg_GC.RES_REFRESH_SHOP, error);
 		return;
 	}
 	this.refresh_shop(msg_req.shop_type, count + 1);
@@ -84,18 +84,18 @@ Shop.prototype.buy_product = function(buffer){
 	msg_req.deserialize(buffer);
 	var product = this.get_product(msg_req.shop_type, msg_req.product_id);
 	if(product == null){
-		this.game_player.cplayer.respond_error_result(Msg_Res.RES_BUY_PRODUCT, Error_Code.ERROR_PRODUCT_NOT_EXIST);
+		this.game_player.cplayer.respond_error_result(Msg_GC.RES_BUY_PRODUCT, Error_Code.ERROR_PRODUCT_NOT_EXIST);
 		return;
 	}
 	if((product.count - msg_req.amount) < 0){
-		this.game_player.cplayer.respond_error_result(Msg_Res.RES_BUY_PRODUCT, Error_Code.ERROR_PRODUCT_NOT_ENOUGH);
+		this.game_player.cplayer.respond_error_result(Msg_GC.RES_BUY_PRODUCT, Error_Code.ERROR_PRODUCT_NOT_ENOUGH);
 		return;
 	}
 	var error = 0;
 	if(msg_req.shop_type == Shop_Type.COPPER_SHOP)
 		error = this.game_player.bag.bag_sub_money(product.price * msg_req.amount, 0);
 	if(error != 0){
-		this.game_player.cplayer.respond_error_result(Msg_Res.RES_BUY_PRODUCT, error);
+		this.game_player.cplayer.respond_error_result(Msg_GC.RES_BUY_PRODUCT, error);
 		return;
 	}
 	var item_arr = new Array();

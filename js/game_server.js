@@ -99,58 +99,58 @@ function process_game_client_buffer(buffer) {
 	}
 	
 	switch(msg_id) {
-	case Msg_Req.REQ_BUY_VITALITY:
+	case Msg_CG.REQ_BUY_VITALITY:
 		game_player.buy_vitality();
 		break;	
-	case Msg_Req.REQ_EXCHANGE_MONEY:
+	case Msg_CG.REQ_EXCHANGE_MONEY:
 		game_player.exchange_money(buffer);
 		break;
-	case Msg_Req.REQ_FETCH_BAG_INFO:
+	case Msg_CG.REQ_FETCH_BAG_INFO:
 		game_player.bag.fetch_bag_info();
 		break;
-	case Msg_Req.REQ_USE_ITEM:
+	case Msg_CG.REQ_USE_ITEM:
 		game_player.bag.use_item(buffer);
 		break;
-	case Msg_Req.REQ_SELL_ITEM:
+	case Msg_CG.REQ_SELL_ITEM:
 		game_player.bag.sell_item(buffer);
 		break
-	case Msg_Req.REQ_FETCH_MAIL_INFO:
+	case Msg_CG.REQ_FETCH_MAIL_INFO:
 		game_player.mail.fetch_mail_info();
 		break;
-	case Msg_Req.REQ_PICKUP_MAIL:
+	case Msg_CG.REQ_PICKUP_MAIL:
 		game_player.mail.pickup_mail(buffer);
 		break;
-	case Msg_Req.REQ_DEL_MAIL:
+	case Msg_CG.REQ_DEL_MAIL:
 		game_player.mail.delete_mail(buffer);
 		break;
-	case Msg_Req.REQ_SEND_MAIL:
+	case Msg_CG.REQ_SEND_MAIL:
 		game_player.mail.send_mail(buffer);
 		break;
-	case Msg_Req.REQ_FETCH_HERO_INFO:
+	case Msg_CG.REQ_FETCH_HERO_INFO:
 		game_player.hero.fetch_hero_info(buffer);
 		break;
-	case Msg_Req.REQ_ADD_HERO_STAR:
+	case Msg_CG.REQ_ADD_HERO_STAR:
 		game_player.hero.add_hero_star(buffer);
 		break;
-	case Msg_Req.REQ_ADD_HERO_QUALITY:
+	case Msg_CG.REQ_ADD_HERO_QUALITY:
 		game_player.hero.add_hero_quality(buffer);
 		break;
-	case Msg_Req.REQ_ADD_EQUIP_LEVEL:
+	case Msg_CG.REQ_ADD_EQUIP_LEVEL:
 		game_player.hero.add_equip_level(buffer);
 		break;
-	case Msg_Req.REQ_EQUIP_ON_OFF:
+	case Msg_CG.REQ_EQUIP_ON_OFF:
 		game_player.hero.equip_on_off(buffer);
 		break;
-	case Msg_Req.REQ_ADD_SKILL_LEVEL:
+	case Msg_CG.REQ_ADD_SKILL_LEVEL:
 		game_player.hero.add_skill_level(buffer);
 		break;
-	case Msg_Req.REQ_FETCH_SHOP_INFO:
+	case Msg_CG.REQ_FETCH_SHOP_INFO:
 		game_player.shop.fetch_shop_info(buffer);
 		break;
-	case Msg_Req.REQ_BUY_PRODUCT:
+	case Msg_CG.REQ_BUY_PRODUCT:
 		game_player.shop.buy_product(buffer);
 		break;
-	case Msg_Req.REQ_REFRESH_SHOP:
+	case Msg_CG.REQ_REFRESH_SHOP:
 		game_player.shop.refresh_by_player(buffer);
 		break;
 	default:
