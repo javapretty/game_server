@@ -1,10 +1,7 @@
 /** 
-* struct JS file description
-* 
 * This file was auto-generated. Please Do not edit
-* 
-* [Version 1.1]
 *
+* [Version 1.3]
 */
 
 function MSG_300000() {
@@ -123,14 +120,6 @@ MSG_300300.prototype.deserialize = function(buffer) {
 		this.property_info.push(property_info_v);
 	}
 }
-/** 
-* struct JS file description
-* 
-* This file was auto-generated. Please Do not edit
-* 
-* [Version 1.1]
-*
-*/
 
 function MSG_120001() {
 	this.account = ""
@@ -715,4 +704,49 @@ MSG_520402.prototype.serialize = function(buffer) {
 }
 
 MSG_520402.prototype.deserialize = function(buffer) {
+}
+
+function MSG_110001() {
+	this.chat_type = 0;
+	this.chat_content = ""
+	this.role_name = ""
+}
+
+MSG_110001.prototype.serialize = function(buffer) {
+	buffer.write_int8(this.chat_type);
+	buffer.write_string(this.chat_content);
+	buffer.write_string(this.role_name);
+}
+
+MSG_110001.prototype.deserialize = function(buffer) {
+	this.chat_type = buffer.read_int8();
+	this.chat_content = buffer.read_string();
+	this.role_name = buffer.read_string();
+}
+
+function MSG_510001() {
+	this.chat_type = 0;
+	this.chat_content = ""
+	this.role_name = ""
+	this.gender = 0;
+	this.career = 0;
+	this.vip_level = 0;
+}
+
+MSG_510001.prototype.serialize = function(buffer) {
+	buffer.write_int8(this.chat_type);
+	buffer.write_string(this.chat_content);
+	buffer.write_string(this.role_name);
+	buffer.write_int32(this.gender);
+	buffer.write_int32(this.career);
+	buffer.write_int32(this.vip_level);
+}
+
+MSG_510001.prototype.deserialize = function(buffer) {
+	this.chat_type = buffer.read_int8();
+	this.chat_content = buffer.read_string();
+	this.role_name = buffer.read_string();
+	this.gender = buffer.read_int32();
+	this.career = buffer.read_int32();
+	this.vip_level = buffer.read_int32();
 }

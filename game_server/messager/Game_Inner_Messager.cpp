@@ -110,7 +110,7 @@ int Game_Inner_Messager::process_loaded_player_data(Block_Buffer &buf) {
 	GAME_MANAGER->logining_map().erase(logining_it);
 
 	switch(msg.player_data.status) {
-	case Player_Data::ROLE_NOT_EXIST:	{
+	case Player_Data_Ctl::ROLE_NOT_EXIST:	{
 		/// [登录]没有此玩家数据, 提示创建新角色
 		Block_Buffer res_buf;
 		res_buf.make_player_message(RES_FETCH_ROLE_INFO, ERROR_ROLE_NOT_EXIST, player_cid);
@@ -120,7 +120,7 @@ int Game_Inner_Messager::process_loaded_player_data(Block_Buffer &buf) {
 		GAME_MANAGER->send_to_gate(gate_cid, res_buf);
 		break;
 	}
-	case Player_Data::ROLE_HAS_EXIST: {
+	case Player_Data_Ctl::ROLE_HAS_EXIST: {
 		/// [创建角色]创建的角色名已存在
 		Block_Buffer res_buf;
 		res_buf.make_player_message(RES_CREATE_ROLE, ERROR_ROLE_NAME_EXIST, player_cid);
@@ -131,7 +131,7 @@ int Game_Inner_Messager::process_loaded_player_data(Block_Buffer &buf) {
 		GAME_MANAGER->send_to_gate(gate_cid, res_buf);
 		break;
 	}
-	case Player_Data::SUCCESS_CREATED: {
+	case Player_Data_Ctl::SUCCESS_CREATED: {
 		/// [创建角色]创建角色成功
 		Block_Buffer res_buf;
 		res_buf.make_player_message(RES_CREATE_ROLE, 0, player_cid);
@@ -144,7 +144,7 @@ int Game_Inner_Messager::process_loaded_player_data(Block_Buffer &buf) {
 		process_success_login(gate_cid, player_cid, msg.player_data);
 		break;
 	}
-	case Player_Data::SUCCESS_LOADED: {
+	case Player_Data_Ctl::SUCCESS_LOADED: {
 		/// 数据加载成功
 		process_success_login(gate_cid, player_cid, msg.player_data);
 		break;

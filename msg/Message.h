@@ -1,10 +1,7 @@
 /** 
-* struct Message description
-* 
 * This file was auto-generated. Please Do not edit
-* 
-* [Version 1.1]
 *
+* [Version 1.3]
 */
 
 #ifndef __Message__H

@@ -40,7 +40,7 @@ public:
 	/// 创建新角色
 	int process_create_player(int cid, Game_Player_Info &player_info);
 	/// 保存玩家数据
-	int process_save_player(int cid, Player_Data &player_data);
+	int process_save_player(int cid, Player_Data_Ctl &player_data);
 	/// 保存邮件信息
 	int process_save_mail(MSG_150004 &msg);
 

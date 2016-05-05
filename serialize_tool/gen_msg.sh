@@ -1,16 +1,19 @@
 #! /bin/bash
 
-JS_DEFINES_1="Active_Message Client_Game_Message"
+JS_DEFINES_1="Active_Message Client_Game_Message Client_Master_Message"
 JS_DEFINES_2="Msg_Struct Game_Struct"
 
-CPP_DEFINES_OUTER="Active_Message Client_Game_Message Client_Login_Message Client_Master_Message Msg_Struct"
-CPP_DEFINES="Game_DB_Message Gate_Message Log_Message Game_Struct"
+CPP_DEFINES_CLIENT="Msg_Struct Active_Message Client_Game_Message Client_Login_Message Client_Master_Message"
+CPP_DEFINES_SERVER="Game_Struct Game_DB_Message Gate_Message Log_Message Game_Master_Message"
 
 DEFINE_PATH=`pwd`'/'
-STRUCT_PATH=$DEFINE_PATH'../misc'
+SERVER_PATH=$DEFINE_PATH'../misc/'
 CPP_TARGET=$DEFINE_PATH'../msg'
 JS_TARGET=$DEFINE_PATH'../js'
 ROBOT_PATH=$DEFINE_PATH'../../robot/msg'
+
+MESSAGE_SERVER='Server_Message'
+MESSAGE_CLIENT='Client_Message'
 
 function gen_msg(){
 	gen_cpp
@@ -21,11 +24,11 @@ function gen_msg(){
 }
 
 function gen_cpp(){
-	for file in $CPP_DEFINES;do
-		./serialize_tool cpp $DEFINE_PATH $file'.define' $file
+	for file in $CPP_DEFINES_SERVER;do
+		./serialize_tool cpp $DEFINE_PATH $file'.define' $MESSAGE_SERVER
 	done
-	for file in $CPP_DEFINES_OUTER;do
-		./serialize_tool cpp $DEFINE_PATH $file'.define' $file
+	for file in $CPP_DEFINES_CLIENT;do
+		./serialize_tool cpp $DEFINE_PATH $file'.define' $MESSAGE_CLIENT
 	done
 }
 
@@ -45,15 +48,12 @@ function gen_msgd(){
 function cp_file(){
 	wildcard='.*'
 	cp -rf CPP/* $CPP_TARGET
-	for file in $CPP_DEFINES_OUTER;do
-		cp -rf CPP/${file}${wildcard} $ROBOT_PATH
-	done
+	cp -rf CPP/${MESSAGE_CLIENT}${wildcard} $ROBOT_PATH
 	cp -rf CPP/Message.h $ROBOT_PATH
 	cp -rf JS/* $JS_TARGET
 }
 
 function do_some_others(){
-	mv -f $CPP_TARGET/Game_Struct.* $STRUCT_PATH
 	rm -rf CPP
 	rm -rf JS
 }

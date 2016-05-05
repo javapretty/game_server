@@ -10,7 +10,7 @@
 #include "boost/unordered_map.hpp"
 #include "Time_Value.h"
 #include "Misc.h"
-#include "Game_Struct.h"
+#include "../msg/Server_Message.h"
 
 struct Server_Conf {
 	Time_Value server_sleep_time;
@@ -136,7 +136,7 @@ struct Recycle_Tick {
 	}
 };
 
-struct Player_Data {
+struct Player_Data_Ctl {
 	enum	 {
 		NULL_STATUS = 0,
 		SUCCESS_LOADED,			/// 加载成功
@@ -155,16 +155,9 @@ struct Player_Data {
 		CHANGE_END
 	};
 
-	int8_t status;
-	std::vector<int32_t> change_module;
+	Player_Data *player_data;
 
-	Game_Player_Info player_info;
-	Hero_Info hero_info;
-	Bag_Info bag_info;
-	Mail_Info mail_info;
-	Shop_Info shop_info;
-
-	Player_Data(void);
+	Player_Data_Ctl(Player_Data *play_data);
 	int serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	int load(int64_t role_id);
