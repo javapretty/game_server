@@ -78,6 +78,8 @@ int Master_Player::sign_in(void) {
 int Master_Player::sign_out(void) {
 	save_player(true);
 	reset();
+	MASTER_MANAGER->push_block_buffer(load_player_data_buffer_);
+	MASTER_MANAGER->push_block_buffer(save_player_data_buffer_);
 	return 0;
 }
 

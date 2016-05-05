@@ -100,5 +100,5 @@ Master_Player.prototype.send_chat_info = function(buffer) {
 		print("chat type error, role_id:", this.player_info.role_id, " chat_type:", msg_req.chat_type);
 		break;
 	}
-	push_game_buffer(buf);
+	push_master_buffer(buf);
 }
