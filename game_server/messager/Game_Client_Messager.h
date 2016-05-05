@@ -15,8 +15,8 @@ class Game_Client_Messager {
 public:
 	static Game_Client_Messager *instance(void);
 
-	//处理登录掉线消息
-	int process_login_buffer(Block_Buffer &buf);
+	//处理客户端登录game消息，客户端和gate断开连接消息
+	int process_client_login_block(Block_Buffer &buf);
 	/// 获取角色信息
 	int fetch_role_info(int gate_cid, int player_cid, MSG_120001 &msg);
 	/// 创建角色

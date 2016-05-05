@@ -117,7 +117,7 @@ mkdir db
 mkdir log
 
 开启mongodb服务器 
-/root/mongodb/bin/mongod -dbpath=/data/db --fork --port 27017 --logpath=/data/log/work.log --logappend
+/root/mongodb/bin/mongod --dbpath=/data/db --fork --port 27017 --logpath=/data/log/work.log --logappend
 将该命令添加到/etc/rc.local,保存，即可实现开机自动启动
 启动mongodb客户端  /root/mongdb/bin/mongo
 

@@ -23,14 +23,3 @@ distccmon-text 1
 kernel /boot/vmlinuz-2.6.11-1.1369_FC4 ro root=LABEL=/1 rhgb quiet
 把光标移动这行后，再按一下e键，进入编辑这行；在行尾条一个空格 ，然后输入 linux single，也就是类似如下的：
 kernel /boot/vmlinuz-2.6.11-1.1369_FC4 ro root=LABEL=/1 rhgb quiet linux single
-
- //打印函数调用堆栈
-uint16_t len;
-uint32_t msg_id;
-int read_idx = buf.get_read_idx();
-buf.read_uint16(len); /// length
-buf.peek_uint32(msg_id);
-if (msg_id == 710090) {
-MSG_USER_TRACE("");
-}
-buf.set_read_idx(read_idx);

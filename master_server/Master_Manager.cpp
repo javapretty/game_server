@@ -117,7 +117,7 @@ int Master_Manager::process_list(void) {
 			all_empty = false;
 			if (buf->is_legal()) {
 				cid = buf->peek_int32();
-				MASTER_CLIENT_MESSAGER->process_block(*buf);
+				MASTER_CLIENT_MESSAGER->process_client_login_block(*buf);
 			} else {
 				LOG_ERROR("buf read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
 				buf->reset();

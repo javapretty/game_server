@@ -171,7 +171,6 @@ struct Player_Data {
 	int save(void);
 	void reset(void);
 	void set_all_change(bool is_change);
-	void set_change(int change_id);
 };
 
 struct DB_Cache {

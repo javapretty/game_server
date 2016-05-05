@@ -20,7 +20,7 @@ Game_Client_Messager *Game_Client_Messager::instance(void) {
 }
 
 //处理登录掉线消息
-int Game_Client_Messager::process_login_buffer(Block_Buffer &buf) {
+int Game_Client_Messager::process_client_login_block(Block_Buffer &buf) {
 	int32_t gate_cid = buf.read_int32();
 	/*int16_t len*/  buf.read_int16();
 	int32_t msg_id = buf.read_int32();

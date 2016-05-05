@@ -95,6 +95,9 @@ function process_master_client_buffer(buffer) {
 	}
 	
 	switch(msg_id) {
+	case Msg_Req.REQ_SEND_CHAT_INFO:
+		master_player.send_chat_info(buffer);
+		break;
 	default:
 		print('msg_id not exist, gate_cid:', gate_cid, " player_cid:", player_cid, " msg_id:", msg_id);
 		break;

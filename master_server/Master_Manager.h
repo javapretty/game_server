@@ -136,7 +136,7 @@ private:
 	Server_Info master_game_server_info_;
 
 	Master_Player_Gate_Cid_Map player_gate_cid_map_;
-	Master_Player_Gate_Cid_Map player_game_cid_map_;
+	Master_Player_Game_Cid_Map player_game_cid_map_;
 	Master_Player_Role_Id_Map player_role_id_map_;
 	Master_Player_Role_Name_Map player_role_name_map_;
 

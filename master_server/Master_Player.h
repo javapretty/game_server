@@ -36,9 +36,6 @@ public:
 	int tick(Time_Value &now);
 	int link_close(void);
 
-	//聊天功能
-	int send_chat_info(Block_Buffer &buf);
-
 private:
 	int gate_cid_;				//gate连接game的cid
 	int game_cid_;				//game连接master的cid
