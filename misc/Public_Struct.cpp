@@ -31,90 +31,62 @@ void Server_Conf::init_server_conf(void) {
 	gate_client_port = server_conf["gate_server"]["client_port"].asInt();
 }
 
-Player_Data::Player_Data(void) { reset(); }
+Player_Data_Ctl::Player_Data_Ctl(Player_Data *data) {
+	player_data = data;
+	reset();
+}
 
-int Player_Data::serialize(Block_Buffer &buffer) const {
-	buffer.write_int8(status);
-
-	buffer.write_uint16(change_module.size());
-	for(std::vector<int>::const_iterator it = change_module.begin();
-			it != change_module.end(); ++it) {
-		buffer.write_int32(*it);
-	}
-	player_info.serialize(buffer);
-	hero_info.serialize(buffer);
-	bag_info.serialize(buffer);
-	mail_info.serialize(buffer);
-	shop_info.serialize(buffer);
+int Player_Data_Ctl::serialize(Block_Buffer &buffer) const {
+	player_data->serialize(buffer);
 	return 0;
 }
 
-int Player_Data::deserialize(Block_Buffer &buffer) {
-	status = buffer.read_int8();
+int Player_Data_Ctl::deserialize(Block_Buffer &buffer) {
+	return player_data->deserialize(buffer);
+}
 
-	uint16_t size = buffer.read_uint16();
-	int change_id = 0;
-	for (int16_t i = 0; i < size; ++i) {
-		change_id = buffer.read_int32();
-		change_module.push_back(change_id);
-	}
-	player_info.deserialize(buffer);
-	hero_info.deserialize(buffer);
-	bag_info.deserialize(buffer);
-	mail_info.deserialize(buffer);
-	shop_info.deserialize(buffer);
+int Player_Data_Ctl::load(int64_t role_id) {
+	CACHED_INSTANCE->load_player_info(role_id, player_data->player_info);
+	CACHED_INSTANCE->load_hero_info(role_id, player_data->hero_info);
+	CACHED_INSTANCE->load_bag_info(role_id, player_data->bag_info);
+	CACHED_INSTANCE->load_mail_info(role_id, player_data->mail_info);
+	CACHED_INSTANCE->load_shop_info(role_id, player_data->shop_info);
 	return 0;
 }
 
-int Player_Data::load(int64_t role_id) {
-	CACHED_INSTANCE->load_player_info(role_id, player_info);
-	CACHED_INSTANCE->load_hero_info(role_id, hero_info);
-	CACHED_INSTANCE->load_bag_info(role_id, bag_info);
-	CACHED_INSTANCE->load_mail_info(role_id, mail_info);
-	CACHED_INSTANCE->load_shop_info(role_id, shop_info);
-	return 0;
-}
-
-int Player_Data::save(void) {
-	for (std::vector<int>::iterator it = change_module.begin(); it != change_module.end(); ++it) {
+int Player_Data_Ctl::save(void) {
+	for (std::vector<int>::iterator it = player_data->change_module.begin(); it != player_data->change_module.end(); ++it) {
 		switch(*it) {
 		case PLAYER_CHANGE:
-			CACHED_INSTANCE->save_player_info(player_info.role_id, player_info);
+			CACHED_INSTANCE->save_player_info(player_data->player_info.role_id, player_data->player_info);
 			break;
 		case HERO_CHANGE:
-			CACHED_INSTANCE->save_hero_info(player_info.role_id, hero_info);
+			CACHED_INSTANCE->save_hero_info(player_data->player_info.role_id, player_data->hero_info);
 			break;
 		case BAG_CHANGE:
-			CACHED_INSTANCE->save_bag_info(player_info.role_id, bag_info);
+			CACHED_INSTANCE->save_bag_info(player_data->player_info.role_id, player_data->bag_info);
 			break;
 		case MAIL_CHANGE:
-			CACHED_INSTANCE->save_mail_info(player_info.role_id, mail_info);
+			CACHED_INSTANCE->save_mail_info(player_data->player_info.role_id, player_data->mail_info);
 			break;
 		case SHOP_CHANGE:
-			CACHED_INSTANCE->save_shop_info(player_info.role_id, shop_info);
+			CACHED_INSTANCE->save_shop_info(player_data->player_info.role_id, player_data->shop_info);
 			break;
 		}
 	}
 	return 0;
 }
 
-void Player_Data::reset(void) {
-	status =	NULL_STATUS;
-	change_module.clear();
-
-	player_info.reset();
-	hero_info.reset();
-	bag_info.reset();
-	mail_info.reset();
-	shop_info.reset();
+void Player_Data_Ctl::reset(void) {
+	player_data->reset();
 }
 
-void Player_Data::set_all_change(bool is_change) {
+void Player_Data_Ctl::set_all_change(bool is_change) {
 	if (is_change) {
 		for (int i = PLAYER_CHANGE; i < CHANGE_END; ++i) {
-			change_module.push_back(i);
+			player_data->change_module.push_back(i);
 		}
 	} else {
-		change_module.clear();
+		player_data->change_module.clear();
 	}
 }

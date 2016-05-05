@@ -80,3 +80,13 @@ struct Mail_Info {
 struct Shop_Info {
 	boost::unordered_map<int32_t(shop_type),Shop_Detail> shop_detail;
 };
+
+struct Player_Data {
+	int8_t status;
+	std::vector<int32_t> change_module;
+	Game_Player_Info player_info;
+	Hero_Info hero_info;
+	Bag_Info bag_info;
+	Mail_Info mail_info;
+	Shop_Info shop_info;
+};

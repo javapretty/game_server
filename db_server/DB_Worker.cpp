@@ -77,8 +77,9 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 	}
 	case SYNC_GAME_DB_SAVE_PLAYER_INFO: {
 		MSG_150003 msg;
+		Player_Data_Ctl ctl(&msg.player_data);
 		msg.deserialize(*buf);
-		process_save_player(cid, msg.player_data);
+		process_save_player(cid, ctl);
 		break;
 	}
 	case SYNC_GAME_DB_SAVE_MAIL_INFO: {
@@ -105,16 +106,17 @@ int DB_Worker::process_load_db_cache(int cid) {
 
 int DB_Worker::process_load_player(int cid, Account_Info &account_info) {
 	MSG_550001 msg;
+	Player_Data_Ctl ctl(&msg.player_data);
 	int has_role = CACHED_INSTANCE->has_role_by_account(account_info.account, account_info.agent_num, account_info.server_num);
 	if (! has_role) {
-		msg.player_data.status = Player_Data::ROLE_NOT_EXIST;
+		msg.player_data.status = Player_Data_Ctl::ROLE_NOT_EXIST;
 		msg.player_data.player_info.account = account_info.account;
 		msg.player_data.player_info.agent_num = account_info.agent_num;
 		msg.player_data.player_info.server_num = account_info.server_num;
 	}	else {
-		msg.player_data.status = Player_Data::SUCCESS_LOADED;
+		msg.player_data.status = Player_Data_Ctl::SUCCESS_LOADED;
 		int64_t role_id = CACHED_INSTANCE->get_role_id(account_info.account, account_info.agent_num, account_info.server_num);
-		msg.player_data.load(role_id);
+		ctl.load(role_id);
 	}
 	Block_Buffer buf;
 	buf.make_inner_message(SYNC_DB_GAME_LOAD_PLAYER_INFO);
@@ -126,14 +128,15 @@ int DB_Worker::process_load_player(int cid, Account_Info &account_info) {
 
 int DB_Worker::process_create_player(int cid, Game_Player_Info &player_info) {
 	MSG_550002 msg;
+	Player_Data_Ctl ctl(&msg.player_data);
 	if (CACHED_INSTANCE->create_init_player(player_info) < 0) {
-		msg.player_data.status = Player_Data::ROLE_HAS_EXIST;
+		msg.player_data.status = Player_Data_Ctl::ROLE_HAS_EXIST;
 	} else {
-		msg.player_data.status = Player_Data::SUCCESS_CREATED;
+		msg.player_data.status = Player_Data_Ctl::SUCCESS_CREATED;
 		//此处保存所有数据是为了创建所有玩家表
-		msg.player_data.set_all_change(true);
-		msg.player_data.save();
-		msg.player_data.set_all_change(false);
+		ctl.set_all_change(true);
+		ctl.save();
+		ctl.set_all_change(false);
 	}
 	msg.player_data.player_info = player_info;
 	Block_Buffer buf;
@@ -144,20 +147,20 @@ int DB_Worker::process_create_player(int cid, Game_Player_Info &player_info) {
 	return 0;
 }
 
-int DB_Worker::process_save_player(int cid, Player_Data &player_data) {
-	if (player_data.status == Player_Data::ROLE_SAVE_OFFLINE) {
-		player_data.set_all_change(true);
-		player_data.save();
+int DB_Worker::process_save_player(int cid, Player_Data_Ctl &ctl) {
+	if (ctl.player_data->status == Player_Data_Ctl::ROLE_SAVE_OFFLINE) {
+		ctl.set_all_change(true);
+		ctl.save();
 
 		Block_Buffer buf;
 		buf.make_inner_message(SYNC_DB_GAME_SAVE_PLAYER_INFO);
 		MSG_550003 msg;
-		msg.role_id = player_data.player_info.role_id;
+		msg.role_id = ctl.player_data->player_info.role_id;
 		msg.serialize(buf);
 		buf.finish_message();
 		DB_MANAGER->send_data_block(cid, buf);
 	} else {
-		player_data.save();
+		ctl.save();
 	}
 	return 0;
 }

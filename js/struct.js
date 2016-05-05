@@ -1,10 +1,7 @@
 /** 
-* struct JS file description
-* 
 * This file was auto-generated. Please Do not edit
-* 
-* [Version 1.1]
 *
+* [Version 1.3]
 */
 
 function Role_Info() {
@@ -252,14 +249,6 @@ Shop_Detail.prototype.deserialize = function(buffer) {
 		this.products.push(products_v);
 	}
 }
-/** 
-* struct JS file description
-* 
-* This file was auto-generated. Please Do not edit
-* 
-* [Version 1.1]
-*
-*/
 
 function Account_Info() {
 	this.account = ""
@@ -540,4 +529,43 @@ Shop_Info.prototype.deserialize = function(buffer) {
 		_v.deserialize(buffer);
 		this.shop_detail.insert(_v.shop_type, _v);
 	}
+}
+
+function Player_Data() {
+	this.status = 0;
+	this.change_module = new Array();
+	this.player_info = new Game_Player_Info();
+	this.hero_info = new Hero_Info();
+	this.bag_info = new Bag_Info();
+	this.mail_info = new Mail_Info();
+	this.shop_info = new Shop_Info();
+}
+
+Player_Data.prototype.serialize = function(buffer) {
+	buffer.write_int8(this.status);
+	var len = this.change_module.length;
+	buffer.write_uint16(len);
+	for(var i = 0; i < len; ++i) {
+		buffer.write_int32(this.change_module[i]);
+	}
+	this.player_info.serialize(buffer);
+	this.hero_info.serialize(buffer);
+	this.bag_info.serialize(buffer);
+	this.mail_info.serialize(buffer);
+	this.shop_info.serialize(buffer);
+}
+
+Player_Data.prototype.deserialize = function(buffer) {
+	this.status = buffer.read_int8();
+	var len = buffer.read_uint16();
+	for(var i = 0; i < len; ++i) {
+		var change_module_v;
+		change_module_v = buffer.read_int32();
+		this.change_module.push(change_module_v);
+	}
+	this.player_info.deserialize(buffer);
+	this.hero_info.deserialize(buffer);
+	this.bag_info.deserialize(buffer);
+	this.mail_info.deserialize(buffer);
+	this.shop_info.deserialize(buffer);
 }
