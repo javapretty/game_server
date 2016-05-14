@@ -392,6 +392,7 @@ function Game_Player_Info() {
 	this.skill_point = 0;
 	this.recover_skill_time = 0;
 	this.exchange_count = 0;
+	this.guild_id = 0;
 }
 
 Game_Player_Info.prototype.serialize = function(buffer) {
@@ -416,6 +417,7 @@ Game_Player_Info.prototype.serialize = function(buffer) {
 	buffer.write_int32(this.skill_point);
 	buffer.write_int64(this.recover_skill_time);
 	buffer.write_int32(this.exchange_count);
+	buffer.write_int32(this.guild_id);
 }
 
 Game_Player_Info.prototype.deserialize = function(buffer) {
@@ -440,6 +442,7 @@ Game_Player_Info.prototype.deserialize = function(buffer) {
 	this.skill_point = buffer.read_int32();
 	this.recover_skill_time = buffer.read_int64();
 	this.exchange_count = buffer.read_int32();
+	this.guild_id = buffer.read_int32();
 }
 
 function Hero_Info() {
@@ -568,4 +571,54 @@ Player_Data.prototype.deserialize = function(buffer) {
 	this.bag_info.deserialize(buffer);
 	this.mail_info.deserialize(buffer);
 	this.shop_info.deserialize(buffer);
+}
+
+function Guild_Data() {
+	this.guild_id = 0;
+	this.guild_name = ""
+	this.chief_id = 0;
+	this.member_list = new Array();
+}
+
+Guild_Data.prototype.serialize = function(buffer) {
+	buffer.write_int64(this.guild_id);
+	buffer.write_string(this.guild_name);
+	buffer.write_int64(this.chief_id);
+	var len = this.member_list.length;
+	buffer.write_uint16(len);
+	for(var i = 0; i < len; ++i) {
+		buffer.write_int64(this.member_list[i]);
+	}
+}
+
+Guild_Data.prototype.deserialize = function(buffer) {
+	this.guild_id = buffer.read_int64();
+	this.guild_name = buffer.read_string();
+	this.chief_id = buffer.read_int64();
+	var len = buffer.read_uint16();
+	for(var i = 0; i < len; ++i) {
+		var member_list_v;
+		member_list_v = buffer.read_int64();
+		this.member_list.push(member_list_v);
+	}
+}
+
+function Guild_Info() {
+	this.guild_map = new Map();
+}
+
+Guild_Info.prototype.serialize = function(buffer) {
+	buffer.write_uint16(this.guild_map.size());
+	this.guild_map.each(function(_key,_v,index) {
+		_v.serialize(buffer);
+	});
+}
+
+Guild_Info.prototype.deserialize = function(buffer) {
+	var len = buffer.read_uint16();
+	for (var i = 0; i < len; ++i) {
+		var _v = new Guild_Data();
+		_v.deserialize(buffer);
+		this.guild_map.insert(_v.guild_id, _v);
+	}
 }

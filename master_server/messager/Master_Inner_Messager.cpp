@@ -19,6 +19,21 @@ Master_Inner_Messager *Master_Inner_Messager::instance(void) {
 	return instance_;
 }
 
+int Master_Inner_Messager::process_db_block(Block_Buffer &buf) {
+	/*int32_t cid*/ buf.read_int32();
+		/*int16_t len*/ buf.read_int16();
+		int32_t msg_id = buf.read_int32();
+		/*int32_t status*/ buf.read_int32();
+
+		Perf_Mon perf_mon(msg_id);
+		switch (msg_id) {
+		default:
+			break;
+		}
+
+		return 0;
+}
+
 int Master_Inner_Messager::process_game_block(Block_Buffer &buf) {
 	int32_t game_cid = buf.read_int32();
 	/*int16_t len*/ buf.read_int16();

@@ -109,6 +109,9 @@ Local<Object> wrap_master_player(Isolate* isolate, Master_Player *player) {
 	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "respond_error_result", NewStringType::kNormal).ToLocalChecked(),
 	                    FunctionTemplate::New(isolate, master_player_respond_error_result)->GetFunction()) ;
 
+	player_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "sync_data_to_game", NewStringType::kNormal).ToLocalChecked(),
+			                    FunctionTemplate::New(isolate, sync_data_to_game)->GetFunction()) ;
+
 	return handle_scope.Escape(player_obj);
 }
 
@@ -165,4 +168,20 @@ void master_player_respond_error_result(const FunctionCallbackInfo<Value>& args)
 	int msg_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int error_code = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	player->respond_error_result(msg_id, error_code);
+}
+
+void sync_data_to_game(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 2) {
+			LOG_ERROR("sync_data_to_game args error, length: %d\n", args.Length());
+			return;
+		}
+
+		Master_Player *player = unwrap_master_player(args.Holder());
+		if (!player) {
+			return;
+		}
+
+		int msg_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+		Block_Buffer *buf = unwrap_buffer(args[1]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
+		player->sync_data_to_game(msg_id, buf);
 }

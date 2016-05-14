@@ -35,5 +35,7 @@ void get_master_player_save_data_buffer(const FunctionCallbackInfo<Value>& args)
 void master_player_respond_success_result(const FunctionCallbackInfo<Value>& args);
 //函数说明：发送错误消息号到client 	参数：1,msg_id 2,错误号	返回值：无
 void master_player_respond_error_result(const FunctionCallbackInfo<Value>& args);
+//函数说明：同步player相关信息到game 	参数：1,buffer对象	返回值：无
+void sync_data_to_game(const FunctionCallbackInfo<Value>& args);
 
 #endif /* PLAYER_WRAP_H_ */

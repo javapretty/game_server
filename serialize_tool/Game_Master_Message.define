@@ -5,3 +5,7 @@ struct MSG_160000 {
 struct MSG_160001 {
 	int64_t role_id;
 };
+
+struct MSG_160100 { //master通知game设置公会信息
+	int64_t guild_id;
+};

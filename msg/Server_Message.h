@@ -108,6 +108,7 @@ struct Game_Player_Info : public MSG {
 	int32_t skill_point;	//技能点
 	int64_t recover_skill_time;	//回复技能点时间
 	int32_t exchange_count;	//聚宝盆兑换剩余次数
+	int32_t guild_id;	//玩家所属公会
 
 	Game_Player_Info(void);
 	~Game_Player_Info();
@@ -175,6 +176,31 @@ struct Player_Data : public MSG {
 
 	Player_Data(void);
 	~Player_Data();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct Guild_Data : public MSG {
+	int64_t guild_id;	
+	std::string guild_name;	
+	int64_t chief_id;	//帮会帮主id
+	std::vector<int64_t> member_list;	
+
+	Guild_Data(void);
+	~Guild_Data();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct Guild_Info : public MSG {
+	std::map<int64_t,Guild_Data> guild_map;	
+
+	Guild_Info(void);
+	~Guild_Info();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
@@ -280,6 +306,69 @@ struct MSG_150004 : public MSG {
 	void print(void);
 };
 
+struct MSG_150101 : public MSG {
+
+	MSG_150101(void);
+	~MSG_150101();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_550101 : public MSG {
+	Guild_Info guild_info;	
+
+	MSG_550101(void);
+	~MSG_550101();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_150102 : public MSG {
+	Guild_Data guild_data;	
+
+	MSG_150102(void);
+	~MSG_150102();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_550102 : public MSG {
+
+	MSG_550102(void);
+	~MSG_550102();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_150103 : public MSG {
+	int64_t guild_id;	
+
+	MSG_150103(void);
+	~MSG_150103();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_550103 : public MSG {
+
+	MSG_550103(void);
+	~MSG_550103();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
 struct MSG_140000 : public MSG {
 	std::string account;	
 	std::string session;	
@@ -372,6 +461,17 @@ struct MSG_160001 : public MSG {
 
 	MSG_160001(void);
 	~MSG_160001();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_160100 : public MSG {
+	int64_t guild_id;	
+
+	MSG_160100(void);
+	~MSG_160100();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

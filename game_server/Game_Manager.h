@@ -75,6 +75,7 @@ public:
 	Block_Buffer* pop_player_load_data_buffer(void);
 	int push_drop_player_cid(int cid);
 	int pop_drop_player_cid(void);
+	Block_Buffer* pop_sync_master_data_buffer(void);
 
 	/// 消息处理
 	int process_list();
@@ -142,6 +143,7 @@ private:
 
 	Data_List player_data_list_; 						//玩家数据,传送给js层
 	Int_List drop_player_cid_list_;					//掉线的玩家cid列表
+	Data_List sync_master_data_list_;				//需要js层处理的数据
 
 	Server_Info game_gate_server_info_;
 
@@ -239,7 +241,21 @@ inline int Game_Manager::push_game_db_data(Block_Buffer *buf) {
 }
 
 inline int Game_Manager::push_game_master_data(Block_Buffer *buf) {
-	game_master_data_list_.push_back(buf);
+	int read_idx = buf->get_read_idx();
+		/*int32_t cid*/ buf->read_int32();
+		/*int16_t len*/ buf->read_int16();
+	int32_t msg_id = buf->read_int32();
+	buf->set_read_idx(read_idx);
+
+	switch (msg_id) {
+	case SYNC_MASTER_GAME_SET_GUILD: {
+		sync_master_data_list_.push_back(buf);
+		break;
+	}
+	default : {
+		game_master_data_list_.push_back(buf);
+	}
+	}
 	return 0;
 }
 
@@ -261,6 +277,10 @@ inline int Game_Manager::push_player_load_data_buffer(Block_Buffer *buf) {
 
 inline Block_Buffer* Game_Manager::pop_player_load_data_buffer(void) {
 	return player_data_list_.pop_front();
+}
+
+inline Block_Buffer* Game_Manager::pop_sync_master_data_buffer(void){
+	return sync_master_data_list_.pop_front();
 }
 
 inline int Game_Manager::push_drop_player_cid(int cid) {

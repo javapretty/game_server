@@ -52,6 +52,7 @@ public:
 	/// 发送数据接口
 	int send_to_gate(int gate_cid, Block_Buffer &buf);
 	int send_to_game(int game_cid, Block_Buffer &buf);
+	int send_to_db(Block_Buffer &buf);
 	/// 关闭客户端连接
 	int close_client(int gate_cid, int player_cid, int error_code);
 	/// 主动关闭处理
@@ -64,10 +65,13 @@ public:
 	int push_master_gate_data(Block_Buffer *buf);
 	Block_Buffer* pop_master_client_data();
 	int push_master_game_data(Block_Buffer *buf);
+	int push_master_db_data(Block_Buffer *buf);
 	int push_self_loop_message(Block_Buffer &msg_buf);
 
 	int push_player_load_data_buffer(Block_Buffer *buf);
 	Block_Buffer* pop_player_load_data_buffer(void);
+
+	Block_Buffer *pop_master_public_data_buffer(void);
 	int push_drop_player_cid(int cid);
 	int pop_drop_player_cid(void);
 
@@ -112,6 +116,9 @@ public:
 	void inner_msg_count(Block_Buffer &buf);
 	void inner_msg_count(int msg_id);
 
+	/// 加载公共信息
+	int load_public_info();
+
 private:
 	Master_Manager(void);
 	virtual ~Master_Manager(void);
@@ -128,8 +135,11 @@ private:
 	Data_List master_client_data_list_;		//玩家逻辑消息数据，发到js处理
 	Data_List master_game_data_list_;			//game-->master
 	Data_List self_loop_block_list_; 			//self_loop_block_list
+	
+	Data_List master_db_data_list_;			//db-->master消息数据
 
 	Data_List player_data_list_; 					//玩家数据,传送给js层
+	Data_List public_data_list_; 					//公共数据,传送给js层
 	Int_List drop_player_cid_list_;				//掉线的玩家cid列表
 
 	Server_Info master_gate_server_info_;
@@ -212,11 +222,36 @@ inline int Master_Manager::push_self_loop_message(Block_Buffer &msg_buf) {
 
 inline int Master_Manager::push_player_load_data_buffer(Block_Buffer *buf) {
 	player_data_list_.push_back(buf);
+	LOG_DEBUG("push_player_load_data_buffer");
 	return 0;
 }
 
 inline Block_Buffer* Master_Manager::pop_player_load_data_buffer(void) {
 	return player_data_list_.pop_front();
+}
+
+inline int Master_Manager::push_master_db_data(Block_Buffer *buf){
+	int read_idx = buf->get_read_idx();
+		/*int32_t cid*/ buf->read_int32();
+		/*int16_t len*/ buf->read_int16();
+		int32_t msg_id = buf->read_int32();
+		buf->set_read_idx(read_idx);
+
+		switch (msg_id) {
+		case SYNC_DB_MASTER_LOAD_PUBLIC_INFO: {
+			public_data_list_.push_back(buf);
+			break;
+		}
+		default : {
+			master_db_data_list_.push_back(buf);
+			break;
+		}
+		}
+	return 0;
+}
+
+inline Block_Buffer *Master_Manager::pop_master_public_data_buffer(void){
+	return public_data_list_.pop_front();
 }
 
 inline int Master_Manager::push_drop_player_cid(int cid) {

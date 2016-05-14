@@ -19,6 +19,7 @@
 #include "Login_Manager.h"
 #include "Master_Server.h"
 #include "Master_Manager.h"
+#include "Master_Connector.h"
 #include "Game_Server.h"
 #include "Game_Connector.h"
 #include "Game_Manager.h"
@@ -276,6 +277,17 @@ void Daemon_Master::start_server(void) {
 
 void Daemon_Master::start_client(void) {
 	start_log_client();
+	
+	int cid = -1;
+	MASTER_DB_CONNECTOR->set(server_conf_.server_ip, server_conf_.db_port, server_conf_.connect_send_interval);
+	MASTER_DB_CONNECTOR->init();
+	MASTER_DB_CONNECTOR->start();
+	if ((cid = MASTER_DB_CONNECTOR->connect_server()) < 2) {
+		LOG_FATAL("master_db_connector fatal cid:%d,port:%d", cid, server_conf_.db_port);
+	}
+	MASTER_DB_CONNECTOR->thr_create();
+	//加载公共信息
+	MASTER_MANAGER->load_public_info();
 	MASTER_V8_MANAGER->thr_create();			//master server v8 engine
 	Daemon::loop();
 }

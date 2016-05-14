@@ -795,4 +795,68 @@ struct MSG_510001 : public MSG {
 	void print(void);
 };
 
+struct MSG_110101 : public MSG {
+	std::string guild_name;	
+
+	MSG_110101(void);
+	~MSG_110101();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_510101 : public MSG {
+	int64_t guild_id;	
+
+	MSG_510101(void);
+	~MSG_510101();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_110102 : public MSG {
+	int64_t guild_id;	
+
+	MSG_110102(void);
+	~MSG_110102();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_510102 : public MSG {
+
+	MSG_510102(void);
+	~MSG_510102();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_110103 : public MSG {
+	int64_t guild_id;	
+
+	MSG_110103(void);
+	~MSG_110103();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_510103 : public MSG {
+
+	MSG_510103(void);
+	~MSG_510103();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
 #endif

@@ -2093,3 +2093,145 @@ void MSG_510001::print(void) {
 	printf("vip_level: %d, ", vip_level);
 	printf("\n");
 }
+
+MSG_110101::MSG_110101(void) {
+	reset();
+}
+
+MSG_110101::~MSG_110101() {
+}
+
+void MSG_110101::serialize(Block_Buffer &buffer) const {
+	buffer.write_string(guild_name);
+}
+
+int MSG_110101::deserialize(Block_Buffer &buffer) {
+	guild_name = buffer.read_string();
+	return 0;
+}
+
+void MSG_110101::reset(void) {
+	guild_name.clear();
+}
+
+void MSG_110101::print(void) {
+	printf("guild_name: %s, ", guild_name.c_str());
+	printf("\n");
+}
+
+MSG_510101::MSG_510101(void) {
+	reset();
+}
+
+MSG_510101::~MSG_510101() {
+}
+
+void MSG_510101::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(guild_id);
+}
+
+int MSG_510101::deserialize(Block_Buffer &buffer) {
+	guild_id = buffer.read_int64();
+	return 0;
+}
+
+void MSG_510101::reset(void) {
+	guild_id = 0;
+}
+
+void MSG_510101::print(void) {
+	printf("guild_id: %ld, ", guild_id);
+	printf("\n");
+}
+
+MSG_110102::MSG_110102(void) {
+	reset();
+}
+
+MSG_110102::~MSG_110102() {
+}
+
+void MSG_110102::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(guild_id);
+}
+
+int MSG_110102::deserialize(Block_Buffer &buffer) {
+	guild_id = buffer.read_int64();
+	return 0;
+}
+
+void MSG_110102::reset(void) {
+	guild_id = 0;
+}
+
+void MSG_110102::print(void) {
+	printf("guild_id: %ld, ", guild_id);
+	printf("\n");
+}
+
+MSG_510102::MSG_510102(void) {
+	reset();
+}
+
+MSG_510102::~MSG_510102() {
+}
+
+void MSG_510102::serialize(Block_Buffer &buffer) const {
+}
+
+int MSG_510102::deserialize(Block_Buffer &buffer) {
+	return 0;
+}
+
+void MSG_510102::reset(void) {
+}
+
+void MSG_510102::print(void) {
+	printf("\n");
+}
+
+MSG_110103::MSG_110103(void) {
+	reset();
+}
+
+MSG_110103::~MSG_110103() {
+}
+
+void MSG_110103::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(guild_id);
+}
+
+int MSG_110103::deserialize(Block_Buffer &buffer) {
+	guild_id = buffer.read_int64();
+	return 0;
+}
+
+void MSG_110103::reset(void) {
+	guild_id = 0;
+}
+
+void MSG_110103::print(void) {
+	printf("guild_id: %ld, ", guild_id);
+	printf("\n");
+}
+
+MSG_510103::MSG_510103(void) {
+	reset();
+}
+
+MSG_510103::~MSG_510103() {
+}
+
+void MSG_510103::serialize(Block_Buffer &buffer) const {
+}
+
+int MSG_510103::deserialize(Block_Buffer &buffer) {
+	return 0;
+}
+
+void MSG_510103::reset(void) {
+}
+
+void MSG_510103::print(void) {
+	printf("\n");
+}

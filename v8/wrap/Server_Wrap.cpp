@@ -71,6 +71,20 @@ void send_game_buffer_to_db(const FunctionCallbackInfo<Value>& args) {
 	GAME_MANAGER->send_to_db(*buf);
 }
 
+void send_master_buffer_to_db(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 1) {
+		LOG_ERROR("send_master_buffer_to_db args error, length: %d\n", args.Length());
+		return;
+	}
+
+	Block_Buffer *buf = unwrap_buffer(args[0]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
+	if (!buf) {
+		return;
+	}
+
+	MASTER_MANAGER->send_to_db(*buf);
+}
+
 void pop_game_client_buffer(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = GAME_MANAGER->pop_game_client_data();
 	if (buf) {
@@ -146,6 +160,16 @@ void get_game_player_by_name(const FunctionCallbackInfo<Value>& args) {
 	}
 }
 
+void pop_sync_master_data_buffer(const FunctionCallbackInfo<Value>& args) {
+	Block_Buffer *buf = GAME_MANAGER->pop_sync_master_data_buffer();
+	if (buf) {
+		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
+	} else {
+		//设置对象为空
+		args.GetReturnValue().SetNull();
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void register_master_timer(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 3) {
@@ -188,20 +212,6 @@ void push_master_buffer(const FunctionCallbackInfo<Value>& args) {
 	}
 }
 
-void send_master_buffer_to_db(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 1) {
-		LOG_ERROR("send_master_buffer_to_db args error, length: %d\n", args.Length());
-		return;
-	}
-
-	Block_Buffer *buf = unwrap_buffer(args[0]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
-	if (!buf) {
-		return;
-	}
-
-	GAME_MANAGER->send_to_db(*buf);
-}
-
 void pop_master_client_buffer(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = MASTER_MANAGER->pop_master_client_data();
 	if (buf) {
@@ -227,6 +237,16 @@ void push_master_client_buffer(const FunctionCallbackInfo<Value>& args) {
 
 void get_master_player_load_data_buffer(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = MASTER_MANAGER->pop_player_load_data_buffer();
+	if (buf) {
+		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
+	} else {
+		//设置对象为空
+		args.GetReturnValue().SetNull();
+	}
+}
+
+void get_master_db_data_buffer(const FunctionCallbackInfo<Value>& args) {
+	Block_Buffer *buf = MASTER_MANAGER->pop_master_public_data_buffer();
 	if (buf) {
 		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
 	} else {

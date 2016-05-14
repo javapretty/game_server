@@ -39,3 +39,28 @@ struct MSG_150004 {
 	int64_t role_id;
 	Mail_Detail mail_detail;
 };
+
+//获取公共信息
+struct MSG_150101 {
+
+};
+
+struct MSG_550101 {
+	Guild_Info guild_info;
+};
+
+//保存公会信息
+struct MSG_150102 {
+	Guild_Data guild_data;
+};
+
+struct MSG_550102 {
+};
+
+//删除公会信息
+struct MSG_150103 {
+	int64_t guild_id;
+};
+
+struct MSG_550103 {
+};

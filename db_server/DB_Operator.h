@@ -62,6 +62,9 @@ public:
 	int load_shop_info(int64_t role_id, Shop_Info &shop_info);
 	int save_shop_info(int64_t role_id, Shop_Info &shop_info);
 
+	int load_guild_info(Guild_Info &guild_info);
+	int save_guild_info(Guild_Data &guild_data);
+	int delete_guild_info(int64_t guild_id);
 private:
 	DB_Operator(void);
 	virtual ~DB_Operator(void);

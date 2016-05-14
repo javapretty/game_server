@@ -13,6 +13,9 @@ class Master_Inner_Messager {
 public:
 	static Master_Inner_Messager *instance(void);
 
+	//db message
+	int process_db_block(Block_Buffer &buf);
+
 	//game message
 	int process_game_block(Block_Buffer &buf);
 

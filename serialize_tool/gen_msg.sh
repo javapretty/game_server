@@ -1,6 +1,6 @@
 #! /bin/bash
 
-JS_DEFINES_1="Active_Message Client_Game_Message Client_Master_Message"
+JS_DEFINES_1="Active_Message Client_Game_Message Client_Master_Message Game_DB_Message Game_Master_Message Master_DB_Message"
 JS_DEFINES_2="Msg_Struct Game_Struct"
 
 CPP_DEFINES_CLIENT="Msg_Struct Active_Message Client_Game_Message Client_Login_Message Client_Master_Message"

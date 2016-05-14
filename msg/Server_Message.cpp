@@ -240,6 +240,7 @@ void Game_Player_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(skill_point);
 	buffer.write_int64(recover_skill_time);
 	buffer.write_int32(exchange_count);
+	buffer.write_int32(guild_id);
 }
 
 int Game_Player_Info::deserialize(Block_Buffer &buffer) {
@@ -264,6 +265,7 @@ int Game_Player_Info::deserialize(Block_Buffer &buffer) {
 	skill_point = buffer.read_int32();
 	recover_skill_time = buffer.read_int64();
 	exchange_count = buffer.read_int32();
+	guild_id = buffer.read_int32();
 	return 0;
 }
 
@@ -289,6 +291,7 @@ void Game_Player_Info::reset(void) {
 	skill_point = 0;
 	recover_skill_time = 0;
 	exchange_count = 0;
+	guild_id = 0;
 }
 
 void Game_Player_Info::print(void) {
@@ -313,6 +316,7 @@ void Game_Player_Info::print(void) {
 	printf("skill_point: %d, ", skill_point);
 	printf("recover_skill_time: %ld, ", recover_skill_time);
 	printf("exchange_count: %d, ", exchange_count);
+	printf("guild_id: %d, ", guild_id);
 	printf("\n");
 }
 
@@ -528,6 +532,92 @@ void Player_Data::print(void) {
 	bag_info.print();
 	mail_info.print();
 	shop_info.print();
+	printf("\n");
+}
+
+Guild_Data::Guild_Data(void) {
+	reset();
+}
+
+Guild_Data::~Guild_Data() {
+}
+
+void Guild_Data::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(guild_id);
+	buffer.write_string(guild_name);
+	buffer.write_int64(chief_id);
+	uint16_t member_list_size = member_list.size();
+	buffer.write_uint16(member_list_size);
+	for(uint16_t i = 0; i < member_list_size; ++i) {
+		buffer.write_int64(member_list[i]);
+	}
+}
+
+int Guild_Data::deserialize(Block_Buffer &buffer) {
+	guild_id = buffer.read_int64();
+	guild_name = buffer.read_string();
+	chief_id = buffer.read_int64();
+	uint16_t member_list_size = buffer.read_uint16();
+	int64_t member_list_v;
+	for(uint16_t i = 0; i < member_list_size; ++i) {
+		member_list_v = buffer.read_int64();
+		member_list.push_back(member_list_v);
+	}
+	return 0;
+}
+
+void Guild_Data::reset(void) {
+	guild_id = 0;
+	guild_name.clear();
+	chief_id = 0;
+	member_list.clear();
+}
+
+void Guild_Data::print(void) {
+	printf("guild_id: %ld, ", guild_id);
+	printf("guild_name: %s, ", guild_name.c_str());
+	printf("chief_id: %ld, ", chief_id);
+	uint16_t member_list_size = (member_list.size() > 5 ? 5 : member_list.size());
+	printf("member_list.size: %ld [", member_list.size());
+	for(uint16_t i = 0; i < member_list_size; ++i) {
+		printf("member_list[i]: %ld, ", member_list[i]);
+	}
+	printf("], ");
+	printf("\n");
+}
+
+Guild_Info::Guild_Info(void) {
+	reset();
+}
+
+Guild_Info::~Guild_Info() {
+}
+
+void Guild_Info::serialize(Block_Buffer &buffer) const {
+
+	buffer.write_uint16(guild_map.size());
+	for(std::map<int64_t,Guild_Data>::const_iterator it = guild_map.begin();
+		it != guild_map.end(); ++it) {
+		it->second.serialize(buffer);
+	}
+}
+
+int Guild_Info::deserialize(Block_Buffer &buffer) {
+	uint16_t guild_map_size = buffer.read_uint16();
+	for (int16_t i = 0; i < guild_map_size; ++i) {
+		Guild_Data _v;
+		_v.deserialize(buffer);
+		guild_map.insert(std::make_pair(_v.guild_id, _v));
+	}
+	return 0;
+}
+
+void Guild_Info::reset(void) {
+	guild_map.clear();
+}
+
+void Guild_Info::print(void) {
+	printf("guild_map.size: %ld {}, ", guild_map.size());
 	printf("\n");
 }
 
@@ -770,6 +860,144 @@ void MSG_150004::print(void) {
 	printf("\n");
 }
 
+MSG_150101::MSG_150101(void) {
+	reset();
+}
+
+MSG_150101::~MSG_150101() {
+}
+
+void MSG_150101::serialize(Block_Buffer &buffer) const {
+}
+
+int MSG_150101::deserialize(Block_Buffer &buffer) {
+	return 0;
+}
+
+void MSG_150101::reset(void) {
+}
+
+void MSG_150101::print(void) {
+	printf("\n");
+}
+
+MSG_550101::MSG_550101(void) {
+	reset();
+}
+
+MSG_550101::~MSG_550101() {
+}
+
+void MSG_550101::serialize(Block_Buffer &buffer) const {
+	guild_info.serialize(buffer);
+}
+
+int MSG_550101::deserialize(Block_Buffer &buffer) {
+	guild_info.deserialize(buffer);
+	return 0;
+}
+
+void MSG_550101::reset(void) {
+	guild_info.reset();
+}
+
+void MSG_550101::print(void) {
+	guild_info.print();
+	printf("\n");
+}
+
+MSG_150102::MSG_150102(void) {
+	reset();
+}
+
+MSG_150102::~MSG_150102() {
+}
+
+void MSG_150102::serialize(Block_Buffer &buffer) const {
+	guild_data.serialize(buffer);
+}
+
+int MSG_150102::deserialize(Block_Buffer &buffer) {
+	guild_data.deserialize(buffer);
+	return 0;
+}
+
+void MSG_150102::reset(void) {
+	guild_data.reset();
+}
+
+void MSG_150102::print(void) {
+	guild_data.print();
+	printf("\n");
+}
+
+MSG_550102::MSG_550102(void) {
+	reset();
+}
+
+MSG_550102::~MSG_550102() {
+}
+
+void MSG_550102::serialize(Block_Buffer &buffer) const {
+}
+
+int MSG_550102::deserialize(Block_Buffer &buffer) {
+	return 0;
+}
+
+void MSG_550102::reset(void) {
+}
+
+void MSG_550102::print(void) {
+	printf("\n");
+}
+
+MSG_150103::MSG_150103(void) {
+	reset();
+}
+
+MSG_150103::~MSG_150103() {
+}
+
+void MSG_150103::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(guild_id);
+}
+
+int MSG_150103::deserialize(Block_Buffer &buffer) {
+	guild_id = buffer.read_int64();
+	return 0;
+}
+
+void MSG_150103::reset(void) {
+	guild_id = 0;
+}
+
+void MSG_150103::print(void) {
+	printf("guild_id: %ld, ", guild_id);
+	printf("\n");
+}
+
+MSG_550103::MSG_550103(void) {
+	reset();
+}
+
+MSG_550103::~MSG_550103() {
+}
+
+void MSG_550103::serialize(Block_Buffer &buffer) const {
+}
+
+int MSG_550103::deserialize(Block_Buffer &buffer) {
+	return 0;
+}
+
+void MSG_550103::reset(void) {
+}
+
+void MSG_550103::print(void) {
+	printf("\n");
+}
+
 MSG_140000::MSG_140000(void) {
 	reset();
 }
@@ -1007,5 +1235,30 @@ void MSG_160001::reset(void) {
 
 void MSG_160001::print(void) {
 	printf("role_id: %ld, ", role_id);
+	printf("\n");
+}
+
+MSG_160100::MSG_160100(void) {
+	reset();
+}
+
+MSG_160100::~MSG_160100() {
+}
+
+void MSG_160100::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(guild_id);
+}
+
+int MSG_160100::deserialize(Block_Buffer &buffer) {
+	guild_id = buffer.read_int64();
+	return 0;
+}
+
+void MSG_160100::reset(void) {
+	guild_id = 0;
+}
+
+void MSG_160100::print(void) {
+	printf("guild_id: %ld, ", guild_id);
 	printf("\n");
 }

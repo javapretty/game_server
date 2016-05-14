@@ -64,3 +64,4 @@ struct Shop_Detail {
 	int32_t refresh_count;
 	std::vector<Product_Info> products;
 };
+

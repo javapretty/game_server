@@ -750,3 +750,348 @@ MSG_510001.prototype.deserialize = function(buffer) {
 	this.career = buffer.read_int32();
 	this.vip_level = buffer.read_int32();
 }
+
+function MSG_110101() {
+	this.guild_name = ""
+}
+
+MSG_110101.prototype.serialize = function(buffer) {
+	buffer.write_string(this.guild_name);
+}
+
+MSG_110101.prototype.deserialize = function(buffer) {
+	this.guild_name = buffer.read_string();
+}
+
+function MSG_510101() {
+	this.guild_id = 0;
+}
+
+MSG_510101.prototype.serialize = function(buffer) {
+	buffer.write_int64(this.guild_id);
+}
+
+MSG_510101.prototype.deserialize = function(buffer) {
+	this.guild_id = buffer.read_int64();
+}
+
+function MSG_110102() {
+	this.guild_id = 0;
+}
+
+MSG_110102.prototype.serialize = function(buffer) {
+	buffer.write_int64(this.guild_id);
+}
+
+MSG_110102.prototype.deserialize = function(buffer) {
+	this.guild_id = buffer.read_int64();
+}
+
+function MSG_510102() {
+}
+
+MSG_510102.prototype.serialize = function(buffer) {
+}
+
+MSG_510102.prototype.deserialize = function(buffer) {
+}
+
+function MSG_110103() {
+	this.guild_id = 0;
+}
+
+MSG_110103.prototype.serialize = function(buffer) {
+	buffer.write_int64(this.guild_id);
+}
+
+MSG_110103.prototype.deserialize = function(buffer) {
+	this.guild_id = buffer.read_int64();
+}
+
+function MSG_510103() {
+}
+
+MSG_510103.prototype.serialize = function(buffer) {
+}
+
+MSG_510103.prototype.deserialize = function(buffer) {
+}
+
+function MSG_150000() {
+}
+
+MSG_150000.prototype.serialize = function(buffer) {
+}
+
+MSG_150000.prototype.deserialize = function(buffer) {
+}
+
+function MSG_550000() {
+	this.db_cache_vec = new Array();
+}
+
+MSG_550000.prototype.serialize = function(buffer) {
+	var len = this.db_cache_vec.length;
+	buffer.write_uint16(len);
+	for(var i = 0; i < len; ++i) {
+		this.db_cache_vec[i].serialize(buffer);
+	}
+}
+
+MSG_550000.prototype.deserialize = function(buffer) {
+	var len = buffer.read_uint16();
+	for(var i = 0; i < len; ++i) {
+		var db_cache_vec_v = new Player_DB_Cache();
+		db_cache_vec_v.deserialize(buffer);
+		this.db_cache_vec.push(db_cache_vec_v);
+	}
+}
+
+function MSG_150001() {
+	this.account_info = new Account_Info();
+}
+
+MSG_150001.prototype.serialize = function(buffer) {
+	this.account_info.serialize(buffer);
+}
+
+MSG_150001.prototype.deserialize = function(buffer) {
+	this.account_info.deserialize(buffer);
+}
+
+function MSG_550001() {
+	this.player_data = new Player_Data();
+}
+
+MSG_550001.prototype.serialize = function(buffer) {
+	this.player_data.serialize(buffer);
+}
+
+MSG_550001.prototype.deserialize = function(buffer) {
+	this.player_data.deserialize(buffer);
+}
+
+function MSG_150002() {
+	this.player_info = new Game_Player_Info();
+}
+
+MSG_150002.prototype.serialize = function(buffer) {
+	this.player_info.serialize(buffer);
+}
+
+MSG_150002.prototype.deserialize = function(buffer) {
+	this.player_info.deserialize(buffer);
+}
+
+function MSG_550002() {
+	this.player_data = new Player_Data();
+}
+
+MSG_550002.prototype.serialize = function(buffer) {
+	this.player_data.serialize(buffer);
+}
+
+MSG_550002.prototype.deserialize = function(buffer) {
+	this.player_data.deserialize(buffer);
+}
+
+function MSG_150003() {
+	this.player_data = new Player_Data();
+}
+
+MSG_150003.prototype.serialize = function(buffer) {
+	this.player_data.serialize(buffer);
+}
+
+MSG_150003.prototype.deserialize = function(buffer) {
+	this.player_data.deserialize(buffer);
+}
+
+function MSG_550003() {
+	this.role_id = 0;
+}
+
+MSG_550003.prototype.serialize = function(buffer) {
+	buffer.write_int64(this.role_id);
+}
+
+MSG_550003.prototype.deserialize = function(buffer) {
+	this.role_id = buffer.read_int64();
+}
+
+function MSG_150004() {
+	this.role_id = 0;
+	this.mail_detail = new Mail_Detail();
+}
+
+MSG_150004.prototype.serialize = function(buffer) {
+	buffer.write_int64(this.role_id);
+	this.mail_detail.serialize(buffer);
+}
+
+MSG_150004.prototype.deserialize = function(buffer) {
+	this.role_id = buffer.read_int64();
+	this.mail_detail.deserialize(buffer);
+}
+
+function MSG_150101() {
+}
+
+MSG_150101.prototype.serialize = function(buffer) {
+}
+
+MSG_150101.prototype.deserialize = function(buffer) {
+}
+
+function MSG_550101() {
+	this.guild_info = new Guild_Info();
+}
+
+MSG_550101.prototype.serialize = function(buffer) {
+	this.guild_info.serialize(buffer);
+}
+
+MSG_550101.prototype.deserialize = function(buffer) {
+	this.guild_info.deserialize(buffer);
+}
+
+function MSG_150102() {
+	this.guild_data = new Guild_Data();
+}
+
+MSG_150102.prototype.serialize = function(buffer) {
+	this.guild_data.serialize(buffer);
+}
+
+MSG_150102.prototype.deserialize = function(buffer) {
+	this.guild_data.deserialize(buffer);
+}
+
+function MSG_550102() {
+}
+
+MSG_550102.prototype.serialize = function(buffer) {
+}
+
+MSG_550102.prototype.deserialize = function(buffer) {
+}
+
+function MSG_150103() {
+	this.guild_id = 0;
+}
+
+MSG_150103.prototype.serialize = function(buffer) {
+	buffer.write_int64(this.guild_id);
+}
+
+MSG_150103.prototype.deserialize = function(buffer) {
+	this.guild_id = buffer.read_int64();
+}
+
+function MSG_550103() {
+}
+
+MSG_550103.prototype.serialize = function(buffer) {
+}
+
+MSG_550103.prototype.deserialize = function(buffer) {
+}
+
+function MSG_160000() {
+	this.player_info = new Master_Player_Info();
+}
+
+MSG_160000.prototype.serialize = function(buffer) {
+	this.player_info.serialize(buffer);
+}
+
+MSG_160000.prototype.deserialize = function(buffer) {
+	this.player_info.deserialize(buffer);
+}
+
+function MSG_160001() {
+	this.role_id = 0;
+}
+
+MSG_160001.prototype.serialize = function(buffer) {
+	buffer.write_int64(this.role_id);
+}
+
+MSG_160001.prototype.deserialize = function(buffer) {
+	this.role_id = buffer.read_int64();
+}
+
+function MSG_160100() {
+	this.guild_id = 0;
+}
+
+MSG_160100.prototype.serialize = function(buffer) {
+	buffer.write_int64(this.guild_id);
+}
+
+MSG_160100.prototype.deserialize = function(buffer) {
+	this.guild_id = buffer.read_int64();
+}
+
+function MSG_150101() {
+}
+
+MSG_150101.prototype.serialize = function(buffer) {
+}
+
+MSG_150101.prototype.deserialize = function(buffer) {
+}
+
+function MSG_550101() {
+	this.guild_info = new Guild_Info();
+}
+
+MSG_550101.prototype.serialize = function(buffer) {
+	this.guild_info.serialize(buffer);
+}
+
+MSG_550101.prototype.deserialize = function(buffer) {
+	this.guild_info.deserialize(buffer);
+}
+
+function MSG_150102() {
+	this.guild_data = new Guild_Data();
+}
+
+MSG_150102.prototype.serialize = function(buffer) {
+	this.guild_data.serialize(buffer);
+}
+
+MSG_150102.prototype.deserialize = function(buffer) {
+	this.guild_data.deserialize(buffer);
+}
+
+function MSG_550102() {
+}
+
+MSG_550102.prototype.serialize = function(buffer) {
+}
+
+MSG_550102.prototype.deserialize = function(buffer) {
+}
+
+function MSG_150103() {
+	this.guild_id = 0;
+}
+
+MSG_150103.prototype.serialize = function(buffer) {
+	buffer.write_int64(this.guild_id);
+}
+
+MSG_150103.prototype.deserialize = function(buffer) {
+	this.guild_id = buffer.read_int64();
+}
+
+function MSG_550103() {
+}
+
+MSG_550103.prototype.serialize = function(buffer) {
+}
+
+MSG_550103.prototype.deserialize = function(buffer) {
+}

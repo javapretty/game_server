@@ -32,10 +32,16 @@ enum Login_Client_Message {
 
 enum Client_Master_Message {
 	REQ_SEND_CHAT_INFO = 110001, //发送世界聊天消息
+	REQ_CREATE_GUILD = 110101, //申请创建公会
+	REQ_DISSOVE_GUILD = 110102, //申请解散公会
+	REQ_JOIN_GUILD = 110103, //申请加入公会
 };
 
 enum Master_Client_Message {
 	RES_SEND_CHAT_INFO = 510001, //发送世界聊天消息(返回)
+	RES_CREATE_GUILD = 510101, //申请创建公会(返回)
+	RES_DISSOVE_GUILD = 510102, //申请解散公会(返回)
+	RES_JOIN_GUILD = 510103, //申请加入公会(返回)
 };
 
 enum Client_Game_Message {
@@ -97,18 +103,25 @@ enum Game_DB_Message {
 	SYNC_GAME_DB_CREATE_PLAYER = 150002, //创建玩家
 	SYNC_GAME_DB_SAVE_PLAYER_INFO = 150003, //保存玩家信息
 	SYNC_GAME_DB_SAVE_MAIL_INFO = 150004, //保存邮件信息
-};
-
-enum DB_Game_Message {
 	SYNC_DB_GAME_LOAD_DB_CACHE = 550000, //加载db_cache(返回)
 	SYNC_DB_GAME_LOAD_PLAYER_INFO = 550001, //加载玩家信息(返回)
 	SYNC_DB_GAME_CREATE_PLAYER = 550002, //创建玩家(返回)
 	SYNC_DB_GAME_SAVE_PLAYER_INFO = 550003, //保存玩家信息(返回)
 };
 
+enum Master_DB_Message {
+	SYNC_MASTER_DB_LOAD_PUBLIC_INFO = 150101, //加载公共信息
+	SYNC_MASTER_DB_SAVE_GUILD_INFO = 150102, //保存公会信息
+	SYNC_MASTER_DB_DELETE_GUILD_INFO = 150103, //删除公会信息
+	SYNC_DB_MASTER_LOAD_PUBLIC_INFO = 550101, //加载公共信息(返回)
+	SYNC_DB_MASTER_SAVE_GUILD_INFO = 550102, //保存公会信息(返回)
+	SYNC_DB_MASTER_DELETE_GUILD_INFO = 550103, //删除公会信息(返回)
+};
+
 enum Game_Master_Message {
 	SYNC_GAME_MASTER_PLYAER_SIGNIN = 160000, //game同步玩家上线到master
 	SYNC_GAME_MASTER_PLAYER_SIGNOUT = 160001, //game同步玩家下线到master
+	SYNC_MASTER_GAME_SET_GUILD = 160100, //master通知game设置公会信息
 };
 
 enum LOG_Message {

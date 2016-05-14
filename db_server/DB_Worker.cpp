@@ -130,6 +130,24 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 		process_save_mail(msg);
 		break;
 	}
+	case SYNC_MASTER_DB_LOAD_PUBLIC_INFO: {
+		MSG_150101 msg;
+		msg.deserialize(*buf);
+		process_load_public_info(cid, msg);
+		break;
+	}
+	case SYNC_MASTER_DB_SAVE_GUILD_INFO: {
+		MSG_150102 msg;
+		msg.deserialize(*buf);
+		process_save_guild(msg);
+		break;
+	}
+	case SYNC_MASTER_DB_DELETE_GUILD_INFO: {
+		MSG_150103 msg;
+		msg.deserialize(*buf);
+		process_delete_guild(msg);
+		break;
+	}
 	default: {
 		LOG_ERROR("msg_id = %d error", msg_id);
 		break;
@@ -221,5 +239,28 @@ int DB_Worker::process_save_mail(MSG_150004 &msg) {
 		}
 	}
 	CACHED_INSTANCE->save_mail_info(msg.role_id, mail_info);
+	return 0;
+}
+
+int DB_Worker::process_load_public_info(int cid, MSG_150101 &msg){
+	Block_Buffer buf;
+	buf.make_inner_message(SYNC_DB_MASTER_LOAD_PUBLIC_INFO);
+	MSG_550101 res;
+	
+	CACHED_INSTANCE->load_guild_info(res.guild_info);
+	
+	res.serialize(buf);
+	buf.finish_message();
+	DB_MANAGER->send_data_block(cid, buf);
+	return 0;
+};
+
+int DB_Worker::process_save_guild(MSG_150102 &msg) {
+	CACHED_INSTANCE->save_guild_info(msg.guild_data);
+	return 0;
+}
+
+int DB_Worker::process_delete_guild(MSG_150103 &msg){
+	CACHED_INSTANCE->delete_guild_info(msg.guild_id);
 	return 0;
 }

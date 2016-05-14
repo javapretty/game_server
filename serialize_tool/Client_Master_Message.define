@@ -13,3 +13,31 @@ struct MSG_510001 {
 	int32_t career;
 	int32_t vip_level;
 };
+
+//申请创建公会
+struct MSG_110101 {
+	std::string guild_name;
+};
+
+struct MSG_510101 {
+	int64_t guild_id;
+};
+
+//申请解散工会
+struct MSG_110102 {
+	int64_t guild_id;
+};
+
+struct MSG_510102 {
+
+};
+
+//申请加入公会
+struct MSG_110103 {
+	int64_t guild_id;
+};
+
+struct MSG_510103 {
+
+};
+

@@ -60,6 +60,7 @@ struct Game_Player_Info {
 	int32_t skill_point;				//技能点
 	int64_t recover_skill_time;	//回复技能点时间
 	int32_t exchange_count;		//聚宝盆兑换剩余次数
+	int32_t guild_id;           //玩家所属公会
 };
 
 struct Hero_Info {
@@ -89,4 +90,15 @@ struct Player_Data {
 	Bag_Info bag_info;
 	Mail_Info mail_info;
 	Shop_Info shop_info;
+};
+
+struct Guild_Data {
+	int64_t guild_id;
+	std::string guild_name;
+	int64_t chief_id; //帮会帮主id
+	std::vector<int64_t> member_list;
+};
+
+struct Guild_Info {
+	std::map<int64_t(guild_id),Guild_Data> guild_map;
 };

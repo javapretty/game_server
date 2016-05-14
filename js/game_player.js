@@ -224,3 +224,12 @@ Game_Player.prototype.exchange_money = function(buffer){
 	
 	this.set_data_change(Data_Change.PLAYER_CHANGE);
 }
+
+Game_Player.prototype.set_guild = function(buffer) {
+	print('set_guild, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
+	var msg = new MSG_160100();
+	msg.deserialize(buffer);
+	this.player_info.guild_id = msg.guild_id;
+	print("role ", this.player_info.role_id, " is belong to GUILD ", this.player_info.guild_id);
+	this.set_data_change(Data_Change.PLAYER_CHANGE);
+}

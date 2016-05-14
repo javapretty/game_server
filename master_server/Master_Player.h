@@ -16,6 +16,7 @@ public:
 
 	int respond_success_result(int msg_id, Block_Buffer *buf = 0);
 	int respond_error_result(int msg_id, int err, Block_Buffer *buf = 0);
+	int sync_data_to_game(int msg_id, Block_Buffer *buf);
 
 	inline void set_gate_cid(int gate_cid) { gate_cid_ = gate_cid; }
 	inline int gate_cid(void) { return gate_cid_; }

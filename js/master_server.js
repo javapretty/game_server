@@ -14,6 +14,7 @@ require('config.js');
 require('util.js');
 require('timer.js');
 require('master_player.js');
+require('guild.js');
 
 //cid----master_player  全局玩家对象
 var master_player_cid_map = new Map();
@@ -27,6 +28,9 @@ config.init();
 //定时器管理器
 var timer = new Timer();
 timer.init(Server_Type.MASTER_SERVER);
+
+//公会
+var guild = new Guild();
 
 //执行脚本主循环函数
 main();
@@ -59,7 +63,14 @@ function main() {
 				master_player.save_player_data();
 			}
 		}
-	
+		
+		//获得db过来的信息
+		var buffer = get_master_db_data_buffer();
+		if(buffer != null) {
+			all_empty = false;
+			process_master_public_buffer(buffer);
+		}
+
 		//处理定时器消息
 		while(true) {
 			var timer_id = get_master_timer_id();
@@ -98,9 +109,29 @@ function process_master_client_buffer(buffer) {
 	case Msg_CM.REQ_SEND_CHAT_INFO:
 		master_player.send_chat_info(buffer);
 		break;
+	case Msg_CM.REQ_CREATE_GUILD:
+		guild.create_guild(master_player, buffer);
+		break;
+	case Msg_CM.REQ_DISSOVE_GUILD:
+		guild.dissove_guild(master_player, buffer);
+		break;
+	case Msg_CM.REQ_JOIN_GUILD:
+		guild.join_guild(master_player, buffer);
+		break;
 	default:
 		print('msg_id not exist, gate_cid:', gate_cid, " player_cid:", player_cid, " msg_id:", msg_id);
 		break;
 	}
 	push_master_client_buffer(gate_cid, buffer);
 }
+
+function process_master_public_buffer(buffer) {
+	/*var cid */ buffer.read_int32();
+	/*var len */ buffer.read_int16();
+	/*var msg_id */ buffer.read_int32();
+	/*var status */ buffer.read_int32();
+	
+	guild.load_data(buffer);
+	//push_master_buffer(buffer);
+}
+

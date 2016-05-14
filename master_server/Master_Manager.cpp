@@ -8,6 +8,7 @@
 #include "Master_Manager.h"
 #include "Master_Timer.h"
 #include "Master_Server.h"
+#include "Master_Connector.h"
 #include "Master_Client_Messager.h"
 #include "Master_Inner_Messager.h"
 
@@ -57,6 +58,15 @@ int Master_Manager::send_to_game(int game_cid, Block_Buffer &buf) {
 	return MASTER_GAME_SERVER->send_block(game_cid, buf);
 }
 
+int Master_Manager::send_to_db(Block_Buffer &buf){
+	int db_cid = MASTER_DB_CONNECTOR->get_cid();
+	if (db_cid < 2) {
+		LOG_INFO("db_cid = %d", db_cid);
+		return -1;
+	}
+	return MASTER_DB_CONNECTOR->send_block(db_cid, buf);
+}
+
 int Master_Manager::close_client(int gate_cid, int player_cid, int error_code) {
 	Block_Buffer buf;
 	buf.make_player_message(ACTIVE_DISCONNECT, error_code, player_cid);
@@ -99,6 +109,19 @@ int Master_Manager::process_list(void) {
 
 	while (1) {
 		bool all_empty = true;
+
+		/// db-->master
+		if ((buf = master_db_data_list_.pop_front()) != 0) {
+			all_empty = false;
+			if (buf->is_legal()) {
+				cid = buf->peek_int32();
+				MASTER_INNER_MESSAGER->process_db_block(*buf);
+			} else {
+				LOG_ERROR("buf.read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
+				buf->reset();
+			}
+			MASTER_DB_CONNECTOR->push_block(cid, buf);
+		}
 
 		/// game-->master
 		if ((buf = master_game_data_list_.pop_front()) != 0) {
@@ -295,4 +318,12 @@ void Master_Manager::print_msg_count(void) {
 		stream << (it->first) << "\t" << (it->second) << std::endl;
 	}
 	LOG_INFO("inner_msg_count_map_.size = %d\n%s\n", inner_msg_count_map_.size(), stream.str().c_str());
+}
+
+int Master_Manager::load_public_info(){
+	Block_Buffer buf;
+	buf.make_inner_message(SYNC_MASTER_DB_LOAD_PUBLIC_INFO);
+	buf.finish_message();
+	send_to_db(buf);
+	return 0;
 }

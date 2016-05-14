@@ -47,6 +47,17 @@ int Master_Player::respond_error_result(int msg_id, int err, Block_Buffer *buf) 
 	}
 }
 
+int Master_Player::sync_data_to_game(int msg_id, Block_Buffer *buf) {
+	Block_Buffer buffer;
+	buffer.make_inner_message(msg_id);
+	buffer.write_int64(player_info_.role_id);
+	buffer.copy(buf);
+	buffer.finish_message();
+	MASTER_MANAGER->send_to_game(game_cid(), buffer);
+
+	return 0;
+}
+
 int Master_Player::load_player(Master_Player_Info &player_info) {
 	player_info_ = player_info;
 

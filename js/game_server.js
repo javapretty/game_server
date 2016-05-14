@@ -63,7 +63,14 @@ function main() {
 				game_player.save_player_data();
 			}
 		}
-	
+		
+		//获得master过来的同步消息
+		var buffer = pop_sync_master_data_buffer();
+		if(buffer != null){
+			all_empty = false;
+			process_game_master_buffer(buffer);
+		}
+
 		//处理定时器消息
 		while(true) {
 			var timer_id = get_game_timer_id();
@@ -158,4 +165,25 @@ function process_game_client_buffer(buffer) {
 		break;
 	}
 	push_game_client_buffer(gate_cid, buffer);
+}
+
+function process_game_master_buffer(buffer) {
+	/*var cid */ buffer.read_int32();
+	/*var len */ buffer.read_int16();
+	var msg_id = buffer.read_int32();
+	/*var status */ buffer.read_int32();
+	var role_id = buffer.read_int64();
+	var game_player = game_player_role_id_map.get(role_id);
+	if(game_player == null){
+		print('role_id: ', role_id, ' do not exist!');
+		return;
+	}
+	switch(msg_id){
+	case Msg_GM.SYNC_MASTER_GAME_SET_GUILD:
+		game_player.set_guild(buffer);
+		break;
+	default:
+		print('msg_id: ', msg_id, ' from master do not exist!');
+		break;
+	}
 }

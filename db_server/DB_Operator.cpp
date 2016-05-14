@@ -110,6 +110,10 @@ int DB_Operator::create_index(void) {
 		}
 	}
 	{
+		//guild
+		CACHED_CONNECTION.createIndex("mmo.guild", BSON("guild_id" << 1));
+	}
+	{
 		//role
 		CACHED_CONNECTION.createIndex("mmo.role", BSON("role_id" << 1));
 		CACHED_CONNECTION.createIndex("mmo.role", BSON("role_name" << 1));
@@ -282,6 +286,7 @@ int DB_Operator::load_player_info(int64_t role_id, Game_Player_Info &player_info
 		player_info.skill_point = res["skill_point"].numberInt();
 		player_info.recover_skill_time = res["recover_skill_time"].numberLong();
 		player_info.exchange_count = res["exchange_count"].numberInt();
+		player_info.guild_id = res["guild_id"].numberLong();
 		return 0;
 	} else {
 		return -1;
@@ -310,7 +315,8 @@ int DB_Operator::save_player_info(int64_t role_id, Game_Player_Info &player_info
 			<< "charge_gold" << player_info.charge_gold
 			<< "skill_point" << player_info.skill_point
 			<< "recover_skill_time" << (long long int)player_info.recover_skill_time
-			<< "exchange_count" << player_info.exchange_count;
+			<< "exchange_count" << player_info.exchange_count
+			<< "guild_id" << player_info.guild_id;
 
 	CACHED_CONNECTION.update("mmo.role", MONGO_QUERY("role_id" << (long long int)role_id),
 			BSON("$set" << builder.obj()), true);
@@ -589,5 +595,52 @@ int DB_Operator::save_shop_info(int64_t role_id, Shop_Info &shop_info) {
 	CACHED_CONNECTION.update("mmo.shop", MONGO_QUERY("role_id" << (long long int)role_id),
 			BSON("$set" << set_builder.obj() ), true);
 
+	return 0;
+}
+
+int DB_Operator::load_guild_info(Guild_Info &guild_info) {
+	std::auto_ptr<DBClientCursor> cursor = CACHED_CONNECTION.query("mmo.guild", Query());
+	while(cursor->more()){
+		BSONObj obj = cursor->next();
+		Guild_Data data;
+		data.guild_id = obj["guild_id"].numberLong();
+		data.guild_name = obj["guild_name"].valuestrsafe();
+		data.chief_id = obj["chief_id"].numberLong();
+		
+		BSONObj member_obj = obj.getObjectField("member_list");
+		BSONObjIterator iter(member_obj);
+		while (iter.more()) {
+			BSONObj obj = iter.next().embeddedObject();
+			int64_t member_id = obj["member_id"].numberLong();
+			data.member_list.push_back(member_id);
+		}
+		
+		guild_info.guild_map.insert(std::make_pair(data.guild_id, data));
+	}
+
+	return 0;
+}
+
+int DB_Operator::save_guild_info(Guild_Data &guild_data) {
+	std::vector<BSONObj> member_list;
+	for (std::vector<int64_t>::const_iterator iter = guild_data.member_list.begin(); 
+			iter != guild_data.member_list.end(); ++iter) {
+		BSONObjBuilder playerid_builder;
+		playerid_builder << "member_id" << (long long int)(*iter);
+		member_list.push_back(playerid_builder.obj());
+	}
+	
+	BSONObjBuilder set_builder;
+	set_builder << "guild_id" << (long long int)guild_data.guild_id << "guild_name" << guild_data.guild_name
+			<< "chief_id" << (long long int)guild_data.chief_id << "member_list" << member_list;
+
+	CACHED_CONNECTION.update("mmo.guild", MONGO_QUERY("guild_id" << (long long int)guild_data.guild_id),
+			BSON("$set" << set_builder.obj() ), true);
+
+	return 0;
+}
+
+int DB_Operator::delete_guild_info(int64_t guild_id){
+	CACHED_CONNECTION.remove("mmo.guild", MONGO_QUERY("guild_id" << (long long int)guild_id));
 	return 0;
 }

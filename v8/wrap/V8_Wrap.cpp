@@ -39,6 +39,9 @@ Local<Context> Create_Context(Isolate* isolate) {
 	global->Set(String::NewFromUtf8(isolate, "pop_game_buffer", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, pop_game_buffer));
 
+	global->Set(String::NewFromUtf8(isolate, "pop_sync_master_data_buffer", NewStringType::kNormal).ToLocalChecked(),
+				FunctionTemplate::New(isolate, pop_sync_master_data_buffer));
+
 	global->Set(String::NewFromUtf8(isolate, "push_game_buffer", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, push_game_buffer));
 
@@ -88,6 +91,9 @@ Local<Context> Create_Context(Isolate* isolate) {
 	global->Set(String::NewFromUtf8(isolate, "get_master_player_load_data_buffer", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, get_master_player_load_data_buffer));
 
+	global->Set(String::NewFromUtf8(isolate, "get_master_db_data_buffer", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, get_master_db_data_buffer));
+	
 	global->Set(String::NewFromUtf8(isolate, "get_drop_master_player_cid", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, get_drop_master_player_cid));
 
