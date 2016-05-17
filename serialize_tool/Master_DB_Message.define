@@ -9,7 +9,7 @@ struct MSG_550101 {
 
 //保存公会信息
 struct MSG_150102 {
-	Guild_Data guild_data;
+	Guild_Info guild_info;
 };
 
 struct MSG_550102 {
@@ -17,8 +17,10 @@ struct MSG_550102 {
 
 //删除公会信息
 struct MSG_150103 {
-	int64_t guild_id;
+	std::vector<int64_t> guild_list;
 };
 
 struct MSG_550103 {
+
 };
+

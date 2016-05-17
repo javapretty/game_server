@@ -12,6 +12,7 @@ function Config() {
 	this.shop_json = null;			//商店配置
 	this.vip_json = null;				//vip配置
 	this.recharge_json = null;		//充值相关配置
+	this.server_json = null;        //服务器相关配置
 	
 	this.init = function() {
 		try {
@@ -36,6 +37,8 @@ function Config() {
 			var recharge_str = read_json("config/vip/recharge.json");
 			this.recharge_json = JSON.parse(recharge_str);
 			
+			var server_str = read_json("config/server/server_misc.json");
+			this.server_json = JSON.parse(server_str);
 		} catch (err) {
 			print(err.message);
 		}

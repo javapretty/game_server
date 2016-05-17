@@ -101,10 +101,10 @@ if (typeof Msg_MD == "undefined") {
 	var Msg_MD = {};
 	Msg_MD.SYNC_MASTER_DB_LOAD_PUBLIC_INFO = 150101; //加载公共信息
 	Msg_MD.SYNC_MASTER_DB_SAVE_GUILD_INFO = 150102; //保存公会信息
-	Msg_MD.SYNC_MASTER_DB_DELETE_GUILD_INFO = 150103; //删除公会信息
+	Msg_MD.SYNC_MASTER_DB_DROP_GUILD_INFO = 150103; //删除公会信息
 	Msg_MD.SYNC_DB_MASTER_LOAD_PUBLIC_INFO = 550101; //加载公共信息(返回)
 	Msg_MD.SYNC_DB_MASTER_SAVE_GUILD_INFO = 550102; //保存公会信息(返回)
-	Msg_MD.SYNC_DB_MASTER_DELETE_GUILD_INFO = 550103; //删除公会信息(返回)
+	Msg_MD.SYNC_DB_MASTER_DROP_GUILD_INFO = 550103; //删除公会信息(返回)
 }
 
 if (typeof Msg_GM == "undefined") {

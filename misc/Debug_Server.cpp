@@ -18,6 +18,7 @@
 #include "Login_Manager.h"
 #include "Master_Server.h"
 #include "Master_Manager.h"
+#include "Master_Connector.h"
 #include "Game_Server.h"
 #include "Game_Connector.h"
 #include "Game_Manager.h"
@@ -146,6 +147,17 @@ int Debug_Server::start(int argc, char *argv[]) {
 		LOG_FATAL("log_connector fatal cid:%d,port:%d", cid, server_conf_.log_port);
 	}
 	LOG_CONNECTOR->thr_create();
+
+	/// Master DB Connector
+	MASTER_DB_CONNECTOR->set(server_conf_.server_ip, server_conf_.db_port, server_conf_.connect_send_interval);
+	MASTER_DB_CONNECTOR->init();
+	MASTER_DB_CONNECTOR->start();
+	if ((cid = MASTER_DB_CONNECTOR->connect_server()) < 2) {
+		LOG_FATAL("master_db_connector fatal cid:%d,port:%d", cid, server_conf_.db_port);
+	}
+	MASTER_DB_CONNECTOR->thr_create();
+	//加载公共信息
+	MASTER_MANAGER->load_public_info();
 
 	/// Game DB Connector
 	GAME_DB_CONNECTOR->set(server_conf_.server_ip, server_conf_.db_port, server_conf_.connect_send_interval);

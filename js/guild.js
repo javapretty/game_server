@@ -5,12 +5,18 @@
 */
 
 function Guild() {
+	this.drop_list = new Array();
+	this.is_change = false;
 	this.guild_info = new Guild_Info();
 }
 
 Guild.prototype.load_data = function(buffer){
 	print('LOAD GUILD DATA!!, util.now_msec:', util.now_msec());
 	this.guild_info.deserialize(buffer);
+}
+
+Guild.prototype.set_change = function(change = true){
+	this.is_change = change;
 }
 
 Guild.prototype.create_guild = function(player, buffer) {
@@ -26,7 +32,7 @@ Guild.prototype.create_guild = function(player, buffer) {
 	print('chief id is ', guild_data.chief_id);
 	guild_data.member_list = new Array();
 	this.guild_info.guild_map.insert(guild_data.guild_id, guild_data);
-	this.save_data(guild_data);
+	this.set_change();
 	this.sync_game_player(player, guild_data.guild_id);
 	
 	var msg = new MSG_510101();
@@ -38,10 +44,16 @@ Guild.prototype.create_guild = function(player, buffer) {
 }
 
 Guild.prototype.get_next_id = function(){
-	var max_id = 0;;
-	for(var i = 0; i < this.guild_info.guild_map.keys.length; i++){
-		if(this.guild_info.guild_map.keys[i] > max_id){
-			max_id = this.guild_info.guild_map.keys[i];
+	var max_id = 0;
+	if(this.guild_info.guild_map.size() == 0){
+		max_id = config.server_json['agent_num'] * 10000000000000 
+			+ config.server_json['server_num'] * 1000000000;
+	}
+	else {
+		for(var i = 0; i < this.guild_info.guild_map.size(); i++){
+			if(this.guild_info.guild_map.keys[i] > max_id){
+				max_id = this.guild_info.guild_map.keys[i];
+			}
 		}
 	}
 	return max_id + 1;
@@ -63,7 +75,8 @@ Guild.prototype.dissove_guild = function(player, buffer) {
 		this.sync_game_player(p, 0);
 	}
 	this.guild_info.guild_map.remove(msg.guild_id);
-	this.delete_data(msg.guild_id);
+	this.drop_list.push(msg.guild_id);
+	this.set_change();
 	
 	var msg = new MSG_510102();
 	var buf = pop_master_buffer();
@@ -82,7 +95,7 @@ Guild.prototype.join_guild = function(player, buffer) {
 		return;
 	}
 	guild_data.member_list.push(player.player_info.role_id);
-	this.save_data(guild_data);
+	this.set_change();
 	this.sync_game_player(player, guild_data.guild_id);
 	
 	var msg = new MSG_510103();
@@ -92,10 +105,9 @@ Guild.prototype.join_guild = function(player, buffer) {
 	push_master_buffer(buf);
 }
 
-Guild.prototype.save_data = function(data){
+Guild.prototype.save_data = function(){
 	var msg = new MSG_150102();
-	//msg.reset();
-	msg.guild_data = data;
+	msg.guild_info = this.guild_info;
 	var buf = pop_master_buffer();
 	buf.make_inner_message(Msg_MD.SYNC_MASTER_DB_SAVE_GUILD_INFO);
 	msg.serialize(buf);
@@ -104,15 +116,16 @@ Guild.prototype.save_data = function(data){
 	push_master_buffer(buf);
 }
 
-Guild.prototype.delete_data = function(data){
+Guild.prototype.delete_data = function(){
 	var msg = new MSG_150103();
-	msg.guild_id = data;
+	msg.guild_list = this.drop_list;
 	var buf = pop_master_buffer();
-	buf.make_inner_message(Msg_MD.SYNC_MASTER_DB_DELETE_GUILD_INFO);
+	buf.make_inner_message(Msg_MD.SYNC_MASTER_DB_DROP_GUILD_INFO);
 	msg.serialize(buf);
 	buf.finish_message();
 	send_master_buffer_to_db(buf);
 	push_master_buffer(buf);
+	this.drop_list = [];
 }
 
 Guild.prototype.sync_game_player = function(player, guild_id){
@@ -123,3 +136,13 @@ Guild.prototype.sync_game_player = function(player, guild_id){
 	player.cplayer.sync_data_to_game(Msg_GM.SYNC_MASTER_GAME_SET_GUILD, buf);
 	push_master_buffer(buf);
 }
+
+Guild.prototype.save_data_handler = function() {
+	if(!this.is_change)
+		return;
+	if(this.drop_list.length > 0)
+		this.delete_data();
+	this.save_data();
+	this.set_change(false);
+}
+

@@ -621,15 +621,23 @@ int DB_Operator::load_guild_info(Guild_Info &guild_info) {
 	return 0;
 }
 
-int DB_Operator::save_guild_info(Guild_Data &guild_data) {
+int DB_Operator::save_guild_info(Guild_Info &guild_info) {
+	for(std::map<int64_t,Guild_Data>::iterator iter = guild_info.guild_map.begin();
+			iter != guild_info.guild_map.end(); iter++){
+		save_guild_data(iter->second);
+	}
+	return 0;
+}
+
+int DB_Operator::save_guild_data(Guild_Data &guild_data) {
 	std::vector<BSONObj> member_list;
-	for (std::vector<int64_t>::const_iterator iter = guild_data.member_list.begin(); 
+	for (std::vector<int64_t>::const_iterator iter = guild_data.member_list.begin();
 			iter != guild_data.member_list.end(); ++iter) {
 		BSONObjBuilder playerid_builder;
 		playerid_builder << "member_id" << (long long int)(*iter);
 		member_list.push_back(playerid_builder.obj());
 	}
-	
+
 	BSONObjBuilder set_builder;
 	set_builder << "guild_id" << (long long int)guild_data.guild_id << "guild_name" << guild_data.guild_name
 			<< "chief_id" << (long long int)guild_data.chief_id << "member_list" << member_list;
@@ -640,7 +648,15 @@ int DB_Operator::save_guild_info(Guild_Data &guild_data) {
 	return 0;
 }
 
-int DB_Operator::delete_guild_info(int64_t guild_id){
+int DB_Operator::drop_guild_info(std::vector<int64_t> &guild_list){
+	for(std::vector<int64_t>::iterator iter = guild_list.begin();
+			iter != guild_list.end(); iter++){
+		drop_guild_data(*iter);
+	}
+	return 0;
+}
+
+int DB_Operator::drop_guild_data(int64_t guild_id){
 	CACHED_CONNECTION.remove("mmo.guild", MONGO_QUERY("guild_id" << (long long int)guild_id));
 	return 0;
 }

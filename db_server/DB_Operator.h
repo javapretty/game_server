@@ -63,13 +63,16 @@ public:
 	int save_shop_info(int64_t role_id, Shop_Info &shop_info);
 
 	int load_guild_info(Guild_Info &guild_info);
-	int save_guild_info(Guild_Data &guild_data);
-	int delete_guild_info(int64_t guild_id);
+	int save_guild_info(Guild_Info &guild_info);
+	int drop_guild_info(std::vector<int64_t> &guild_list);
 private:
 	DB_Operator(void);
 	virtual ~DB_Operator(void);
 	DB_Operator(const DB_Operator &);
 	const DB_Operator &operator=(const DB_Operator &);
+
+	int save_guild_data(Guild_Data &guild_data);
+	int drop_guild_data(int64_t guild_id);
 
 private:
 	static DB_Operator *instance_;

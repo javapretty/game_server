@@ -25,12 +25,12 @@ var master_player_role_id_map = new Map();
 var config = new Config();
 config.init();
 
+//公会
+var guild = new Guild();
+
 //定时器管理器
 var timer = new Timer();
 timer.init(Server_Type.MASTER_SERVER);
-
-//公会
-var guild = new Guild();
 
 //执行脚本主循环函数
 main();

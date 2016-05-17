@@ -110,19 +110,6 @@ int Master_Manager::process_list(void) {
 	while (1) {
 		bool all_empty = true;
 
-		/// db-->master
-		if ((buf = master_db_data_list_.pop_front()) != 0) {
-			all_empty = false;
-			if (buf->is_legal()) {
-				cid = buf->peek_int32();
-				MASTER_INNER_MESSAGER->process_db_block(*buf);
-			} else {
-				LOG_ERROR("buf.read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
-				buf->reset();
-			}
-			MASTER_DB_CONNECTOR->push_block(cid, buf);
-		}
-
 		/// game-->master
 		if ((buf = master_game_data_list_.pop_front()) != 0) {
 			all_empty = false;

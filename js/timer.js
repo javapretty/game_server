@@ -22,6 +22,8 @@ function Timer() {
 			this.register_master_timer(500, 0, this.master_player_handler);
 			//注册每日刷新定时器,时间间隔24h
 			this.register_master_timer(util.whole_day_msec, util.get_next_day_tick(config.util_json['daily_refresh_time']), this.master_daily_refresh_handler);
+			//注册公共信息保存定时器
+			this.register_master_timer(15000, 0, this.master_public_data_save_handler);
 		}
 	}
 	
@@ -76,5 +78,9 @@ function Timer() {
 		master_player_role_id_map.each(function(key,value,index) {
 			value.daily_refresh();
     	});
+	}
+
+	this.master_public_data_save_handler = function() {
+		guild.save_data_handler();
 	}
 }

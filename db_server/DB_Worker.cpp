@@ -142,10 +142,10 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 		process_save_guild(msg);
 		break;
 	}
-	case SYNC_MASTER_DB_DELETE_GUILD_INFO: {
+	case SYNC_MASTER_DB_DROP_GUILD_INFO: {
 		MSG_150103 msg;
 		msg.deserialize(*buf);
-		process_delete_guild(msg);
+		process_drop_guild(msg);
 		break;
 	}
 	default: {
@@ -256,11 +256,11 @@ int DB_Worker::process_load_public_info(int cid, MSG_150101 &msg){
 };
 
 int DB_Worker::process_save_guild(MSG_150102 &msg) {
-	CACHED_INSTANCE->save_guild_info(msg.guild_data);
+	CACHED_INSTANCE->save_guild_info(msg.guild_info);
 	return 0;
 }
 
-int DB_Worker::process_delete_guild(MSG_150103 &msg){
-	CACHED_INSTANCE->delete_guild_info(msg.guild_id);
+int DB_Worker::process_drop_guild(MSG_150103 &msg) {
+	CACHED_INSTANCE->drop_guild_info(msg.guild_list);
 	return 0;
 }

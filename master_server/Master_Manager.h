@@ -135,8 +135,6 @@ private:
 	Data_List master_client_data_list_;		//玩家逻辑消息数据，发到js处理
 	Data_List master_game_data_list_;			//game-->master
 	Data_List self_loop_block_list_; 			//self_loop_block_list
-	
-	Data_List master_db_data_list_;			//db-->master消息数据
 
 	Data_List player_data_list_; 					//玩家数据,传送给js层
 	Data_List public_data_list_; 					//公共数据,传送给js层
@@ -231,22 +229,7 @@ inline Block_Buffer* Master_Manager::pop_player_load_data_buffer(void) {
 }
 
 inline int Master_Manager::push_master_db_data(Block_Buffer *buf){
-	int read_idx = buf->get_read_idx();
-		/*int32_t cid*/ buf->read_int32();
-		/*int16_t len*/ buf->read_int16();
-		int32_t msg_id = buf->read_int32();
-		buf->set_read_idx(read_idx);
-
-		switch (msg_id) {
-		case SYNC_DB_MASTER_LOAD_PUBLIC_INFO: {
-			public_data_list_.push_back(buf);
-			break;
-		}
-		default : {
-			master_db_data_list_.push_back(buf);
-			break;
-		}
-		}
+	public_data_list_.push_back(buf);
 	return 0;
 }
 

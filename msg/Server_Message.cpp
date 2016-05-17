@@ -860,144 +860,6 @@ void MSG_150004::print(void) {
 	printf("\n");
 }
 
-MSG_150101::MSG_150101(void) {
-	reset();
-}
-
-MSG_150101::~MSG_150101() {
-}
-
-void MSG_150101::serialize(Block_Buffer &buffer) const {
-}
-
-int MSG_150101::deserialize(Block_Buffer &buffer) {
-	return 0;
-}
-
-void MSG_150101::reset(void) {
-}
-
-void MSG_150101::print(void) {
-	printf("\n");
-}
-
-MSG_550101::MSG_550101(void) {
-	reset();
-}
-
-MSG_550101::~MSG_550101() {
-}
-
-void MSG_550101::serialize(Block_Buffer &buffer) const {
-	guild_info.serialize(buffer);
-}
-
-int MSG_550101::deserialize(Block_Buffer &buffer) {
-	guild_info.deserialize(buffer);
-	return 0;
-}
-
-void MSG_550101::reset(void) {
-	guild_info.reset();
-}
-
-void MSG_550101::print(void) {
-	guild_info.print();
-	printf("\n");
-}
-
-MSG_150102::MSG_150102(void) {
-	reset();
-}
-
-MSG_150102::~MSG_150102() {
-}
-
-void MSG_150102::serialize(Block_Buffer &buffer) const {
-	guild_data.serialize(buffer);
-}
-
-int MSG_150102::deserialize(Block_Buffer &buffer) {
-	guild_data.deserialize(buffer);
-	return 0;
-}
-
-void MSG_150102::reset(void) {
-	guild_data.reset();
-}
-
-void MSG_150102::print(void) {
-	guild_data.print();
-	printf("\n");
-}
-
-MSG_550102::MSG_550102(void) {
-	reset();
-}
-
-MSG_550102::~MSG_550102() {
-}
-
-void MSG_550102::serialize(Block_Buffer &buffer) const {
-}
-
-int MSG_550102::deserialize(Block_Buffer &buffer) {
-	return 0;
-}
-
-void MSG_550102::reset(void) {
-}
-
-void MSG_550102::print(void) {
-	printf("\n");
-}
-
-MSG_150103::MSG_150103(void) {
-	reset();
-}
-
-MSG_150103::~MSG_150103() {
-}
-
-void MSG_150103::serialize(Block_Buffer &buffer) const {
-	buffer.write_int64(guild_id);
-}
-
-int MSG_150103::deserialize(Block_Buffer &buffer) {
-	guild_id = buffer.read_int64();
-	return 0;
-}
-
-void MSG_150103::reset(void) {
-	guild_id = 0;
-}
-
-void MSG_150103::print(void) {
-	printf("guild_id: %ld, ", guild_id);
-	printf("\n");
-}
-
-MSG_550103::MSG_550103(void) {
-	reset();
-}
-
-MSG_550103::~MSG_550103() {
-}
-
-void MSG_550103::serialize(Block_Buffer &buffer) const {
-}
-
-int MSG_550103::deserialize(Block_Buffer &buffer) {
-	return 0;
-}
-
-void MSG_550103::reset(void) {
-}
-
-void MSG_550103::print(void) {
-	printf("\n");
-}
-
 MSG_140000::MSG_140000(void) {
 	reset();
 }
@@ -1260,5 +1122,157 @@ void MSG_160100::reset(void) {
 
 void MSG_160100::print(void) {
 	printf("guild_id: %ld, ", guild_id);
+	printf("\n");
+}
+
+MSG_150101::MSG_150101(void) {
+	reset();
+}
+
+MSG_150101::~MSG_150101() {
+}
+
+void MSG_150101::serialize(Block_Buffer &buffer) const {
+}
+
+int MSG_150101::deserialize(Block_Buffer &buffer) {
+	return 0;
+}
+
+void MSG_150101::reset(void) {
+}
+
+void MSG_150101::print(void) {
+	printf("\n");
+}
+
+MSG_550101::MSG_550101(void) {
+	reset();
+}
+
+MSG_550101::~MSG_550101() {
+}
+
+void MSG_550101::serialize(Block_Buffer &buffer) const {
+	guild_info.serialize(buffer);
+}
+
+int MSG_550101::deserialize(Block_Buffer &buffer) {
+	guild_info.deserialize(buffer);
+	return 0;
+}
+
+void MSG_550101::reset(void) {
+	guild_info.reset();
+}
+
+void MSG_550101::print(void) {
+	guild_info.print();
+	printf("\n");
+}
+
+MSG_150102::MSG_150102(void) {
+	reset();
+}
+
+MSG_150102::~MSG_150102() {
+}
+
+void MSG_150102::serialize(Block_Buffer &buffer) const {
+	guild_info.serialize(buffer);
+}
+
+int MSG_150102::deserialize(Block_Buffer &buffer) {
+	guild_info.deserialize(buffer);
+	return 0;
+}
+
+void MSG_150102::reset(void) {
+	guild_info.reset();
+}
+
+void MSG_150102::print(void) {
+	guild_info.print();
+	printf("\n");
+}
+
+MSG_550102::MSG_550102(void) {
+	reset();
+}
+
+MSG_550102::~MSG_550102() {
+}
+
+void MSG_550102::serialize(Block_Buffer &buffer) const {
+}
+
+int MSG_550102::deserialize(Block_Buffer &buffer) {
+	return 0;
+}
+
+void MSG_550102::reset(void) {
+}
+
+void MSG_550102::print(void) {
+	printf("\n");
+}
+
+MSG_150103::MSG_150103(void) {
+	reset();
+}
+
+MSG_150103::~MSG_150103() {
+}
+
+void MSG_150103::serialize(Block_Buffer &buffer) const {
+	uint16_t guild_list_size = guild_list.size();
+	buffer.write_uint16(guild_list_size);
+	for(uint16_t i = 0; i < guild_list_size; ++i) {
+		buffer.write_int64(guild_list[i]);
+	}
+}
+
+int MSG_150103::deserialize(Block_Buffer &buffer) {
+	uint16_t guild_list_size = buffer.read_uint16();
+	int64_t guild_list_v;
+	for(uint16_t i = 0; i < guild_list_size; ++i) {
+		guild_list_v = buffer.read_int64();
+		guild_list.push_back(guild_list_v);
+	}
+	return 0;
+}
+
+void MSG_150103::reset(void) {
+	guild_list.clear();
+}
+
+void MSG_150103::print(void) {
+	uint16_t guild_list_size = (guild_list.size() > 5 ? 5 : guild_list.size());
+	printf("guild_list.size: %ld [", guild_list.size());
+	for(uint16_t i = 0; i < guild_list_size; ++i) {
+		printf("guild_list[i]: %ld, ", guild_list[i]);
+	}
+	printf("], ");
+	printf("\n");
+}
+
+MSG_550103::MSG_550103(void) {
+	reset();
+}
+
+MSG_550103::~MSG_550103() {
+}
+
+void MSG_550103::serialize(Block_Buffer &buffer) const {
+}
+
+int MSG_550103::deserialize(Block_Buffer &buffer) {
+	return 0;
+}
+
+void MSG_550103::reset(void) {
+}
+
+void MSG_550103::print(void) {
 	printf("\n");
 }

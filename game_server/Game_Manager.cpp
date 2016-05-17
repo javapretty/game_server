@@ -159,18 +159,6 @@ int Game_Manager::process_list(void) {
 			}
 			GAME_DB_CONNECTOR->push_block(cid, buf);
 		}
-		/// master-->game
-		if ((buf = game_master_data_list_.pop_front()) != 0) {
-			all_empty = false;
-			if (buf->is_legal()) {
-				cid = buf->peek_int32();
-				GAME_INNER_MESSAGER->process_master_block(*buf);
-			} else {
-				LOG_ERROR("buf.read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
-				buf->reset();
-			}
-			GAME_MASTER_CONNECTOR->push_block(cid, buf);
-		}
 		/// 游戏服内部循环消息队列
 		if (! self_loop_block_list_.empty()) {
 			all_empty = false;
