@@ -23,6 +23,8 @@ void pop_game_buffer(const FunctionCallbackInfo<Value>& args);
 void push_game_buffer(const FunctionCallbackInfo<Value>& args);
 //函数说明：发送消息到db_server 	参数：1,buffer对象	返回值：无
 void send_game_buffer_to_db(const FunctionCallbackInfo<Value>& args);
+//函数说明：发送消息到master_server 	参数：1,buffer对象	返回值：无
+void send_game_buffer_to_master(const FunctionCallbackInfo<Value>& args);
 //函数说明：获取客户端消息buffer	参数：无	返回值：buffer对象
 void pop_game_client_buffer(const FunctionCallbackInfo<Value>& args);
 //函数说明：回收客户端消息buffer	参数：buffer对象	返回值：无

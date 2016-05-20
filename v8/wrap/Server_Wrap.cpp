@@ -71,6 +71,20 @@ void send_game_buffer_to_db(const FunctionCallbackInfo<Value>& args) {
 	GAME_MANAGER->send_to_db(*buf);
 }
 
+void send_game_buffer_to_master(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 1) {
+		LOG_ERROR("send_game_buffer_to_db args error, length: %d\n", args.Length());
+		return;
+	}
+
+	Block_Buffer *buf = unwrap_buffer(args[0]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
+	if (!buf) {
+		return;
+	}
+
+	GAME_MANAGER->send_to_master(*buf);
+}
+
 void send_master_buffer_to_db(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 1) {
 		LOG_ERROR("send_master_buffer_to_db args error, length: %d\n", args.Length());

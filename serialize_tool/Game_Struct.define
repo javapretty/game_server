@@ -92,13 +92,30 @@ struct Player_Data {
 	Shop_Info shop_info;
 };
 
+struct Member_Info {
+	int64_t role_id;
+	std::string role_name;
+	int32_t level;
+	int32_t career; 						//职业1-3
+};
+
 struct Guild_Data {
 	int64_t guild_id;
 	std::string guild_name;
 	int64_t chief_id; //帮会帮主id
-	std::vector<int64_t> member_list;
+	std::vector<int64_t> applicant_list;
+	std::vector<Member_Info> member_list;
 };
 
 struct Guild_Info {
 	std::map<int64_t(guild_id),Guild_Data> guild_map;
+};
+
+struct Offline_Msg_Detail {
+	int64_t role_id;
+	std::vector<int64_t> guild_msg;
+};
+
+struct Offline_Msg {
+	std::map<int64_t(role_id),Offline_Msg_Detail> msg_map;
 };

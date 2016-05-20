@@ -114,6 +114,10 @@ int DB_Operator::create_index(void) {
 		CACHED_CONNECTION.createIndex("mmo.guild", BSON("guild_id" << 1));
 	}
 	{
+		//offline_msg
+		CACHED_CONNECTION.createIndex("mmo.offlinemsg", BSON("role_id" << 1));
+	}
+	{
 		//role
 		CACHED_CONNECTION.createIndex("mmo.role", BSON("role_id" << 1));
 		CACHED_CONNECTION.createIndex("mmo.role", BSON("role_name" << 1));
@@ -607,12 +611,24 @@ int DB_Operator::load_guild_info(Guild_Info &guild_info) {
 		data.guild_name = obj["guild_name"].valuestrsafe();
 		data.chief_id = obj["chief_id"].numberLong();
 		
+		BSONObj applicant_obj = obj.getObjectField("applicant_list");
+		BSONObjIterator applicant_iter(applicant_obj);
+		while (applicant_iter.more()) {
+			BSONObj obj = applicant_iter.next().embeddedObject();
+			int64_t applicant = obj["applicant"].numberLong();
+			data.applicant_list.push_back(applicant);
+		}
+
 		BSONObj member_obj = obj.getObjectField("member_list");
-		BSONObjIterator iter(member_obj);
-		while (iter.more()) {
-			BSONObj obj = iter.next().embeddedObject();
-			int64_t member_id = obj["member_id"].numberLong();
-			data.member_list.push_back(member_id);
+		BSONObjIterator member_iter(member_obj);
+		while (member_iter.more()) {
+			BSONObj obj = member_iter.next().embeddedObject();
+			Member_Info info;
+			info.role_id = obj["role_id"].numberLong();
+			info.role_name = obj["role_name"].valuestrsafe();
+			info.level = obj["level"].numberInt();
+			info.career = obj["career"].numberInt();
+			data.member_list.push_back(info);
 		}
 		
 		guild_info.guild_map.insert(std::make_pair(data.guild_id, data));
@@ -621,7 +637,7 @@ int DB_Operator::load_guild_info(Guild_Info &guild_info) {
 	return 0;
 }
 
-int DB_Operator::save_guild_info(Guild_Info &guild_info) {
+int DB_Operator::save_guild_info	(Guild_Info &guild_info) {
 	for(std::map<int64_t,Guild_Data>::iterator iter = guild_info.guild_map.begin();
 			iter != guild_info.guild_map.end(); iter++){
 		save_guild_data(iter->second);
@@ -630,17 +646,28 @@ int DB_Operator::save_guild_info(Guild_Info &guild_info) {
 }
 
 int DB_Operator::save_guild_data(Guild_Data &guild_data) {
+	std::vector<BSONObj> applicant_list;
+	for (std::vector<int64_t>::const_iterator iter = guild_data.applicant_list.begin();
+			iter != guild_data.applicant_list.end(); ++iter) {
+		BSONObjBuilder applicant_builder;
+		applicant_builder << "applicant" << (long long int)*iter;
+		applicant_list.push_back(applicant_builder.obj());
+	}
 	std::vector<BSONObj> member_list;
-	for (std::vector<int64_t>::const_iterator iter = guild_data.member_list.begin();
+	for (std::vector<Member_Info>::const_iterator iter = guild_data.member_list.begin();
 			iter != guild_data.member_list.end(); ++iter) {
-		BSONObjBuilder playerid_builder;
-		playerid_builder << "member_id" << (long long int)(*iter);
-		member_list.push_back(playerid_builder.obj());
+		BSONObjBuilder member_builder;
+		member_builder << "role_id" << (long long int)iter->role_id
+				<<"role_name" << iter->role_name
+				<<"career" << iter->career
+				<<"level" << iter->level;
+		member_list.push_back(member_builder.obj());
 	}
 
 	BSONObjBuilder set_builder;
 	set_builder << "guild_id" << (long long int)guild_data.guild_id << "guild_name" << guild_data.guild_name
-			<< "chief_id" << (long long int)guild_data.chief_id << "member_list" << member_list;
+			<< "chief_id" << (long long int)guild_data.chief_id << "applicant_list" << applicant_list
+			<< "member_list" << member_list;
 
 	CACHED_CONNECTION.update("mmo.guild", MONGO_QUERY("guild_id" << (long long int)guild_data.guild_id),
 			BSON("$set" << set_builder.obj() ), true);
@@ -658,5 +685,66 @@ int DB_Operator::drop_guild_info(std::vector<int64_t> &guild_list){
 
 int DB_Operator::drop_guild_data(int64_t guild_id){
 	CACHED_CONNECTION.remove("mmo.guild", MONGO_QUERY("guild_id" << (long long int)guild_id));
+	return 0;
+}
+
+int DB_Operator::load_offline_msg(Offline_Msg &offline_msg) {
+	std::auto_ptr<DBClientCursor> cursor = CACHED_CONNECTION.query("mmo.offlinemsg", Query());
+	while(cursor->more()){
+		BSONObj obj = cursor->next();
+		Offline_Msg_Detail msg_detail;
+		msg_detail.role_id = obj["role_id"].numberLong();
+
+		BSONObj guild_obj = obj.getObjectField("guild_list");
+		BSONObjIterator guild_iter(guild_obj);
+		while (guild_iter.more()) {
+			BSONObj obj = guild_iter.next().embeddedObject();
+			int64_t guild_id = obj["guild_id"].numberLong();
+			msg_detail.guild_msg.push_back(guild_id);
+		}
+
+		offline_msg.msg_map.insert(std::make_pair(msg_detail.role_id, msg_detail));
+	}
+
+	return 0;
+}
+
+int DB_Operator::save_offline_msg(Offline_Msg &offline_msg) {
+	for(std::map<int64_t,Offline_Msg_Detail>::iterator iter = offline_msg.msg_map.begin();
+			iter != offline_msg.msg_map.end(); iter++){
+		save_offline_msg_data(iter->second);
+	}
+	return 0;
+}
+
+int DB_Operator::save_offline_msg_data(Offline_Msg_Detail &msg_detail) {
+	//guild info
+	std::vector<BSONObj> guild_list;
+	for (std::vector<int64_t>::const_iterator iter = msg_detail.guild_msg.begin();
+			iter != msg_detail.guild_msg.end(); ++iter) {
+		BSONObjBuilder guild_builder;
+		guild_builder << "guild_id" << (long long int)*iter;
+		guild_list.push_back(guild_builder.obj());
+	}
+
+	BSONObjBuilder set_builder;
+	set_builder << "role_id" << (long long int)msg_detail.role_id <<"guild_list" << guild_list;
+
+	CACHED_CONNECTION.update("mmo.offlinemsg", MONGO_QUERY("guild_id" << (long long int)msg_detail.role_id),
+			BSON("$set" << set_builder.obj() ), true);
+
+	return 0;
+}
+
+int DB_Operator::drop_offline_msg(std::vector<int64_t> &offline_msg_list){
+	for(std::vector<int64_t>::iterator iter = offline_msg_list.begin();
+			iter != offline_msg_list.end(); iter++){
+		drop_guild_data(*iter);
+	}
+	return 0;
+}
+
+int DB_Operator::drop_offline_msg_data(int64_t role_id){
+	CACHED_CONNECTION.remove("mmo.offlinemsg", MONGO_QUERY("role_id" << (long long int)role_id));
 	return 0;
 }

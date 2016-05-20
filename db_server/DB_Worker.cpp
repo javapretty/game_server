@@ -148,6 +148,18 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 		process_drop_guild(msg);
 		break;
 	}
+	case SYNC_MASTER_DB_SAVE_OFFLINE_MSG: {
+		MSG_150104 msg;
+		msg.deserialize(*buf);
+		process_save_offline_msg(msg);
+		break;
+	}
+	case SYNC_MASTER_DB_DROP_OFFLINE_MSG: {
+		MSG_150105 msg;
+		msg.deserialize(*buf);
+		process_drop_offline_msg(msg);
+		break;
+	}
 	default: {
 		LOG_ERROR("msg_id = %d error", msg_id);
 		break;
@@ -248,6 +260,7 @@ int DB_Worker::process_load_public_info(int cid, MSG_150101 &msg){
 	MSG_550101 res;
 	
 	CACHED_INSTANCE->load_guild_info(res.guild_info);
+	CACHED_INSTANCE->load_offline_msg(res.offline_msg);
 	
 	res.serialize(buf);
 	buf.finish_message();
@@ -262,5 +275,15 @@ int DB_Worker::process_save_guild(MSG_150102 &msg) {
 
 int DB_Worker::process_drop_guild(MSG_150103 &msg) {
 	CACHED_INSTANCE->drop_guild_info(msg.guild_list);
+	return 0;
+}
+
+int DB_Worker::process_save_offline_msg(MSG_150104 &msg) {
+	CACHED_INSTANCE->save_offline_msg(msg.offline_msg);
+	return 0;
+}
+
+int DB_Worker::process_drop_offline_msg(MSG_150105 &msg) {
+	CACHED_INSTANCE->drop_offline_msg(msg.offline_msg_list);
 	return 0;
 }

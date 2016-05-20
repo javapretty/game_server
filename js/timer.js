@@ -82,5 +82,6 @@ function Timer() {
 
 	this.master_public_data_save_handler = function() {
 		guild.save_data_handler();
+		offline_manager.save_data_handler();
 	}
 }

@@ -53,7 +53,7 @@ int Master_Player::sync_data_to_game(int msg_id, Block_Buffer *buf) {
 	buffer.write_int64(player_info_.role_id);
 	buffer.copy(buf);
 	buffer.finish_message();
-	MASTER_MANAGER->send_to_game(game_cid(), buffer);
+	MASTER_MANAGER->send_to_game(game_cid_, buffer);
 
 	return 0;
 }

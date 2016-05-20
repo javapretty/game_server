@@ -981,14 +981,17 @@ MSG_150101.prototype.deserialize = function(buffer) {
 
 function MSG_550101() {
 	this.guild_info = new Guild_Info();
+	this.offline_msg = new Offline_Msg();
 }
 
 MSG_550101.prototype.serialize = function(buffer) {
 	this.guild_info.serialize(buffer);
+	this.offline_msg.serialize(buffer);
 }
 
 MSG_550101.prototype.deserialize = function(buffer) {
 	this.guild_info.deserialize(buffer);
+	this.offline_msg.deserialize(buffer);
 }
 
 function MSG_150102() {
@@ -1040,4 +1043,55 @@ MSG_550103.prototype.serialize = function(buffer) {
 }
 
 MSG_550103.prototype.deserialize = function(buffer) {
+}
+
+function MSG_150104() {
+	this.offline_msg = new Offline_Msg();
+}
+
+MSG_150104.prototype.serialize = function(buffer) {
+	this.offline_msg.serialize(buffer);
+}
+
+MSG_150104.prototype.deserialize = function(buffer) {
+	this.offline_msg.deserialize(buffer);
+}
+
+function MSG_550104() {
+}
+
+MSG_550104.prototype.serialize = function(buffer) {
+}
+
+MSG_550104.prototype.deserialize = function(buffer) {
+}
+
+function MSG_150105() {
+	this.offline_msg_list = new Array();
+}
+
+MSG_150105.prototype.serialize = function(buffer) {
+	var len = this.offline_msg_list.length;
+	buffer.write_uint16(len);
+	for(var i = 0; i < len; ++i) {
+		buffer.write_int64(this.offline_msg_list[i]);
+	}
+}
+
+MSG_150105.prototype.deserialize = function(buffer) {
+	var len = buffer.read_uint16();
+	for(var i = 0; i < len; ++i) {
+		var offline_msg_list_v;
+		offline_msg_list_v = buffer.read_int64();
+		this.offline_msg_list.push(offline_msg_list_v);
+	}
+}
+
+function MSG_550105() {
+}
+
+MSG_550105.prototype.serialize = function(buffer) {
+}
+
+MSG_550105.prototype.deserialize = function(buffer) {
 }

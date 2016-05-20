@@ -48,6 +48,9 @@ Local<Context> Create_Context(Isolate* isolate) {
 	global->Set(String::NewFromUtf8(isolate, "send_game_buffer_to_db", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, send_game_buffer_to_db));
 
+	global->Set(String::NewFromUtf8(isolate, "send_game_buffer_to_master", NewStringType::kNormal).ToLocalChecked(),
+				FunctionTemplate::New(isolate, send_game_buffer_to_master));
+
 	global->Set(String::NewFromUtf8(isolate, "pop_game_client_buffer", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, pop_game_client_buffer));
 

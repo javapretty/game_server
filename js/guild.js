@@ -11,7 +11,7 @@ function Guild() {
 }
 
 Guild.prototype.load_data = function(buffer){
-	print('LOAD GUILD DATA!!, util.now_msec:', util.now_msec());
+	print('LOAD GUILD DATA, util.now_msec:', util.now_msec());
 	this.guild_info.deserialize(buffer);
 }
 
@@ -29,8 +29,8 @@ Guild.prototype.create_guild = function(player, buffer) {
 	guild_data.guild_id = this.get_next_id();
 	guild_data.guild_name = msg.guild_name;
 	guild_data.chief_id = player.player_info.role_id;
-	print('chief id is ', guild_data.chief_id);
-	guild_data.member_list = new Array();
+
+	this.member_join_guild(player, guild_data);
 	this.guild_info.guild_map.insert(guild_data.guild_id, guild_data);
 	this.set_change();
 	this.sync_game_player(player, guild_data.guild_id);
@@ -69,10 +69,14 @@ Guild.prototype.dissove_guild = function(player, buffer) {
 		return;
 	}
 	for(var i = 0; i < guild_data.member_list.length; i++){
-		var p = master_player_role_id_map.get(guild_data.member_list[i]);
-		if(p == null)
+		var p = master_player_role_id_map.get(guild_data.member_list[i].role_id);
+		if(p == null){
 			continue;
-		this.sync_game_player(p, 0);
+			//offline_msg.store_offline_msg(guild_data.mamber_list[i].role_id, );
+		}
+		else {
+			this.sync_game_player(p, 0);
+		}
 	}
 	this.guild_info.guild_map.remove(msg.guild_id);
 	this.drop_list.push(msg.guild_id);
@@ -94,9 +98,8 @@ Guild.prototype.join_guild = function(player, buffer) {
 		print('guild ', msg.guild_id, " not exist!");
 		return;
 	}
-	guild_data.member_list.push(player.player_info.role_id);
+	guild_data.applicant_list.push(player.player_info.role_id);
 	this.set_change();
-	this.sync_game_player(player, guild_data.guild_id);
 	
 	var msg = new MSG_510103();
 	var buf = pop_master_buffer();
@@ -144,5 +147,14 @@ Guild.prototype.save_data_handler = function() {
 		this.delete_data();
 	this.save_data();
 	this.set_change(false);
+}
+
+Guild.prototype.member_join_guild = function(player, guild_data) {
+	var member = new Member_Info();
+	member.role_id = player.player_info.role_id;
+	member.role_name = player.player_info.role_name;
+	member.level = player.player_info.level;
+	member.career = player.player_info.career;
+	guild_data.member_list.push(member);
 }
 

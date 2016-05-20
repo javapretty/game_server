@@ -182,11 +182,26 @@ struct Player_Data : public MSG {
 	void print(void);
 };
 
+struct Member_Info : public MSG {
+	int64_t role_id;	
+	std::string role_name;	
+	int32_t level;	
+	int32_t career;	//职业1-3
+
+	Member_Info(void);
+	~Member_Info();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
 struct Guild_Data : public MSG {
 	int64_t guild_id;	
 	std::string guild_name;	
 	int64_t chief_id;	//帮会帮主id
-	std::vector<int64_t> member_list;	
+	std::vector<int64_t> applicant_list;	
+	std::vector<Member_Info> member_list;	
 
 	Guild_Data(void);
 	~Guild_Data();
@@ -201,6 +216,29 @@ struct Guild_Info : public MSG {
 
 	Guild_Info(void);
 	~Guild_Info();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct Offline_Msg_Detail : public MSG {
+	int64_t role_id;	
+	std::vector<int64_t> guild_msg;	
+
+	Offline_Msg_Detail(void);
+	~Offline_Msg_Detail();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct Offline_Msg : public MSG {
+	std::map<int64_t,Offline_Msg_Detail> msg_map;	
+
+	Offline_Msg(void);
+	~Offline_Msg();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
@@ -427,6 +465,7 @@ struct MSG_150101 : public MSG {
 
 struct MSG_550101 : public MSG {
 	Guild_Info guild_info;	
+	Offline_Msg offline_msg;	
 
 	MSG_550101(void);
 	~MSG_550101();
@@ -472,6 +511,48 @@ struct MSG_550103 : public MSG {
 
 	MSG_550103(void);
 	~MSG_550103();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_150104 : public MSG {
+	Offline_Msg offline_msg;	
+
+	MSG_150104(void);
+	~MSG_150104();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_550104 : public MSG {
+
+	MSG_550104(void);
+	~MSG_550104();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_150105 : public MSG {
+	std::vector<int64_t> offline_msg_list;	
+
+	MSG_150105(void);
+	~MSG_150105();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_550105 : public MSG {
+
+	MSG_550105(void);
+	~MSG_550105();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

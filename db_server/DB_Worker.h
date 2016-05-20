@@ -57,12 +57,16 @@ public:
 	int process_save_player(int cid, Player_Data &player_data);
 	/// 保存邮件信息
 	int process_save_mail(MSG_150004 &msg);
-	/// 获取公会信息
+	/// 获取公共信息
 	int process_load_public_info(int cid, MSG_150101 &msg);
 	/// 保存公会信息
 	int process_save_guild(MSG_150102 &msg);
 	/// 删除公会数据
 	int process_drop_guild(MSG_150103 &msg);
+	/// 保存离线信息
+	int process_save_offline_msg(MSG_150104 &msg);
+	/// 删除离线数据
+	int process_drop_offline_msg(MSG_150105 &msg);
 private:
 	Data_List data_list_;						///通用数据保存列表
 	Data_List load_player_list_; 		///等待加载的玩家列表
