@@ -59,8 +59,9 @@ struct Game_Player_Info {
 	int32_t charge_gold;				//总共充值的元宝数
 	int32_t skill_point;				//技能点
 	int64_t recover_skill_time;	//回复技能点时间
-	int32_t exchange_count;		//聚宝盆兑换剩余次数
-	int32_t guild_id;           //玩家所属公会
+	int32_t exchange_count;		  //聚宝盆兑换剩余次数
+	int32_t guild_id;           //公会id
+	std::string guild_name;		  //公会名字
 };
 
 struct Hero_Info {
@@ -92,30 +93,32 @@ struct Player_Data {
 	Shop_Info shop_info;
 };
 
-struct Member_Info {
+struct Guild_Member_Detail {
 	int64_t role_id;
 	std::string role_name;
 	int32_t level;
-	int32_t career; 						//职业1-3
+	int32_t career; 									//职业1-3
 };
 
-struct Guild_Data {
+struct Guild_Detail {
+	bool change;
 	int64_t guild_id;
 	std::string guild_name;
-	int64_t chief_id; //帮会帮主id
-	std::vector<int64_t> applicant_list;
-	std::vector<Member_Info> member_list;
+	int64_t chief_id; 				  			//帮主id
+	std::vector<int64_t> applicant_list;		//申请者列表
+	std::vector<Guild_Member_Detail> member_list;
 };
 
 struct Guild_Info {
-	std::map<int64_t(guild_id),Guild_Data> guild_map;
+	boost::unordered_map<int64_t(guild_id),Guild_Detail> guild_map;
 };
 
-struct Offline_Msg_Detail {
+struct Offline_Detail {
 	int64_t role_id;
-	std::vector<int64_t> guild_msg;
+	int64_t guild_id;
+	std::string guild_name;
 };
 
-struct Offline_Msg {
-	std::map<int64_t(role_id),Offline_Msg_Detail> msg_map;
+struct Offline_Info {
+	boost::unordered_map<int64_t(role_id),Offline_Detail> offline_map;
 };

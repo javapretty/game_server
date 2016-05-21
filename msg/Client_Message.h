@@ -829,6 +829,7 @@ struct MSG_110102 : public MSG {
 };
 
 struct MSG_510102 : public MSG {
+	int64_t guild_id;	
 
 	MSG_510102(void);
 	~MSG_510102();

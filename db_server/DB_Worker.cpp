@@ -139,25 +139,25 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 	case SYNC_MASTER_DB_SAVE_GUILD_INFO: {
 		MSG_150102 msg;
 		msg.deserialize(*buf);
-		process_save_guild(msg);
+		process_save_guild_info(msg);
 		break;
 	}
 	case SYNC_MASTER_DB_DROP_GUILD_INFO: {
 		MSG_150103 msg;
 		msg.deserialize(*buf);
-		process_drop_guild(msg);
+		process_drop_guild_info(msg);
 		break;
 	}
-	case SYNC_MASTER_DB_SAVE_OFFLINE_MSG: {
+	case SYNC_MASTER_DB_SAVE_OFFLINE_INFO: {
 		MSG_150104 msg;
 		msg.deserialize(*buf);
-		process_save_offline_msg(msg);
+		process_save_offline_info(msg);
 		break;
 	}
-	case SYNC_MASTER_DB_DROP_OFFLINE_MSG: {
+	case SYNC_MASTER_DB_DROP_OFFLINE_INFO: {
 		MSG_150105 msg;
 		msg.deserialize(*buf);
-		process_drop_offline_msg(msg);
+		process_drop_offline_info(msg);
 		break;
 	}
 	default: {
@@ -258,32 +258,30 @@ int DB_Worker::process_load_public_info(int cid, MSG_150101 &msg){
 	Block_Buffer buf;
 	buf.make_inner_message(SYNC_DB_MASTER_LOAD_PUBLIC_INFO);
 	MSG_550101 res;
-	
 	CACHED_INSTANCE->load_guild_info(res.guild_info);
-	CACHED_INSTANCE->load_offline_msg(res.offline_msg);
-	
+	CACHED_INSTANCE->load_offline_info(res.offline_info);
 	res.serialize(buf);
 	buf.finish_message();
 	DB_MANAGER->send_data_block(cid, buf);
 	return 0;
 };
 
-int DB_Worker::process_save_guild(MSG_150102 &msg) {
+int DB_Worker::process_save_guild_info(MSG_150102 &msg) {
 	CACHED_INSTANCE->save_guild_info(msg.guild_info);
 	return 0;
 }
 
-int DB_Worker::process_drop_guild(MSG_150103 &msg) {
+int DB_Worker::process_drop_guild_info(MSG_150103 &msg) {
 	CACHED_INSTANCE->drop_guild_info(msg.guild_list);
 	return 0;
 }
 
-int DB_Worker::process_save_offline_msg(MSG_150104 &msg) {
-	CACHED_INSTANCE->save_offline_msg(msg.offline_msg);
+int DB_Worker::process_save_offline_info(MSG_150104 &msg) {
+	CACHED_INSTANCE->save_offline_info(msg.offline_info);
 	return 0;
 }
 
-int DB_Worker::process_drop_offline_msg(MSG_150105 &msg) {
-	CACHED_INSTANCE->drop_offline_msg(msg.offline_msg_list);
+int DB_Worker::process_drop_offline_info(MSG_150105 &msg) {
+	CACHED_INSTANCE->drop_offline_info(msg.offline_list);
 	return 0;
 }

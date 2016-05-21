@@ -2177,16 +2177,20 @@ MSG_510102::~MSG_510102() {
 }
 
 void MSG_510102::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(guild_id);
 }
 
 int MSG_510102::deserialize(Block_Buffer &buffer) {
+	guild_id = buffer.read_int64();
 	return 0;
 }
 
 void MSG_510102::reset(void) {
+	guild_id = 0;
 }
 
 void MSG_510102::print(void) {
+	printf("guild_id: %ld, ", guild_id);
 	printf("\n");
 }
 

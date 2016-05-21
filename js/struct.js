@@ -393,6 +393,7 @@ function Game_Player_Info() {
 	this.recover_skill_time = 0;
 	this.exchange_count = 0;
 	this.guild_id = 0;
+	this.guild_name = ""
 }
 
 Game_Player_Info.prototype.serialize = function(buffer) {
@@ -418,6 +419,7 @@ Game_Player_Info.prototype.serialize = function(buffer) {
 	buffer.write_int64(this.recover_skill_time);
 	buffer.write_int32(this.exchange_count);
 	buffer.write_int32(this.guild_id);
+	buffer.write_string(this.guild_name);
 }
 
 Game_Player_Info.prototype.deserialize = function(buffer) {
@@ -443,6 +445,7 @@ Game_Player_Info.prototype.deserialize = function(buffer) {
 	this.recover_skill_time = buffer.read_int64();
 	this.exchange_count = buffer.read_int32();
 	this.guild_id = buffer.read_int32();
+	this.guild_name = buffer.read_string();
 }
 
 function Hero_Info() {
@@ -573,28 +576,29 @@ Player_Data.prototype.deserialize = function(buffer) {
 	this.shop_info.deserialize(buffer);
 }
 
-function Member_Info() {
+function Guild_Member_Detail() {
 	this.role_id = 0;
 	this.role_name = ""
 	this.level = 0;
 	this.career = 0;
 }
 
-Member_Info.prototype.serialize = function(buffer) {
+Guild_Member_Detail.prototype.serialize = function(buffer) {
 	buffer.write_int64(this.role_id);
 	buffer.write_string(this.role_name);
 	buffer.write_int32(this.level);
 	buffer.write_int32(this.career);
 }
 
-Member_Info.prototype.deserialize = function(buffer) {
+Guild_Member_Detail.prototype.deserialize = function(buffer) {
 	this.role_id = buffer.read_int64();
 	this.role_name = buffer.read_string();
 	this.level = buffer.read_int32();
 	this.career = buffer.read_int32();
 }
 
-function Guild_Data() {
+function Guild_Detail() {
+	this.change = 0;
 	this.guild_id = 0;
 	this.guild_name = ""
 	this.chief_id = 0;
@@ -602,7 +606,8 @@ function Guild_Data() {
 	this.member_list = new Array();
 }
 
-Guild_Data.prototype.serialize = function(buffer) {
+Guild_Detail.prototype.serialize = function(buffer) {
+	buffer.write_bool(this.change);
 	buffer.write_int64(this.guild_id);
 	buffer.write_string(this.guild_name);
 	buffer.write_int64(this.chief_id);
@@ -618,7 +623,8 @@ Guild_Data.prototype.serialize = function(buffer) {
 	}
 }
 
-Guild_Data.prototype.deserialize = function(buffer) {
+Guild_Detail.prototype.deserialize = function(buffer) {
+	this.change = buffer.read_bool();
 	this.guild_id = buffer.read_int64();
 	this.guild_name = buffer.read_string();
 	this.chief_id = buffer.read_int64();
@@ -630,7 +636,7 @@ Guild_Data.prototype.deserialize = function(buffer) {
 	}
 	var len = buffer.read_uint16();
 	for(var i = 0; i < len; ++i) {
-		var member_list_v = new Member_Info();
+		var member_list_v = new Guild_Member_Detail();
 		member_list_v.deserialize(buffer);
 		this.member_list.push(member_list_v);
 	}
@@ -650,52 +656,46 @@ Guild_Info.prototype.serialize = function(buffer) {
 Guild_Info.prototype.deserialize = function(buffer) {
 	var len = buffer.read_uint16();
 	for (var i = 0; i < len; ++i) {
-		var _v = new Guild_Data();
+		var _v = new Guild_Detail();
 		_v.deserialize(buffer);
 		this.guild_map.insert(_v.guild_id, _v);
 	}
 }
 
-function Offline_Msg_Detail() {
+function Offline_Detail() {
 	this.role_id = 0;
-	this.guild_msg = new Array();
+	this.guild_id = 0;
+	this.guild_name = ""
 }
 
-Offline_Msg_Detail.prototype.serialize = function(buffer) {
+Offline_Detail.prototype.serialize = function(buffer) {
 	buffer.write_int64(this.role_id);
-	var len = this.guild_msg.length;
-	buffer.write_uint16(len);
-	for(var i = 0; i < len; ++i) {
-		buffer.write_int64(this.guild_msg[i]);
-	}
+	buffer.write_int64(this.guild_id);
+	buffer.write_string(this.guild_name);
 }
 
-Offline_Msg_Detail.prototype.deserialize = function(buffer) {
+Offline_Detail.prototype.deserialize = function(buffer) {
 	this.role_id = buffer.read_int64();
-	var len = buffer.read_uint16();
-	for(var i = 0; i < len; ++i) {
-		var guild_msg_v;
-		guild_msg_v = buffer.read_int64();
-		this.guild_msg.push(guild_msg_v);
-	}
+	this.guild_id = buffer.read_int64();
+	this.guild_name = buffer.read_string();
 }
 
-function Offline_Msg() {
-	this.msg_map = new Map();
+function Offline_Info() {
+	this.offline_map = new Map();
 }
 
-Offline_Msg.prototype.serialize = function(buffer) {
-	buffer.write_uint16(this.msg_map.size());
-	this.msg_map.each(function(_key,_v,index) {
+Offline_Info.prototype.serialize = function(buffer) {
+	buffer.write_uint16(this.offline_map.size());
+	this.offline_map.each(function(_key,_v,index) {
 		_v.serialize(buffer);
 	});
 }
 
-Offline_Msg.prototype.deserialize = function(buffer) {
+Offline_Info.prototype.deserialize = function(buffer) {
 	var len = buffer.read_uint16();
 	for (var i = 0; i < len; ++i) {
-		var _v = new Offline_Msg_Detail();
+		var _v = new Offline_Detail();
 		_v.deserialize(buffer);
-		this.msg_map.insert(_v.role_id, _v);
+		this.offline_map.insert(_v.role_id, _v);
 	}
 }

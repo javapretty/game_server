@@ -102,20 +102,20 @@ if (typeof Msg_MD == "undefined") {
 	Msg_MD.SYNC_MASTER_DB_LOAD_PUBLIC_INFO = 150101; //加载公共信息
 	Msg_MD.SYNC_MASTER_DB_SAVE_GUILD_INFO = 150102; //保存公会信息
 	Msg_MD.SYNC_MASTER_DB_DROP_GUILD_INFO = 150103; //删除公会信息
-	Msg_MD.SYNC_MASTER_DB_SAVE_OFFLINE_MSG = 150104; //保存离线信息
-	Msg_MD.SYNC_MASTER_DB_DROP_OFFLINE_MSG = 150105; //删除离线信息
+	Msg_MD.SYNC_MASTER_DB_SAVE_OFFLINE_INFO = 150104; //保存离线信息
+	Msg_MD.SYNC_MASTER_DB_DROP_OFFLINE_INFO = 150105; //删除离线信息
 	Msg_MD.SYNC_DB_MASTER_LOAD_PUBLIC_INFO = 550101; //加载公共信息(返回)
 	Msg_MD.SYNC_DB_MASTER_SAVE_GUILD_INFO = 550102; //保存公会信息(返回)
 	Msg_MD.SYNC_DB_MASTER_DROP_GUILD_INFO = 550103; //删除公会信息(返回)
-	Msg_MD.SYNC_DB_MASTER_SAVE_OFFLINE_MSG = 550104; //保存离线信息(返回)
-	Msg_MD.SYNC_DB_MASTER_DROP_OFFLINE_MSG = 550105; //删除离线信息(返回)
+	Msg_MD.SYNC_DB_MASTER_SAVE_OFFLINE_INFO = 550104; //保存离线信息(返回)
+	Msg_MD.SYNC_DB_MASTER_DROP_OFFLINE_INFO = 550105; //删除离线信息(返回)
 }
 
 if (typeof Msg_GM == "undefined") {
 	var Msg_GM = {};
 	Msg_GM.SYNC_GAME_MASTER_PLYAER_SIGNIN = 160000; //game同步玩家上线到master
 	Msg_GM.SYNC_GAME_MASTER_PLAYER_SIGNOUT = 160001; //game同步玩家下线到master
-	Msg_GM.SYNC_MASTER_GAME_SET_GUILD = 160100; //master通知game设置公会信息
+	Msg_GM.SYNC_MASTER_GAME_GUILD_INFO = 160100; //master通知game公会信息
 }
 
 if (typeof Msg_Active == "undefined") {

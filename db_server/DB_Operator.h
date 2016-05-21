@@ -64,21 +64,19 @@ public:
 
 	int load_guild_info(Guild_Info &guild_info);
 	int save_guild_info(Guild_Info &guild_info);
+	int save_guild_detail(Guild_Detail &guild_detail);
 	int drop_guild_info(std::vector<int64_t> &guild_list);
 
-	int load_offline_msg(Offline_Msg &offline_msg);
-	int save_offline_msg(Offline_Msg &offline_msg);
-	int drop_offline_msg(std::vector<int64_t> &offline_msg_list);
+	int load_offline_info(Offline_Info &offline_info);
+	int save_offline_info(Offline_Info &offline_info);
+	int save_offline_detail(Offline_Detail &offline_detail);
+	int drop_offline_info(std::vector<int64_t> &offline_list);
+
 private:
 	DB_Operator(void);
 	virtual ~DB_Operator(void);
 	DB_Operator(const DB_Operator &);
 	const DB_Operator &operator=(const DB_Operator &);
-
-	int save_guild_data(Guild_Data &guild_data);
-	int drop_guild_data(int64_t guild_id);
-	int save_offline_msg_data(Offline_Msg_Detail &msg_detail);
-	int drop_offline_msg_data(int64_t role_id);
 
 private:
 	static DB_Operator *instance_;

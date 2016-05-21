@@ -241,6 +241,7 @@ void Game_Player_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int64(recover_skill_time);
 	buffer.write_int32(exchange_count);
 	buffer.write_int32(guild_id);
+	buffer.write_string(guild_name);
 }
 
 int Game_Player_Info::deserialize(Block_Buffer &buffer) {
@@ -266,6 +267,7 @@ int Game_Player_Info::deserialize(Block_Buffer &buffer) {
 	recover_skill_time = buffer.read_int64();
 	exchange_count = buffer.read_int32();
 	guild_id = buffer.read_int32();
+	guild_name = buffer.read_string();
 	return 0;
 }
 
@@ -292,6 +294,7 @@ void Game_Player_Info::reset(void) {
 	recover_skill_time = 0;
 	exchange_count = 0;
 	guild_id = 0;
+	guild_name.clear();
 }
 
 void Game_Player_Info::print(void) {
@@ -317,6 +320,7 @@ void Game_Player_Info::print(void) {
 	printf("recover_skill_time: %ld, ", recover_skill_time);
 	printf("exchange_count: %d, ", exchange_count);
 	printf("guild_id: %d, ", guild_id);
+	printf("guild_name: %s, ", guild_name.c_str());
 	printf("\n");
 }
 
@@ -535,21 +539,21 @@ void Player_Data::print(void) {
 	printf("\n");
 }
 
-Member_Info::Member_Info(void) {
+Guild_Member_Detail::Guild_Member_Detail(void) {
 	reset();
 }
 
-Member_Info::~Member_Info() {
+Guild_Member_Detail::~Guild_Member_Detail() {
 }
 
-void Member_Info::serialize(Block_Buffer &buffer) const {
+void Guild_Member_Detail::serialize(Block_Buffer &buffer) const {
 	buffer.write_int64(role_id);
 	buffer.write_string(role_name);
 	buffer.write_int32(level);
 	buffer.write_int32(career);
 }
 
-int Member_Info::deserialize(Block_Buffer &buffer) {
+int Guild_Member_Detail::deserialize(Block_Buffer &buffer) {
 	role_id = buffer.read_int64();
 	role_name = buffer.read_string();
 	level = buffer.read_int32();
@@ -557,14 +561,14 @@ int Member_Info::deserialize(Block_Buffer &buffer) {
 	return 0;
 }
 
-void Member_Info::reset(void) {
+void Guild_Member_Detail::reset(void) {
 	role_id = 0;
 	role_name.clear();
 	level = 0;
 	career = 0;
 }
 
-void Member_Info::print(void) {
+void Guild_Member_Detail::print(void) {
 	printf("role_id: %ld, ", role_id);
 	printf("role_name: %s, ", role_name.c_str());
 	printf("level: %d, ", level);
@@ -572,14 +576,15 @@ void Member_Info::print(void) {
 	printf("\n");
 }
 
-Guild_Data::Guild_Data(void) {
+Guild_Detail::Guild_Detail(void) {
 	reset();
 }
 
-Guild_Data::~Guild_Data() {
+Guild_Detail::~Guild_Detail() {
 }
 
-void Guild_Data::serialize(Block_Buffer &buffer) const {
+void Guild_Detail::serialize(Block_Buffer &buffer) const {
+	buffer.write_bool(change);
 	buffer.write_int64(guild_id);
 	buffer.write_string(guild_name);
 	buffer.write_int64(chief_id);
@@ -595,7 +600,8 @@ void Guild_Data::serialize(Block_Buffer &buffer) const {
 	}
 }
 
-int Guild_Data::deserialize(Block_Buffer &buffer) {
+int Guild_Detail::deserialize(Block_Buffer &buffer) {
+	change = buffer.read_bool();
 	guild_id = buffer.read_int64();
 	guild_name = buffer.read_string();
 	chief_id = buffer.read_int64();
@@ -606,7 +612,7 @@ int Guild_Data::deserialize(Block_Buffer &buffer) {
 		applicant_list.push_back(applicant_list_v);
 	}
 	uint16_t member_list_size = buffer.read_uint16();
-	Member_Info member_list_v;
+	Guild_Member_Detail member_list_v;
 	for(uint16_t i = 0; i < member_list_size; ++i) {
 		member_list_v.deserialize(buffer);
 		member_list.push_back(member_list_v);
@@ -614,7 +620,8 @@ int Guild_Data::deserialize(Block_Buffer &buffer) {
 	return 0;
 }
 
-void Guild_Data::reset(void) {
+void Guild_Detail::reset(void) {
+	change = 0;
 	guild_id = 0;
 	guild_name.clear();
 	chief_id = 0;
@@ -622,7 +629,8 @@ void Guild_Data::reset(void) {
 	member_list.clear();
 }
 
-void Guild_Data::print(void) {
+void Guild_Detail::print(void) {
+	printf("change: %d, ", change);
 	printf("guild_id: %ld, ", guild_id);
 	printf("guild_name: %s, ", guild_name.c_str());
 	printf("chief_id: %ld, ", chief_id);
@@ -651,7 +659,7 @@ Guild_Info::~Guild_Info() {
 void Guild_Info::serialize(Block_Buffer &buffer) const {
 
 	buffer.write_uint16(guild_map.size());
-	for(std::map<int64_t,Guild_Data>::const_iterator it = guild_map.begin();
+	for(boost::unordered_map<int64_t,Guild_Detail>::const_iterator it = guild_map.begin();
 		it != guild_map.end(); ++it) {
 		it->second.serialize(buffer);
 	}
@@ -660,9 +668,9 @@ void Guild_Info::serialize(Block_Buffer &buffer) const {
 int Guild_Info::deserialize(Block_Buffer &buffer) {
 	uint16_t guild_map_size = buffer.read_uint16();
 	for (int16_t i = 0; i < guild_map_size; ++i) {
-		Guild_Data _v;
+		Guild_Detail _v;
 		_v.deserialize(buffer);
-		guild_map.insert(std::make_pair(_v.guild_id, _v));
+		guild_map[_v.guild_id] =  _v;
 	}
 	return 0;
 }
@@ -676,81 +684,71 @@ void Guild_Info::print(void) {
 	printf("\n");
 }
 
-Offline_Msg_Detail::Offline_Msg_Detail(void) {
+Offline_Detail::Offline_Detail(void) {
 	reset();
 }
 
-Offline_Msg_Detail::~Offline_Msg_Detail() {
+Offline_Detail::~Offline_Detail() {
 }
 
-void Offline_Msg_Detail::serialize(Block_Buffer &buffer) const {
+void Offline_Detail::serialize(Block_Buffer &buffer) const {
 	buffer.write_int64(role_id);
-	uint16_t guild_msg_size = guild_msg.size();
-	buffer.write_uint16(guild_msg_size);
-	for(uint16_t i = 0; i < guild_msg_size; ++i) {
-		buffer.write_int64(guild_msg[i]);
-	}
+	buffer.write_int64(guild_id);
+	buffer.write_string(guild_name);
 }
 
-int Offline_Msg_Detail::deserialize(Block_Buffer &buffer) {
+int Offline_Detail::deserialize(Block_Buffer &buffer) {
 	role_id = buffer.read_int64();
-	uint16_t guild_msg_size = buffer.read_uint16();
-	int64_t guild_msg_v;
-	for(uint16_t i = 0; i < guild_msg_size; ++i) {
-		guild_msg_v = buffer.read_int64();
-		guild_msg.push_back(guild_msg_v);
-	}
+	guild_id = buffer.read_int64();
+	guild_name = buffer.read_string();
 	return 0;
 }
 
-void Offline_Msg_Detail::reset(void) {
+void Offline_Detail::reset(void) {
 	role_id = 0;
-	guild_msg.clear();
+	guild_id = 0;
+	guild_name.clear();
 }
 
-void Offline_Msg_Detail::print(void) {
+void Offline_Detail::print(void) {
 	printf("role_id: %ld, ", role_id);
-	uint16_t guild_msg_size = (guild_msg.size() > 5 ? 5 : guild_msg.size());
-	printf("guild_msg.size: %ld [", guild_msg.size());
-	for(uint16_t i = 0; i < guild_msg_size; ++i) {
-		printf("guild_msg[i]: %ld, ", guild_msg[i]);
-	}
-	printf("], ");
+	printf("guild_id: %ld, ", guild_id);
+	printf("guild_name: %s, ", guild_name.c_str());
 	printf("\n");
 }
 
-Offline_Msg::Offline_Msg(void) {
+Offline_Info::Offline_Info(void) {
 	reset();
 }
 
-Offline_Msg::~Offline_Msg() {
+Offline_Info::~Offline_Info() {
 }
 
-void Offline_Msg::serialize(Block_Buffer &buffer) const {
+void Offline_Info::serialize(Block_Buffer &buffer) const {
 
-	buffer.write_uint16(msg_map.size());
-	for(std::map<int64_t,Offline_Msg_Detail>::const_iterator it = msg_map.begin();
-		it != msg_map.end(); ++it) {
+	buffer.write_uint16(offline_map.size());
+	for(boost::unordered_map<int64_t,Offline_Detail>::const_iterator it = offline_map.begin();
+		it != offline_map.end(); ++it) {
 		it->second.serialize(buffer);
 	}
 }
 
-int Offline_Msg::deserialize(Block_Buffer &buffer) {
-	uint16_t msg_map_size = buffer.read_uint16();
-	for (int16_t i = 0; i < msg_map_size; ++i) {
-		Offline_Msg_Detail _v;
+int Offline_Info::deserialize(Block_Buffer &buffer) {
+	uint16_t offline_map_size = buffer.read_uint16();
+	for (int16_t i = 0; i < offline_map_size; ++i) {
+		Offline_Detail _v;
 		_v.deserialize(buffer);
-		msg_map.insert(std::make_pair(_v.role_id, _v));
+		offline_map[_v.role_id] =  _v;
 	}
 	return 0;
 }
 
-void Offline_Msg::reset(void) {
-	msg_map.clear();
+void Offline_Info::reset(void) {
+	offline_map.clear();
 }
 
-void Offline_Msg::print(void) {
-	printf("msg_map.size: %ld {}, ", msg_map.size());
+void Offline_Info::print(void) {
+	printf("offline_map.size: %ld {}, ", offline_map.size());
 	printf("\n");
 }
 
@@ -1242,19 +1240,23 @@ MSG_160100::~MSG_160100() {
 
 void MSG_160100::serialize(Block_Buffer &buffer) const {
 	buffer.write_int64(guild_id);
+	buffer.write_string(guild_name);
 }
 
 int MSG_160100::deserialize(Block_Buffer &buffer) {
 	guild_id = buffer.read_int64();
+	guild_name = buffer.read_string();
 	return 0;
 }
 
 void MSG_160100::reset(void) {
 	guild_id = 0;
+	guild_name.clear();
 }
 
 void MSG_160100::print(void) {
 	printf("guild_id: %ld, ", guild_id);
+	printf("guild_name: %s, ", guild_name.c_str());
 	printf("\n");
 }
 
@@ -1288,23 +1290,23 @@ MSG_550101::~MSG_550101() {
 
 void MSG_550101::serialize(Block_Buffer &buffer) const {
 	guild_info.serialize(buffer);
-	offline_msg.serialize(buffer);
+	offline_info.serialize(buffer);
 }
 
 int MSG_550101::deserialize(Block_Buffer &buffer) {
 	guild_info.deserialize(buffer);
-	offline_msg.deserialize(buffer);
+	offline_info.deserialize(buffer);
 	return 0;
 }
 
 void MSG_550101::reset(void) {
 	guild_info.reset();
-	offline_msg.reset();
+	offline_info.reset();
 }
 
 void MSG_550101::print(void) {
 	guild_info.print();
-	offline_msg.print();
+	offline_info.print();
 	printf("\n");
 }
 
@@ -1422,20 +1424,20 @@ MSG_150104::~MSG_150104() {
 }
 
 void MSG_150104::serialize(Block_Buffer &buffer) const {
-	offline_msg.serialize(buffer);
+	offline_info.serialize(buffer);
 }
 
 int MSG_150104::deserialize(Block_Buffer &buffer) {
-	offline_msg.deserialize(buffer);
+	offline_info.deserialize(buffer);
 	return 0;
 }
 
 void MSG_150104::reset(void) {
-	offline_msg.reset();
+	offline_info.reset();
 }
 
 void MSG_150104::print(void) {
-	offline_msg.print();
+	offline_info.print();
 	printf("\n");
 }
 
@@ -1468,32 +1470,32 @@ MSG_150105::~MSG_150105() {
 }
 
 void MSG_150105::serialize(Block_Buffer &buffer) const {
-	uint16_t offline_msg_list_size = offline_msg_list.size();
-	buffer.write_uint16(offline_msg_list_size);
-	for(uint16_t i = 0; i < offline_msg_list_size; ++i) {
-		buffer.write_int64(offline_msg_list[i]);
+	uint16_t offline_list_size = offline_list.size();
+	buffer.write_uint16(offline_list_size);
+	for(uint16_t i = 0; i < offline_list_size; ++i) {
+		buffer.write_int64(offline_list[i]);
 	}
 }
 
 int MSG_150105::deserialize(Block_Buffer &buffer) {
-	uint16_t offline_msg_list_size = buffer.read_uint16();
-	int64_t offline_msg_list_v;
-	for(uint16_t i = 0; i < offline_msg_list_size; ++i) {
-		offline_msg_list_v = buffer.read_int64();
-		offline_msg_list.push_back(offline_msg_list_v);
+	uint16_t offline_list_size = buffer.read_uint16();
+	int64_t offline_list_v;
+	for(uint16_t i = 0; i < offline_list_size; ++i) {
+		offline_list_v = buffer.read_int64();
+		offline_list.push_back(offline_list_v);
 	}
 	return 0;
 }
 
 void MSG_150105::reset(void) {
-	offline_msg_list.clear();
+	offline_list.clear();
 }
 
 void MSG_150105::print(void) {
-	uint16_t offline_msg_list_size = (offline_msg_list.size() > 5 ? 5 : offline_msg_list.size());
-	printf("offline_msg_list.size: %ld [", offline_msg_list.size());
-	for(uint16_t i = 0; i < offline_msg_list_size; ++i) {
-		printf("offline_msg_list[i]: %ld, ", offline_msg_list[i]);
+	uint16_t offline_list_size = (offline_list.size() > 5 ? 5 : offline_list.size());
+	printf("offline_list.size: %ld [", offline_list.size());
+	for(uint16_t i = 0; i < offline_list_size; ++i) {
+		printf("offline_list[i]: %ld, ", offline_list[i]);
 	}
 	printf("], ");
 	printf("\n");

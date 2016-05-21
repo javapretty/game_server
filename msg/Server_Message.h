@@ -108,7 +108,8 @@ struct Game_Player_Info : public MSG {
 	int32_t skill_point;	//技能点
 	int64_t recover_skill_time;	//回复技能点时间
 	int32_t exchange_count;	//聚宝盆兑换剩余次数
-	int32_t guild_id;	//玩家所属公会
+	int32_t guild_id;	//公会id
+	std::string guild_name;	//公会名字
 
 	Game_Player_Info(void);
 	~Game_Player_Info();
@@ -182,29 +183,30 @@ struct Player_Data : public MSG {
 	void print(void);
 };
 
-struct Member_Info : public MSG {
+struct Guild_Member_Detail : public MSG {
 	int64_t role_id;	
 	std::string role_name;	
 	int32_t level;	
 	int32_t career;	//职业1-3
 
-	Member_Info(void);
-	~Member_Info();
+	Guild_Member_Detail(void);
+	~Guild_Member_Detail();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 	void print(void);
 };
 
-struct Guild_Data : public MSG {
+struct Guild_Detail : public MSG {
+	bool change;	
 	int64_t guild_id;	
 	std::string guild_name;	
-	int64_t chief_id;	//帮会帮主id
-	std::vector<int64_t> applicant_list;	
-	std::vector<Member_Info> member_list;	
+	int64_t chief_id;	//帮主id
+	std::vector<int64_t> applicant_list;	//申请者列表
+	std::vector<Guild_Member_Detail> member_list;	
 
-	Guild_Data(void);
-	~Guild_Data();
+	Guild_Detail(void);
+	~Guild_Detail();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
@@ -212,7 +214,7 @@ struct Guild_Data : public MSG {
 };
 
 struct Guild_Info : public MSG {
-	std::map<int64_t,Guild_Data> guild_map;	
+	boost::unordered_map<int64_t,Guild_Detail> guild_map;	
 
 	Guild_Info(void);
 	~Guild_Info();
@@ -222,23 +224,24 @@ struct Guild_Info : public MSG {
 	void print(void);
 };
 
-struct Offline_Msg_Detail : public MSG {
+struct Offline_Detail : public MSG {
 	int64_t role_id;	
-	std::vector<int64_t> guild_msg;	
+	int64_t guild_id;	
+	std::string guild_name;	
 
-	Offline_Msg_Detail(void);
-	~Offline_Msg_Detail();
+	Offline_Detail(void);
+	~Offline_Detail();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 	void print(void);
 };
 
-struct Offline_Msg : public MSG {
-	std::map<int64_t,Offline_Msg_Detail> msg_map;	
+struct Offline_Info : public MSG {
+	boost::unordered_map<int64_t,Offline_Detail> offline_map;	
 
-	Offline_Msg(void);
-	~Offline_Msg();
+	Offline_Info(void);
+	~Offline_Info();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
@@ -444,6 +447,7 @@ struct MSG_160001 : public MSG {
 
 struct MSG_160100 : public MSG {
 	int64_t guild_id;	
+	std::string guild_name;	
 
 	MSG_160100(void);
 	~MSG_160100();
@@ -465,7 +469,7 @@ struct MSG_150101 : public MSG {
 
 struct MSG_550101 : public MSG {
 	Guild_Info guild_info;	
-	Offline_Msg offline_msg;	
+	Offline_Info offline_info;	
 
 	MSG_550101(void);
 	~MSG_550101();
@@ -518,7 +522,7 @@ struct MSG_550103 : public MSG {
 };
 
 struct MSG_150104 : public MSG {
-	Offline_Msg offline_msg;	
+	Offline_Info offline_info;	
 
 	MSG_150104(void);
 	~MSG_150104();
@@ -539,7 +543,7 @@ struct MSG_550104 : public MSG {
 };
 
 struct MSG_150105 : public MSG {
-	std::vector<int64_t> offline_msg_list;	
+	std::vector<int64_t> offline_list;	
 
 	MSG_150105(void);
 	~MSG_150105();

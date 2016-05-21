@@ -15,7 +15,7 @@ require('util.js');
 require('timer.js');
 require('master_player.js');
 require('guild.js');
-require('offline_manager.js');
+require('offline.js');
 
 //cid----master_player  全局玩家对象
 var master_player_cid_map = new Map();
@@ -27,10 +27,9 @@ var config = new Config();
 config.init();
 
 //公会
-var guild = new Guild();
-
+var guild_manager = new Guild();
 //离线管理器
-var offline_manager = new Offline_Manager();
+var offline_manager = new Offline();
 
 //定时器管理器
 var timer = new Timer();
@@ -115,13 +114,13 @@ function process_master_client_buffer(buffer) {
 		master_player.send_chat_info(buffer);
 		break;
 	case Msg_CM.REQ_CREATE_GUILD:
-		guild.create_guild(master_player, buffer);
+		guild_manager.create_guild(master_player, buffer);
 		break;
 	case Msg_CM.REQ_DISSOVE_GUILD:
-		guild.dissove_guild(master_player, buffer);
+		guild_manager.dissove_guild(master_player, buffer);
 		break;
 	case Msg_CM.REQ_JOIN_GUILD:
-		guild.join_guild(master_player, buffer);
+		guild_manager.join_guild(master_player, buffer);
 		break;
 	default:
 		print('msg_id not exist, gate_cid:', gate_cid, " player_cid:", player_cid, " msg_id:", msg_id);
@@ -131,12 +130,12 @@ function process_master_client_buffer(buffer) {
 }
 
 function process_master_public_buffer(buffer) {
-	/*var cid */ buffer.read_int32();
-	/*var len */ buffer.read_int16();
-	/*var msg_id */ buffer.read_int32();
-	/*var status */ buffer.read_int32();
+	var cid = buffer.read_int32();
+	var len = buffer.read_int16();
+	var msg_id = buffer.read_int32();
+	var status = buffer.read_int32();
 	
-	guild.load_data(buffer);
+	guild_manager.load_data(buffer);
 	offline_manager.load_data(buffer);
 }
 

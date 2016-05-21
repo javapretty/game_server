@@ -5,7 +5,7 @@ struct MSG_150101 {
 
 struct MSG_550101 {
 	Guild_Info guild_info;
-	Offline_Msg offline_msg;
+	Offline_Info offline_info;
 };
 
 //保存公会信息
@@ -27,7 +27,7 @@ struct MSG_550103 {
 
 //保存离线信息
 struct MSG_150104 {
-	Offline_Msg offline_msg;
+	Offline_Info offline_info;
 };
 
 struct MSG_550104 {
@@ -35,7 +35,7 @@ struct MSG_550104 {
 
 //删除离线信息
 struct MSG_150105 {
-	std::vector<int64_t> offline_msg_list;
+	std::vector<int64_t> offline_list;
 };
 
 struct MSG_550105 {

@@ -168,19 +168,20 @@ function process_game_client_buffer(buffer) {
 }
 
 function process_game_master_buffer(buffer) {
-	/*var cid */ buffer.read_int32();
-	/*var len */ buffer.read_int16();
+	var cid = buffer.read_int32();
+	var len = buffer.read_int16();
 	var msg_id = buffer.read_int32();
-	/*var status */ buffer.read_int32();
+	var status = buffer.read_int32();
 	var role_id = buffer.read_int64();
 	var game_player = game_player_role_id_map.get(role_id);
-	if(game_player == null){
+	if(!game_player){
 		print('role_id: ', role_id, ' do not exist!');
 		return;
 	}
+	
 	switch(msg_id){
 	case Msg_GM.SYNC_MASTER_GAME_SET_GUILD:
-		game_player.set_guild(buffer);
+		game_player.set_guild_info(buffer);
 		break;
 	default:
 		print('msg_id: ', msg_id, ' from master do not exist!');
