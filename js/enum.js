@@ -43,3 +43,9 @@ if (typeof Shop_Type == "undefined") {
 	Shop_Type.COPPER_SHOP = 1; //铜币商店
 	Shop_Type.GOLD_SHOP = 2; //金币商店
 }
+
+if (typeof Rank_Type == "undefined") {
+	var Rank_Type = {};
+	Rank_Type.LEVEL_RANK = 1; //等级排行
+	Rank_Type.BATTLE_RANK = 2; //战力排行
+}

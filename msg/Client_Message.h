@@ -134,6 +134,31 @@ struct Shop_Detail : public MSG {
 	void print(void);
 };
 
+struct Rank_Member : public MSG {
+	int64_t role_id;	
+	std::string role_name;	
+	int32_t value;	
+
+	Rank_Member(void);
+	~Rank_Member();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct Rank_List : public MSG {
+	int8_t rank_type;	
+	std::vector<Rank_Member> member_list;	
+
+	Rank_List(void);
+	~Rank_List();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
 struct MSG_300000 : public MSG {
 
 	MSG_300000(void);
@@ -604,6 +629,27 @@ struct MSG_520305 : public MSG {
 	void print(void);
 };
 
+struct MSG_120306 : public MSG {
+	int32_t exp;	
+
+	MSG_120306(void);
+	~MSG_120306();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_520306 : public MSG {
+
+	MSG_520306(void);
+	~MSG_520306();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
 struct MSG_120400 : public MSG {
 	uint32_t shop_type;	//商店类型
 
@@ -854,6 +900,74 @@ struct MSG_510103 : public MSG {
 
 	MSG_510103(void);
 	~MSG_510103();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_110104 : public MSG {
+	int64_t guild_id;	
+	int64_t role_id;	
+	bool allow;	//允许加入(true)或拒绝加入(false)
+
+	MSG_110104(void);
+	~MSG_110104();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_510104 : public MSG {
+
+	MSG_510104(void);
+	~MSG_510104();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_110105 : public MSG {
+	int64_t guild_id;	
+	int64_t role_id;	
+
+	MSG_110105(void);
+	~MSG_110105();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_510105 : public MSG {
+
+	MSG_510105(void);
+	~MSG_510105();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_110201 : public MSG {
+	int32_t type;	
+
+	MSG_110201(void);
+	~MSG_110201();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_510201 : public MSG {
+	int32_t rank;	
+	Rank_List rank_list;	
+
+	MSG_510201(void);
+	~MSG_510201();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

@@ -67,6 +67,8 @@ public:
 	int process_save_offline_info(MSG_150104 &msg);
 	/// 删除离线数据
 	int process_drop_offline_info(MSG_150105 &msg);
+	/// 保存排行榜信息
+	int process_save_rank_info(MSG_150106 &msg);
 
 private:
 	Data_List data_list_;						///通用数据保存列表

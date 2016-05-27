@@ -39,7 +39,10 @@ Offline.prototype.handle_offline_info = function(player){
 	if(offline_detail == null)
 		return;
 	
-	guild_manager.sync_guild_info_to_game(player, offline_detail.guild_id, offline_detail.guild_name);
+	if(offline_detail.flag & 0x01){
+		guild_manager.sync_guild_info_to_game(player, offline_detail.guild_id, offline_detail.guild_name);
+		offline_detail.flag &= 0xFE;
+	}
 	
 	this.offline_info.offline_map.remove(role_id);
 	this.drop_list.push(role_id);
@@ -47,7 +50,7 @@ Offline.prototype.handle_offline_info = function(player){
 }
 
 Offline.prototype.set_offline_detail = function(role_id, guild_id, guild_name) {
-	var offline_detail = this.get_offline_msg_detail(role_id);
+	var offline_detail = this.offline_info.offline_map.get(role_id);
 	if (offline_detail)
 	{
 		offline_detail.guild_id = guild_id;
@@ -59,6 +62,7 @@ Offline.prototype.set_offline_detail = function(role_id, guild_id, guild_name) {
 		offline_detail.guild_name = guild_name;
 		this.offline_info.offline_map.insert(role_id, offline_detail);
 	}
+	offline_detail.flag |= 0x01;
 	this.set_change();
 }
 

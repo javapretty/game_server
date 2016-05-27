@@ -160,6 +160,9 @@ function process_game_client_buffer(buffer) {
 	case Msg_CG.REQ_REFRESH_SHOP:
 		game_player.shop.refresh_by_player(buffer);
 		break;
+	case Msg_CG.REQ_ADD_HERO_EXP:
+		game_player.add_hero_exp_test(buffer);
+		break;
 	default:
 		print('msg_id not exist, gate_cid:', gate_cid, " player_cid:", player_cid, " msg_id:", msg_id);print("can not find the msg_id:", msg_id);
 		break;
@@ -180,7 +183,7 @@ function process_game_master_buffer(buffer) {
 	}
 	
 	switch(msg_id){
-	case Msg_GM.SYNC_MASTER_GAME_SET_GUILD:
+	case Msg_GM.SYNC_MASTER_GAME__GUILD_INFO:
 		game_player.set_guild_info(buffer);
 		break;
 	default:

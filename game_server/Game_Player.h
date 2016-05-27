@@ -37,6 +37,7 @@ public:
 
 	int sync_signin_to_master(void);
 	int sync_signout_to_master(void);
+	int sync_data_to_master(int msg_id, Block_Buffer *buf);
 	int respond_role_login(void);
 
 	int tick(Time_Value &now);

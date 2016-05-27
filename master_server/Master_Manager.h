@@ -65,6 +65,7 @@ public:
 	int push_master_gate_data(Block_Buffer *buf);
 	Block_Buffer* pop_master_client_data();
 	int push_master_game_data(Block_Buffer *buf);
+	Block_Buffer* pop_master_player_sync_data();
 	int push_master_db_data(Block_Buffer *buf);
 	int push_self_loop_message(Block_Buffer &msg_buf);
 
@@ -139,6 +140,7 @@ private:
 	Data_List player_data_list_; 					//玩家数据,传送给js层
 	Data_List public_data_list_; 					//公共数据,传送给js层
 	Int_List drop_player_cid_list_;				//掉线的玩家cid列表
+	Data_List player_sync_data_list_;			//玩家同步数据,传送给js层
 
 	Server_Info master_gate_server_info_;
 	Server_Info master_game_server_info_;
@@ -202,8 +204,22 @@ inline Block_Buffer* Master_Manager::pop_master_client_data() {
 }
 
 inline int Master_Manager::push_master_game_data(Block_Buffer *buf) {
-	master_game_data_list_.push_back(buf);
+	int read_idx = buf->get_read_idx();
+	/*int32_t cid*/ buf->read_int32();
+	/*int16_t len*/ buf->read_int16();
+	int32_t msg_id = buf->read_int32();
+	buf->set_read_idx(read_idx);
+	if(msg_id >= GAME_MASTER_SYNC_DATA_START && msg_id <= GAME_MASTER_SYNC_DATA_END){
+		player_sync_data_list_.push_back(buf);
+	}
+	else {
+		master_game_data_list_.push_back(buf);
+	}
 	return 0;
+}
+
+inline Block_Buffer* Master_Manager::pop_master_player_sync_data() {
+	return player_sync_data_list_.pop_front();
 }
 
 inline int Master_Manager::push_self_loop_message(Block_Buffer &msg_buf) {

@@ -150,6 +150,17 @@ int Game_Player::sync_signout_to_master(void) {
 	return GAME_MANAGER->send_to_master(buf);
 }
 
+int Game_Player::sync_data_to_master(int msg_id, Block_Buffer *buf){
+	Block_Buffer buffer;
+	buffer.make_inner_message(msg_id);
+	buffer.write_int64(player_data_.player_info.role_id);
+	buffer.copy(buf);
+	buffer.finish_message();
+	GAME_MANAGER->send_to_master(buffer);
+
+	return 0;
+}
+
 int Game_Player::respond_role_login(void) {
 	MSG_520001 msg;
 	msg.role_info.role_id = player_data_.player_info.role_id;

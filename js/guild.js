@@ -59,13 +59,16 @@ Guild.prototype.save_data_handler = function() {
 	this.drop_guild();
 }
 
-Guild.prototype.member_join_guild = function(player, guild_detail) {
+Guild.prototype.member_join_guild = function(player, guild_detail, is_applicant = false) {
 	var member_detail = new Guild_Member_Detail();
 	member_detail.role_id = player.player_info.role_id;
 	member_detail.role_name = player.player_info.role_name;
 	member_detail.level = player.player_info.level;
 	member_detail.career = player.player_info.career;
-	guild_detail.member_list.push(member_detail);
+	if(!is_applicant)
+		guild_detail.member_list.push(member_detail);
+	else
+		guild_detail.applicant_list.push(member_detail);
 }
 
 Guild.prototype.get_guild_id = function(){
@@ -120,7 +123,7 @@ Guild.prototype.dissove_guild = function(player, buffer) {
 		var mem_player = master_player_role_id_map.get(guild_detail.member_list[i].role_id);
 		if(mem_player == null){
 			//离线数据，保存到离线数据列表
-			offline_manager.set_offline_detail(player, guild_detail.guild_id, guild_detail.guild_name);
+			offline_manager.set_offline_detail(guild_detail.member_list[i].role_id, guild_detail.guild_id, guild_detail.guild_name);
 		} else {
 			this.sync_guild_info_to_game(mem_player, 0, "");
 		}
@@ -145,7 +148,7 @@ Guild.prototype.join_guild = function(player, buffer) {
 		print('guild ', msg.guild_id, " not exist!");
 		return;
 	}
-	guild_detail.applicant_list.push(player.player_info.role_id);
+	this.member_join_guild(player, guild_detail, true);
 	guild_detail.change = true;
 	
 	var msg_res = new MSG_510103();
@@ -153,5 +156,76 @@ Guild.prototype.join_guild = function(player, buffer) {
 	msg_res.serialize(buf);
 	player.cplayer.respond_success_result(Msg_MC.RES_JOIN_GUILD, buf);
 	push_master_buffer(buf);
+}
+
+Guild.prototype.allow_join_player = function(player, buffer) {
+	print('allow join guild, util.now_msec:', util.now_msec());
+	var msg = new MSG_110104();
+	msg.deserialize(buffer);
+	var guild_detail = this.guild_info.guild_map.get(msg.guild_id);
+	if(guild_detail == null){
+		print('guild ', msg.guild_id, " not exist!");
+		return;
+	}
+
+	var member;
+	for(var i = 0; i < guild_detail.applicant_list.length; i++){
+		if(msg.role_id == guild_detail.applicant_list[i].role_id){
+			if(msg.allow){
+				member = guild_detail.applicant_list[i];
+				guild_detail.member_list.push(member);
+				
+				var mem_player = master_player_role_id_map.get(member.role_id);
+				if(mem_player == null){
+					offline_manager.set_offline_detail(member.role_id, guild_detail.guild_id, guild_detail.guild_name);
+				} else {
+					this.sync_guild_info_to_game(mem_player, guild_detail.guild_id, guild_detail.guild_name);
+				}
+			}
+			guild_detail.applicant_list.splice(i, 1);
+			guild_detail.change = true;
+			
+			var msg_res = new MSG_510104();
+			var buf = pop_master_buffer();
+			msg_res.serialize(buf);
+			player.cplayer.respond_success_result(Msg_MC.RES_GUILD_ALLOW_JOIN, buf);
+			push_master_buffer(buf);
+			return;
+		}
+	}
+	player.cplayer.respond_error_result(Msg_MC.RES_GUILD_ALLOW_JOIN, Error_Code.ERROR_ROLE_ID_NOT_EXIST);
+}
+
+Guild.prototype.kick_out_player = function(player, buffer) {
+	print('kick out player, util.now_msec:', util.now_msec());
+	var msg = new MSG_110105();
+	msg.deserialize(buffer);
+	var guild_detail = this.guild_info.guild_map.get(msg.guild_id);
+	if(guild_detail == null){
+		print('guild ', msg.guild_id, " not exist!");
+		return;
+	}
+	var member;
+	for(var i = 0; i < guild_detail.member_list.length; i++){
+		if(msg.role_id == guild_detail.member_list[i].role_id){
+			guild_detail.member_list.splice(i, 1);
+			guild_detail.change = true;
+				
+			var mem_player = master_player_role_id_map.get(msg.role_id);
+			if(mem_player == null){
+				offline_manager.set_offline_detail(msg.role_id, 0, "");
+			} else {
+				this.sync_guild_info_to_game(mem_player, 0, "");
+			}
+
+			var msg_res = new MSG_510105();
+			var buf = pop_master_buffer();
+			msg_res.serialize(buf);
+			player.cplayer.respond_success_result(Msg_MC.RES_GUILD_KICK_OUT, buf);
+			push_master_buffer(buf);
+			return;
+		}
+	}
+	player.cplayer.respond_error_result(Msg_MC.RES_GUILD_KICK_OUT, Error_Code.ERROR_ROLE_ID_NOT_EXIST);
 }
 

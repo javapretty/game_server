@@ -26,6 +26,9 @@ if (typeof Msg_CM == "undefined") {
 	Msg_CM.REQ_CREATE_GUILD = 110101; //申请创建公会
 	Msg_CM.REQ_DISSOVE_GUILD = 110102; //申请解散公会
 	Msg_CM.REQ_JOIN_GUILD = 110103; //申请加入公会
+	Msg_CM.REQ_GUILD_ALLOW_JOIN = 110104; //允许入帮
+	Msg_CM.REQ_GUILD_KICK_OUT = 110105; //踢出帮会
+	Msg_CM.REQ_FETCH_RANK = 110201; //拉取排行榜信息
 }
 
 if (typeof Msg_MC == "undefined") {
@@ -34,6 +37,9 @@ if (typeof Msg_MC == "undefined") {
 	Msg_MC.RES_CREATE_GUILD = 510101; //申请创建公会(返回)
 	Msg_MC.RES_DISSOVE_GUILD = 510102; //申请解散公会(返回)
 	Msg_MC.RES_JOIN_GUILD = 510103; //申请加入公会(返回)
+	Msg_MC.RES_GUILD_ALLOW_JOIN = 510104; //允许入帮(返回)
+	Msg_MC.RES_GUILD_KICK_OUT = 510105; //踢出帮会(返回)
+	Msg_MC.RES_FETCH_RANK = 510201; //拉取排行榜信息(返回)
 }
 
 if (typeof Msg_CG == "undefined") {
@@ -55,6 +61,7 @@ if (typeof Msg_CG == "undefined") {
 	Msg_CG.REQ_ADD_EQUIP_LEVEL = 120303; //提高英雄装备等级
 	Msg_CG.REQ_EQUIP_ON_OFF = 120304; //英雄装备穿脱
 	Msg_CG.REQ_ADD_SKILL_LEVEL = 120305; //提高英雄技能等级
+	Msg_CG.REQ_ADD_HERO_EXP = 120306; //增加英雄经验
 	Msg_CG.REQ_FETCH_SHOP_INFO = 120400; //拉取商店信息
 	Msg_CG.REQ_BUY_PRODUCT = 120401; //购买物品
 	Msg_CG.REQ_REFRESH_SHOP = 120402; //刷新商店
@@ -79,6 +86,7 @@ if (typeof Msg_GC == "undefined") {
 	Msg_GC.RES_ADD_EQUIP_LEVEL = 520303; //提高英雄装备等级(返回)
 	Msg_GC.RES_EQUIP_ON_OFF = 520304; //英雄装备穿脱(返回)
 	Msg_GC.RES_ADD_SKILL_LEVEL = 520305; //提高英雄技能等级(返回)
+	Msg_GC.RES_ADD_HERO_EXP = 520306; //增加英雄经验(返回)
 	Msg_GC.RES_FETCH_SHOP_INFO = 520400; //拉取商店信息(返回)
 	Msg_GC.RES_BUY_PRODUCT = 520401; //购买物品(返回)
 	Msg_GC.RES_REFRESH_SHOP = 520402; //刷新商店(返回)
@@ -104,17 +112,20 @@ if (typeof Msg_MD == "undefined") {
 	Msg_MD.SYNC_MASTER_DB_DROP_GUILD_INFO = 150103; //删除公会信息
 	Msg_MD.SYNC_MASTER_DB_SAVE_OFFLINE_INFO = 150104; //保存离线信息
 	Msg_MD.SYNC_MASTER_DB_DROP_OFFLINE_INFO = 150105; //删除离线信息
+	Msg_MD.SYNC_MASTER_DB_SAVE_RANK_INFO = 150106; //保存排行榜信息
 	Msg_MD.SYNC_DB_MASTER_LOAD_PUBLIC_INFO = 550101; //加载公共信息(返回)
 	Msg_MD.SYNC_DB_MASTER_SAVE_GUILD_INFO = 550102; //保存公会信息(返回)
 	Msg_MD.SYNC_DB_MASTER_DROP_GUILD_INFO = 550103; //删除公会信息(返回)
 	Msg_MD.SYNC_DB_MASTER_SAVE_OFFLINE_INFO = 550104; //保存离线信息(返回)
 	Msg_MD.SYNC_DB_MASTER_DROP_OFFLINE_INFO = 550105; //删除离线信息(返回)
+	Msg_MD.SYNC_DB_MASTER_SAVE_RANK_INFO = 550106; //保存排行榜信息(返回)
 }
 
 if (typeof Msg_GM == "undefined") {
 	var Msg_GM = {};
 	Msg_GM.SYNC_GAME_MASTER_PLYAER_SIGNIN = 160000; //game同步玩家上线到master
 	Msg_GM.SYNC_GAME_MASTER_PLAYER_SIGNOUT = 160001; //game同步玩家下线到master
+	Msg_GM.SYNC_GAME_MASTER_PLAYER_INFO = 165000; //gameplayer信息更新同步master
 	Msg_GM.SYNC_MASTER_GAME_GUILD_INFO = 160100; //master通知game公会信息
 }
 

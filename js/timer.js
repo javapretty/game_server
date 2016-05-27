@@ -83,5 +83,6 @@ function Timer() {
 	this.master_public_data_save_handler = function() {
 		guild_manager.save_data_handler();
 		offline_manager.save_data_handler();
+		rank_manager.save_data();
 	}
 }

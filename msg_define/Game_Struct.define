@@ -105,7 +105,7 @@ struct Guild_Detail {
 	int64_t guild_id;
 	std::string guild_name;
 	int64_t chief_id; 				  			//帮主id
-	std::vector<int64_t> applicant_list;		//申请者列表
+	std::vector<Guild_Member_Detail> applicant_list;		//申请者列表
 	std::vector<Guild_Member_Detail> member_list;
 };
 
@@ -117,8 +117,14 @@ struct Offline_Detail {
 	int64_t role_id;
 	int64_t guild_id;
 	std::string guild_name;
+	int16_t flag;
 };
 
 struct Offline_Info {
 	boost::unordered_map<int64_t(role_id),Offline_Detail> offline_map;
 };
+
+struct Rank_Info {
+	std::map<int32_t(rank_type),Rank_List> rank_map;
+};
+

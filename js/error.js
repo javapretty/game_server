@@ -17,6 +17,7 @@ if (typeof Error_Code == "undefined") {
 	Error_Code.ERROR_LEVEL_NOT_ENOUGH 					= 10103;				//角色等级不足
 	Error_Code.ERROR_VITALITY_TIMES_NOT_ENOUGH	=	10104;				//购买体力次数不足
 	Error_Code.ERROR_SKILL_POINT_NOT_ENOUGH			=	10105;				//技能点不足
+	Error_Code.ERROR_ROLE_ID_NOT_EXIST			=	10106;				//角色信息不存在
 	
 	Error_Code.ERROR_BAG_FULL									= 10200,				//背包已满
 	Error_Code.ERROR_ITEM_NOT_EXIST						= 10201;				//物品不存在

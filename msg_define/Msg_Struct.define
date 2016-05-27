@@ -65,3 +65,14 @@ struct Shop_Detail {
 	std::vector<Product_Info> products;
 };
 
+struct Rank_Member {
+	int64_t role_id;
+	std::string role_name;
+	int32_t value;
+};
+
+struct Rank_List {
+	int8_t rank_type;
+	std::vector<Rank_Member> member_list;
+};
+

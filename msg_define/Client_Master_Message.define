@@ -41,3 +41,34 @@ struct MSG_510103 {
 
 };
 
+//允许加入公会
+struct MSG_110104 {
+	int64_t guild_id;
+	int64_t role_id;
+	bool allow; //允许加入(true)或拒绝加入(false)
+};
+
+struct MSG_510104 {
+};
+
+//踢出帮会
+struct MSG_110105 {
+	int64_t guild_id;
+	int64_t role_id;
+};
+
+struct MSG_510105 {
+
+};
+
+//拉取排行榜信息
+struct MSG_110201 {
+	int32_t type;
+};
+
+struct MSG_510201 {
+	int32_t rank;
+	Rank_List rank_list;
+};
+
+

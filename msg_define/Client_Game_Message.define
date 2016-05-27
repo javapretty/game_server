@@ -168,6 +168,14 @@ struct MSG_520305 {
 	int32_t skill_id;
 };
 
+//增加英雄经验
+struct MSG_120306 {
+	int32_t exp;
+};
+
+struct MSG_520306 {
+};
+
 //获取商店列表
 struct MSG_120400 {
 	uint32_t shop_type; //商店类型
@@ -193,3 +201,4 @@ struct MSG_120402 {
 
 struct MSG_520402 {
 };
+

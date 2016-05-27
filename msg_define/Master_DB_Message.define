@@ -6,6 +6,7 @@ struct MSG_150101 {
 struct MSG_550101 {
 	Guild_Info guild_info;
 	Offline_Info offline_info;
+	Rank_Info rank_info;
 };
 
 //保存公会信息
@@ -40,4 +41,12 @@ struct MSG_150105 {
 
 struct MSG_550105 {
 
+};
+
+//保存排行榜信息
+struct MSG_150106 {
+	Rank_Info rank_info;
+};
+
+struct MSG_550106 {
 };

@@ -106,6 +106,9 @@ Local<Context> Create_Context(Isolate* isolate) {
 	global->Set(String::NewFromUtf8(isolate, "get_master_player_by_name", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, get_master_player_by_name));
 
+	global->Set(String::NewFromUtf8(isolate, "get_game_player_sync_buffer", NewStringType::kNormal).ToLocalChecked(),
+				FunctionTemplate::New(isolate, get_game_player_sync_buffer));
+
 	return Context::New(isolate, NULL, global);
 }
 

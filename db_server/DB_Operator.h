@@ -72,6 +72,10 @@ public:
 	int save_offline_detail(Offline_Detail &offline_detail);
 	int drop_offline_info(std::vector<int64_t> &offline_list);
 
+	int load_rank_info(Rank_Info &rank_info);
+	int save_rank_info(Rank_Info &rank_info);
+	int save_rank_list(Rank_List &rank_list);
+
 private:
 	DB_Operator(void);
 	virtual ~DB_Operator(void);

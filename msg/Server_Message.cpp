@@ -591,7 +591,7 @@ void Guild_Detail::serialize(Block_Buffer &buffer) const {
 	uint16_t applicant_list_size = applicant_list.size();
 	buffer.write_uint16(applicant_list_size);
 	for(uint16_t i = 0; i < applicant_list_size; ++i) {
-		buffer.write_int64(applicant_list[i]);
+		applicant_list[i].serialize(buffer);
 	}
 	uint16_t member_list_size = member_list.size();
 	buffer.write_uint16(member_list_size);
@@ -606,9 +606,9 @@ int Guild_Detail::deserialize(Block_Buffer &buffer) {
 	guild_name = buffer.read_string();
 	chief_id = buffer.read_int64();
 	uint16_t applicant_list_size = buffer.read_uint16();
-	int64_t applicant_list_v;
+	Guild_Member_Detail applicant_list_v;
 	for(uint16_t i = 0; i < applicant_list_size; ++i) {
-		applicant_list_v = buffer.read_int64();
+		applicant_list_v.deserialize(buffer);
 		applicant_list.push_back(applicant_list_v);
 	}
 	uint16_t member_list_size = buffer.read_uint16();
@@ -637,7 +637,7 @@ void Guild_Detail::print(void) {
 	uint16_t applicant_list_size = (applicant_list.size() > 5 ? 5 : applicant_list.size());
 	printf("applicant_list.size: %ld [", applicant_list.size());
 	for(uint16_t i = 0; i < applicant_list_size; ++i) {
-		printf("applicant_list[i]: %ld, ", applicant_list[i]);
+		applicant_list[i].print();
 	}
 	printf("], ");
 	uint16_t member_list_size = (member_list.size() > 5 ? 5 : member_list.size());
@@ -695,12 +695,14 @@ void Offline_Detail::serialize(Block_Buffer &buffer) const {
 	buffer.write_int64(role_id);
 	buffer.write_int64(guild_id);
 	buffer.write_string(guild_name);
+	buffer.write_int16(flag);
 }
 
 int Offline_Detail::deserialize(Block_Buffer &buffer) {
 	role_id = buffer.read_int64();
 	guild_id = buffer.read_int64();
 	guild_name = buffer.read_string();
+	flag = buffer.read_int16();
 	return 0;
 }
 
@@ -708,12 +710,14 @@ void Offline_Detail::reset(void) {
 	role_id = 0;
 	guild_id = 0;
 	guild_name.clear();
+	flag = 0;
 }
 
 void Offline_Detail::print(void) {
 	printf("role_id: %ld, ", role_id);
 	printf("guild_id: %ld, ", guild_id);
 	printf("guild_name: %s, ", guild_name.c_str());
+	printf("flag: %d, ", flag);
 	printf("\n");
 }
 
@@ -749,6 +753,41 @@ void Offline_Info::reset(void) {
 
 void Offline_Info::print(void) {
 	printf("offline_map.size: %ld {}, ", offline_map.size());
+	printf("\n");
+}
+
+Rank_Info::Rank_Info(void) {
+	reset();
+}
+
+Rank_Info::~Rank_Info() {
+}
+
+void Rank_Info::serialize(Block_Buffer &buffer) const {
+
+	buffer.write_uint16(rank_map.size());
+	for(std::map<int32_t,Rank_List>::const_iterator it = rank_map.begin();
+		it != rank_map.end(); ++it) {
+		it->second.serialize(buffer);
+	}
+}
+
+int Rank_Info::deserialize(Block_Buffer &buffer) {
+	uint16_t rank_map_size = buffer.read_uint16();
+	for (int16_t i = 0; i < rank_map_size; ++i) {
+		Rank_List _v;
+		_v.deserialize(buffer);
+		rank_map.insert(std::make_pair(_v.rank_type, _v));
+	}
+	return 0;
+}
+
+void Rank_Info::reset(void) {
+	rank_map.clear();
+}
+
+void Rank_Info::print(void) {
+	printf("rank_map.size: %ld {}, ", rank_map.size());
 	printf("\n");
 }
 
@@ -1260,6 +1299,31 @@ void MSG_160100::print(void) {
 	printf("\n");
 }
 
+MSG_165000::MSG_165000(void) {
+	reset();
+}
+
+MSG_165000::~MSG_165000() {
+}
+
+void MSG_165000::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(level);
+}
+
+int MSG_165000::deserialize(Block_Buffer &buffer) {
+	level = buffer.read_int32();
+	return 0;
+}
+
+void MSG_165000::reset(void) {
+	level = 0;
+}
+
+void MSG_165000::print(void) {
+	printf("level: %d, ", level);
+	printf("\n");
+}
+
 MSG_150101::MSG_150101(void) {
 	reset();
 }
@@ -1291,22 +1355,26 @@ MSG_550101::~MSG_550101() {
 void MSG_550101::serialize(Block_Buffer &buffer) const {
 	guild_info.serialize(buffer);
 	offline_info.serialize(buffer);
+	rank_info.serialize(buffer);
 }
 
 int MSG_550101::deserialize(Block_Buffer &buffer) {
 	guild_info.deserialize(buffer);
 	offline_info.deserialize(buffer);
+	rank_info.deserialize(buffer);
 	return 0;
 }
 
 void MSG_550101::reset(void) {
 	guild_info.reset();
 	offline_info.reset();
+	rank_info.reset();
 }
 
 void MSG_550101::print(void) {
 	guild_info.print();
 	offline_info.print();
+	rank_info.print();
 	printf("\n");
 }
 
@@ -1519,5 +1587,51 @@ void MSG_550105::reset(void) {
 }
 
 void MSG_550105::print(void) {
+	printf("\n");
+}
+
+MSG_150106::MSG_150106(void) {
+	reset();
+}
+
+MSG_150106::~MSG_150106() {
+}
+
+void MSG_150106::serialize(Block_Buffer &buffer) const {
+	rank_info.serialize(buffer);
+}
+
+int MSG_150106::deserialize(Block_Buffer &buffer) {
+	rank_info.deserialize(buffer);
+	return 0;
+}
+
+void MSG_150106::reset(void) {
+	rank_info.reset();
+}
+
+void MSG_150106::print(void) {
+	rank_info.print();
+	printf("\n");
+}
+
+MSG_550106::MSG_550106(void) {
+	reset();
+}
+
+MSG_550106::~MSG_550106() {
+}
+
+void MSG_550106::serialize(Block_Buffer &buffer) const {
+}
+
+int MSG_550106::deserialize(Block_Buffer &buffer) {
+	return 0;
+}
+
+void MSG_550106::reset(void) {
+}
+
+void MSG_550106::print(void) {
 	printf("\n");
 }

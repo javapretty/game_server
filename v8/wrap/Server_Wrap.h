@@ -65,5 +65,7 @@ void get_drop_master_player_cid(const FunctionCallbackInfo<Value>& args);
 void get_master_player_by_cid(const FunctionCallbackInfo<Value>& args);
 //函数说明：通过role_name获取master_player对象  	参数：1,role_name	返回值：master_player对象
 void get_master_player_by_name(const FunctionCallbackInfo<Value>& args);
+//函数说明：获取game过来的角色同步信息	参数：无	返回值：buffer对象
+void get_game_player_sync_buffer(const FunctionCallbackInfo<Value>& args);
 
 #endif /* SERVER_WRAP_H_ */

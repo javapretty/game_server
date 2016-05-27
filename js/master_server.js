@@ -16,6 +16,7 @@ require('timer.js');
 require('master_player.js');
 require('guild.js');
 require('offline.js');
+require('rank_manager.js');
 
 //cid----master_player  全局玩家对象
 var master_player_cid_map = new Map();
@@ -30,6 +31,8 @@ config.init();
 var guild_manager = new Guild();
 //离线管理器
 var offline_manager = new Offline();
+//排行榜
+var rank_manager = new Rank_Manager();
 
 //定时器管理器
 var timer = new Timer();
@@ -73,6 +76,13 @@ function main() {
 		if(buffer != null) {
 			all_empty = false;
 			process_master_public_buffer(buffer);
+		}
+		
+		//获得game同步过来的信息
+		var buffer = get_game_player_sync_buffer();
+		if(buffer != null) {
+			all_empty = false;
+			process_game_player_sync_buffer(buffer);
 		}
 
 		//处理定时器消息
@@ -122,6 +132,15 @@ function process_master_client_buffer(buffer) {
 	case Msg_CM.REQ_JOIN_GUILD:
 		guild_manager.join_guild(master_player, buffer);
 		break;
+	case Msg_CM.REQ_FETCH_RANK:
+		rank_manager.fetch_rank_info(master_player, buffer);
+		break;
+	case Msg_CM.REQ_GUILD_ALLOW_JOIN:
+		guild_manager.allow_join_player(master_player, buffer);
+		break;
+	case Msg_CM.REQ_GUILD_KICK_OUT:
+		guild_manager.kick_out_player(master_player, buffer);
+		break;
 	default:
 		print('msg_id not exist, gate_cid:', gate_cid, " player_cid:", player_cid, " msg_id:", msg_id);
 		break;
@@ -137,5 +156,29 @@ function process_master_public_buffer(buffer) {
 	
 	guild_manager.load_data(buffer);
 	offline_manager.load_data(buffer);
+	rank_manager.load_data(buffer);
+
+}
+
+function process_game_player_sync_buffer(buffer) {
+	var cid = buffer.read_int32();
+	var len = buffer.read_int16();
+	var msg_id = buffer.read_int32();
+	var status = buffer.read_int32();
+	var role_id = buffer.read_int64();
+	var master_player = master_player_role_id_map.get(role_id);
+	if(!master_player){
+		print('role_id: ', role_id, ' do not exist!');
+		return;
+	}
+
+	switch(msg_id) {
+	case Msg_GM.SYNC_GAME_MASTER_PLAYER_INFO:
+		master_player.sync_game_player_data(buffer);
+		break;
+	default:
+		print('msg_id ', msg_id, ' not exist');
+		break;
+	}
 }
 

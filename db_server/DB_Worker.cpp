@@ -160,6 +160,12 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 		process_drop_offline_info(msg);
 		break;
 	}
+	case SYNC_MASTER_DB_SAVE_RANK_INFO: {
+		MSG_150106 msg;
+		msg.deserialize(*buf);
+		process_save_rank_info(msg);
+		break;
+	}
 	default: {
 		LOG_ERROR("msg_id = %d error", msg_id);
 		break;
@@ -260,6 +266,7 @@ int DB_Worker::process_load_public_info(int cid, MSG_150101 &msg){
 	MSG_550101 res;
 	CACHED_INSTANCE->load_guild_info(res.guild_info);
 	CACHED_INSTANCE->load_offline_info(res.offline_info);
+	CACHED_INSTANCE->load_rank_info(res.rank_info);
 	res.serialize(buf);
 	buf.finish_message();
 	DB_MANAGER->send_data_block(cid, buf);
@@ -283,5 +290,10 @@ int DB_Worker::process_save_offline_info(MSG_150104 &msg) {
 
 int DB_Worker::process_drop_offline_info(MSG_150105 &msg) {
 	CACHED_INSTANCE->drop_offline_info(msg.offline_list);
+	return 0;
+}
+
+int DB_Worker::process_save_rank_info(MSG_150106 &msg) {
+	CACHED_INSTANCE->save_rank_info(msg.rank_info);
 	return 0;
 }

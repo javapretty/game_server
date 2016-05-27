@@ -202,7 +202,7 @@ struct Guild_Detail : public MSG {
 	int64_t guild_id;	
 	std::string guild_name;	
 	int64_t chief_id;	//帮主id
-	std::vector<int64_t> applicant_list;	//申请者列表
+	std::vector<Guild_Member_Detail> applicant_list;	//申请者列表
 	std::vector<Guild_Member_Detail> member_list;	
 
 	Guild_Detail(void);
@@ -228,6 +228,7 @@ struct Offline_Detail : public MSG {
 	int64_t role_id;	
 	int64_t guild_id;	
 	std::string guild_name;	
+	int16_t flag;	
 
 	Offline_Detail(void);
 	~Offline_Detail();
@@ -242,6 +243,17 @@ struct Offline_Info : public MSG {
 
 	Offline_Info(void);
 	~Offline_Info();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct Rank_Info : public MSG {
+	std::map<int32_t,Rank_List> rank_map;	
+
+	Rank_Info(void);
+	~Rank_Info();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
@@ -457,6 +469,17 @@ struct MSG_160100 : public MSG {
 	void print(void);
 };
 
+struct MSG_165000 : public MSG {
+	int32_t level;	
+
+	MSG_165000(void);
+	~MSG_165000();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
 struct MSG_150101 : public MSG {
 
 	MSG_150101(void);
@@ -470,6 +493,7 @@ struct MSG_150101 : public MSG {
 struct MSG_550101 : public MSG {
 	Guild_Info guild_info;	
 	Offline_Info offline_info;	
+	Rank_Info rank_info;	
 
 	MSG_550101(void);
 	~MSG_550101();
@@ -557,6 +581,27 @@ struct MSG_550105 : public MSG {
 
 	MSG_550105(void);
 	~MSG_550105();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_150106 : public MSG {
+	Rank_Info rank_info;	
+
+	MSG_150106(void);
+	~MSG_150106();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_550106 : public MSG {
+
+	MSG_550106(void);
+	~MSG_550106();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

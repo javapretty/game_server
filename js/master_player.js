@@ -27,6 +27,8 @@ Master_Player.prototype.load_player_data = function(buffer) {
 	
 	master_player_cid_map.insert(this.cid, this);
 	master_player_role_id_map.insert(this.player_info.role_id, this);
+
+	rank_manager.update_rank_level(this);
 }
 	
 //玩家离线，保存数据
@@ -101,4 +103,15 @@ Master_Player.prototype.send_chat_info = function(buffer) {
 		break;
 	}
 	push_master_buffer(buf);
+}
+
+Master_Player.prototype.sync_game_player_data = function(buffer) {
+	print('sync game player data, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
+	
+	var msg = new MSG_165000();
+	msg.deserialize(buffer);
+
+	this.player_info.level = msg.level;
+
+	rank_manager.update_rank_level(this);
 }

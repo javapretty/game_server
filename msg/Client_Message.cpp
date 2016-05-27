@@ -407,6 +407,82 @@ void Shop_Detail::print(void) {
 	printf("\n");
 }
 
+Rank_Member::Rank_Member(void) {
+	reset();
+}
+
+Rank_Member::~Rank_Member() {
+}
+
+void Rank_Member::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(role_id);
+	buffer.write_string(role_name);
+	buffer.write_int32(value);
+}
+
+int Rank_Member::deserialize(Block_Buffer &buffer) {
+	role_id = buffer.read_int64();
+	role_name = buffer.read_string();
+	value = buffer.read_int32();
+	return 0;
+}
+
+void Rank_Member::reset(void) {
+	role_id = 0;
+	role_name.clear();
+	value = 0;
+}
+
+void Rank_Member::print(void) {
+	printf("role_id: %ld, ", role_id);
+	printf("role_name: %s, ", role_name.c_str());
+	printf("value: %d, ", value);
+	printf("\n");
+}
+
+Rank_List::Rank_List(void) {
+	reset();
+}
+
+Rank_List::~Rank_List() {
+}
+
+void Rank_List::serialize(Block_Buffer &buffer) const {
+	buffer.write_int8(rank_type);
+	uint16_t member_list_size = member_list.size();
+	buffer.write_uint16(member_list_size);
+	for(uint16_t i = 0; i < member_list_size; ++i) {
+		member_list[i].serialize(buffer);
+	}
+}
+
+int Rank_List::deserialize(Block_Buffer &buffer) {
+	rank_type = buffer.read_int8();
+	uint16_t member_list_size = buffer.read_uint16();
+	Rank_Member member_list_v;
+	for(uint16_t i = 0; i < member_list_size; ++i) {
+		member_list_v.deserialize(buffer);
+		member_list.push_back(member_list_v);
+	}
+	return 0;
+}
+
+void Rank_List::reset(void) {
+	rank_type = 0;
+	member_list.clear();
+}
+
+void Rank_List::print(void) {
+	printf("rank_type: %d, ", rank_type);
+	uint16_t member_list_size = (member_list.size() > 5 ? 5 : member_list.size());
+	printf("member_list.size: %ld [", member_list.size());
+	for(uint16_t i = 0; i < member_list_size; ++i) {
+		member_list[i].print();
+	}
+	printf("], ");
+	printf("\n");
+}
+
 MSG_300000::MSG_300000(void) {
 	reset();
 }
@@ -1634,6 +1710,52 @@ void MSG_520305::print(void) {
 	printf("\n");
 }
 
+MSG_120306::MSG_120306(void) {
+	reset();
+}
+
+MSG_120306::~MSG_120306() {
+}
+
+void MSG_120306::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(exp);
+}
+
+int MSG_120306::deserialize(Block_Buffer &buffer) {
+	exp = buffer.read_int32();
+	return 0;
+}
+
+void MSG_120306::reset(void) {
+	exp = 0;
+}
+
+void MSG_120306::print(void) {
+	printf("exp: %d, ", exp);
+	printf("\n");
+}
+
+MSG_520306::MSG_520306(void) {
+	reset();
+}
+
+MSG_520306::~MSG_520306() {
+}
+
+void MSG_520306::serialize(Block_Buffer &buffer) const {
+}
+
+int MSG_520306::deserialize(Block_Buffer &buffer) {
+	return 0;
+}
+
+void MSG_520306::reset(void) {
+}
+
+void MSG_520306::print(void) {
+	printf("\n");
+}
+
 MSG_120400::MSG_120400(void) {
 	reset();
 }
@@ -2237,5 +2359,163 @@ void MSG_510103::reset(void) {
 }
 
 void MSG_510103::print(void) {
+	printf("\n");
+}
+
+MSG_110104::MSG_110104(void) {
+	reset();
+}
+
+MSG_110104::~MSG_110104() {
+}
+
+void MSG_110104::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(guild_id);
+	buffer.write_int64(role_id);
+	buffer.write_bool(allow);
+}
+
+int MSG_110104::deserialize(Block_Buffer &buffer) {
+	guild_id = buffer.read_int64();
+	role_id = buffer.read_int64();
+	allow = buffer.read_bool();
+	return 0;
+}
+
+void MSG_110104::reset(void) {
+	guild_id = 0;
+	role_id = 0;
+	allow = 0;
+}
+
+void MSG_110104::print(void) {
+	printf("guild_id: %ld, ", guild_id);
+	printf("role_id: %ld, ", role_id);
+	printf("allow: %d, ", allow);
+	printf("\n");
+}
+
+MSG_510104::MSG_510104(void) {
+	reset();
+}
+
+MSG_510104::~MSG_510104() {
+}
+
+void MSG_510104::serialize(Block_Buffer &buffer) const {
+}
+
+int MSG_510104::deserialize(Block_Buffer &buffer) {
+	return 0;
+}
+
+void MSG_510104::reset(void) {
+}
+
+void MSG_510104::print(void) {
+	printf("\n");
+}
+
+MSG_110105::MSG_110105(void) {
+	reset();
+}
+
+MSG_110105::~MSG_110105() {
+}
+
+void MSG_110105::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(guild_id);
+	buffer.write_int64(role_id);
+}
+
+int MSG_110105::deserialize(Block_Buffer &buffer) {
+	guild_id = buffer.read_int64();
+	role_id = buffer.read_int64();
+	return 0;
+}
+
+void MSG_110105::reset(void) {
+	guild_id = 0;
+	role_id = 0;
+}
+
+void MSG_110105::print(void) {
+	printf("guild_id: %ld, ", guild_id);
+	printf("role_id: %ld, ", role_id);
+	printf("\n");
+}
+
+MSG_510105::MSG_510105(void) {
+	reset();
+}
+
+MSG_510105::~MSG_510105() {
+}
+
+void MSG_510105::serialize(Block_Buffer &buffer) const {
+}
+
+int MSG_510105::deserialize(Block_Buffer &buffer) {
+	return 0;
+}
+
+void MSG_510105::reset(void) {
+}
+
+void MSG_510105::print(void) {
+	printf("\n");
+}
+
+MSG_110201::MSG_110201(void) {
+	reset();
+}
+
+MSG_110201::~MSG_110201() {
+}
+
+void MSG_110201::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(type);
+}
+
+int MSG_110201::deserialize(Block_Buffer &buffer) {
+	type = buffer.read_int32();
+	return 0;
+}
+
+void MSG_110201::reset(void) {
+	type = 0;
+}
+
+void MSG_110201::print(void) {
+	printf("type: %d, ", type);
+	printf("\n");
+}
+
+MSG_510201::MSG_510201(void) {
+	reset();
+}
+
+MSG_510201::~MSG_510201() {
+}
+
+void MSG_510201::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(rank);
+	rank_list.serialize(buffer);
+}
+
+int MSG_510201::deserialize(Block_Buffer &buffer) {
+	rank = buffer.read_int32();
+	rank_list.deserialize(buffer);
+	return 0;
+}
+
+void MSG_510201::reset(void) {
+	rank = 0;
+	rank_list.reset();
+}
+
+void MSG_510201::print(void) {
+	printf("rank: %d, ", rank);
+	rank_list.print();
 	printf("\n");
 }

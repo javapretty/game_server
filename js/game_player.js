@@ -234,3 +234,22 @@ Game_Player.prototype.set_guild_info = function(buffer) {
 	print('set_guild_info, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, 
 	" guild_id:", this.player_info.guild_id, " guild_name:", this.player_info.guild_name);
 }
+
+Game_Player.prototype.sync_data_to_master = function() {
+	var msg = new MSG_165000();
+	msg.level = this.player_info.level;
+
+	var buf = pop_game_buffer();
+	msg.serialize(buf);
+	this.cplayer.sync_data_to_master(Msg_GM.SYNC_GAME_MASTER_PLAYER_INFO, buf);
+	push_game_buffer(buf);
+}
+
+Game_Player.prototype.add_hero_exp_test = function(buffer) {
+	print('add hero exp test, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
+	var msg = new MSG_120306();
+	msg.deserialize(buffer);
+	this.add_exp(msg.exp);
+	this.sync_data_to_master();
+}
+

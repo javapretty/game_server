@@ -310,3 +310,13 @@ void get_master_player_by_name(const FunctionCallbackInfo<Value>& args) {
 		args.GetReturnValue().SetNull();
 	}
 }
+
+void get_game_player_sync_buffer(const FunctionCallbackInfo<Value>& args){
+	Block_Buffer *buf = MASTER_MANAGER->pop_master_player_sync_data();
+	if (buf) {
+		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
+	} else {
+		//设置对象为空
+		args.GetReturnValue().SetNull();
+	}
+}
