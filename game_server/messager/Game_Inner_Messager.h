@@ -30,7 +30,7 @@ public:
 	//玩家登录时候从数据库加载信息
 	int process_loaded_player_data(Block_Buffer &buf);
 	/// 登录, 创建角色 成功处理
-	int process_success_login(int gate_cid, int player_cid, Player_Data &data);
+	int process_success_login(int gate_cid, int player_cid, Block_Buffer &buffer, Game_Player_Info &player_info);
 	/// 保存玩家信息完成
 	int process_save_player_complete(Block_Buffer &buf);
 

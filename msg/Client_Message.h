@@ -148,7 +148,7 @@ struct Rank_Member : public MSG {
 };
 
 struct Rank_List : public MSG {
-	int8_t rank_type;	
+	int64_t rank_type;	
 	std::vector<Rank_Member> member_list;	
 
 	Rank_List(void);

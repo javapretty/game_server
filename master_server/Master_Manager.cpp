@@ -105,7 +105,6 @@ int Master_Manager::boardcast_msg_to_all(Block_Buffer &buf) {
 int Master_Manager::process_list(void) {
 	int32_t cid = 0;
 	Block_Buffer *buf = 0;
-	Player_Data player_data;
 
 	while (1) {
 		bool all_empty = true;
@@ -307,10 +306,17 @@ void Master_Manager::print_msg_count(void) {
 	LOG_INFO("inner_msg_count_map_.size = %d\n%s\n", inner_msg_count_map_.size(), stream.str().c_str());
 }
 
-int Master_Manager::load_public_info(){
-	Block_Buffer buf;
-	buf.make_inner_message(SYNC_MASTER_DB_LOAD_PUBLIC_INFO);
-	buf.finish_message();
-	send_to_db(buf);
-	return 0;
-}
+//int Master_Manager::load_db_info(){
+//	Block_Buffer buf;
+//	buf.make_inner_message(SYNC_MASTER_DB_LOAD_PUBLIC_INFO);
+//	buf.finish_message();
+//	send_to_db(buf);
+//
+//	buf.reset();
+//	buf.make_inner_message(SYNC_MASTER_DB_LOAD_DATA);
+//	buf.write_string("Rank_Info");
+//	buf.write_int64(0);
+//	buf.finish_message();
+//	send_to_db(buf);
+//	return 0;
+//}

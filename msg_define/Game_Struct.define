@@ -65,32 +65,26 @@ struct Game_Player_Info {
 };
 
 struct Hero_Info {
+	int64_t role_id;
 	boost::unordered_map<int32_t(hero_id),Hero_Detail> hero_map;
 };
 
 struct Bag_Info {
+	int64_t role_id;
 	int32_t copper;
 	int32_t gold;
 	boost::unordered_map<int32_t(item_id),Item_Info> item_map;
 };
 
 struct Mail_Info {
+	int64_t role_id;
 	int32_t total_count; 			//邮件的总数量，即目前为止收到的所有邮件数
 	std::map<int32_t(mail_id),Mail_Detail> mail_map;
 };
 
 struct Shop_Info {
+	int64_t role_id;
 	boost::unordered_map<int32_t(shop_type),Shop_Detail> shop_detail;
-};
-
-struct Player_Data {
-	int8_t status;
-	std::vector<int32_t> change_module;
-	Game_Player_Info player_info;
-	Hero_Info hero_info;
-	Bag_Info bag_info;
-	Mail_Info mail_info;
-	Shop_Info shop_info;
 };
 
 struct Guild_Member_Detail {
@@ -101,8 +95,8 @@ struct Guild_Member_Detail {
 };
 
 struct Guild_Detail {
-	bool change;
 	int64_t guild_id;
+	bool change;
 	std::string guild_name;
 	int64_t chief_id; 				  			//帮主id
 	std::vector<Guild_Member_Detail> applicant_list;		//申请者列表

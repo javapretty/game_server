@@ -117,9 +117,6 @@ public:
 	void inner_msg_count(Block_Buffer &buf);
 	void inner_msg_count(int msg_id);
 
-	/// 加载公共信息
-	int load_public_info();
-
 private:
 	Master_Manager(void);
 	virtual ~Master_Manager(void);

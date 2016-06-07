@@ -14,45 +14,61 @@ DB_Worker::DB_Worker(void) { }
 
 DB_Worker::~DB_Worker(void) { }
 
-int DB_Worker::load_player_data(int64_t role_id, Player_Data &player_data) {
-	CACHED_INSTANCE->load_player_info(role_id, player_data.player_info);
-	CACHED_INSTANCE->load_hero_info(role_id, player_data.hero_info);
-	CACHED_INSTANCE->load_bag_info(role_id, player_data.bag_info);
-	CACHED_INSTANCE->load_mail_info(role_id, player_data.mail_info);
-	CACHED_INSTANCE->load_shop_info(role_id, player_data.shop_info);
+int DB_Worker::load_player_data(int64_t role_id, Block_Buffer &buffer, Game_Player_Info &player_info) {
+	CACHED_INSTANCE->load_player_info(role_id, player_info);
+	player_info.serialize(buffer);
+	DB_Definition *role_def = DB_MANAGER->get_role_info_definition();
+	for(std::vector<DB_Type_Description>::iterator iter = role_def->type_vec().begin();
+			iter != role_def->type_vec().end(); iter++){
+		if((*iter).type_name == "Role_Info")
+			continue;
+		DB_Manager::DB_Name_Definition_Map::iterator it = DB_MANAGER->db_name_definition_map().find((*iter).type_name);
+		if(it == DB_MANAGER->db_name_definition_map().end()){
+			LOG_ERROR("Can not find the module %s", (*iter).type_name.c_str());
+			return -1;
+		}
+		DB_Definition *def = it->second;
+		def->load_data(role_id, buffer);
+	}
 	return 0;
 }
 
-int DB_Worker::save_player_data(Player_Data &player_data) {
-	for (std::vector<int>::iterator iter = player_data.change_module.begin(); iter != player_data.change_module.end(); ++iter) {
-		switch(*iter) {
-		case PLAYER_CHANGE:
-			CACHED_INSTANCE->save_player_info(player_data.player_info.role_id, player_data.player_info);
-			break;
-		case HERO_CHANGE:
-			CACHED_INSTANCE->save_hero_info(player_data.player_info.role_id, player_data.hero_info);
-			break;
-		case BAG_CHANGE:
-			CACHED_INSTANCE->save_bag_info(player_data.player_info.role_id, player_data.bag_info);
-			break;
-		case MAIL_CHANGE:
-			CACHED_INSTANCE->save_mail_info(player_data.player_info.role_id, player_data.mail_info);
-			break;
-		case SHOP_CHANGE:
-			CACHED_INSTANCE->save_shop_info(player_data.player_info.role_id, player_data.shop_info);
-			break;
+int DB_Worker::save_player_data(Block_Buffer &buffer) {
+	while(buffer.readable_bytes() > 0){
+		int32_t change_id = buffer.read_int32();
+		if(change_id == 0){
+			Game_Player_Info player_info;
+			player_info.deserialize(buffer);
+			CACHED_INSTANCE->save_player_info(player_info.role_id, player_info);
+		}
+		else {
+			DB_Definition *role_def = DB_MANAGER->get_role_info_definition();
+			std::string type_name = role_def->type_vec()[change_id].type_name;
+			DB_Manager::DB_Name_Definition_Map::iterator iter = DB_MANAGER->db_name_definition_map().find(type_name);
+			if(iter == DB_MANAGER->db_name_definition_map().end()){
+				LOG_ERROR("Can not find the module %s", type_name.c_str());
+				return -1;
+			}
+			DB_Definition *def = iter->second;
+			def->save_data(buffer);
 		}
 	}
 	return 0;
 }
 
-int DB_Worker::set_player_data_change(bool change, Player_Data &player_data) {
-	if (change) {
-		for (int i = PLAYER_CHANGE; i < CHANGE_END; ++i) {
-			player_data.change_module.push_back(i);
+int DB_Worker::init_player_table(Game_Player_Info &player_info) {
+	DB_Definition *role_def = DB_MANAGER->get_role_info_definition();
+	for(std::vector<DB_Type_Description>::iterator iter = role_def->type_vec().begin();
+			iter != role_def->type_vec().end(); iter++){
+		if((*iter).type_name == "Role_Info")
+			continue;
+		DB_Manager::DB_Name_Definition_Map::iterator it = DB_MANAGER->db_name_definition_map().find((*iter).type_name);
+		if(it == DB_MANAGER->db_name_definition_map().end()){
+			LOG_ERROR("Can not find the module %s", (*iter).type_name.c_str());
+			return -1;
 		}
-	} else {
-		player_data.change_module.clear();
+		DB_Definition *def = it->second;
+		def->init_table(player_info.role_id);
 	}
 	return 0;
 }
@@ -119,9 +135,7 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 		break;
 	}
 	case SYNC_GAME_DB_SAVE_PLAYER_INFO: {
-		MSG_150003 msg;
-		msg.deserialize(*buf);
-		process_save_player(cid, msg.player_data);
+		process_save_player(cid, *buf);
 		break;
 	}
 	case SYNC_GAME_DB_SAVE_MAIL_INFO: {
@@ -130,44 +144,42 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 		process_save_mail(msg);
 		break;
 	}
-	case SYNC_MASTER_DB_LOAD_PUBLIC_INFO: {
-		MSG_150101 msg;
-		msg.deserialize(*buf);
-		process_load_public_info(cid, msg);
+	case SYNC_MASTER_DB_LOAD_DATA:{
+		std::string msg_type = buf->read_string();
+		DB_Manager::DB_Name_Definition_Map::iterator iter = DB_MANAGER->db_name_definition_map().find(msg_type);
+		if(iter == DB_MANAGER->db_name_definition_map().end()){
+			LOG_ERROR("Can not find the module %s", msg_type.c_str());
+			break;
+		}
+		DB_Definition *def = iter->second;
+		int64_t index = buf->read_int64();
+		Block_Buffer buffer;
+		buffer.make_inner_message(def->cmdid() + 400000);
+		def->load_data(index, buffer);
+		buffer.finish_message();
+		DB_MANAGER->send_data_block(cid, buffer);
 		break;
 	}
-	case SYNC_MASTER_DB_SAVE_GUILD_INFO: {
-		MSG_150102 msg;
-		msg.deserialize(*buf);
-		process_save_guild_info(msg);
-		break;
-	}
-	case SYNC_MASTER_DB_DROP_GUILD_INFO: {
-		MSG_150103 msg;
-		msg.deserialize(*buf);
-		process_drop_guild_info(msg);
-		break;
-	}
-	case SYNC_MASTER_DB_SAVE_OFFLINE_INFO: {
-		MSG_150104 msg;
-		msg.deserialize(*buf);
-		process_save_offline_info(msg);
-		break;
-	}
-	case SYNC_MASTER_DB_DROP_OFFLINE_INFO: {
-		MSG_150105 msg;
-		msg.deserialize(*buf);
-		process_drop_offline_info(msg);
-		break;
-	}
-	case SYNC_MASTER_DB_SAVE_RANK_INFO: {
-		MSG_150106 msg;
-		msg.deserialize(*buf);
-		process_save_rank_info(msg);
+	case SYNC_MASTER_DB_DELETE_DATA:
+	case SYNC_GAME_DB_DELETE_DATA: {
+		std::string msg_type = buf->read_string();
+		DB_Manager::DB_Name_Definition_Map::iterator iter = DB_MANAGER->db_name_definition_map().find(msg_type);
+		if(iter == DB_MANAGER->db_name_definition_map().end()){
+			LOG_ERROR("Can not find the module %s", msg_type.c_str());
+			break;
+		}
+		DB_Definition *def = iter->second;
+		def->delete_data(*buf);
 		break;
 	}
 	default: {
-		LOG_ERROR("msg_id = %d error", msg_id);
+		DB_Manager::DB_Id_Definition_Map::iterator iter = DB_MANAGER->db_id_definition_map().find(msg_id);
+		if(iter == DB_MANAGER->db_id_definition_map().end()){
+			LOG_ERROR("Can not find the msg_id %d", msg_id);
+			break;
+		}
+		DB_Definition *def = iter->second;
+		def->save_data(*buf);
 		break;
 	}
 	}
@@ -183,60 +195,63 @@ int DB_Worker::process_load_db_cache(int cid) {
 }
 
 int DB_Worker::process_load_player(int cid, Account_Info &account_info) {
-	MSG_550001 msg;
-	int has_role = CACHED_INSTANCE->has_role_by_account(account_info.account, account_info.agent_num, account_info.server_num);
-	if (! has_role) {
-		msg.player_data.status = ROLE_NOT_EXIST;
-		msg.player_data.player_info.account = account_info.account;
-		msg.player_data.player_info.agent_num = account_info.agent_num;
-		msg.player_data.player_info.server_num = account_info.server_num;
-	}	else {
-		msg.player_data.status = SUCCESS_LOADED;
-		int64_t role_id = CACHED_INSTANCE->get_role_id(account_info.account, account_info.agent_num, account_info.server_num);
-		load_player_data(role_id, msg.player_data);
-	}
 	Block_Buffer buf;
 	buf.make_inner_message(SYNC_DB_GAME_LOAD_PLAYER_INFO);
-	msg.serialize(buf);
+	Game_Player_Info player_info;
+	int has_role = CACHED_INSTANCE->has_role_by_account(account_info.account, account_info.agent_num, account_info.server_num);
+	if (! has_role) {
+		buf.write_int32(ROLE_NOT_EXIST);
+		player_info.account = account_info.account;
+		player_info.agent_num = account_info.agent_num;
+		player_info.server_num = account_info.server_num;
+	}	else {
+		buf.write_int32(SUCCESS_LOADED);
+		int64_t role_id = CACHED_INSTANCE->get_role_id(account_info.account, account_info.agent_num, account_info.server_num);
+		load_player_data(role_id, buf, player_info);
+	}
+
 	buf.finish_message();
 	DB_MANAGER->send_data_block(cid, buf);
 	return 0;
 }
 
 int DB_Worker::process_create_player(int cid, Game_Player_Info &player_info) {
-	MSG_550002 msg;
-	if (CACHED_INSTANCE->create_init_player(player_info) < 0) {
-		msg.player_data.status = ROLE_HAS_EXIST;
-	} else {
-		msg.player_data.status = SUCCESS_CREATED;
-		//此处保存所有数据是为了创建所有玩家表
-		set_player_data_change(true, msg.player_data);
-		save_player_data(msg.player_data);
-		set_player_data_change(false, msg.player_data);
-	}
-	msg.player_data.player_info = player_info;
 	Block_Buffer buf;
 	buf.make_inner_message(SYNC_DB_GAME_CREATE_PLAYER);
-	msg.serialize(buf);
+	int32_t status;
+	if (CACHED_INSTANCE->create_init_player(player_info) < 0) {
+		status = ROLE_HAS_EXIST;
+	} else {
+		status = SUCCESS_CREATED;
+		//此处保存所有数据是为了创建所有玩家表
+		init_player_table(player_info);
+	}
+	buf.write_int32(status);
+	load_player_data(player_info.role_id, buf, player_info);
 	buf.finish_message();
 	DB_MANAGER->send_data_block(cid, buf);
 	return 0;
 }
 
-int DB_Worker::process_save_player(int cid, Player_Data &player_data) {
-	if (player_data.status == ROLE_SAVE_OFFLINE) {
-		set_player_data_change(true, player_data);
-		save_player_data(player_data);
+int DB_Worker::process_save_player(int cid, Block_Buffer &buffer) {
+	int32_t status = buffer.read_int32();
+	if (status == 1) {
+		int rdx = buffer.get_read_idx();
+		buffer.read_int32();
+		int64_t role_id = buffer.read_int64();
+		buffer.set_read_idx(rdx);
+
+		save_player_data(buffer);
 
 		Block_Buffer buf;
 		buf.make_inner_message(SYNC_DB_GAME_SAVE_PLAYER_INFO);
 		MSG_550003 msg;
-		msg.role_id = player_data.player_info.role_id;
+		msg.role_id = role_id;
 		msg.serialize(buf);
 		buf.finish_message();
 		DB_MANAGER->send_data_block(cid, buf);
 	} else {
-		save_player_data(player_data);
+		save_player_data(buffer);
 	}
 	return 0;
 }
@@ -257,43 +272,5 @@ int DB_Worker::process_save_mail(MSG_150004 &msg) {
 		}
 	}
 	CACHED_INSTANCE->save_mail_info(msg.role_id, mail_info);
-	return 0;
-}
-
-int DB_Worker::process_load_public_info(int cid, MSG_150101 &msg){
-	Block_Buffer buf;
-	buf.make_inner_message(SYNC_DB_MASTER_LOAD_PUBLIC_INFO);
-	MSG_550101 res;
-	CACHED_INSTANCE->load_guild_info(res.guild_info);
-	CACHED_INSTANCE->load_offline_info(res.offline_info);
-	CACHED_INSTANCE->load_rank_info(res.rank_info);
-	res.serialize(buf);
-	buf.finish_message();
-	DB_MANAGER->send_data_block(cid, buf);
-	return 0;
-};
-
-int DB_Worker::process_save_guild_info(MSG_150102 &msg) {
-	CACHED_INSTANCE->save_guild_info(msg.guild_info);
-	return 0;
-}
-
-int DB_Worker::process_drop_guild_info(MSG_150103 &msg) {
-	CACHED_INSTANCE->drop_guild_info(msg.guild_list);
-	return 0;
-}
-
-int DB_Worker::process_save_offline_info(MSG_150104 &msg) {
-	CACHED_INSTANCE->save_offline_info(msg.offline_info);
-	return 0;
-}
-
-int DB_Worker::process_drop_offline_info(MSG_150105 &msg) {
-	CACHED_INSTANCE->drop_offline_info(msg.offline_list);
-	return 0;
-}
-
-int DB_Worker::process_save_rank_info(MSG_150106 &msg) {
-	CACHED_INSTANCE->save_rank_info(msg.rank_info);
 	return 0;
 }

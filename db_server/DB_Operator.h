@@ -62,20 +62,6 @@ public:
 	int load_shop_info(int64_t role_id, Shop_Info &shop_info);
 	int save_shop_info(int64_t role_id, Shop_Info &shop_info);
 
-	int load_guild_info(Guild_Info &guild_info);
-	int save_guild_info(Guild_Info &guild_info);
-	int save_guild_detail(Guild_Detail &guild_detail);
-	int drop_guild_info(std::vector<int64_t> &guild_list);
-
-	int load_offline_info(Offline_Info &offline_info);
-	int save_offline_info(Offline_Info &offline_info);
-	int save_offline_detail(Offline_Detail &offline_detail);
-	int drop_offline_info(std::vector<int64_t> &offline_list);
-
-	int load_rank_info(Rank_Info &rank_info);
-	int save_rank_info(Rank_Info &rank_info);
-	int save_rank_list(Rank_List &rank_list);
-
 private:
 	DB_Operator(void);
 	virtual ~DB_Operator(void);

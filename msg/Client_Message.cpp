@@ -448,7 +448,7 @@ Rank_List::~Rank_List() {
 }
 
 void Rank_List::serialize(Block_Buffer &buffer) const {
-	buffer.write_int8(rank_type);
+	buffer.write_int64(rank_type);
 	uint16_t member_list_size = member_list.size();
 	buffer.write_uint16(member_list_size);
 	for(uint16_t i = 0; i < member_list_size; ++i) {
@@ -457,7 +457,7 @@ void Rank_List::serialize(Block_Buffer &buffer) const {
 }
 
 int Rank_List::deserialize(Block_Buffer &buffer) {
-	rank_type = buffer.read_int8();
+	rank_type = buffer.read_int64();
 	uint16_t member_list_size = buffer.read_uint16();
 	Rank_Member member_list_v;
 	for(uint16_t i = 0; i < member_list_size; ++i) {
@@ -473,7 +473,7 @@ void Rank_List::reset(void) {
 }
 
 void Rank_List::print(void) {
-	printf("rank_type: %d, ", rank_type);
+	printf("rank_type: %ld, ", rank_type);
 	uint16_t member_list_size = (member_list.size() > 5 ? 5 : member_list.size());
 	printf("member_list.size: %ld [", member_list.size());
 	for(uint16_t i = 0; i < member_list_size; ++i) {

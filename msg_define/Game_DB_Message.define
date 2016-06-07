@@ -13,7 +13,6 @@ struct MSG_150001 {
 };
 
 struct MSG_550001 {
-	Player_Data player_data;
 };
 
 //创建玩家
@@ -22,12 +21,10 @@ struct MSG_150002 {
 };
 
 struct MSG_550002 {
-	Player_Data player_data;
 };
 
 //保存玩家信息
 struct MSG_150003 {
-	Player_Data player_data;
 };
 
 struct MSG_550003 {
@@ -38,5 +35,11 @@ struct MSG_550003 {
 struct MSG_150004 {
 	int64_t role_id;
 	Mail_Detail mail_detail;
+};
+
+//删除数据库信息
+struct MSG_150008 {
+	std::string table_name; //删除数据表名称
+	std::vector<int64_t> delete_list;
 };
 

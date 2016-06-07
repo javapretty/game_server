@@ -6,19 +6,28 @@
 
 function Guild() {
 	this.guild_info = new Guild_Info();
+	this.save_list = new Array();
 	this.drop_list = new Array();
 }
 
 Guild.prototype.load_data = function(buffer){
 	print('load guild data, util.now_msec:', util.now_msec());
-	this.guild_info.deserialize(buffer);
+	var msg = new MSG_550103();
+	msg.deserialize(buffer);
+	for(var i = 0; i < msg.guild_list.length; i++){
+		var guild = msg.guild_list[i];
+		print("guild[", i, "].guild_id is ", guild.guild_id);
+		this.guild_info.guild_map.insert(guild.guild_id, guild);
+	}
 }
 
 Guild.prototype.save_data = function(){
-	var msg = new MSG_150102();
+	var msg = new MSG_150103();
+	msg.index = 0;
+	print("SAVE GUILD, GUILD MAP SIZE IS ", this.guild_info.guild_map.size());
 	this.guild_info.guild_map.each(function(key,value,index) {
 		if (value.change) {
-			msg.guild_info.guild_map.insert(value.guild_id, value);
+			msg.guild_list.push(value);
 			value.change = false;
 		}
     });
@@ -33,10 +42,11 @@ Guild.prototype.save_data = function(){
 Guild.prototype.drop_guild = function(){
 	if (this.drop_list.length <= 0) return;
 		
-	var msg = new MSG_150103();
-	msg.guild_list = this.drop_list;
+	var msg = new MSG_150102();
+	msg.table_name = "Guild_Info";
+	msg.delete_list = this.drop_list;
 	var buf = pop_master_buffer();
-	buf.make_inner_message(Msg_MD.SYNC_MASTER_DB_DROP_GUILD_INFO);
+	buf.make_inner_message(Msg_MD.SYNC_MASTER_DB_DELETE_DATA);
 	msg.serialize(buf);
 	buf.finish_message();
 	send_master_buffer_to_db(buf);
@@ -93,8 +103,8 @@ Guild.prototype.create_guild = function(player, buffer) {
 	msg.deserialize(buffer);
 
 	var guild_detail = new Guild_Detail();
-	guild_detail.change = true;
 	guild_detail.guild_id = this.get_guild_id();
+	guild_detail.change = true;
 	guild_detail.guild_name = msg.guild_name;
 	guild_detail.chief_id = player.player_info.role_id;
 

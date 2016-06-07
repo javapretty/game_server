@@ -24,12 +24,7 @@ Game_Player.prototype.load_player_data = function(buffer) {
 	
 	var gate_cid = buffer.read_int32();
 	var player_cid = buffer.read_int32();
-	var status = buffer.read_int8();					//status
-	var change_len = buffer.read_uint16();		//change_module len
-	for(var i = 0; i < change_len; ++i) {
-		var change_id = buffer.read_int32();
-		this.change_module.push(change_id);
-	}
+	
 	this.player_info.deserialize(buffer);
 	this.hero.load_data(this, buffer);
 	this.bag.load_data(this, buffer);
@@ -43,35 +38,65 @@ Game_Player.prototype.load_player_data = function(buffer) {
 	game_player_cid_map.insert(this.cid, this);
 	game_player_role_id_map.insert(this.player_info.role_id, this);
 }
-	
+
 //玩家离线，保存数据
 Game_Player.prototype.save_player_data = function() {
 	print('------game_player save_data,role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name);
 	
-	this.sync_player_data();
+	this.sync_player_data(true);
 	game_player_cid_map.remove(this.cid);
 	game_player_role_id_map.remove(this.player_info.role_id);
 }
 
-Game_Player.prototype.sync_player_data = function() {
+Game_Player.prototype.sync_player_data = function(is_logout = false) {
 	var buffer = this.cplayer.get_save_data_buffer();
 	if (buffer == null) {
 		return;
 	}
-	
-	buffer.write_int8(0);			//status
+
 	var change_len = this.change_module.length;
-	buffer.write_uint16(change_len);
-	for(var i = 0; i < change_len; ++i) {
-		buffer.write_int32(this.change_module[i]);
+	if(is_logout == true){
+		this.set_data_change(Data_Change.PLAYER_CHANGE);
+		this.set_data_change(Data_Change.HERO_CHANGE);
+		this.set_data_change(Data_Change.BAG_CHANGE);
+		this.set_data_change(Data_Change.MAIL_CHANGE);
+		this.set_data_change(Data_Change.SHOP_CHANGE);
+		change_len = this.change_module.length;
 	}
-	this.player_info.serialize(buffer);
-	this.hero.save_data(buffer);
-	this.bag.save_data(buffer);
-	this.mail.save_data(buffer);
-	this.shop.save_data(buffer);
+	else {
+		if(change_len == 0){
+			print("No player module changed");
+			return;
+		}
+	}
+
+	this.change_module.sort();
+	for(var i = 0; i < change_len; i++){
+		var change_id = this.change_module[i];
+		buffer.write_int32(change_id);
+		switch(change_id){
+		case Data_Change.PLAYER_CHANGE:
+			this.player_info.serialize(buffer);
+			break;
+		case Data_Change.HERO_CHANGE:
+			this.hero.save_data(buffer);
+			break;
+		case Data_Change.BAG_CHANGE:
+			this.bag.save_data(buffer);
+			break;
+		case Data_Change.MAIL_CHANGE:
+			this.mail.save_data(buffer);
+			break;
+		case Data_Change.SHOP_CHANGE:
+			this.shop.save_data(buffer);
+			break;
+		default:
+			break;
+		}
+	}
+	this.change_module = [];
 }
-	
+
 Game_Player.prototype.set_data_change = function(change_id) {
 	var exist = false;
 	for (var i = 0; i < this.change_module.length; ++i) {
@@ -84,7 +109,7 @@ Game_Player.prototype.set_data_change = function(change_id) {
 		this.change_module.push(change_id);
 	}
 }
-	
+
 Game_Player.prototype.tick = function(now) {
 	//技能点回复，五分钟回复一点
 	if (this.player_info.skill_point < 10) {

@@ -120,6 +120,7 @@ struct Game_Player_Info : public MSG {
 };
 
 struct Hero_Info : public MSG {
+	int64_t role_id;	
 	boost::unordered_map<int32_t,Hero_Detail> hero_map;	
 
 	Hero_Info(void);
@@ -131,6 +132,7 @@ struct Hero_Info : public MSG {
 };
 
 struct Bag_Info : public MSG {
+	int64_t role_id;	
 	int32_t copper;	
 	int32_t gold;	
 	boost::unordered_map<int32_t,Item_Info> item_map;	
@@ -144,6 +146,7 @@ struct Bag_Info : public MSG {
 };
 
 struct Mail_Info : public MSG {
+	int64_t role_id;	
 	int32_t total_count;	//邮件的总数量，即目前为止收到的所有邮件数
 	std::map<int32_t,Mail_Detail> mail_map;	
 
@@ -156,27 +159,11 @@ struct Mail_Info : public MSG {
 };
 
 struct Shop_Info : public MSG {
+	int64_t role_id;	
 	boost::unordered_map<int32_t,Shop_Detail> shop_detail;	
 
 	Shop_Info(void);
 	~Shop_Info();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct Player_Data : public MSG {
-	int8_t status;	
-	std::vector<int32_t> change_module;	
-	Game_Player_Info player_info;	
-	Hero_Info hero_info;	
-	Bag_Info bag_info;	
-	Mail_Info mail_info;	
-	Shop_Info shop_info;	
-
-	Player_Data(void);
-	~Player_Data();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
@@ -198,8 +185,8 @@ struct Guild_Member_Detail : public MSG {
 };
 
 struct Guild_Detail : public MSG {
-	bool change;	
 	int64_t guild_id;	
+	bool change;	
 	std::string guild_name;	
 	int64_t chief_id;	//帮主id
 	std::vector<Guild_Member_Detail> applicant_list;	//申请者列表
@@ -293,7 +280,6 @@ struct MSG_150001 : public MSG {
 };
 
 struct MSG_550001 : public MSG {
-	Player_Data player_data;	
 
 	MSG_550001(void);
 	~MSG_550001();
@@ -315,7 +301,6 @@ struct MSG_150002 : public MSG {
 };
 
 struct MSG_550002 : public MSG {
-	Player_Data player_data;	
 
 	MSG_550002(void);
 	~MSG_550002();
@@ -326,7 +311,6 @@ struct MSG_550002 : public MSG {
 };
 
 struct MSG_150003 : public MSG {
-	Player_Data player_data;	
 
 	MSG_150003(void);
 	~MSG_150003();
@@ -353,6 +337,18 @@ struct MSG_150004 : public MSG {
 
 	MSG_150004(void);
 	~MSG_150004();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_150008 : public MSG {
+	std::string table_name;	//删除数据表名称
+	std::vector<int64_t> delete_list;	
+
+	MSG_150008(void);
+	~MSG_150008();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
@@ -481,6 +477,8 @@ struct MSG_165000 : public MSG {
 };
 
 struct MSG_150101 : public MSG {
+	std::string msg_type;	//拉取数据表名称
+	int64_t index;	//索引值
 
 	MSG_150101(void);
 	~MSG_150101();
@@ -490,21 +488,9 @@ struct MSG_150101 : public MSG {
 	void print(void);
 };
 
-struct MSG_550101 : public MSG {
-	Guild_Info guild_info;	
-	Offline_Info offline_info;	
-	Rank_Info rank_info;	
-
-	MSG_550101(void);
-	~MSG_550101();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
 struct MSG_150102 : public MSG {
-	Guild_Info guild_info;	
+	std::string table_name;	//删除数据表名称
+	std::vector<int64_t> delete_list;	
 
 	MSG_150102(void);
 	~MSG_150102();
@@ -514,18 +500,9 @@ struct MSG_150102 : public MSG {
 	void print(void);
 };
 
-struct MSG_550102 : public MSG {
-
-	MSG_550102(void);
-	~MSG_550102();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
 struct MSG_150103 : public MSG {
-	std::vector<int64_t> guild_list;	
+	int64_t index;	
+	std::vector<Guild_Detail> guild_list;	
 
 	MSG_150103(void);
 	~MSG_150103();
@@ -536,6 +513,7 @@ struct MSG_150103 : public MSG {
 };
 
 struct MSG_550103 : public MSG {
+	std::vector<Guild_Detail> guild_list;	
 
 	MSG_550103(void);
 	~MSG_550103();
@@ -546,7 +524,8 @@ struct MSG_550103 : public MSG {
 };
 
 struct MSG_150104 : public MSG {
-	Offline_Info offline_info;	
+	int64_t index;	
+	std::vector<Offline_Detail> offline_list;	
 
 	MSG_150104(void);
 	~MSG_150104();
@@ -557,6 +536,7 @@ struct MSG_150104 : public MSG {
 };
 
 struct MSG_550104 : public MSG {
+	std::vector<Offline_Detail> offline_list;	
 
 	MSG_550104(void);
 	~MSG_550104();
@@ -567,7 +547,8 @@ struct MSG_550104 : public MSG {
 };
 
 struct MSG_150105 : public MSG {
-	std::vector<int64_t> offline_list;	
+	int64_t index;	
+	std::vector<Rank_List> rank_list;	
 
 	MSG_150105(void);
 	~MSG_150105();
@@ -578,30 +559,10 @@ struct MSG_150105 : public MSG {
 };
 
 struct MSG_550105 : public MSG {
+	std::vector<Rank_List> rank_list;	
 
 	MSG_550105(void);
 	~MSG_550105();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct MSG_150106 : public MSG {
-	Rank_Info rank_info;	
-
-	MSG_150106(void);
-	~MSG_150106();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct MSG_550106 : public MSG {
-
-	MSG_550106(void);
-	~MSG_550106();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

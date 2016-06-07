@@ -274,7 +274,7 @@ function Rank_List() {
 }
 
 Rank_List.prototype.serialize = function(buffer) {
-	buffer.write_int8(this.rank_type);
+	buffer.write_int64(this.rank_type);
 	var len = this.member_list.length;
 	buffer.write_uint16(len);
 	for(var i = 0; i < len; ++i) {
@@ -283,7 +283,7 @@ Rank_List.prototype.serialize = function(buffer) {
 }
 
 Rank_List.prototype.deserialize = function(buffer) {
-	this.rank_type = buffer.read_int8();
+	this.rank_type = buffer.read_int64();
 	var len = buffer.read_uint16();
 	for(var i = 0; i < len; ++i) {
 		var member_list_v = new Rank_Member();
@@ -491,10 +491,12 @@ Game_Player_Info.prototype.deserialize = function(buffer) {
 }
 
 function Hero_Info() {
+	this.role_id = 0;
 	this.hero_map = new Map();
 }
 
 Hero_Info.prototype.serialize = function(buffer) {
+	buffer.write_int64(this.role_id);
 	buffer.write_uint16(this.hero_map.size());
 	this.hero_map.each(function(_key,_v,index) {
 		_v.serialize(buffer);
@@ -502,6 +504,7 @@ Hero_Info.prototype.serialize = function(buffer) {
 }
 
 Hero_Info.prototype.deserialize = function(buffer) {
+	this.role_id = buffer.read_int64();
 	var len = buffer.read_uint16();
 	for (var i = 0; i < len; ++i) {
 		var _v = new Hero_Detail();
@@ -511,12 +514,14 @@ Hero_Info.prototype.deserialize = function(buffer) {
 }
 
 function Bag_Info() {
+	this.role_id = 0;
 	this.copper = 0;
 	this.gold = 0;
 	this.item_map = new Map();
 }
 
 Bag_Info.prototype.serialize = function(buffer) {
+	buffer.write_int64(this.role_id);
 	buffer.write_int32(this.copper);
 	buffer.write_int32(this.gold);
 	buffer.write_uint16(this.item_map.size());
@@ -526,6 +531,7 @@ Bag_Info.prototype.serialize = function(buffer) {
 }
 
 Bag_Info.prototype.deserialize = function(buffer) {
+	this.role_id = buffer.read_int64();
 	this.copper = buffer.read_int32();
 	this.gold = buffer.read_int32();
 	var len = buffer.read_uint16();
@@ -537,11 +543,13 @@ Bag_Info.prototype.deserialize = function(buffer) {
 }
 
 function Mail_Info() {
+	this.role_id = 0;
 	this.total_count = 0;
 	this.mail_map = new Map();
 }
 
 Mail_Info.prototype.serialize = function(buffer) {
+	buffer.write_int64(this.role_id);
 	buffer.write_int32(this.total_count);
 	buffer.write_uint16(this.mail_map.size());
 	this.mail_map.each(function(_key,_v,index) {
@@ -550,6 +558,7 @@ Mail_Info.prototype.serialize = function(buffer) {
 }
 
 Mail_Info.prototype.deserialize = function(buffer) {
+	this.role_id = buffer.read_int64();
 	this.total_count = buffer.read_int32();
 	var len = buffer.read_uint16();
 	for (var i = 0; i < len; ++i) {
@@ -560,10 +569,12 @@ Mail_Info.prototype.deserialize = function(buffer) {
 }
 
 function Shop_Info() {
+	this.role_id = 0;
 	this.shop_detail = new Map();
 }
 
 Shop_Info.prototype.serialize = function(buffer) {
+	buffer.write_int64(this.role_id);
 	buffer.write_uint16(this.shop_detail.size());
 	this.shop_detail.each(function(_key,_v,index) {
 		_v.serialize(buffer);
@@ -571,51 +582,13 @@ Shop_Info.prototype.serialize = function(buffer) {
 }
 
 Shop_Info.prototype.deserialize = function(buffer) {
+	this.role_id = buffer.read_int64();
 	var len = buffer.read_uint16();
 	for (var i = 0; i < len; ++i) {
 		var _v = new Shop_Detail();
 		_v.deserialize(buffer);
 		this.shop_detail.insert(_v.shop_type, _v);
 	}
-}
-
-function Player_Data() {
-	this.status = 0;
-	this.change_module = new Array();
-	this.player_info = new Game_Player_Info();
-	this.hero_info = new Hero_Info();
-	this.bag_info = new Bag_Info();
-	this.mail_info = new Mail_Info();
-	this.shop_info = new Shop_Info();
-}
-
-Player_Data.prototype.serialize = function(buffer) {
-	buffer.write_int8(this.status);
-	var len = this.change_module.length;
-	buffer.write_uint16(len);
-	for(var i = 0; i < len; ++i) {
-		buffer.write_int32(this.change_module[i]);
-	}
-	this.player_info.serialize(buffer);
-	this.hero_info.serialize(buffer);
-	this.bag_info.serialize(buffer);
-	this.mail_info.serialize(buffer);
-	this.shop_info.serialize(buffer);
-}
-
-Player_Data.prototype.deserialize = function(buffer) {
-	this.status = buffer.read_int8();
-	var len = buffer.read_uint16();
-	for(var i = 0; i < len; ++i) {
-		var change_module_v;
-		change_module_v = buffer.read_int32();
-		this.change_module.push(change_module_v);
-	}
-	this.player_info.deserialize(buffer);
-	this.hero_info.deserialize(buffer);
-	this.bag_info.deserialize(buffer);
-	this.mail_info.deserialize(buffer);
-	this.shop_info.deserialize(buffer);
 }
 
 function Guild_Member_Detail() {
@@ -640,8 +613,8 @@ Guild_Member_Detail.prototype.deserialize = function(buffer) {
 }
 
 function Guild_Detail() {
-	this.change = 0;
 	this.guild_id = 0;
+	this.change = 0;
 	this.guild_name = ""
 	this.chief_id = 0;
 	this.applicant_list = new Array();
@@ -649,8 +622,8 @@ function Guild_Detail() {
 }
 
 Guild_Detail.prototype.serialize = function(buffer) {
-	buffer.write_bool(this.change);
 	buffer.write_int64(this.guild_id);
+	buffer.write_bool(this.change);
 	buffer.write_string(this.guild_name);
 	buffer.write_int64(this.chief_id);
 	var len = this.applicant_list.length;
@@ -666,8 +639,8 @@ Guild_Detail.prototype.serialize = function(buffer) {
 }
 
 Guild_Detail.prototype.deserialize = function(buffer) {
-	this.change = buffer.read_bool();
 	this.guild_id = buffer.read_int64();
+	this.change = buffer.read_bool();
 	this.guild_name = buffer.read_string();
 	this.chief_id = buffer.read_int64();
 	var len = buffer.read_uint16();

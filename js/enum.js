@@ -12,11 +12,11 @@ if (typeof Server_Type == "undefined") {
 
 if (typeof Data_Change == "undefined") {
 	var Data_Change = {};
-	Data_Change.PLAYER_CHANGE = 1;
-	Data_Change.HERO_CHANGE = 2;
-	Data_Change.BAG_CHANGE = 3;
-	Data_Change.MAIL_CHANGE = 4;
-	Data_Change.SHOP_CHANGE = 5;
+	Data_Change.PLAYER_CHANGE = 0;
+	Data_Change.HERO_CHANGE = 1;
+	Data_Change.BAG_CHANGE = 2;
+	Data_Change.MAIL_CHANGE = 3;
+	Data_Change.SHOP_CHANGE = 4;
 }
 
 if (typeof Property_Type == "undefined") {

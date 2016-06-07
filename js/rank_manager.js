@@ -10,13 +10,24 @@ function Rank_Manager() {
 
 Rank_Manager.prototype.load_data = function(buffer){
 	print('load rank_manager data, util.now_msec:', util.now_msec());
-	this.rank_info.deserialize(buffer);
+	var msg = new MSG_550105();
+	msg.deserialize(buffer);
+	for(var i = 0; i < msg.rank_list.length; i++){
+		var list = new Rank_List();
+		list.rank_type = msg.rank_list[i].rank_type;
+		print("rank type is ", list.rank_type);
+		list.member_list = msg.rank_list[i].member_list;
+		print("list size is ", list.member_list.length);
+		print("list data 1 role_name is ", list.member_list[0].role_name);
+		this.rank_info.rank_map.insert(list.rank_type, list);
+	}
 }
 
 Rank_Manager.prototype.save_data = function(){
-	var msg = new MSG_150106();
+	var msg = new MSG_150105();
+	msg.index = 0;
 	this.rank_info.rank_map.each(function(key,value,index) {
-		msg.rank_info.rank_map.insert(value.rank_type, value);
+		msg.rank_list.push(value);
     });
 	var buf = pop_master_buffer();
 	buf.make_inner_message(Msg_MD.SYNC_MASTER_DB_SAVE_RANK_INFO);

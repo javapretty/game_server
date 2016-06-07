@@ -25,10 +25,10 @@ public:
 	}
 	inline int gate_cid(void) { return gate_cid_; }
 	inline int player_cid(void) { return player_cid_; }
-	inline Player_Data &player_data(void) { return player_data_; }
+	inline Game_Player_Info &player_info(void) { return player_info_; }
 	inline Block_Buffer *save_player_data_buffer(void) { return save_player_data_buffer_; }
 
-	int load_player(Player_Data &player_data);
+	int load_player(Block_Buffer &buffer, Game_Player_Info &player_info);
 	int save_player(bool is_logout = false);
 
 	int sign_in(void);
@@ -47,7 +47,8 @@ public:
 private:
 	int gate_cid_;			//gate连接game的cid
 	int player_cid_;		//player连接gate的cid
-	Player_Data player_data_;
+	//Player_Data player_data_;
+	Game_Player_Info player_info_;
 	Block_Buffer *load_player_data_buffer_;			//供js端读取登录数据的buffer
 	Block_Buffer *save_player_data_buffer_;			//供js端写入玩家数据的buffer
 	Recycle_Tick recycle_tick_;

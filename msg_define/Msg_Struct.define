@@ -72,7 +72,7 @@ struct Rank_Member {
 };
 
 struct Rank_List {
-	int8_t rank_type;
+	int64_t rank_type;
 	std::vector<Rank_Member> member_list;
 };
 

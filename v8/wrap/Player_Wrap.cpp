@@ -141,7 +141,7 @@ Master_Player *unwrap_master_player(Local<Object> obj) {
 }
 
 void get_master_player_save_data_buffer(const FunctionCallbackInfo<Value>& args) {
-	Game_Player *player = unwrap_game_player(args.Holder());
+	Master_Player *player = unwrap_master_player(args.Holder());
 	if (!player) {
 		args.GetReturnValue().SetNull();
 		return;

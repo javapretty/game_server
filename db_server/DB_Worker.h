@@ -31,9 +31,9 @@ public:
 	};
 
 	//玩家数据处理
-	int load_player_data(int64_t role_id, Player_Data &player_data);
-	int save_player_data(Player_Data &player_data);
-	int set_player_data_change(bool change, Player_Data &player_data);
+	int load_player_data(int64_t role_id, Block_Buffer &buffer, Game_Player_Info &player_info);
+	int save_player_data(Block_Buffer &buffer);
+	int init_player_table(Game_Player_Info &player_info);
 
 	/// 通用消息
 	int push_data_block(Block_Buffer *buf);
@@ -54,21 +54,9 @@ public:
 	/// 创建新角色
 	int process_create_player(int cid, Game_Player_Info &player_info);
 	/// 保存玩家数据
-	int process_save_player(int cid, Player_Data &player_data);
+	int process_save_player(int cid, Block_Buffer &buffer);
 	/// 保存邮件信息
 	int process_save_mail(MSG_150004 &msg);
-	/// 获取公共信息
-	int process_load_public_info(int cid, MSG_150101 &msg);
-	/// 保存公会信息
-	int process_save_guild_info(MSG_150102 &msg);
-	/// 删除公会数据
-	int process_drop_guild_info(MSG_150103 &msg);
-	/// 保存离线信息
-	int process_save_offline_info(MSG_150104 &msg);
-	/// 删除离线数据
-	int process_drop_offline_info(MSG_150105 &msg);
-	/// 保存排行榜信息
-	int process_save_rank_info(MSG_150106 &msg);
 
 private:
 	Data_List data_list_;						///通用数据保存列表

@@ -332,6 +332,7 @@ Hero_Info::~Hero_Info() {
 }
 
 void Hero_Info::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(role_id);
 
 	buffer.write_uint16(hero_map.size());
 	for(boost::unordered_map<int32_t,Hero_Detail>::const_iterator it = hero_map.begin();
@@ -341,6 +342,7 @@ void Hero_Info::serialize(Block_Buffer &buffer) const {
 }
 
 int Hero_Info::deserialize(Block_Buffer &buffer) {
+	role_id = buffer.read_int64();
 	uint16_t hero_map_size = buffer.read_uint16();
 	for (int16_t i = 0; i < hero_map_size; ++i) {
 		Hero_Detail _v;
@@ -351,10 +353,12 @@ int Hero_Info::deserialize(Block_Buffer &buffer) {
 }
 
 void Hero_Info::reset(void) {
+	role_id = 0;
 	hero_map.clear();
 }
 
 void Hero_Info::print(void) {
+	printf("role_id: %ld, ", role_id);
 	printf("hero_map.size: %ld {}, ", hero_map.size());
 	printf("\n");
 }
@@ -367,6 +371,7 @@ Bag_Info::~Bag_Info() {
 }
 
 void Bag_Info::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(role_id);
 	buffer.write_int32(copper);
 	buffer.write_int32(gold);
 
@@ -378,6 +383,7 @@ void Bag_Info::serialize(Block_Buffer &buffer) const {
 }
 
 int Bag_Info::deserialize(Block_Buffer &buffer) {
+	role_id = buffer.read_int64();
 	copper = buffer.read_int32();
 	gold = buffer.read_int32();
 	uint16_t item_map_size = buffer.read_uint16();
@@ -390,12 +396,14 @@ int Bag_Info::deserialize(Block_Buffer &buffer) {
 }
 
 void Bag_Info::reset(void) {
+	role_id = 0;
 	copper = 0;
 	gold = 0;
 	item_map.clear();
 }
 
 void Bag_Info::print(void) {
+	printf("role_id: %ld, ", role_id);
 	printf("copper: %d, ", copper);
 	printf("gold: %d, ", gold);
 	printf("item_map.size: %ld {}, ", item_map.size());
@@ -410,6 +418,7 @@ Mail_Info::~Mail_Info() {
 }
 
 void Mail_Info::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(role_id);
 	buffer.write_int32(total_count);
 
 	buffer.write_uint16(mail_map.size());
@@ -420,6 +429,7 @@ void Mail_Info::serialize(Block_Buffer &buffer) const {
 }
 
 int Mail_Info::deserialize(Block_Buffer &buffer) {
+	role_id = buffer.read_int64();
 	total_count = buffer.read_int32();
 	uint16_t mail_map_size = buffer.read_uint16();
 	for (int16_t i = 0; i < mail_map_size; ++i) {
@@ -431,11 +441,13 @@ int Mail_Info::deserialize(Block_Buffer &buffer) {
 }
 
 void Mail_Info::reset(void) {
+	role_id = 0;
 	total_count = 0;
 	mail_map.clear();
 }
 
 void Mail_Info::print(void) {
+	printf("role_id: %ld, ", role_id);
 	printf("total_count: %d, ", total_count);
 	printf("mail_map.size: %ld {}, ", mail_map.size());
 	printf("\n");
@@ -449,6 +461,7 @@ Shop_Info::~Shop_Info() {
 }
 
 void Shop_Info::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(role_id);
 
 	buffer.write_uint16(shop_detail.size());
 	for(boost::unordered_map<int32_t,Shop_Detail>::const_iterator it = shop_detail.begin();
@@ -458,6 +471,7 @@ void Shop_Info::serialize(Block_Buffer &buffer) const {
 }
 
 int Shop_Info::deserialize(Block_Buffer &buffer) {
+	role_id = buffer.read_int64();
 	uint16_t shop_detail_size = buffer.read_uint16();
 	for (int16_t i = 0; i < shop_detail_size; ++i) {
 		Shop_Detail _v;
@@ -468,74 +482,13 @@ int Shop_Info::deserialize(Block_Buffer &buffer) {
 }
 
 void Shop_Info::reset(void) {
+	role_id = 0;
 	shop_detail.clear();
 }
 
 void Shop_Info::print(void) {
+	printf("role_id: %ld, ", role_id);
 	printf("shop_detail.size: %ld {}, ", shop_detail.size());
-	printf("\n");
-}
-
-Player_Data::Player_Data(void) {
-	reset();
-}
-
-Player_Data::~Player_Data() {
-}
-
-void Player_Data::serialize(Block_Buffer &buffer) const {
-	buffer.write_int8(status);
-	uint16_t change_module_size = change_module.size();
-	buffer.write_uint16(change_module_size);
-	for(uint16_t i = 0; i < change_module_size; ++i) {
-		buffer.write_int32(change_module[i]);
-	}
-	player_info.serialize(buffer);
-	hero_info.serialize(buffer);
-	bag_info.serialize(buffer);
-	mail_info.serialize(buffer);
-	shop_info.serialize(buffer);
-}
-
-int Player_Data::deserialize(Block_Buffer &buffer) {
-	status = buffer.read_int8();
-	uint16_t change_module_size = buffer.read_uint16();
-	int32_t change_module_v;
-	for(uint16_t i = 0; i < change_module_size; ++i) {
-		change_module_v = buffer.read_int32();
-		change_module.push_back(change_module_v);
-	}
-	player_info.deserialize(buffer);
-	hero_info.deserialize(buffer);
-	bag_info.deserialize(buffer);
-	mail_info.deserialize(buffer);
-	shop_info.deserialize(buffer);
-	return 0;
-}
-
-void Player_Data::reset(void) {
-	status = 0;
-	change_module.clear();
-	player_info.reset();
-	hero_info.reset();
-	bag_info.reset();
-	mail_info.reset();
-	shop_info.reset();
-}
-
-void Player_Data::print(void) {
-	printf("status: %d, ", status);
-	uint16_t change_module_size = (change_module.size() > 5 ? 5 : change_module.size());
-	printf("change_module.size: %ld [", change_module.size());
-	for(uint16_t i = 0; i < change_module_size; ++i) {
-		printf("change_module[i]: %d, ", change_module[i]);
-	}
-	printf("], ");
-	player_info.print();
-	hero_info.print();
-	bag_info.print();
-	mail_info.print();
-	shop_info.print();
 	printf("\n");
 }
 
@@ -584,8 +537,8 @@ Guild_Detail::~Guild_Detail() {
 }
 
 void Guild_Detail::serialize(Block_Buffer &buffer) const {
-	buffer.write_bool(change);
 	buffer.write_int64(guild_id);
+	buffer.write_bool(change);
 	buffer.write_string(guild_name);
 	buffer.write_int64(chief_id);
 	uint16_t applicant_list_size = applicant_list.size();
@@ -601,8 +554,8 @@ void Guild_Detail::serialize(Block_Buffer &buffer) const {
 }
 
 int Guild_Detail::deserialize(Block_Buffer &buffer) {
-	change = buffer.read_bool();
 	guild_id = buffer.read_int64();
+	change = buffer.read_bool();
 	guild_name = buffer.read_string();
 	chief_id = buffer.read_int64();
 	uint16_t applicant_list_size = buffer.read_uint16();
@@ -621,8 +574,8 @@ int Guild_Detail::deserialize(Block_Buffer &buffer) {
 }
 
 void Guild_Detail::reset(void) {
-	change = 0;
 	guild_id = 0;
+	change = 0;
 	guild_name.clear();
 	chief_id = 0;
 	applicant_list.clear();
@@ -630,8 +583,8 @@ void Guild_Detail::reset(void) {
 }
 
 void Guild_Detail::print(void) {
-	printf("change: %d, ", change);
 	printf("guild_id: %ld, ", guild_id);
+	printf("change: %d, ", change);
 	printf("guild_name: %s, ", guild_name.c_str());
 	printf("chief_id: %ld, ", chief_id);
 	uint16_t applicant_list_size = (applicant_list.size() > 5 ? 5 : applicant_list.size());
@@ -884,20 +837,16 @@ MSG_550001::~MSG_550001() {
 }
 
 void MSG_550001::serialize(Block_Buffer &buffer) const {
-	player_data.serialize(buffer);
 }
 
 int MSG_550001::deserialize(Block_Buffer &buffer) {
-	player_data.deserialize(buffer);
 	return 0;
 }
 
 void MSG_550001::reset(void) {
-	player_data.reset();
 }
 
 void MSG_550001::print(void) {
-	player_data.print();
 	printf("\n");
 }
 
@@ -934,20 +883,16 @@ MSG_550002::~MSG_550002() {
 }
 
 void MSG_550002::serialize(Block_Buffer &buffer) const {
-	player_data.serialize(buffer);
 }
 
 int MSG_550002::deserialize(Block_Buffer &buffer) {
-	player_data.deserialize(buffer);
 	return 0;
 }
 
 void MSG_550002::reset(void) {
-	player_data.reset();
 }
 
 void MSG_550002::print(void) {
-	player_data.print();
 	printf("\n");
 }
 
@@ -959,20 +904,16 @@ MSG_150003::~MSG_150003() {
 }
 
 void MSG_150003::serialize(Block_Buffer &buffer) const {
-	player_data.serialize(buffer);
 }
 
 int MSG_150003::deserialize(Block_Buffer &buffer) {
-	player_data.deserialize(buffer);
 	return 0;
 }
 
 void MSG_150003::reset(void) {
-	player_data.reset();
 }
 
 void MSG_150003::print(void) {
-	player_data.print();
 	printf("\n");
 }
 
@@ -1027,6 +968,49 @@ void MSG_150004::reset(void) {
 void MSG_150004::print(void) {
 	printf("role_id: %ld, ", role_id);
 	mail_detail.print();
+	printf("\n");
+}
+
+MSG_150008::MSG_150008(void) {
+	reset();
+}
+
+MSG_150008::~MSG_150008() {
+}
+
+void MSG_150008::serialize(Block_Buffer &buffer) const {
+	buffer.write_string(table_name);
+	uint16_t delete_list_size = delete_list.size();
+	buffer.write_uint16(delete_list_size);
+	for(uint16_t i = 0; i < delete_list_size; ++i) {
+		buffer.write_int64(delete_list[i]);
+	}
+}
+
+int MSG_150008::deserialize(Block_Buffer &buffer) {
+	table_name = buffer.read_string();
+	uint16_t delete_list_size = buffer.read_uint16();
+	int64_t delete_list_v;
+	for(uint16_t i = 0; i < delete_list_size; ++i) {
+		delete_list_v = buffer.read_int64();
+		delete_list.push_back(delete_list_v);
+	}
+	return 0;
+}
+
+void MSG_150008::reset(void) {
+	table_name.clear();
+	delete_list.clear();
+}
+
+void MSG_150008::print(void) {
+	printf("table_name: %s, ", table_name.c_str());
+	uint16_t delete_list_size = (delete_list.size() > 5 ? 5 : delete_list.size());
+	printf("delete_list.size: %ld [", delete_list.size());
+	for(uint16_t i = 0; i < delete_list_size; ++i) {
+		printf("delete_list[i]: %ld, ", delete_list[i]);
+	}
+	printf("], ");
 	printf("\n");
 }
 
@@ -1332,49 +1316,24 @@ MSG_150101::~MSG_150101() {
 }
 
 void MSG_150101::serialize(Block_Buffer &buffer) const {
+	buffer.write_string(msg_type);
+	buffer.write_int64(index);
 }
 
 int MSG_150101::deserialize(Block_Buffer &buffer) {
+	msg_type = buffer.read_string();
+	index = buffer.read_int64();
 	return 0;
 }
 
 void MSG_150101::reset(void) {
+	msg_type.clear();
+	index = 0;
 }
 
 void MSG_150101::print(void) {
-	printf("\n");
-}
-
-MSG_550101::MSG_550101(void) {
-	reset();
-}
-
-MSG_550101::~MSG_550101() {
-}
-
-void MSG_550101::serialize(Block_Buffer &buffer) const {
-	guild_info.serialize(buffer);
-	offline_info.serialize(buffer);
-	rank_info.serialize(buffer);
-}
-
-int MSG_550101::deserialize(Block_Buffer &buffer) {
-	guild_info.deserialize(buffer);
-	offline_info.deserialize(buffer);
-	rank_info.deserialize(buffer);
-	return 0;
-}
-
-void MSG_550101::reset(void) {
-	guild_info.reset();
-	offline_info.reset();
-	rank_info.reset();
-}
-
-void MSG_550101::print(void) {
-	guild_info.print();
-	offline_info.print();
-	rank_info.print();
+	printf("msg_type: %s, ", msg_type.c_str());
+	printf("index: %ld, ", index);
 	printf("\n");
 }
 
@@ -1386,41 +1345,38 @@ MSG_150102::~MSG_150102() {
 }
 
 void MSG_150102::serialize(Block_Buffer &buffer) const {
-	guild_info.serialize(buffer);
+	buffer.write_string(table_name);
+	uint16_t delete_list_size = delete_list.size();
+	buffer.write_uint16(delete_list_size);
+	for(uint16_t i = 0; i < delete_list_size; ++i) {
+		buffer.write_int64(delete_list[i]);
+	}
 }
 
 int MSG_150102::deserialize(Block_Buffer &buffer) {
-	guild_info.deserialize(buffer);
+	table_name = buffer.read_string();
+	uint16_t delete_list_size = buffer.read_uint16();
+	int64_t delete_list_v;
+	for(uint16_t i = 0; i < delete_list_size; ++i) {
+		delete_list_v = buffer.read_int64();
+		delete_list.push_back(delete_list_v);
+	}
 	return 0;
 }
 
 void MSG_150102::reset(void) {
-	guild_info.reset();
+	table_name.clear();
+	delete_list.clear();
 }
 
 void MSG_150102::print(void) {
-	guild_info.print();
-	printf("\n");
-}
-
-MSG_550102::MSG_550102(void) {
-	reset();
-}
-
-MSG_550102::~MSG_550102() {
-}
-
-void MSG_550102::serialize(Block_Buffer &buffer) const {
-}
-
-int MSG_550102::deserialize(Block_Buffer &buffer) {
-	return 0;
-}
-
-void MSG_550102::reset(void) {
-}
-
-void MSG_550102::print(void) {
+	printf("table_name: %s, ", table_name.c_str());
+	uint16_t delete_list_size = (delete_list.size() > 5 ? 5 : delete_list.size());
+	printf("delete_list.size: %ld [", delete_list.size());
+	for(uint16_t i = 0; i < delete_list_size; ++i) {
+		printf("delete_list[i]: %ld, ", delete_list[i]);
+	}
+	printf("], ");
 	printf("\n");
 }
 
@@ -1432,32 +1388,36 @@ MSG_150103::~MSG_150103() {
 }
 
 void MSG_150103::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(index);
 	uint16_t guild_list_size = guild_list.size();
 	buffer.write_uint16(guild_list_size);
 	for(uint16_t i = 0; i < guild_list_size; ++i) {
-		buffer.write_int64(guild_list[i]);
+		guild_list[i].serialize(buffer);
 	}
 }
 
 int MSG_150103::deserialize(Block_Buffer &buffer) {
+	index = buffer.read_int64();
 	uint16_t guild_list_size = buffer.read_uint16();
-	int64_t guild_list_v;
+	Guild_Detail guild_list_v;
 	for(uint16_t i = 0; i < guild_list_size; ++i) {
-		guild_list_v = buffer.read_int64();
+		guild_list_v.deserialize(buffer);
 		guild_list.push_back(guild_list_v);
 	}
 	return 0;
 }
 
 void MSG_150103::reset(void) {
+	index = 0;
 	guild_list.clear();
 }
 
 void MSG_150103::print(void) {
+	printf("index: %ld, ", index);
 	uint16_t guild_list_size = (guild_list.size() > 5 ? 5 : guild_list.size());
 	printf("guild_list.size: %ld [", guild_list.size());
 	for(uint16_t i = 0; i < guild_list_size; ++i) {
-		printf("guild_list[i]: %ld, ", guild_list[i]);
+		guild_list[i].print();
 	}
 	printf("], ");
 	printf("\n");
@@ -1471,16 +1431,34 @@ MSG_550103::~MSG_550103() {
 }
 
 void MSG_550103::serialize(Block_Buffer &buffer) const {
+	uint16_t guild_list_size = guild_list.size();
+	buffer.write_uint16(guild_list_size);
+	for(uint16_t i = 0; i < guild_list_size; ++i) {
+		guild_list[i].serialize(buffer);
+	}
 }
 
 int MSG_550103::deserialize(Block_Buffer &buffer) {
+	uint16_t guild_list_size = buffer.read_uint16();
+	Guild_Detail guild_list_v;
+	for(uint16_t i = 0; i < guild_list_size; ++i) {
+		guild_list_v.deserialize(buffer);
+		guild_list.push_back(guild_list_v);
+	}
 	return 0;
 }
 
 void MSG_550103::reset(void) {
+	guild_list.clear();
 }
 
 void MSG_550103::print(void) {
+	uint16_t guild_list_size = (guild_list.size() > 5 ? 5 : guild_list.size());
+	printf("guild_list.size: %ld [", guild_list.size());
+	for(uint16_t i = 0; i < guild_list_size; ++i) {
+		guild_list[i].print();
+	}
+	printf("], ");
 	printf("\n");
 }
 
@@ -1492,20 +1470,38 @@ MSG_150104::~MSG_150104() {
 }
 
 void MSG_150104::serialize(Block_Buffer &buffer) const {
-	offline_info.serialize(buffer);
+	buffer.write_int64(index);
+	uint16_t offline_list_size = offline_list.size();
+	buffer.write_uint16(offline_list_size);
+	for(uint16_t i = 0; i < offline_list_size; ++i) {
+		offline_list[i].serialize(buffer);
+	}
 }
 
 int MSG_150104::deserialize(Block_Buffer &buffer) {
-	offline_info.deserialize(buffer);
+	index = buffer.read_int64();
+	uint16_t offline_list_size = buffer.read_uint16();
+	Offline_Detail offline_list_v;
+	for(uint16_t i = 0; i < offline_list_size; ++i) {
+		offline_list_v.deserialize(buffer);
+		offline_list.push_back(offline_list_v);
+	}
 	return 0;
 }
 
 void MSG_150104::reset(void) {
-	offline_info.reset();
+	index = 0;
+	offline_list.clear();
 }
 
 void MSG_150104::print(void) {
-	offline_info.print();
+	printf("index: %ld, ", index);
+	uint16_t offline_list_size = (offline_list.size() > 5 ? 5 : offline_list.size());
+	printf("offline_list.size: %ld [", offline_list.size());
+	for(uint16_t i = 0; i < offline_list_size; ++i) {
+		offline_list[i].print();
+	}
+	printf("], ");
 	printf("\n");
 }
 
@@ -1517,16 +1513,34 @@ MSG_550104::~MSG_550104() {
 }
 
 void MSG_550104::serialize(Block_Buffer &buffer) const {
+	uint16_t offline_list_size = offline_list.size();
+	buffer.write_uint16(offline_list_size);
+	for(uint16_t i = 0; i < offline_list_size; ++i) {
+		offline_list[i].serialize(buffer);
+	}
 }
 
 int MSG_550104::deserialize(Block_Buffer &buffer) {
+	uint16_t offline_list_size = buffer.read_uint16();
+	Offline_Detail offline_list_v;
+	for(uint16_t i = 0; i < offline_list_size; ++i) {
+		offline_list_v.deserialize(buffer);
+		offline_list.push_back(offline_list_v);
+	}
 	return 0;
 }
 
 void MSG_550104::reset(void) {
+	offline_list.clear();
 }
 
 void MSG_550104::print(void) {
+	uint16_t offline_list_size = (offline_list.size() > 5 ? 5 : offline_list.size());
+	printf("offline_list.size: %ld [", offline_list.size());
+	for(uint16_t i = 0; i < offline_list_size; ++i) {
+		offline_list[i].print();
+	}
+	printf("], ");
 	printf("\n");
 }
 
@@ -1538,32 +1552,36 @@ MSG_150105::~MSG_150105() {
 }
 
 void MSG_150105::serialize(Block_Buffer &buffer) const {
-	uint16_t offline_list_size = offline_list.size();
-	buffer.write_uint16(offline_list_size);
-	for(uint16_t i = 0; i < offline_list_size; ++i) {
-		buffer.write_int64(offline_list[i]);
+	buffer.write_int64(index);
+	uint16_t rank_list_size = rank_list.size();
+	buffer.write_uint16(rank_list_size);
+	for(uint16_t i = 0; i < rank_list_size; ++i) {
+		rank_list[i].serialize(buffer);
 	}
 }
 
 int MSG_150105::deserialize(Block_Buffer &buffer) {
-	uint16_t offline_list_size = buffer.read_uint16();
-	int64_t offline_list_v;
-	for(uint16_t i = 0; i < offline_list_size; ++i) {
-		offline_list_v = buffer.read_int64();
-		offline_list.push_back(offline_list_v);
+	index = buffer.read_int64();
+	uint16_t rank_list_size = buffer.read_uint16();
+	Rank_List rank_list_v;
+	for(uint16_t i = 0; i < rank_list_size; ++i) {
+		rank_list_v.deserialize(buffer);
+		rank_list.push_back(rank_list_v);
 	}
 	return 0;
 }
 
 void MSG_150105::reset(void) {
-	offline_list.clear();
+	index = 0;
+	rank_list.clear();
 }
 
 void MSG_150105::print(void) {
-	uint16_t offline_list_size = (offline_list.size() > 5 ? 5 : offline_list.size());
-	printf("offline_list.size: %ld [", offline_list.size());
-	for(uint16_t i = 0; i < offline_list_size; ++i) {
-		printf("offline_list[i]: %ld, ", offline_list[i]);
+	printf("index: %ld, ", index);
+	uint16_t rank_list_size = (rank_list.size() > 5 ? 5 : rank_list.size());
+	printf("rank_list.size: %ld [", rank_list.size());
+	for(uint16_t i = 0; i < rank_list_size; ++i) {
+		rank_list[i].print();
 	}
 	printf("], ");
 	printf("\n");
@@ -1577,61 +1595,33 @@ MSG_550105::~MSG_550105() {
 }
 
 void MSG_550105::serialize(Block_Buffer &buffer) const {
+	uint16_t rank_list_size = rank_list.size();
+	buffer.write_uint16(rank_list_size);
+	for(uint16_t i = 0; i < rank_list_size; ++i) {
+		rank_list[i].serialize(buffer);
+	}
 }
 
 int MSG_550105::deserialize(Block_Buffer &buffer) {
+	uint16_t rank_list_size = buffer.read_uint16();
+	Rank_List rank_list_v;
+	for(uint16_t i = 0; i < rank_list_size; ++i) {
+		rank_list_v.deserialize(buffer);
+		rank_list.push_back(rank_list_v);
+	}
 	return 0;
 }
 
 void MSG_550105::reset(void) {
+	rank_list.clear();
 }
 
 void MSG_550105::print(void) {
-	printf("\n");
-}
-
-MSG_150106::MSG_150106(void) {
-	reset();
-}
-
-MSG_150106::~MSG_150106() {
-}
-
-void MSG_150106::serialize(Block_Buffer &buffer) const {
-	rank_info.serialize(buffer);
-}
-
-int MSG_150106::deserialize(Block_Buffer &buffer) {
-	rank_info.deserialize(buffer);
-	return 0;
-}
-
-void MSG_150106::reset(void) {
-	rank_info.reset();
-}
-
-void MSG_150106::print(void) {
-	rank_info.print();
-	printf("\n");
-}
-
-MSG_550106::MSG_550106(void) {
-	reset();
-}
-
-MSG_550106::~MSG_550106() {
-}
-
-void MSG_550106::serialize(Block_Buffer &buffer) const {
-}
-
-int MSG_550106::deserialize(Block_Buffer &buffer) {
-	return 0;
-}
-
-void MSG_550106::reset(void) {
-}
-
-void MSG_550106::print(void) {
+	uint16_t rank_list_size = (rank_list.size() > 5 ? 5 : rank_list.size());
+	printf("rank_list.size: %ld [", rank_list.size());
+	for(uint16_t i = 0; i < rank_list_size; ++i) {
+		rank_list[i].print();
+	}
+	printf("], ");
 	printf("\n");
 }
