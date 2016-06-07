@@ -99,8 +99,8 @@ void DB_Definition::load_data(int64_t index, Block_Buffer &buffer){
 	std::vector<BSONObj> total_record;
 	if(index == 0){
 		int total_count = CACHED_CONNECTION.count(dbname_);
-		if (total_count == 0) return;
-		CACHED_CONNECTION.findN(total_record, dbname_, Query(), total_count);
+		if(total_count > 0)
+			CACHED_CONNECTION.findN(total_record, dbname_, Query(), total_count);
 	}
 	else {
 		BSONObj obj = CACHED_CONNECTION.findOne(dbname_, MONGO_QUERY(index_ << (long long int)index));
