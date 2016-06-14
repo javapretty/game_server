@@ -12,13 +12,13 @@ function Shop() {
 Shop.prototype.init = function(){
 	var copper_shop = this.get_rand_product(config.shop_json[Shop_Type.COPPER_SHOP].product, 2);
 	copper_shop.shop_type = Shop_Type.COPPER_SHOP;
-	this.shop_info.shop_detail.insert(Shop_Type.COPPER_SHOP, copper_shop);
+	this.shop_info.shop_map.insert(Shop_Type.COPPER_SHOP, copper_shop);
 }
 	
 Shop.prototype.load_data = function(game_player, buffer) {
 	this.game_player = game_player;
 	this.shop_info.deserialize(buffer);
-	if(this.shop_info.shop_detail.empty()){
+	if(this.shop_info.shop_map.empty()){
 		this.init();
 	}
 }
@@ -37,7 +37,7 @@ Shop.prototype.fetch_shop_info = function(buffer){
 	var msg_req = new MSG_120400();
 	msg_req.deserialize(buffer);
 	var msg_res = new MSG_520400();
-	msg_res.shop = this.shop_info.shop_detail.get(msg_req.shop_type);
+	msg_res.shop = this.shop_info.shop_map.get(msg_req.shop_type);
 	
 	var buf = pop_game_buffer();
 	msg_res.serialize(buf);
@@ -50,7 +50,7 @@ Shop.prototype.refresh_by_player = function(buffer){
 	
 	var msg_req = new MSG_120402();
 	msg_req.deserialize(buffer);
-	var count = this.shop_info.shop_detail.get(msg_req.shop_type).refresh_count;
+	var count = this.shop_info.shop_map.get(msg_req.shop_type).refresh_count;
 	var max_count = config.vip_json[this.game_player.player_info.vip_level]['refresh_shop_count'];
 	if(count >= max_count){
 		this.game_player.cplayer.respond_error_result(Msg_GC.RES_REFRESH_SHOP, Error_Code.ERROR_REFRESH_NOT_ENOUGH);
@@ -73,8 +73,8 @@ Shop.prototype.refresh_shop = function(shop_type, refresh_count = -1){
 	var shop = this.get_rand_product(config.shop_json[shop_type].product, 2);
 	shop.shop_type = shop_type;
 	shop.refresh_count = ( refresh_count < 0 ? 0 : refresh_count);
-	this.shop_info.shop_detail.remove(shop_type);
-	this.shop_info.shop_detail.insert(shop_type, shop);
+	this.shop_info.shop_map.remove(shop_type);
+	this.shop_info.shop_map.insert(shop_type, shop);
 }
 
 Shop.prototype.buy_product = function(buffer){
@@ -110,7 +110,7 @@ Shop.prototype.buy_product = function(buffer){
 }
 	
 Shop.prototype.get_product = function(shop_type, product_id){
-	var shop = this.shop_info.shop_detail.get(shop_type);
+	var shop = this.shop_info.shop_map.get(shop_type);
 	for(var i = 0; i < shop.products.length; i++){
 		if(product_id == shop.products[i].product_id){
 			return shop.products[i];

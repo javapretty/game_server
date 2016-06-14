@@ -95,6 +95,12 @@ int Game_Inner_Messager::process_loaded_player_data(Block_Buffer &buf) {
 	int32_t status = buf.read_int32();
 	Game_Player_Info player_info;
 	player_info.deserialize(buf);
+	if (player_info.agent_num == 0) {
+		player_info.agent_num = player_info.role_id / 10000000000000L;
+	}
+	if (player_info.server_num == 0) {
+		player_info.server_num = player_info.role_id / 1000000000L % 10000L;
+	}
 	Game_Manager::Logining_Map::iterator logining_it = GAME_MANAGER->logining_map().find(player_info.account);
 	if (logining_it == GAME_MANAGER->logining_map().end()) {
 		LOG_INFO("account not exist in logining map, account = %s.", player_info.account.c_str());

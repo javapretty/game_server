@@ -43,8 +43,9 @@ Mail.prototype.pickup_mail = function(buffer) {
 	
 	var msg_res = new MSG_520201();
 	if (msg_req.mail_id == 0) {
+		var thismail = this;
 		this.mail_info.mail_map.each(function(key,value,index) {
-			var result = this.pickup_item_money(value);
+			var result = thismail.pickup_item_money(value);
 			if (result == 0) {
 				msg_res.mail_id_info.push(key);
 			}
@@ -77,8 +78,9 @@ Mail.prototype.delete_mail = function(buffer) {
 	
 	var msg_res = new MSG_520202();
 	if (msg_req.mail_id == 0) {
+		var thismail = this;
 		this.mail_info.mail_map.each(function(key,value,index) {
-			var result = this.pickup_item_money(value);
+			var result = thismail.pickup_item_money(value);
 			if (result == 0) {
 				msg_res.mail_id_info.push(key);
 			}

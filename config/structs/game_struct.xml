@@ -1,0 +1,215 @@
+<root>
+
+<!--自定义类型在此定义-->
+	<Rank_Member>
+		<arg type="int64" value="role_id"/>
+		<arg type="string" value="role_name"/>
+		<arg type="int32" value="value"/>
+	</Rank_Member>
+
+	<Role_Info>
+    	<arg type="int64" value="role_id" desc="玩家id"/>
+    	<arg type="string" value="account" desc="玩家账号名"/>
+    	<arg type="string" value="role_name" desc="玩家名字"/>
+    	<arg type="int32" value="level" desc="玩家等级"/>
+    	<arg type="int32" value="exp" desc="玩家经验"/>
+    	<arg type="int32" value="career" desc="职业"/>
+    	<arg type="int32" value="gender" desc="0(女)1(男)"/>
+    	<arg type="int32" value="vitality" desc="玩家体力"/>
+    	<arg type="int32" value="buy_vitality_times" desc="今天购买次数"/>
+    	<arg type="int32" value="vip_level" desc="vip等级"/>
+    	<arg type="int32" value="vip_exp" desc="vip经验"/>
+    	<arg type="int32" value="charge_gold" desc="总共充值的元宝数"/>
+    	<arg type="int32" value="skill_point" desc="技能点"/>
+	</Role_Info>
+
+	<Hero_Detail>
+		<arg type="int32" value="hero_id"/>
+		<arg type="int32" value="level"/>
+		<arg type="int32" value="exp"/>
+		<arg type="int32" value="star"/>
+		<arg type="int32" value="quality"/>
+		<arg type="int32" value="energy"/>
+		<vector type="int32" value="skill_info"/>
+		<vector type="Item_Info" value="equip_info"/>
+		<vector type="Property_Detail" value="property_info"/>
+	</Hero_Detail>
+
+	<Item_Info>
+		<arg type="int32" value="item_id"/>
+		<arg type="int32" value="amount"/>
+		<arg type="int32" value="level"/>
+		<arg type="int32" value="exp"/>
+	</Item_Info>
+
+	<Property_Detail>
+		<arg type="int32" value="type"/>
+		<arg type="int32" value="value"/>
+	</Property_Detail>
+	
+	<Mail_Detail>
+		<arg type="bool" value="pickup"/>
+		<arg type="int32" value="mail_id"/>
+		<arg type="int32" value="send_time"/>
+		<arg type="int32" value="sender_type"/>
+		<arg type="int64" value="sender_id"/>
+		<arg type="string" value="sender_name"/>
+		<arg type="string" value="mail_title"/>
+		<arg type="string" value="mail_content"/>
+		<arg type="int32" value="copper"/>
+		<arg type="int32" value="gold"/>
+		<vector type="Item_Info" value="item_info"/>
+	</Mail_Detail>
+
+	<Shop_Detail>
+		<arg type="int32" value="shop_type"/>
+		<arg type="int32" value="refresh_count"/>
+		<vector type="Product_Info" value="products"/>
+	</Shop_Detail>
+
+	<Product_Info>
+		<arg type="int32" value="product_id"/>
+		<arg type="int32" value="item_id"/>
+		<arg type="int32" value="price"/>
+		<arg type="int32" value="count"/>
+	</Product_Info>
+
+	<Guild_Member_Detail>
+		<arg type="int64" value="role_id"/>
+		<arg type="string" value="role_name"/>
+		<arg type="int32" value="level"/>
+		<arg type="int32" value="career"/>
+	</Guild_Member_Detail>
+	
+<!--游戏内所需结构在此定义
+	欲持久化的数据需要添加persistence标签,并添加dbname和index属性(需要直接发消息到数据库保存的应赋值给cmdid属性相应的消息ID)
+-->
+
+	<Player_Data type="mem_only">
+		<!--玩家个人数据在此定义-->
+		<fixed type="Game_Player_Info" value="role_info"/>
+		<fixed type="Hero_Info" value="hero_info"/>
+		<fixed type="Bag_Info" value="bag_info"/>
+		<fixed type="Mail_Info" value="mail_info"/>
+		<fixed type="Shop_Info" value="shop_info"/>
+	</Player_Data>
+
+	<Game_Player_Info>
+		<persistence dbname="mmo.role" index="role_id"/>
+		<arg type="int64" value="role_id"/>
+		<arg type="string" value="account"/>
+		<arg type="string" value="role_name"/>
+		<arg type="string" value="client_ip"/>
+		<arg type="int32" value="agent_num"/>
+		<arg type="int32" value="server_num"/>
+		<arg type="int32" value="level"/>
+		<arg type="int32" value="exp"/>
+		<arg type="int32" value="gender"/>
+		<arg type="int32" value="career"/>
+		<arg type="int32" value="create_time"/>
+		<arg type="int32" value="last_sign_in_time"/>
+		<arg type="int32" value="last_sign_out_time"/>
+		<arg type="int32" value="vitality"/>
+		<arg type="int32" value="buy_vitality_times"/>
+		<arg type="int32" value="vip_level"/>
+		<arg type="int32" value="vip_exp"/>
+		<arg type="int32" value="charge_gold"/>
+		<arg type="int32" value="skill_point"/>
+		<arg type="int64" value="recover_skill_time"/>
+		<arg type="int32" value="exchange_count"/>
+		<arg type="int32" value="guild_id"/>
+		<arg type="string" value="guild_name"/>
+	</Game_Player_Info>
+	
+	<Hero_Info>
+		<persistence dbname="mmo.hero" index="role_id"/>
+		<arg type="int64" value="role_id"/>
+		<unordered_map type="Hero_Detail" key_name="hero_id" key_type="int32" value="hero_map"/>
+	</Hero_Info>
+
+	<Bag_Info>
+		<persistence dbname="mmo.bag" index="role_id"/>
+		<arg type="int64" value="role_id"/>
+		<arg type="int32" value="copper"/>
+		<arg type="int32" value="gold"/>
+		<unordered_map type="Item_Info" key_type="int32" key_name="item_id" value="item_map"/>
+	</Bag_Info>
+	
+	<Mail_Info>
+		<persistence dbname="mmo.mail" index="role_id"/>
+		<arg type="int64" value="role_id"/>
+		<arg type="int32" value="total_count"/>
+		<unordered_map type="Mail_Detail" key_type="int32" key_name="mail_id" value="mail_map"/>
+	</Mail_Info>
+	
+	<Shop_Info>
+		<persistence dbname="mmo.shop" index="role_id"/>
+		<arg type="int64" value="role_id"/>
+		<unordered_map type="Shop_Detail" key_type="int32" key_name="shop_type" value="shop_map"/>
+	</Shop_Info>
+	
+	<Rank_Info>
+		<persistence dbname="mmo.rank" index="role_id" cmdid="150105"/>
+		<arg type="int64" value="rank_type"/>
+		<vector type="Rank_Member" value="member_list"/>
+	</Rank_Info>
+
+	<Guild_Info>
+		<persistence dbname="mmo.guild" index="role_id" cmdid="150103"/>
+		<arg type="int64" value="guild_id"/>
+		<arg type="bool" value="change"/>
+		<arg type="string" value="guild_name"/>
+		<arg type="int64" value="chief_id"/>
+		<vector type="Guild_Member_Detail" value="applicant_list"/>
+		<vector type="Guild_Member_Detail" value="member_list"/>
+	</Guild_Info>
+
+	<Offline_Info>
+		<persistence dbname="mmo.offlinemsg" index="role_id" cmdid="150104"/>
+		<arg type="int64" value="role_id"/>
+		<arg type="int64" value="guild_id"/>
+		<arg type="string" value="guild_name"/>
+		<arg type="int16" value="flag"/>
+	</Offline_Info>
+
+	<Account_Info>
+    	<arg type="string" value="account"/>
+    	<arg type="int32" value="agent_num"/>
+    	<arg type="int32" value="server_num"/>
+	</Account_Info>
+
+	<Ip_Info>
+    	<arg type="string" value="ip"/>
+    	<arg type="int32" value="port"/>
+	</Ip_Info>
+
+	<Player_DB_Cache>
+    	<arg type="int64" value="role_id"/>
+    	<arg type="string" value="account"/>
+    	<arg type="string" value="role_name"/>
+    	<arg type="int32" value="agent_num"/>
+    	<arg type="int32" value="server_num"/>
+    	<arg type="int32" value="level"/>
+    	<arg type="int32" value="gender"/>
+    	<arg type="int32" value="career"/>
+	</Player_DB_Cache>
+
+	<Login_Player_Info>
+    	<arg type="string" value="account"/>
+    	<arg type="string" value="gate_ip"/>
+    	<arg type="int32" value="gate_port"/>
+    	<arg type="string" value="session"/>
+    	<arg type="int64" value="session_tick"/>
+	</Login_Player_Info>
+
+	<Master_Player_Info>
+    	<arg type="int64" value="role_id"/>
+    	<arg type="string" value="account"/>
+    	<arg type="string" value="role_name"/>
+    	<arg type="int32" value="level"/>
+    	<arg type="int32" value="gender"/>
+    	<arg type="int32" value="career"/>
+    	<arg type="int32" value="vip_level"/>
+	</Master_Player_Info>
+
+</root>

@@ -59,6 +59,17 @@ std::string Xml::get_key(TiXmlNode *node){
 	return str;
 }
 
+bool Xml::has_key(TiXmlNode *node, const char *key){
+	do{
+		if(node->Type() != TiXmlNode::TINYXML_ELEMENT)
+			continue;
+		if(get_key(node) == key)
+				return true;
+	}while((node = node->NextSibling()));
+
+	return false;
+}
+
 std::string Xml::get_val_str(TiXmlNode *node){
 	if(node == NULL)
 		return "";
@@ -82,28 +93,31 @@ float Xml::get_val_float(TiXmlNode *node){
 }
 
 std::string Xml::get_attr_str(TiXmlNode* node, const char *key){
+	std::string value;
 	if(node == NULL)
 		return "";
 	TiXmlElement *element = node->ToElement();
-	std::string value = element->Attribute(key);
+	const char *p= element->Attribute(key);
+	if(!p)
+		return "";
+	value = p;
 	return value;
 }
 
 int Xml::get_attr_int(TiXmlNode* node, const char *key){
+	int value = 0;
 	if(node == NULL)
-		return 0;
+		return value;
 	TiXmlElement *element = node->ToElement();
-	int value;
 	element->Attribute(key, &value);
 	return value;
 }
 
 float Xml::get_attr_float(TiXmlNode* node, const char *key){
+	double value = 0.0f;
 	if(node == NULL)
-		return 0.0f;
+		return value;
 	TiXmlElement *element = node->ToElement();
-	double value;
 	element->Attribute(key, &value);
 	return value;
 }
-

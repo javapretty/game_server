@@ -44,9 +44,14 @@ int DB_Manager::init(void) {
 		}
 		db_worker_vec_.push_back(worker);
 	}
+	load_struct("config/structs/game_struct.xml");
 
+	return 0;
+}
+
+int DB_Manager::load_struct(const char *path){
 	Xml xml;
-	xml.load_xml("config/db_struct/db_struct.xml");
+	xml.load_xml(path);
 	TiXmlNode *node = xml.get_root_node();
 	XML_LOOP_BEGIN(node)
 		DB_Definition *def = new DB_Definition(xml, node);

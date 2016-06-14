@@ -19,22 +19,18 @@ DB_Definition::DB_Definition(Xml &xml, TiXmlNode *node):
 	if(node){
 		def_name_ = xml.get_key(node);
 		TiXmlNode* sub = xml.enter_node(node, def_name_.c_str());
-		std::string type_name, value_name;
+		std::string label_name;
 		XML_LOOP_BEGIN(sub)
-			if(xml.get_key(sub) == "dbname"){
-				dbname_ = xml.get_val_str(xml.enter_node(sub, "dbname"));
+			if((label_name = xml.get_key(sub)) == "persistence"){
+				dbname_ = xml.get_attr_str(sub, "dbname");
+				cmdid_ = xml.get_attr_int(sub, "cmdid");
+				index_ = xml.get_attr_str(sub, "index");
 			}
-			else if(xml.get_key(sub) == "cmdid"){
-				cmdid_ = xml.get_val_int(xml.enter_node(sub, "cmdid"));
-			}
-			else if(xml.get_key(sub) == "index"){
-				index_ = xml.get_val_str(xml.enter_node(sub, "index"));
-			}
-			else {
+			else if(is_arg(label_name, xml.get_key(sub))){
 				DB_Type_Description des;
-				des.label_name = xml.get_key(sub);
+				des.label_name = label_name;
 				des.type_name = xml.get_attr_str(sub, "type");
-				des.value_name = xml.get_val_str(xml.enter_node(sub, des.label_name.c_str()));
+				des.value_name = xml.get_attr_str(sub, "value");
 				type_vec_.push_back(des);
 			}
 		XML_LOOP_END(sub)
@@ -344,4 +340,16 @@ bool DB_Definition::is_fixed_type(std::string type){
 			type == "string")
 		return false;
 	return true;
+}
+
+bool DB_Definition::is_arg(std::string &dst_label, std::string src_label){
+	if(src_label == "arg" || src_label == "fixed"){
+		dst_label = src_label;
+		return true;
+	}
+	else if(src_label == "vector" || src_label == "map" || src_label == "unordered_map"){
+		dst_label = "vector";
+		return true;
+	}
+	return false;
 }

@@ -1,487 +1,10 @@
 /** 
 * This file was auto-generated. Please Do not edit
 *
-* [Version 1.3]
+* [Version 1.4]
 */
 
 #include "Client_Message.h"
-
-Role_Info::Role_Info(void) {
-	reset();
-}
-
-Role_Info::~Role_Info() {
-}
-
-void Role_Info::serialize(Block_Buffer &buffer) const {
-	buffer.write_int64(role_id);
-	buffer.write_string(account);
-	buffer.write_string(role_name);
-	buffer.write_int32(level);
-	buffer.write_int32(exp);
-	buffer.write_int32(career);
-	buffer.write_int32(gender);
-	buffer.write_int32(vitality);
-	buffer.write_int32(buy_vitality_times);
-	buffer.write_int32(vip_level);
-	buffer.write_int32(vip_exp);
-	buffer.write_int32(charge_gold);
-	buffer.write_int32(skill_point);
-}
-
-int Role_Info::deserialize(Block_Buffer &buffer) {
-	role_id = buffer.read_int64();
-	account = buffer.read_string();
-	role_name = buffer.read_string();
-	level = buffer.read_int32();
-	exp = buffer.read_int32();
-	career = buffer.read_int32();
-	gender = buffer.read_int32();
-	vitality = buffer.read_int32();
-	buy_vitality_times = buffer.read_int32();
-	vip_level = buffer.read_int32();
-	vip_exp = buffer.read_int32();
-	charge_gold = buffer.read_int32();
-	skill_point = buffer.read_int32();
-	return 0;
-}
-
-void Role_Info::reset(void) {
-	role_id = 0;
-	account.clear();
-	role_name.clear();
-	level = 0;
-	exp = 0;
-	career = 0;
-	gender = 0;
-	vitality = 0;
-	buy_vitality_times = 0;
-	vip_level = 0;
-	vip_exp = 0;
-	charge_gold = 0;
-	skill_point = 0;
-}
-
-void Role_Info::print(void) {
-	printf("role_id: %ld, ", role_id);
-	printf("account: %s, ", account.c_str());
-	printf("role_name: %s, ", role_name.c_str());
-	printf("level: %d, ", level);
-	printf("exp: %d, ", exp);
-	printf("career: %d, ", career);
-	printf("gender: %d, ", gender);
-	printf("vitality: %d, ", vitality);
-	printf("buy_vitality_times: %d, ", buy_vitality_times);
-	printf("vip_level: %d, ", vip_level);
-	printf("vip_exp: %d, ", vip_exp);
-	printf("charge_gold: %d, ", charge_gold);
-	printf("skill_point: %d, ", skill_point);
-	printf("\n");
-}
-
-Property_Detail::Property_Detail(void) {
-	reset();
-}
-
-Property_Detail::~Property_Detail() {
-}
-
-void Property_Detail::serialize(Block_Buffer &buffer) const {
-	buffer.write_int32(type);
-	buffer.write_int32(value);
-}
-
-int Property_Detail::deserialize(Block_Buffer &buffer) {
-	type = buffer.read_int32();
-	value = buffer.read_int32();
-	return 0;
-}
-
-void Property_Detail::reset(void) {
-	type = 0;
-	value = 0;
-}
-
-void Property_Detail::print(void) {
-	printf("type: %d, ", type);
-	printf("value: %d, ", value);
-	printf("\n");
-}
-
-Item_Info::Item_Info(void) {
-	reset();
-}
-
-Item_Info::~Item_Info() {
-}
-
-void Item_Info::serialize(Block_Buffer &buffer) const {
-	buffer.write_int32(item_id);
-	buffer.write_int32(amount);
-	buffer.write_int32(level);
-	buffer.write_int32(exp);
-}
-
-int Item_Info::deserialize(Block_Buffer &buffer) {
-	item_id = buffer.read_int32();
-	amount = buffer.read_int32();
-	level = buffer.read_int32();
-	exp = buffer.read_int32();
-	return 0;
-}
-
-void Item_Info::reset(void) {
-	item_id = 0;
-	amount = 0;
-	level = 0;
-	exp = 0;
-}
-
-void Item_Info::print(void) {
-	printf("item_id: %d, ", item_id);
-	printf("amount: %d, ", amount);
-	printf("level: %d, ", level);
-	printf("exp: %d, ", exp);
-	printf("\n");
-}
-
-Hero_Detail::Hero_Detail(void) {
-	reset();
-}
-
-Hero_Detail::~Hero_Detail() {
-}
-
-void Hero_Detail::serialize(Block_Buffer &buffer) const {
-	buffer.write_int32(hero_id);
-	buffer.write_int32(level);
-	buffer.write_int32(exp);
-	buffer.write_int32(star);
-	buffer.write_int32(quality);
-	buffer.write_int32(energy);
-	uint16_t skill_info_size = skill_info.size();
-	buffer.write_uint16(skill_info_size);
-	for(uint16_t i = 0; i < skill_info_size; ++i) {
-		buffer.write_int32(skill_info[i]);
-	}
-	uint16_t equip_info_size = equip_info.size();
-	buffer.write_uint16(equip_info_size);
-	for(uint16_t i = 0; i < equip_info_size; ++i) {
-		equip_info[i].serialize(buffer);
-	}
-	uint16_t property_info_size = property_info.size();
-	buffer.write_uint16(property_info_size);
-	for(uint16_t i = 0; i < property_info_size; ++i) {
-		property_info[i].serialize(buffer);
-	}
-}
-
-int Hero_Detail::deserialize(Block_Buffer &buffer) {
-	hero_id = buffer.read_int32();
-	level = buffer.read_int32();
-	exp = buffer.read_int32();
-	star = buffer.read_int32();
-	quality = buffer.read_int32();
-	energy = buffer.read_int32();
-	uint16_t skill_info_size = buffer.read_uint16();
-	int32_t skill_info_v;
-	for(uint16_t i = 0; i < skill_info_size; ++i) {
-		skill_info_v = buffer.read_int32();
-		skill_info.push_back(skill_info_v);
-	}
-	uint16_t equip_info_size = buffer.read_uint16();
-	Item_Info equip_info_v;
-	for(uint16_t i = 0; i < equip_info_size; ++i) {
-		equip_info_v.deserialize(buffer);
-		equip_info.push_back(equip_info_v);
-	}
-	uint16_t property_info_size = buffer.read_uint16();
-	Property_Detail property_info_v;
-	for(uint16_t i = 0; i < property_info_size; ++i) {
-		property_info_v.deserialize(buffer);
-		property_info.push_back(property_info_v);
-	}
-	return 0;
-}
-
-void Hero_Detail::reset(void) {
-	hero_id = 0;
-	level = 0;
-	exp = 0;
-	star = 0;
-	quality = 0;
-	energy = 0;
-	skill_info.clear();
-	equip_info.clear();
-	property_info.clear();
-}
-
-void Hero_Detail::print(void) {
-	printf("hero_id: %d, ", hero_id);
-	printf("level: %d, ", level);
-	printf("exp: %d, ", exp);
-	printf("star: %d, ", star);
-	printf("quality: %d, ", quality);
-	printf("energy: %d, ", energy);
-	uint16_t skill_info_size = (skill_info.size() > 5 ? 5 : skill_info.size());
-	printf("skill_info.size: %ld [", skill_info.size());
-	for(uint16_t i = 0; i < skill_info_size; ++i) {
-		printf("skill_info[i]: %d, ", skill_info[i]);
-	}
-	printf("], ");
-	uint16_t equip_info_size = (equip_info.size() > 5 ? 5 : equip_info.size());
-	printf("equip_info.size: %ld [", equip_info.size());
-	for(uint16_t i = 0; i < equip_info_size; ++i) {
-		equip_info[i].print();
-	}
-	printf("], ");
-	uint16_t property_info_size = (property_info.size() > 5 ? 5 : property_info.size());
-	printf("property_info.size: %ld [", property_info.size());
-	for(uint16_t i = 0; i < property_info_size; ++i) {
-		property_info[i].print();
-	}
-	printf("], ");
-	printf("\n");
-}
-
-Mail_Detail::Mail_Detail(void) {
-	reset();
-}
-
-Mail_Detail::~Mail_Detail() {
-}
-
-void Mail_Detail::serialize(Block_Buffer &buffer) const {
-	buffer.write_bool(pickup);
-	buffer.write_int32(mail_id);
-	buffer.write_int32(send_time);
-	buffer.write_int32(sender_type);
-	buffer.write_int64(sender_id);
-	buffer.write_string(sender_name);
-	buffer.write_string(mail_title);
-	buffer.write_string(mail_content);
-	buffer.write_int32(copper);
-	buffer.write_int32(gold);
-	uint16_t item_info_size = item_info.size();
-	buffer.write_uint16(item_info_size);
-	for(uint16_t i = 0; i < item_info_size; ++i) {
-		item_info[i].serialize(buffer);
-	}
-}
-
-int Mail_Detail::deserialize(Block_Buffer &buffer) {
-	pickup = buffer.read_bool();
-	mail_id = buffer.read_int32();
-	send_time = buffer.read_int32();
-	sender_type = buffer.read_int32();
-	sender_id = buffer.read_int64();
-	sender_name = buffer.read_string();
-	mail_title = buffer.read_string();
-	mail_content = buffer.read_string();
-	copper = buffer.read_int32();
-	gold = buffer.read_int32();
-	uint16_t item_info_size = buffer.read_uint16();
-	Item_Info item_info_v;
-	for(uint16_t i = 0; i < item_info_size; ++i) {
-		item_info_v.deserialize(buffer);
-		item_info.push_back(item_info_v);
-	}
-	return 0;
-}
-
-void Mail_Detail::reset(void) {
-	pickup = 0;
-	mail_id = 0;
-	send_time = 0;
-	sender_type = 0;
-	sender_id = 0;
-	sender_name.clear();
-	mail_title.clear();
-	mail_content.clear();
-	copper = 0;
-	gold = 0;
-	item_info.clear();
-}
-
-void Mail_Detail::print(void) {
-	printf("pickup: %d, ", pickup);
-	printf("mail_id: %d, ", mail_id);
-	printf("send_time: %d, ", send_time);
-	printf("sender_type: %d, ", sender_type);
-	printf("sender_id: %ld, ", sender_id);
-	printf("sender_name: %s, ", sender_name.c_str());
-	printf("mail_title: %s, ", mail_title.c_str());
-	printf("mail_content: %s, ", mail_content.c_str());
-	printf("copper: %d, ", copper);
-	printf("gold: %d, ", gold);
-	uint16_t item_info_size = (item_info.size() > 5 ? 5 : item_info.size());
-	printf("item_info.size: %ld [", item_info.size());
-	for(uint16_t i = 0; i < item_info_size; ++i) {
-		item_info[i].print();
-	}
-	printf("], ");
-	printf("\n");
-}
-
-Product_Info::Product_Info(void) {
-	reset();
-}
-
-Product_Info::~Product_Info() {
-}
-
-void Product_Info::serialize(Block_Buffer &buffer) const {
-	buffer.write_int32(product_id);
-	buffer.write_int32(item_id);
-	buffer.write_int32(price);
-	buffer.write_int32(count);
-}
-
-int Product_Info::deserialize(Block_Buffer &buffer) {
-	product_id = buffer.read_int32();
-	item_id = buffer.read_int32();
-	price = buffer.read_int32();
-	count = buffer.read_int32();
-	return 0;
-}
-
-void Product_Info::reset(void) {
-	product_id = 0;
-	item_id = 0;
-	price = 0;
-	count = 0;
-}
-
-void Product_Info::print(void) {
-	printf("product_id: %d, ", product_id);
-	printf("item_id: %d, ", item_id);
-	printf("price: %d, ", price);
-	printf("count: %d, ", count);
-	printf("\n");
-}
-
-Shop_Detail::Shop_Detail(void) {
-	reset();
-}
-
-Shop_Detail::~Shop_Detail() {
-}
-
-void Shop_Detail::serialize(Block_Buffer &buffer) const {
-	buffer.write_int32(shop_type);
-	buffer.write_int32(refresh_count);
-	uint16_t products_size = products.size();
-	buffer.write_uint16(products_size);
-	for(uint16_t i = 0; i < products_size; ++i) {
-		products[i].serialize(buffer);
-	}
-}
-
-int Shop_Detail::deserialize(Block_Buffer &buffer) {
-	shop_type = buffer.read_int32();
-	refresh_count = buffer.read_int32();
-	uint16_t products_size = buffer.read_uint16();
-	Product_Info products_v;
-	for(uint16_t i = 0; i < products_size; ++i) {
-		products_v.deserialize(buffer);
-		products.push_back(products_v);
-	}
-	return 0;
-}
-
-void Shop_Detail::reset(void) {
-	shop_type = 0;
-	refresh_count = 0;
-	products.clear();
-}
-
-void Shop_Detail::print(void) {
-	printf("shop_type: %d, ", shop_type);
-	printf("refresh_count: %d, ", refresh_count);
-	uint16_t products_size = (products.size() > 5 ? 5 : products.size());
-	printf("products.size: %ld [", products.size());
-	for(uint16_t i = 0; i < products_size; ++i) {
-		products[i].print();
-	}
-	printf("], ");
-	printf("\n");
-}
-
-Rank_Member::Rank_Member(void) {
-	reset();
-}
-
-Rank_Member::~Rank_Member() {
-}
-
-void Rank_Member::serialize(Block_Buffer &buffer) const {
-	buffer.write_int64(role_id);
-	buffer.write_string(role_name);
-	buffer.write_int32(value);
-}
-
-int Rank_Member::deserialize(Block_Buffer &buffer) {
-	role_id = buffer.read_int64();
-	role_name = buffer.read_string();
-	value = buffer.read_int32();
-	return 0;
-}
-
-void Rank_Member::reset(void) {
-	role_id = 0;
-	role_name.clear();
-	value = 0;
-}
-
-void Rank_Member::print(void) {
-	printf("role_id: %ld, ", role_id);
-	printf("role_name: %s, ", role_name.c_str());
-	printf("value: %d, ", value);
-	printf("\n");
-}
-
-Rank_List::Rank_List(void) {
-	reset();
-}
-
-Rank_List::~Rank_List() {
-}
-
-void Rank_List::serialize(Block_Buffer &buffer) const {
-	buffer.write_int64(rank_type);
-	uint16_t member_list_size = member_list.size();
-	buffer.write_uint16(member_list_size);
-	for(uint16_t i = 0; i < member_list_size; ++i) {
-		member_list[i].serialize(buffer);
-	}
-}
-
-int Rank_List::deserialize(Block_Buffer &buffer) {
-	rank_type = buffer.read_int64();
-	uint16_t member_list_size = buffer.read_uint16();
-	Rank_Member member_list_v;
-	for(uint16_t i = 0; i < member_list_size; ++i) {
-		member_list_v.deserialize(buffer);
-		member_list.push_back(member_list_v);
-	}
-	return 0;
-}
-
-void Rank_List::reset(void) {
-	rank_type = 0;
-	member_list.clear();
-}
-
-void Rank_List::print(void) {
-	printf("rank_type: %ld, ", rank_type);
-	uint16_t member_list_size = (member_list.size() > 5 ? 5 : member_list.size());
-	printf("member_list.size: %ld [", member_list.size());
-	for(uint16_t i = 0; i < member_list_size; ++i) {
-		member_list[i].print();
-	}
-	printf("], ");
-	printf("\n");
-}
 
 MSG_300000::MSG_300000(void) {
 	reset();
@@ -1764,20 +1287,20 @@ MSG_120400::~MSG_120400() {
 }
 
 void MSG_120400::serialize(Block_Buffer &buffer) const {
-	buffer.write_uint32(shop_type);
+	buffer.write_int32(shopype);
 }
 
 int MSG_120400::deserialize(Block_Buffer &buffer) {
-	shop_type = buffer.read_uint32();
+	shopype = buffer.read_int32();
 	return 0;
 }
 
 void MSG_120400::reset(void) {
-	shop_type = 0;
+	shopype = 0;
 }
 
 void MSG_120400::print(void) {
-	printf("shop_type: %d, ", shop_type);
+	printf("shopype: %d, ", shopype);
 	printf("\n");
 }
 
@@ -1814,26 +1337,26 @@ MSG_120401::~MSG_120401() {
 }
 
 void MSG_120401::serialize(Block_Buffer &buffer) const {
-	buffer.write_uint32(shop_type);
-	buffer.write_uint32(product_id);
-	buffer.write_uint32(amount);
+	buffer.write_int32(shopype);
+	buffer.write_int32(product_id);
+	buffer.write_int32(amount);
 }
 
 int MSG_120401::deserialize(Block_Buffer &buffer) {
-	shop_type = buffer.read_uint32();
-	product_id = buffer.read_uint32();
-	amount = buffer.read_uint32();
+	shopype = buffer.read_int32();
+	product_id = buffer.read_int32();
+	amount = buffer.read_int32();
 	return 0;
 }
 
 void MSG_120401::reset(void) {
-	shop_type = 0;
+	shopype = 0;
 	product_id = 0;
 	amount = 0;
 }
 
 void MSG_120401::print(void) {
-	printf("shop_type: %d, ", shop_type);
+	printf("shopype: %d, ", shopype);
 	printf("product_id: %d, ", product_id);
 	printf("amount: %d, ", amount);
 	printf("\n");
@@ -1868,20 +1391,20 @@ MSG_120402::~MSG_120402() {
 }
 
 void MSG_120402::serialize(Block_Buffer &buffer) const {
-	buffer.write_uint32(shop_type);
+	buffer.write_int32(shopype);
 }
 
 int MSG_120402::deserialize(Block_Buffer &buffer) {
-	shop_type = buffer.read_uint32();
+	shopype = buffer.read_int32();
 	return 0;
 }
 
 void MSG_120402::reset(void) {
-	shop_type = 0;
+	shopype = 0;
 }
 
 void MSG_120402::print(void) {
-	printf("shop_type: %d, ", shop_type);
+	printf("shopype: %d, ", shopype);
 	printf("\n");
 }
 
@@ -2146,26 +1669,26 @@ MSG_110001::~MSG_110001() {
 }
 
 void MSG_110001::serialize(Block_Buffer &buffer) const {
-	buffer.write_int8(chat_type);
+	buffer.write_int8(chatype);
 	buffer.write_string(chat_content);
 	buffer.write_string(role_name);
 }
 
 int MSG_110001::deserialize(Block_Buffer &buffer) {
-	chat_type = buffer.read_int8();
+	chatype = buffer.read_int8();
 	chat_content = buffer.read_string();
 	role_name = buffer.read_string();
 	return 0;
 }
 
 void MSG_110001::reset(void) {
-	chat_type = 0;
+	chatype = 0;
 	chat_content.clear();
 	role_name.clear();
 }
 
 void MSG_110001::print(void) {
-	printf("chat_type: %d, ", chat_type);
+	printf("chatype: %d, ", chatype);
 	printf("chat_content: %s, ", chat_content.c_str());
 	printf("role_name: %s, ", role_name.c_str());
 	printf("\n");
@@ -2179,7 +1702,7 @@ MSG_510001::~MSG_510001() {
 }
 
 void MSG_510001::serialize(Block_Buffer &buffer) const {
-	buffer.write_int8(chat_type);
+	buffer.write_int8(chatype);
 	buffer.write_string(chat_content);
 	buffer.write_string(role_name);
 	buffer.write_int32(gender);
@@ -2188,7 +1711,7 @@ void MSG_510001::serialize(Block_Buffer &buffer) const {
 }
 
 int MSG_510001::deserialize(Block_Buffer &buffer) {
-	chat_type = buffer.read_int8();
+	chatype = buffer.read_int8();
 	chat_content = buffer.read_string();
 	role_name = buffer.read_string();
 	gender = buffer.read_int32();
@@ -2198,7 +1721,7 @@ int MSG_510001::deserialize(Block_Buffer &buffer) {
 }
 
 void MSG_510001::reset(void) {
-	chat_type = 0;
+	chatype = 0;
 	chat_content.clear();
 	role_name.clear();
 	gender = 0;
@@ -2207,7 +1730,7 @@ void MSG_510001::reset(void) {
 }
 
 void MSG_510001::print(void) {
-	printf("chat_type: %d, ", chat_type);
+	printf("chatype: %d, ", chatype);
 	printf("chat_content: %s, ", chat_content.c_str());
 	printf("role_name: %s, ", role_name.c_str());
 	printf("gender: %d, ", gender);
@@ -2499,23 +2022,19 @@ MSG_510201::~MSG_510201() {
 }
 
 void MSG_510201::serialize(Block_Buffer &buffer) const {
-	buffer.write_int32(rank);
-	rank_list.serialize(buffer);
+	rank_info.serialize(buffer);
 }
 
 int MSG_510201::deserialize(Block_Buffer &buffer) {
-	rank = buffer.read_int32();
-	rank_list.deserialize(buffer);
+	rank_info.deserialize(buffer);
 	return 0;
 }
 
 void MSG_510201::reset(void) {
-	rank = 0;
-	rank_list.reset();
+	rank_info.reset();
 }
 
 void MSG_510201::print(void) {
-	printf("rank: %d, ", rank);
-	rank_list.print();
+	rank_info.print();
 	printf("\n");
 }

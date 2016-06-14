@@ -5,7 +5,7 @@
 */
 
 function Rank_Manager() {
-	this.rank_info = new Rank_Info();
+	this.rank_info = new Map();
 }
 
 Rank_Manager.prototype.load_data = function(buffer){
@@ -13,20 +13,15 @@ Rank_Manager.prototype.load_data = function(buffer){
 	var msg = new MSG_550105();
 	msg.deserialize(buffer);
 	for(var i = 0; i < msg.rank_list.length; i++){
-		var list = new Rank_List();
-		list.rank_type = msg.rank_list[i].rank_type;
-		print("rank type is ", list.rank_type);
-		list.member_list = msg.rank_list[i].member_list;
-		print("list size is ", list.member_list.length);
-		print("list data 1 role_name is ", list.member_list[0].role_name);
-		this.rank_info.rank_map.insert(list.rank_type, list);
+		var rank = msg.rank_list[i];
+		this.rank_info.insert(rank.rank_type, rank);
 	}
 }
 
 Rank_Manager.prototype.save_data = function(){
 	var msg = new MSG_150105();
 	msg.index = 0;
-	this.rank_info.rank_map.each(function(key,value,index) {
+	this.rank_info.each(function(key,value,index) {
 		msg.rank_list.push(value);
     });
 	var buf = pop_master_buffer();
@@ -41,7 +36,7 @@ Rank_Manager.prototype.fetch_rank_info = function(player, buffer) {
 	print('fetch rank info, util.now_msec:', util.now_msec());
 	var msg = new MSG_110104();
 	msg.deserialize(buffer);
-	var rank_list = this.rank_info.rank_map.get(msg.type);
+	var rank_list = this.rank_info.get(msg.type);
 	
 	var min = (rank_list.member_list.length > 100) ? 100 : rank_list.member_list.length;
 	var msg_res = new MSG_510104();
@@ -73,11 +68,11 @@ Rank_Manager.prototype.get_player_value = function(type, player){
 }
 
 Rank_Manager.prototype.update_rank = function(type, player){
-	var rank_list = this.rank_info.rank_map.get(type);
+	var rank_list = this.rank_info.get(type);
 	if(rank_list == null){
 		rank_list = new Rank_List();
 		rank_list.rank_type = type;
-		this.rank_info.rank_map.insert(type, rank_list);
+		this.rank_info.insert(type, rank_list);
 	}
 
 	var rank_member = null;

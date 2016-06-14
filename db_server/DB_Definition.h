@@ -47,6 +47,7 @@ private:
 	void build_struct_vector(DB_Type_Description &des, Block_Buffer &buffer, BSONObj &bsonobj);
 	void build_struct_fixed(DB_Type_Description &des, Block_Buffer &buffer, BSONObj &bsonobj);
 	bool is_fixed_type(std::string type);
+	bool is_arg(std::string &dst_label, std::string src_label);
 private:
 	std::string def_name_;
 	std::string dbname_;

@@ -44,24 +44,6 @@ public:
 	bool has_role_by_account(std::string &account, const int agent_num, const int server_num);
 	int64_t get_role_id(const std::string &account, const int agent_num, const int server_num);
 
-	int load_player_info(int64_t role_id, Game_Player_Info &player_info);
-	int save_player_info(int64_t role_id, Game_Player_Info &player_info);
-
-	int load_hero_info(int64_t role_id, Hero_Info &hero_info);
-	int save_hero_info(int64_t role_id, Hero_Info &hero_info);
-
-	int load_bag_info(int64_t role_id, Bag_Info &bag_info);
-	int save_bag_info(int64_t role_id, Bag_Info &bag_info);
-
-	int load_item_info(const mongo::BSONObj &obj, Item_Info &item);
-	int save_item_info(const Item_Info &item, mongo::BSONObj &obj);
-
-	int load_mail_info(int64_t role_id, Mail_Info &mail_info);
-	int save_mail_info(int64_t role_id, Mail_Info &mail_info);
-
-	int load_shop_info(int64_t role_id, Shop_Info &shop_info);
-	int save_shop_info(int64_t role_id, Shop_Info &shop_info);
-
 private:
 	DB_Operator(void);
 	virtual ~DB_Operator(void);

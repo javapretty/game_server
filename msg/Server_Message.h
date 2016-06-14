@@ -1,251 +1,44 @@
 /** 
 * This file was auto-generated. Please Do not edit
 *
-* [Version 1.3]
+* [Version 1.4]
 */
 
-#ifndef __Game_Struct__H
-#define __Game_Struct__H
+#ifndef __inner_msg__H
+#define __inner_msg__H
 
 #include "Block_Buffer.h"
 #include "boost/unordered_map.hpp"
-#include "Client_Message.h"
+#include "Game_Struct.h"
 
-struct Account_Info : public MSG {
-	std::string account;	
-	int32_t agent_num;	
-	int32_t server_num;	
-
-	Account_Info(void);
-	~Account_Info();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct Ip_Info : public MSG {
-	std::string ip;	
-	int32_t port;	
-
-	Ip_Info(void);
-	~Ip_Info();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct Player_DB_Cache : public MSG {
-	int64_t role_id;	
-	std::string account;	
-	std::string role_name;	
-	int32_t agent_num;	
-	int32_t server_num;	
-	int32_t level;	
-	int32_t gender;	
-	int32_t career;	
-
-	Player_DB_Cache(void);
-	~Player_DB_Cache();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct Login_Player_Info : public MSG {
-	std::string account;	
-	std::string gate_ip;	
-	int32_t gate_port;	
-	std::string session;	
-	int64_t session_tick;	
-
-	Login_Player_Info(void);
-	~Login_Player_Info();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct Master_Player_Info : public MSG {
-	int64_t role_id;	
-	std::string account;	
-	std::string role_name;	
-	int32_t level;	
-	int32_t gender;	//0(女),1(男)
-	int32_t career;	//职业1-3
-	int32_t vip_level;	//vip等级
-
-	Master_Player_Info(void);
-	~Master_Player_Info();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct Game_Player_Info : public MSG {
-	int64_t role_id;	//玩家id
-	std::string account;	//玩家账号名
-	std::string role_name;	//玩家名字
-	std::string client_ip;	//客户端ip
-	int32_t agent_num;	//平台编号
-	int32_t server_num;	//服务器编号
-	int32_t level;	//玩家等级
-	int32_t exp;	//玩家经验
-	int32_t gender;	//0(女),1(男)
-	int32_t career;	//职业1-3
-	int32_t create_time;	//创建角色时刻
-	int32_t last_sign_in_time;	//最后登录时间
-	int32_t last_sign_out_time;	//最后登出时间
-	int32_t vitality;	//玩家体力
-	int32_t buy_vitality_times;	//购买体力次数
-	int32_t vip_level;	//vip等级
-	int32_t vip_exp;	//vip经验值
-	int32_t charge_gold;	//总共充值的元宝数
-	int32_t skill_point;	//技能点
-	int64_t recover_skill_time;	//回复技能点时间
-	int32_t exchange_count;	//聚宝盆兑换剩余次数
-	int32_t guild_id;	//公会id
-	std::string guild_name;	//公会名字
-
-	Game_Player_Info(void);
-	~Game_Player_Info();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct Hero_Info : public MSG {
-	int64_t role_id;	
-	boost::unordered_map<int32_t,Hero_Detail> hero_map;	
-
-	Hero_Info(void);
-	~Hero_Info();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct Bag_Info : public MSG {
-	int64_t role_id;	
-	int32_t copper;	
-	int32_t gold;	
-	boost::unordered_map<int32_t,Item_Info> item_map;	
-
-	Bag_Info(void);
-	~Bag_Info();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct Mail_Info : public MSG {
-	int64_t role_id;	
-	int32_t total_count;	//邮件的总数量，即目前为止收到的所有邮件数
-	std::map<int32_t,Mail_Detail> mail_map;	
-
-	Mail_Info(void);
-	~Mail_Info();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct Shop_Info : public MSG {
-	int64_t role_id;	
-	boost::unordered_map<int32_t,Shop_Detail> shop_detail;	
-
-	Shop_Info(void);
-	~Shop_Info();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct Guild_Member_Detail : public MSG {
-	int64_t role_id;	
-	std::string role_name;	
-	int32_t level;	
-	int32_t career;	//职业1-3
-
-	Guild_Member_Detail(void);
-	~Guild_Member_Detail();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct Guild_Detail : public MSG {
-	int64_t guild_id;	
-	bool change;	
-	std::string guild_name;	
-	int64_t chief_id;	//帮主id
-	std::vector<Guild_Member_Detail> applicant_list;	//申请者列表
-	std::vector<Guild_Member_Detail> member_list;	
-
-	Guild_Detail(void);
-	~Guild_Detail();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct Guild_Info : public MSG {
-	boost::unordered_map<int64_t,Guild_Detail> guild_map;	
-
-	Guild_Info(void);
-	~Guild_Info();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct Offline_Detail : public MSG {
-	int64_t role_id;	
-	int64_t guild_id;	
-	std::string guild_name;	
-	int16_t flag;	
-
-	Offline_Detail(void);
-	~Offline_Detail();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct Offline_Info : public MSG {
-	boost::unordered_map<int64_t,Offline_Detail> offline_map;	
-
-	Offline_Info(void);
-	~Offline_Info();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct Rank_Info : public MSG {
-	std::map<int32_t,Rank_List> rank_map;	
-
-	Rank_Info(void);
-	~Rank_Info();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
+struct MSG_150000;
+struct MSG_550000;
+struct MSG_150001;
+struct MSG_550001;
+struct MSG_150002;
+struct MSG_550002;
+struct MSG_150003;
+struct MSG_550003;
+struct MSG_150004;
+struct MSG_150008;
+struct MSG_150101;
+struct MSG_150102;
+struct MSG_150103;
+struct MSG_550103;
+struct MSG_150104;
+struct MSG_550104;
+struct MSG_150105;
+struct MSG_550105;
+struct MSG_180000;
+struct MSG_180001;
+struct MSG_160000;
+struct MSG_160001;
+struct MSG_160100;
+struct MSG_165000;
+struct MSG_140000;
+struct MSG_140001;
+struct MSG_140100;
+struct MSG_140200;
 
 struct MSG_150000 : public MSG {
 
@@ -355,46 +148,93 @@ struct MSG_150008 : public MSG {
 	void print(void);
 };
 
-struct MSG_140000 : public MSG {
-	std::string account;	
-	std::string session;	
-	std::string gate_ip;	
-	int32_t gate_port;	
+struct MSG_150101 : public MSG {
+	std::string msg_type;	//拉取数据表名称
+	int64_t index;	//索引值
 
-	MSG_140000(void);
-	~MSG_140000();
+	MSG_150101(void);
+	~MSG_150101();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 	void print(void);
 };
 
-struct MSG_140001 : public MSG {
-	std::string account;	
+struct MSG_150102 : public MSG {
+	std::string table_name;	//删除数据表名称
+	std::vector<int64_t> delete_list;	
 
-	MSG_140001(void);
-	~MSG_140001();
+	MSG_150102(void);
+	~MSG_150102();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 	void print(void);
 };
 
-struct MSG_140100 : public MSG {
+struct MSG_150103 : public MSG {
+	int64_t index;	
+	std::vector<Guild_Info> guild_list;	
 
-	MSG_140100(void);
-	~MSG_140100();
+	MSG_150103(void);
+	~MSG_150103();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 	void print(void);
 };
 
-struct MSG_140200 : public MSG {
-	Master_Player_Info player_info;	
+struct MSG_550103 : public MSG {
+	std::vector<Guild_Info> guild_list;	
 
-	MSG_140200(void);
-	~MSG_140200();
+	MSG_550103(void);
+	~MSG_550103();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_150104 : public MSG {
+	int64_t index;	
+	std::vector<Offline_Info> offline_list;	
+
+	MSG_150104(void);
+	~MSG_150104();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_550104 : public MSG {
+	std::vector<Offline_Info> offline_list;	
+
+	MSG_550104(void);
+	~MSG_550104();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_150105 : public MSG {
+	int64_t index;	
+	std::vector<Rank_Info> rank_list;	
+
+	MSG_150105(void);
+	~MSG_150105();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_550105 : public MSG {
+	std::vector<Rank_Info> rank_list;	
+
+	MSG_550105(void);
+	~MSG_550105();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
@@ -419,9 +259,9 @@ struct MSG_180001 : public MSG {
 	std::string account;	
 	uint16_t level;	
 	std::string client_ip;	
-	uint32_t login_time;	
-	uint32_t logout_time;	
-	uint32_t online_time;	
+	int32_t login_time;	
+	int32_t logout_time;	
+	int32_t online_time;	
 
 	MSG_180001(void);
 	~MSG_180001();
@@ -476,93 +316,46 @@ struct MSG_165000 : public MSG {
 	void print(void);
 };
 
-struct MSG_150101 : public MSG {
-	std::string msg_type;	//拉取数据表名称
-	int64_t index;	//索引值
+struct MSG_140000 : public MSG {
+	std::string account;	
+	std::string session;	
+	std::string gate_ip;	
+	int32_t gate_port;	
 
-	MSG_150101(void);
-	~MSG_150101();
+	MSG_140000(void);
+	~MSG_140000();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 	void print(void);
 };
 
-struct MSG_150102 : public MSG {
-	std::string table_name;	//删除数据表名称
-	std::vector<int64_t> delete_list;	
+struct MSG_140001 : public MSG {
+	std::string account;	
 
-	MSG_150102(void);
-	~MSG_150102();
+	MSG_140001(void);
+	~MSG_140001();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 	void print(void);
 };
 
-struct MSG_150103 : public MSG {
-	int64_t index;	
-	std::vector<Guild_Detail> guild_list;	
+struct MSG_140100 : public MSG {
 
-	MSG_150103(void);
-	~MSG_150103();
+	MSG_140100(void);
+	~MSG_140100();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 	void print(void);
 };
 
-struct MSG_550103 : public MSG {
-	std::vector<Guild_Detail> guild_list;	
+struct MSG_140200 : public MSG {
+	Master_Player_Info player_info;	
 
-	MSG_550103(void);
-	~MSG_550103();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct MSG_150104 : public MSG {
-	int64_t index;	
-	std::vector<Offline_Detail> offline_list;	
-
-	MSG_150104(void);
-	~MSG_150104();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct MSG_550104 : public MSG {
-	std::vector<Offline_Detail> offline_list;	
-
-	MSG_550104(void);
-	~MSG_550104();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct MSG_150105 : public MSG {
-	int64_t index;	
-	std::vector<Rank_List> rank_list;	
-
-	MSG_150105(void);
-	~MSG_150105();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct MSG_550105 : public MSG {
-	std::vector<Rank_List> rank_list;	
-
-	MSG_550105(void);
-	~MSG_550105();
+	MSG_140200(void);
+	~MSG_140200();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

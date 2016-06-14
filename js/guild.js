@@ -5,7 +5,7 @@
 */
 
 function Guild() {
-	this.guild_info = new Guild_Info();
+	this.guild_info = new Map();
 	this.save_list = new Array();
 	this.drop_list = new Array();
 }
@@ -17,15 +17,15 @@ Guild.prototype.load_data = function(buffer){
 	for(var i = 0; i < msg.guild_list.length; i++){
 		var guild = msg.guild_list[i];
 		print("guild[", i, "].guild_id is ", guild.guild_id);
-		this.guild_info.guild_map.insert(guild.guild_id, guild);
+		this.guild_info.insert(guild.guild_id, guild);
 	}
 }
 
 Guild.prototype.save_data = function(){
 	var msg = new MSG_150103();
 	msg.index = 0;
-	print("SAVE GUILD, GUILD MAP SIZE IS ", this.guild_info.guild_map.size());
-	this.guild_info.guild_map.each(function(key,value,index) {
+	print("SAVE GUILD, GUILD MAP SIZE IS ", this.guild_info.size());
+	this.guild_info.each(function(key,value,index) {
 		if (value.change) {
 			msg.guild_list.push(value);
 			value.change = false;
@@ -83,14 +83,14 @@ Guild.prototype.member_join_guild = function(player, guild_detail, is_applicant 
 
 Guild.prototype.get_guild_id = function(){
 	var max_id = 0;
-	if(this.guild_info.guild_map.size() == 0){
+	if(this.guild_info.size() == 0){
 		max_id = config.server_json['agent_num'] * 10000000000000 
 			+ config.server_json['server_num'] * 1000000000;
 	}
 	else {
-		for(var i = 0; i < this.guild_info.guild_map.size(); i++){
-			if(this.guild_info.guild_map.keys[i] > max_id){
-				max_id = this.guild_info.guild_map.keys[i];
+		for(var i = 0; i < this.guild_info.size(); i++){
+			if(this.guild_info.keys[i] > max_id){
+				max_id = this.guild_info.keys[i];
 			}
 		}
 	}
@@ -102,14 +102,14 @@ Guild.prototype.create_guild = function(player, buffer) {
 	var msg = new MSG_110101();
 	msg.deserialize(buffer);
 
-	var guild_detail = new Guild_Detail();
+	var guild_detail = new Guild_Info();
 	guild_detail.guild_id = this.get_guild_id();
 	guild_detail.change = true;
 	guild_detail.guild_name = msg.guild_name;
 	guild_detail.chief_id = player.player_info.role_id;
 
 	this.member_join_guild(player, guild_detail);
-	this.guild_info.guild_map.insert(guild_detail.guild_id, guild_detail);
+	this.guild_info.insert(guild_detail.guild_id, guild_detail);
 	this.sync_guild_info_to_game(player, guild_detail.guild_id, guild_detail.guild_name);
 	
 	var msg_res = new MSG_510101();
@@ -124,7 +124,7 @@ Guild.prototype.dissove_guild = function(player, buffer) {
 	print('dissove_guild, util.now_msec:', util.now_msec());
 	var msg = new MSG_110102();
 	msg.deserialize(buffer);
-	var guild_detail = this.guild_info.guild_map.get(msg.guild_id);
+	var guild_detail = this.guild_info.get(msg.guild_id);
 	if(guild_detail == null){
 		print('guild ', msg.guild_id, " not exist!");
 		return;
@@ -138,7 +138,7 @@ Guild.prototype.dissove_guild = function(player, buffer) {
 			this.sync_guild_info_to_game(mem_player, 0, "");
 		}
 	}
-	this.guild_info.guild_map.remove(msg.guild_id);
+	this.guild_info.remove(msg.guild_id);
 	this.drop_list.push(msg.guild_id);
 	
 	var msg_res = new MSG_510102();
@@ -153,7 +153,7 @@ Guild.prototype.join_guild = function(player, buffer) {
 	print('join_guild, util.now_msec:', util.now_msec());
 	var msg = new MSG_110103();
 	msg.deserialize(buffer);
-	var guild_detail = this.guild_info.guild_map.get(msg.guild_id);
+	var guild_detail = this.guild_info.get(msg.guild_id);
 	if(guild_detail == null){
 		print('guild ', msg.guild_id, " not exist!");
 		return;
@@ -172,7 +172,7 @@ Guild.prototype.allow_join_player = function(player, buffer) {
 	print('allow join guild, util.now_msec:', util.now_msec());
 	var msg = new MSG_110104();
 	msg.deserialize(buffer);
-	var guild_detail = this.guild_info.guild_map.get(msg.guild_id);
+	var guild_detail = this.guild_info.get(msg.guild_id);
 	if(guild_detail == null){
 		print('guild ', msg.guild_id, " not exist!");
 		return;
@@ -210,7 +210,7 @@ Guild.prototype.kick_out_player = function(player, buffer) {
 	print('kick out player, util.now_msec:', util.now_msec());
 	var msg = new MSG_110105();
 	msg.deserialize(buffer);
-	var guild_detail = this.guild_info.guild_map.get(msg.guild_id);
+	var guild_detail = this.guild_info.get(msg.guild_id);
 	if(guild_detail == null){
 		print('guild ', msg.guild_id, " not exist!");
 		return;

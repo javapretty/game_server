@@ -87,38 +87,3 @@ struct Shop_Info {
 	boost::unordered_map<int32_t(shop_type),Shop_Detail> shop_detail;
 };
 
-struct Guild_Member_Detail {
-	int64_t role_id;
-	std::string role_name;
-	int32_t level;
-	int32_t career; 									//职业1-3
-};
-
-struct Guild_Detail {
-	int64_t guild_id;
-	bool change;
-	std::string guild_name;
-	int64_t chief_id; 				  			//帮主id
-	std::vector<Guild_Member_Detail> applicant_list;		//申请者列表
-	std::vector<Guild_Member_Detail> member_list;
-};
-
-struct Guild_Info {
-	boost::unordered_map<int64_t(guild_id),Guild_Detail> guild_map;
-};
-
-struct Offline_Detail {
-	int64_t role_id;
-	int64_t guild_id;
-	std::string guild_name;
-	int16_t flag;
-};
-
-struct Offline_Info {
-	boost::unordered_map<int64_t(role_id),Offline_Detail> offline_map;
-};
-
-struct Rank_Info {
-	std::map<int32_t(rank_type),Rank_List> rank_map;
-};
-

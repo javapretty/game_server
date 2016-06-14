@@ -21,6 +21,7 @@ public:
 	TiXmlNode *get_root_node(const char *key = "");
 	TiXmlNode *enter_node(TiXmlNode *node, const char *key);
 	std::string get_key(TiXmlNode *node);
+	bool has_key(TiXmlNode *node, const char *key);
 	std::string get_val_str(TiXmlNode *node);
 	int get_val_int(TiXmlNode *node);
 	float get_val_float(TiXmlNode *node);
