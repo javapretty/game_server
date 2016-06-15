@@ -767,37 +767,41 @@ Rank_Info::~Rank_Info() {
 
 void Rank_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int64(rank_type);
-	uint16_t member_list_size = member_list.size();
-	buffer.write_uint16(member_list_size);
-	for(uint16_t i = 0; i < member_list_size; ++i) {
-		member_list[i].serialize(buffer);
+	buffer.write_int32(min_value);
+	buffer.write_int64(min_role_id);
+
+	buffer.write_uint16(member_map.size());
+	for(std::map<int64_t,Rank_Member>::const_iterator it = member_map.begin();
+		it != member_map.end(); ++it) {
+		it->second.serialize(buffer);
 	}
 }
 
 int Rank_Info::deserialize(Block_Buffer &buffer) {
 	rank_type = buffer.read_int64();
-	uint16_t member_list_size = buffer.read_uint16();
-	Rank_Member member_list_v;
-	for(uint16_t i = 0; i < member_list_size; ++i) {
-		member_list_v.deserialize(buffer);
-		member_list.push_back(member_list_v);
+	min_value = buffer.read_int32();
+	min_role_id = buffer.read_int64();
+	uint16_t member_map_size = buffer.read_uint16();
+	for (int16_t i = 0; i < member_map_size; ++i) {
+		Rank_Member _v;
+		_v.deserialize(buffer);
+		member_map.insert(std::make_pair(_v.role_id, _v));
 	}
 	return 0;
 }
 
 void Rank_Info::reset(void) {
 	rank_type = 0;
-	member_list.clear();
+	min_value = 0;
+	min_role_id = 0;
+	member_map.clear();
 }
 
 void Rank_Info::print(void) {
 	printf("rank_type: %ld, ", rank_type);
-	uint16_t member_list_size = (member_list.size() > 5 ? 5 : member_list.size());
-	printf("member_list.size: %ld [", member_list.size());
-	for(uint16_t i = 0; i < member_list_size; ++i) {
-		member_list[i].print();
-	}
-	printf("], ");
+	printf("min_value: %d, ", min_value);
+	printf("min_role_id: %ld, ", min_role_id);
+	printf("member_map.size: %ld {}, ", member_map.size());
 	printf("\n");
 }
 
@@ -944,35 +948,6 @@ void Account_Info::print(void) {
 	printf("\n");
 }
 
-Ip_Info::Ip_Info(void) {
-	reset();
-}
-
-Ip_Info::~Ip_Info() {
-}
-
-void Ip_Info::serialize(Block_Buffer &buffer) const {
-	buffer.write_string(ip);
-	buffer.write_int32(port);
-}
-
-int Ip_Info::deserialize(Block_Buffer &buffer) {
-	ip = buffer.read_string();
-	port = buffer.read_int32();
-	return 0;
-}
-
-void Ip_Info::reset(void) {
-	ip.clear();
-	port = 0;
-}
-
-void Ip_Info::print(void) {
-	printf("ip: %s, ", ip.c_str());
-	printf("port: %d, ", port);
-	printf("\n");
-}
-
 Player_DB_Cache::Player_DB_Cache(void) {
 	reset();
 }
@@ -1023,47 +998,6 @@ void Player_DB_Cache::print(void) {
 	printf("level: %d, ", level);
 	printf("gender: %d, ", gender);
 	printf("career: %d, ", career);
-	printf("\n");
-}
-
-Login_Player_Info::Login_Player_Info(void) {
-	reset();
-}
-
-Login_Player_Info::~Login_Player_Info() {
-}
-
-void Login_Player_Info::serialize(Block_Buffer &buffer) const {
-	buffer.write_string(account);
-	buffer.write_string(gate_ip);
-	buffer.write_int32(gate_port);
-	buffer.write_string(session);
-	buffer.write_int64(session_tick);
-}
-
-int Login_Player_Info::deserialize(Block_Buffer &buffer) {
-	account = buffer.read_string();
-	gate_ip = buffer.read_string();
-	gate_port = buffer.read_int32();
-	session = buffer.read_string();
-	session_tick = buffer.read_int64();
-	return 0;
-}
-
-void Login_Player_Info::reset(void) {
-	account.clear();
-	gate_ip.clear();
-	gate_port = 0;
-	session.clear();
-	session_tick = 0;
-}
-
-void Login_Player_Info::print(void) {
-	printf("account: %s, ", account.c_str());
-	printf("gate_ip: %s, ", gate_ip.c_str());
-	printf("gate_port: %d, ", gate_port);
-	printf("session: %s, ", session.c_str());
-	printf("session_tick: %ld, ", session_tick);
 	printf("\n");
 }
 

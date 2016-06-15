@@ -151,7 +151,9 @@
 	<Rank_Info>
 		<persistence dbname="mmo.rank" index="role_id" cmdid="150105"/>
 		<arg type="int64" value="rank_type"/>
-		<vector type="Rank_Member" value="member_list"/>
+		<arg type="int32" value="min_value"/>
+		<arg type="int64" value="min_role_id"/>
+		<map type="Rank_Member" key_type="int64" key_name="role_id" value="member_map"/>
 	</Rank_Info>
 
 	<Guild_Info>
@@ -178,11 +180,6 @@
     	<arg type="int32" value="server_num"/>
 	</Account_Info>
 
-	<Ip_Info>
-    	<arg type="string" value="ip"/>
-    	<arg type="int32" value="port"/>
-	</Ip_Info>
-
 	<Player_DB_Cache>
     	<arg type="int64" value="role_id"/>
     	<arg type="string" value="account"/>
@@ -193,14 +190,6 @@
     	<arg type="int32" value="gender"/>
     	<arg type="int32" value="career"/>
 	</Player_DB_Cache>
-
-	<Login_Player_Info>
-    	<arg type="string" value="account"/>
-    	<arg type="string" value="gate_ip"/>
-    	<arg type="int32" value="gate_port"/>
-    	<arg type="string" value="session"/>
-    	<arg type="int64" value="session_tick"/>
-	</Login_Player_Info>
 
 	<Master_Player_Info>
     	<arg type="int64" value="role_id"/>

@@ -22,8 +22,8 @@ function gen_cpp(){
 
 function gen_js(){
 	./serialize_tool js $DEFINE_PATH 'game_struct.xml' 'struct'
-	./serialize_tool js $DEFINE_PATH 'inner_msg.xml' 'msg_struct'
-	./serialize_tool js $DEFINE_PATH 'outer_msg.xml' 'msg_struct'
+	./serialize_tool js $DEFINE_PATH 'inner_msg.xml' 'struct'
+	./serialize_tool js $DEFINE_PATH 'outer_msg.xml' 'struct'
 }
 
 function gen_msgd(){

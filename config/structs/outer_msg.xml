@@ -355,7 +355,9 @@
 	</MSG_110201>
 
 	<MSG_510201>
-	    <fixed type="Rank_Info" value="rank_info"/>
+		<arg type="int32" value="rank_type"/>
+		<arg type="int32" value="self_rank"/>
+	    <vector type="Rank_Member" value="rank_list"/>
 	</MSG_510201>
 
 </root>

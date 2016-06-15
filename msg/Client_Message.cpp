@@ -2022,19 +2022,41 @@ MSG_510201::~MSG_510201() {
 }
 
 void MSG_510201::serialize(Block_Buffer &buffer) const {
-	rank_info.serialize(buffer);
+	buffer.write_int32(rank_type);
+	buffer.write_int32(self_rank);
+	uint16_t rank_list_size = rank_list.size();
+	buffer.write_uint16(rank_list_size);
+	for(uint16_t i = 0; i < rank_list_size; ++i) {
+		rank_list[i].serialize(buffer);
+	}
 }
 
 int MSG_510201::deserialize(Block_Buffer &buffer) {
-	rank_info.deserialize(buffer);
+	rank_type = buffer.read_int32();
+	self_rank = buffer.read_int32();
+	uint16_t rank_list_size = buffer.read_uint16();
+	Rank_Member rank_list_v;
+	for(uint16_t i = 0; i < rank_list_size; ++i) {
+		rank_list_v.deserialize(buffer);
+		rank_list.push_back(rank_list_v);
+	}
 	return 0;
 }
 
 void MSG_510201::reset(void) {
-	rank_info.reset();
+	rank_type = 0;
+	self_rank = 0;
+	rank_list.clear();
 }
 
 void MSG_510201::print(void) {
-	rank_info.print();
+	printf("rank_type: %d, ", rank_type);
+	printf("self_rank: %d, ", self_rank);
+	uint16_t rank_list_size = (rank_list.size() > 5 ? 5 : rank_list.size());
+	printf("rank_list.size: %ld [", rank_list.size());
+	for(uint16_t i = 0; i < rank_list_size; ++i) {
+		rank_list[i].print();
+	}
+	printf("], ");
 	printf("\n");
 }

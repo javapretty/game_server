@@ -13,9 +13,6 @@ Hero.prototype.load_data = function(game_player, buffer) {
 	this.game_player = game_player;
 	this.hero_info.deserialize(buffer);
 
-	var hero = new Hero_Detail();
-	hero.hero_id = 101;
-	this.hero_info.hero_map.insert(hero.hero_id, hero);
 	//初始化英雄装备信息
 	this.hero_info.hero_map.each(function(key,value,index) {
 		if (value.equip_info.length != 6) {

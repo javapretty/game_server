@@ -37,9 +37,7 @@ struct Rank_Info;
 struct Guild_Info;
 struct Offline_Info;
 struct Account_Info;
-struct Ip_Info;
 struct Player_DB_Cache;
-struct Login_Player_Info;
 struct Master_Player_Info;
 
 struct Rank_Member : public MSG {
@@ -271,7 +269,9 @@ struct Shop_Info : public MSG {
 
 struct Rank_Info : public MSG {
 	int64_t rank_type;	
-	std::vector<Rank_Member> member_list;	
+	int32_t min_value;	
+	int64_t min_role_id;	
+	std::map<int64_t, Rank_Member> member_map;	
 
 	Rank_Info(void);
 	~Rank_Info();
@@ -324,18 +324,6 @@ struct Account_Info : public MSG {
 	void print(void);
 };
 
-struct Ip_Info : public MSG {
-	std::string ip;	
-	int32_t port;	
-
-	Ip_Info(void);
-	~Ip_Info();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
 struct Player_DB_Cache : public MSG {
 	int64_t role_id;	
 	std::string account;	
@@ -348,21 +336,6 @@ struct Player_DB_Cache : public MSG {
 
 	Player_DB_Cache(void);
 	~Player_DB_Cache();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct Login_Player_Info : public MSG {
-	std::string account;	
-	std::string gate_ip;	
-	int32_t gate_port;	
-	std::string session;	
-	int64_t session_tick;	
-
-	Login_Player_Info(void);
-	~Login_Player_Info();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

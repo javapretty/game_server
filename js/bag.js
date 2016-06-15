@@ -12,10 +12,6 @@ function Bag() {
 Bag.prototype.load_data = function(game_player, buffer) {
 	this.game_player = game_player;
 	this.bag_info.deserialize(buffer);
-	var item = new Item_Info();
-	item.item_id = 1001;
-	this.bag_info.item_map.insert(item.item_id, item);
-	this.bag_info.copper = 1122;
 }
 
 Bag.prototype.save_data = function(buffer) {

@@ -12,9 +12,6 @@ function Mail() {
 Mail.prototype.load_data = function(game_player, buffer) {
 	this.game_player = game_player;
 	this.mail_info.deserialize(buffer);
-	var mail = new Mail_Detail();
-	mail.mail_id = 202;
-	this.mail_info.mail_map.insert(mail.mail_id, mail);
 }
 	
 Mail.prototype.save_data = function(buffer) {

@@ -5,7 +5,7 @@
 */
 
 function Rank_Manager() {
-	this.rank_info = new Map();
+	this.rank_map = new Map();
 }
 
 Rank_Manager.prototype.load_data = function(buffer){
@@ -14,14 +14,14 @@ Rank_Manager.prototype.load_data = function(buffer){
 	msg.deserialize(buffer);
 	for(var i = 0; i < msg.rank_list.length; i++){
 		var rank = msg.rank_list[i];
-		this.rank_info.insert(rank.rank_type, rank);
+		this.rank_map.insert(rank.rank_type, rank);
 	}
 }
 
 Rank_Manager.prototype.save_data = function(){
 	var msg = new MSG_150105();
 	msg.index = 0;
-	this.rank_info.each(function(key,value,index) {
+	this.rank_map.each(function(key,value,index) {
 		msg.rank_list.push(value);
     });
 	var buf = pop_master_buffer();
@@ -34,22 +34,26 @@ Rank_Manager.prototype.save_data = function(){
 
 Rank_Manager.prototype.fetch_rank_info = function(player, buffer) {
 	print('fetch rank info, util.now_msec:', util.now_msec());
-	var msg = new MSG_110104();
+	var msg = new MSG_110201();
 	msg.deserialize(buffer);
-	var rank_list = this.rank_info.get(msg.type);
+	var rank_info = this.rank_map.get(msg.type);
 	
-	var min = (rank_list.member_list.length > 100) ? 100 : rank_list.member_list.length;
-	var msg_res = new MSG_510104();
+	var msg_res = new MSG_510201();
 	msg_res.rank_type = msg.type;
-	for(var i = 0; i < min; i++){
-		msg_res.rank_list.member_list.push(rank_list.member_list[i]);
-	}
-	for(var i = 0; i < rank_list.member_list.length; i++){
-		if(player.player_info.role_id == rank_list.member_list[i].role_id){
-			msg_res.rank = i + 1;
+	rank_info.member_map.each(function(key,value,index) {
+		msg_res.rank_list.push(value);
+	});
+	
+	msg_res.rank_list.sort(function(a,b){
+		return b.value - a.value;
+	});
+	for(var i = 0; i < msg_res.rank_list.length; i++){
+		if(player.player_info.role_id == msg_res.rank_list[i].role_id){
+			msg_res.self_rank = i + 1;
 			break;
 		}
 	}
+
 	var buf = pop_master_buffer();
 	msg_res.serialize(buf);
 	player.cplayer.respond_success_result(Msg_MC.RES_FETCH_RANK, buf);
@@ -68,48 +72,56 @@ Rank_Manager.prototype.get_player_value = function(type, player){
 }
 
 Rank_Manager.prototype.update_rank = function(type, player){
-	var rank_list = this.rank_info.get(type);
-	if(rank_list == null){
-		rank_list = new Rank_List();
-		rank_list.rank_type = type;
-		this.rank_info.insert(type, rank_list);
+	var rank_info = this.rank_map.get(type);
+	if(rank_info == null){
+		rank_info = new Rank_Info();
+		rank_info.rank_type = type;
+		rank_info.min_value = 0x7fffffff;
+		this.rank_map.insert(type, rank_info);
 	}
 
-	var rank_member = null;
-	var pos = -1;//当前位置
-	var flag;//遍历方向
+	var rank_member = rank_info.member_map.get(player.player_info.role_id);
 	var value = this.get_player_value(type, player);
-	for(var i = 0; i < rank_list.member_list.length; i++){
-		if(rank_list.member_list[i].role_id == player.player_info.role_id){
-			rank_member = rank_list.member_list[i];
-			rank_list.member_list.splice(i, 1);
-			pos = i;
-			flag = (rank_member.value > value) ? true : false;
-			break;
-		}
-	}
+
 	if(rank_member == null){
 		rank_member = new Rank_Member();
 		rank_member.role_id = player.player_info.role_id;
 		rank_member.role_name = player.player_info.role_name;
-		pos = 0;
-		flag = true;
-	}
-	
-	rank_member.value = value;
-	
-	if(flag){
-		while(pos != rank_list.member_list.length &&
-			rank_member.value <= rank_list.member_list[pos].value)
-			pos++;
+		rank_member.value = value;
+		if(rank_info.member_map.size() < 100){
+			rank_info.member_map.insert(rank_member.role_id, rank_member);
+			if(rank_member.value < rank_info.min_value){
+				rank_info.min_value = rank_member.value;
+				rank_info.min_role_id = rank_member.role_id;
+			}
+		}
+		else{
+			if(rank_member.value > rank_info.min_value){
+				rank_info.member_map.remove(rank_info.min_role_id);
+				rank_info.member_map.insert(rank_member.role_id, rank_member);
+				this.refresh_min_value(rank_info);
+			}
+		}
 	}
 	else {
-		pos--;
-		while(pos != -1 &&
-			rank_member.value > rank_list.member_list[pos].value)
-			pos--;
-		pos++;
+		rank_member.value = value;
+		if(rank_member.value < rank_info.min_value){
+			rank_info.min_value = rank_member.value;
+			rank_info.min_role_id = rank_member.role_id;
+		}
+		else
+			this.refresh_min_value(rank_info);
 	}
-	rank_list.member_list.splice(pos, 0, rank_member);
+	
+}
+
+Rank_Manager.prototype.refresh_min_value = function(rank_info){
+	rank_info.min_value = 0x7fffffff;
+	rank_info.member_map.each(function(key,value,index) {
+		if(value.value < rank_info.min_value){
+			rank_info.min_value = value.value;
+			rank_info.min_role_id = value.role_id;
+		}
+	});
 }
 

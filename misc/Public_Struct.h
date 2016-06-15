@@ -20,6 +20,9 @@ enum	 {
 	ROLE_SAVE_OFFLINE,	/// 角色下线保存
 };
 
+struct Ip_Info;
+struct Login_Player_Info;
+
 struct Server_Conf {
 	Time_Value server_sleep_time;
 	Time_Value receive_timeout;
@@ -154,6 +157,34 @@ struct DB_Cache {
 
 	boost::unordered_map<int64_t,Player_DB_Cache> id_player_cache_map;
 	boost::unordered_map<std::string,Player_DB_Cache> account_player_cache_map;
+};
+
+
+struct Ip_Info {
+	std::string ip;
+	int32_t port;
+
+	Ip_Info(void);
+	~Ip_Info();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct Login_Player_Info {
+	std::string account;
+	std::string gate_ip;
+	int32_t gate_port;
+	std::string session;
+	int64_t session_tick;
+
+	Login_Player_Info(void);
+	~Login_Player_Info();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
 };
 
 #endif /* PUBLIC_STURCT_H_ */

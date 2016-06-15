@@ -887,7 +887,9 @@ struct MSG_110201 : public MSG {
 };
 
 struct MSG_510201 : public MSG {
-	Rank_Info rank_info;	
+	int32_t rank_type;	
+	int32_t self_rank;	
+	std::vector<Rank_Member> rank_list;	
 
 	MSG_510201(void);
 	~MSG_510201();
