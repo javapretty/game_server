@@ -58,8 +58,13 @@ int Game_Player::load_player(Block_Buffer &buffer, Game_Player_Info &player_info
 	GAME_MANAGER->logining_map().erase(player_info.account);
 	player_info_ = player_info;
 
+	LOG_DEBUG("***********load_game_player*********** account=[%s], gate_cid=%d, player_cid=%d, role_id=%ld, name=%s",
+			player_info_.account.c_str(), gate_cid_, player_cid_, player_info_.role_id, player_info_.role_name.c_str());
+
 	load_player_data_buffer_ = GAME_MANAGER->pop_block_buffer();
 	save_player_data_buffer_ = GAME_MANAGER->pop_block_buffer();
+	load_player_data_buffer_->reset();
+	save_player_data_buffer_->reset();
 	load_player_data_buffer_->write_int32(gate_cid_);
 	load_player_data_buffer_->write_int32(player_cid_);
 	player_info_.serialize(*load_player_data_buffer_);
@@ -102,9 +107,6 @@ int Game_Player::save_player(bool is_logout) {
 }
 
 int Game_Player::sign_in() {
-	LOG_DEBUG("player sign in game_server. account=[%s], gate_cid = %d, player_cid = %d, role_id=%ld, name=%s",
-			player_info_.account.c_str(), gate_cid_, player_cid_, player_info_.role_id, player_info_.role_name.c_str());
-
 	sync_signin_to_master();
 	respond_role_login();
 	return 0;

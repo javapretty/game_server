@@ -1,0 +1,1 @@
+<pid=10474|tid=139964620126016>(14:33:6)[LOG_DEBUG] in ../misc/Daemon.cpp:117 function start_server: "log_server listen at port:7500"

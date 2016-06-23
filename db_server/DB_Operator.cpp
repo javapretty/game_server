@@ -244,5 +244,3 @@ int64_t DB_Operator::get_role_id(const std::string &account, const int agent_num
 	}
 	else return res["role_id"].numberLong();
 }
-
-/////////////////// Base Info DB Operator ///////////////////

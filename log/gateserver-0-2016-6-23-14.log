@@ -1,0 +1,3 @@
+<pid=10479|tid=140371594127168>(14:33:6)[LOG_DEBUG] in ../misc/Daemon.cpp:396 function start_server: "gate_client_server listen at port:7507"
+<pid=10479|tid=140371436168960>(14:33:6)[LOG_DEBUG] in ../gate_server/Gate_Manager.cpp:328 function object_pool_size: "gate block_pool_ free = 0, used = 1"
+<pid=10479|tid=140371436168960>(14:33:6)[LOG_DEBUG] in ../gate_server/Gate_Manager.cpp:329 function object_pool_size: "gate player_pool_ free = 0, used = 0"
