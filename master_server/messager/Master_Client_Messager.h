@@ -18,6 +18,7 @@ public:
 
 	//gate通知master玩家上线
 	int gate_master_player_signin(int gate_cid, int player_cid, Block_Buffer &buf);
+	int gate_master_player_signout(int gate_cid, int player_cid);
 
 private:
 	Master_Client_Messager(void);

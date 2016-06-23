@@ -21,6 +21,8 @@ struct DB_Type_Description {
 	std::string value_name;
 };
 
+typedef std::vector<DB_Type_Description> DB_TYPE_DESC_VEC;
+
 class DB_Definition {
 public:
 	DB_Definition(Xml &xml, TiXmlNode *node);
@@ -33,7 +35,7 @@ public:
 	std::string def_name(){return def_name_;}
 	std::string dbname(){return dbname_;}
 	std::string index(){return index_;}
-	std::vector<DB_Type_Description>& type_vec(){return type_vec_;}
+	DB_TYPE_DESC_VEC& type_vec(){return type_vec_;}
 private:
 	void init_table_arg(DB_Type_Description &des, BSONObjBuilder &builder, int64_t role_id);
 	void init_table_vector(DB_Type_Description &des, BSONObjBuilder &builder);
@@ -53,7 +55,7 @@ private:
 	std::string dbname_;
 	std::string index_;
 	int32_t cmdid_;
-	std::vector<DB_Type_Description> type_vec_;
+	DB_TYPE_DESC_VEC type_vec_;
 };
 
 #endif

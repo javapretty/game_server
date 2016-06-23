@@ -52,6 +52,7 @@ function main() {
 			all_empty = false;
 			var game_player = new Game_Player();
 			game_player.load_player_data(buffer);
+			print("PLAYER ADDED!GAME ONLINE IS ", game_player_cid_map.size());
 		}
 	
 		//获得下线玩家的cid
@@ -61,6 +62,7 @@ function main() {
 			var game_player = game_player_cid_map.get(cid);
 			if (game_player) {
 				game_player.save_player_data();
+				print("PLAYER DELETED!GAME ONLINE IS ", game_player_cid_map.size());
 			}
 		}
 		
@@ -191,3 +193,4 @@ function process_game_master_buffer(buffer) {
 		break;
 	}
 }
+

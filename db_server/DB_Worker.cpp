@@ -34,6 +34,10 @@ int DB_Worker::save_player_data(Block_Buffer &buffer) {
 	while(buffer.readable_bytes() > 0){
 		change_id = buffer.read_int32();
 		DB_Definition *role_def = DB_MANAGER->get_player_data_definition();
+		if(change_id < 0 || (size_t)change_id >= role_def->type_vec().size()){
+			LOG_ERROR("The change id %d out of range", change_id);
+			return -1;
+		}
 		std::string type_name = role_def->type_vec()[change_id].type_name;
 		DB_Manager::DB_Name_Definition_Map::iterator iter = DB_MANAGER->db_name_definition_map().find(type_name);
 		if(iter == DB_MANAGER->db_name_definition_map().end()){

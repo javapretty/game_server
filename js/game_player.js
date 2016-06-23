@@ -73,6 +73,7 @@ Game_Player.prototype.sync_player_data = function(is_logout = false) {
 	this.change_module.sort();
 	for(var i = 0; i < change_len; i++){
 		var change_id = this.change_module[i];
+		print("The Change_id is ", change_id);
 		buffer.write_int32(change_id);
 		switch(change_id){
 		case Data_Change.PLAYER_CHANGE:

@@ -184,7 +184,8 @@ inline int Master_Manager::push_master_gate_data(Block_Buffer *buf) {
 	buf->set_read_idx(read_idx);
 
 	switch (msg_id) {
-	case SYNC_GATE_MASTER_PLAYER_SIGNIN: {
+	case SYNC_GATE_MASTER_PLAYER_SIGNIN:
+	case SYNC_GATE_MASTER_PLAYER_SIGNOUT: {
 		player_login_data_list_.push_back(buf);
 		break;
 	}

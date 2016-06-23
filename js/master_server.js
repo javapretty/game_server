@@ -61,6 +61,7 @@ function main() {
 			var master_player = new Master_Player();
 			master_player.load_player_data(buffer);
 			//offline_manager.fetch_offline_msg(master_player);
+			print("PLAYER ADDED!MASTER ONLINE IS ", master_player_cid_map.size());
 		}
 	
 		//获得下线玩家的cid
@@ -70,6 +71,7 @@ function main() {
 			var master_player = master_player_cid_map.get(cid);
 			if (master_player) {
 				master_player.save_player_data();
+				print("PLAYER DELETED!MASTER ONLINE IS ", master_player_cid_map.size());
 			}
 		}
 		

@@ -104,6 +104,7 @@ enum Gate_Message {
 	SYNC_GATE_LOGIN_PLAYER_ACCOUNT = 140000, //gate校验玩家账户、session
 	SYNC_LOGIN_GATE_PLAYER_ACCOUNT = 140001, //login返回session校验结果
 	SYNC_GATE_GAME_PLAYER_SIGNOUT = 140100, //gate同步玩家下线到game
+	SYNC_GATE_MASTER_PLAYER_SIGNOUT = 140101, //gate同步玩家下线到master
 	SYNC_GATE_MASTER_PLAYER_SIGNIN = 140200, //gate同步玩家上线到master
 };
 
