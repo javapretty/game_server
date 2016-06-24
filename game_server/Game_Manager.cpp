@@ -40,6 +40,8 @@ int Game_Manager::init(void) {
 	GAME_CLIENT_MESSAGER;					///外部消息处理
 	GAME_TIMER->thr_create();			///定时器
 
+	set_msg_count_onoff(1);
+
 	if ((db_cache_ = new DB_Cache) == 0) {
 		LOG_FATAL("new DB_Cache fatal");
 	}

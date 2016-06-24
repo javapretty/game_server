@@ -9,7 +9,6 @@ require('enum.js');
 require('error.js');
 require('message.js');
 require('struct.js');
-require('msg_struct.js');
 require('config.js');
 require('util.js');
 require('timer.js');
@@ -38,8 +37,6 @@ var rank_manager = new Rank_Manager();
 var timer = new Timer();
 timer.init(Server_Type.MASTER_SERVER);
 
-//获取公共信息
-load_public_data();
 //执行脚本主循环函数
 main();
 
@@ -163,7 +160,7 @@ function process_master_db_buffer(buffer) {
 		guild_manager.load_data(buffer);
 		break;
 	case Msg_MD.SYNC_DB_MASTER_LOAD_OFFLINE_INFO:
-		offline_manager.load_data(buffer);
+		//offline_manager.load_data(buffer);
 		break;
 	case Msg_MD.SYNC_DB_MASTER_LOAD_RANK_INFO:
 		rank_manager.load_data(buffer);
@@ -194,27 +191,5 @@ function process_game_player_sync_buffer(buffer) {
 		print('msg_id ', msg_id, ' not exist');
 		break;
 	}
-}
-
-function load_public_data() {
-	var msg = new MSG_150101();
-	var buf = pop_master_buffer();
-	buf.make_inner_message(Msg_MD.SYNC_MASTER_DB_LOAD_DATA);
-	msg.msg_type = "Rank_Info";
-	msg.index = 0;
-	msg.serialize(buf);
-	buf.finish_message();
-	send_master_buffer_to_db(buf);
-	buf.reset();
-
-	buf.make_inner_message(Msg_MD.SYNC_MASTER_DB_LOAD_DATA);
-	msg.msg_type = "Guild_Info";
-	msg.index = 0;
-	msg.serialize(buf);
-	buf.finish_message();
-	send_master_buffer_to_db(buf);
-	buf.reset();
-
-	push_master_buffer(buf);
 }
 

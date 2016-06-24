@@ -149,8 +149,6 @@ struct MSG_150008 : public MSG {
 };
 
 struct MSG_150101 : public MSG {
-	std::string msg_type;	//拉取数据表名称
-	int64_t index;	//索引值
 
 	MSG_150101(void);
 	~MSG_150101();
@@ -173,7 +171,6 @@ struct MSG_150102 : public MSG {
 };
 
 struct MSG_150103 : public MSG {
-	int64_t index;	
 	std::vector<Guild_Info> guild_list;	
 
 	MSG_150103(void);
@@ -196,7 +193,6 @@ struct MSG_550103 : public MSG {
 };
 
 struct MSG_150104 : public MSG {
-	int64_t index;	
 	std::vector<Offline_Info> offline_list;	
 
 	MSG_150104(void);
@@ -219,7 +215,6 @@ struct MSG_550104 : public MSG {
 };
 
 struct MSG_150105 : public MSG {
-	int64_t index;	
 	std::vector<Rank_Info> rank_list;	
 
 	MSG_150105(void);

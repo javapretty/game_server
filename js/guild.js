@@ -23,7 +23,6 @@ Guild.prototype.load_data = function(buffer){
 
 Guild.prototype.save_data = function(){
 	var msg = new MSG_150103();
-	msg.index = 0;
 	print("SAVE GUILD, GUILD MAP SIZE IS ", this.guild_info.size());
 	this.guild_info.each(function(key,value,index) {
 		if (value.change) {

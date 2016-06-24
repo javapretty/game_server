@@ -78,11 +78,8 @@ int Game_Player::save_player(bool is_logout) {
 	if (save_player_data_buffer_->readable_bytes() <= 0) {
 		return 0;
 	}
-	int change_id = save_player_data_buffer_->peek_int32();
-	if(change_id == 0){
-		save_player_data_buffer_->read_int32();
-		player_info_.deserialize(*save_player_data_buffer_);
-	}
+
+	player_info_.deserialize(*save_player_data_buffer_);
 
 	if (is_logout) {
 		player_info_.last_sign_out_time = GAME_MANAGER->tick_time().sec();
@@ -91,10 +88,7 @@ int Game_Player::save_player(bool is_logout) {
 	Block_Buffer buf;
 	buf.make_inner_message(SYNC_GAME_DB_SAVE_PLAYER_INFO);
 	buf.write_int32(is_logout);
-	if(change_id == 0){
-		buf.write_int32(0);
-		player_info_.serialize(buf);
-	}
+	player_info_.serialize(buf);
 	buf.copy(save_player_data_buffer_);
 	buf.finish_message();
 	GAME_MANAGER->send_to_db(buf);

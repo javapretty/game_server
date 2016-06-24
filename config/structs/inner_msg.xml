@@ -48,8 +48,6 @@
 
 	<MSG_150101>
 		<!--拉取数据库信息-->
-    	<arg type="string" value="msg_type" desc="拉取数据表名称"/>
-    	<arg type="int64" value="index" desc="索引值"/>
 	</MSG_150101>
 
 	<MSG_150102>
@@ -60,7 +58,6 @@
 
 	<MSG_150103>
 		<!--保存公会信息-->
-    	<arg type="int64" value="index"/>
     	<vector type="Guild_Info" value="guild_list"/>
 	</MSG_150103>
 
@@ -70,7 +67,6 @@
 
 	<MSG_150104>
 		<!--保存离线信息-->
-    	<arg type="int64" value="index"/>
     	<vector type="Offline_Info" value="offline_list"/>
 	</MSG_150104>
 
@@ -80,7 +76,6 @@
 
 	<MSG_150105>
 		<!--保存排行榜信息-->
-    	<arg type="int64" value="index"/>
     	<vector type="Rank_Info" value="rank_list"/>
 	</MSG_150105>
 

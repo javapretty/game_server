@@ -40,6 +40,7 @@ public:
 	DB_Id_Definition_Map& db_id_definition_map();
 
 	DB_Definition *get_player_data_definition();
+	DB_Definition *get_public_data_definition();
 
 private:
 	DB_Manager(void);
@@ -82,6 +83,10 @@ inline DB_Manager::DB_Id_Definition_Map& DB_Manager::db_id_definition_map(){
 
 inline DB_Definition *DB_Manager::get_player_data_definition(){
 	return db_name_definition_map_.find("Player_Data")->second;
+}
+
+inline DB_Definition *DB_Manager::get_public_data_definition(){
+	return db_name_definition_map_.find("Public_Data")->second;
 }
 
 #endif /* DB_MANAGER_H_ */

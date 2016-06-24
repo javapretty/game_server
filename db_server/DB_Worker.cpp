@@ -30,21 +30,16 @@ int DB_Worker::load_player_data(int64_t role_id, Block_Buffer &buffer) {
 }
 
 int DB_Worker::save_player_data(Block_Buffer &buffer) {
-	int32_t change_id = 0;
-	while(buffer.readable_bytes() > 0){
-		change_id = buffer.read_int32();
-		DB_Definition *role_def = DB_MANAGER->get_player_data_definition();
-		if(change_id < 0 || (size_t)change_id >= role_def->type_vec().size()){
-			LOG_ERROR("The change id %d out of range", change_id);
-			return -1;
-		}
-		std::string type_name = role_def->type_vec()[change_id].type_name;
-		DB_Manager::DB_Name_Definition_Map::iterator iter = DB_MANAGER->db_name_definition_map().find(type_name);
-		if(iter == DB_MANAGER->db_name_definition_map().end()){
+	DB_Definition *role_def = DB_MANAGER->get_player_data_definition();
+	for(std::vector<DB_Type_Description>::iterator iter = role_def->type_vec().begin();
+			iter != role_def->type_vec().end(); iter++){
+		std::string type_name = (*iter).type_name;
+		DB_Manager::DB_Name_Definition_Map::iterator it = DB_MANAGER->db_name_definition_map().find(type_name);
+		if(it == DB_MANAGER->db_name_definition_map().end()){
 			LOG_ERROR("Can not find the module %s", type_name.c_str());
 			return -1;
 		}
-		DB_Definition *def = iter->second;
+		DB_Definition *def = it->second;
 		def->save_data(buffer);
 	}
 	return 0;
@@ -138,20 +133,10 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 		//process_save_mail(msg);
 		break;
 	}
-	case SYNC_MASTER_DB_LOAD_DATA:{
-		std::string msg_type = buf->read_string();
-		DB_Manager::DB_Name_Definition_Map::iterator iter = DB_MANAGER->db_name_definition_map().find(msg_type);
-		if(iter == DB_MANAGER->db_name_definition_map().end()){
-			LOG_ERROR("Can not find the module %s", msg_type.c_str());
-			break;
-		}
-		DB_Definition *def = iter->second;
-		int64_t index = buf->read_int64();
-		Block_Buffer buffer;
-		buffer.make_inner_message(def->cmdid() + 400000);
-		def->load_data(index, buffer);
-		buffer.finish_message();
-		DB_MANAGER->send_data_block(cid, buffer);
+	case SYNC_MASTER_DB_LOAD_PUBLIC_DATA:{
+		MSG_150101 msg;
+		msg.deserialize(*buf);
+		process_load_public_data(cid, *buf);
 		break;
 	}
 	case SYNC_MASTER_DB_DELETE_DATA:
@@ -173,7 +158,7 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 			break;
 		}
 		DB_Definition *def = iter->second;
-		def->save_data(*buf);
+		def->save_data_vector(*buf);
 		break;
 	}
 	}
@@ -247,5 +232,28 @@ int DB_Worker::process_save_player(int cid, Block_Buffer &buffer) {
 	} else {
 		save_player_data(buffer);
 	}
+	return 0;
+}
+
+int DB_Worker::process_load_public_data(int cid, Block_Buffer &buffer) {
+	DB_Definition *public_data = DB_MANAGER->get_public_data_definition();
+
+	for(std::vector<DB_Type_Description>::iterator iter = public_data->type_vec().begin();
+				iter != public_data->type_vec().end(); iter++){
+		std::string type_name = (*iter).type_name;
+		DB_Manager::DB_Name_Definition_Map::iterator it = DB_MANAGER->db_name_definition_map().find(type_name);
+		if(it == DB_MANAGER->db_name_definition_map().end()){
+			LOG_ERROR("Can not find the module %s", type_name.c_str());
+			return -1;
+		}
+
+		DB_Definition *def = it->second;
+		Block_Buffer buf;
+		buf.make_inner_message(def->cmdid() + 400000);
+		def->load_data(0, buf);
+		buf.finish_message();
+		DB_MANAGER->send_data_block(cid, buf);
+	}
+
 	return 0;
 }

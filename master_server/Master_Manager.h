@@ -117,6 +117,8 @@ public:
 	void inner_msg_count(Block_Buffer &buf);
 	void inner_msg_count(int msg_id);
 
+	void load_public_data();
+
 private:
 	Master_Manager(void);
 	virtual ~Master_Manager(void);

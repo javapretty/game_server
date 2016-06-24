@@ -20,7 +20,6 @@ Rank_Manager.prototype.load_data = function(buffer){
 
 Rank_Manager.prototype.save_data = function(){
 	var msg = new MSG_150105();
-	msg.index = 0;
 	this.rank_map.each(function(key,value,index) {
 		msg.rank_list.push(value);
     });

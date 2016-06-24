@@ -9,7 +9,6 @@ require('enum.js');
 require('error.js');
 require('message.js');
 require('struct.js');
-require('msg_struct.js');
 require('config.js');
 require('util.js');
 require('timer.js');

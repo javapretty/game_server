@@ -66,7 +66,7 @@ Shop.prototype.refresh_by_player = function(buffer){
 	}
 	this.refresh_shop(msg_req.shop_type, count + 1);
 	
-	this.game_player.set_data_change(Data_Change.SHOP_CHANGE);
+	this.game_player.set_data_change();
 }
 
 Shop.prototype.refresh_shop = function(shop_type, refresh_count = -1){
@@ -106,7 +106,7 @@ Shop.prototype.buy_product = function(buffer){
 	this.game_player.bag.bag_insert_item(item_arr);
 	product.count -= msg_req.amount;
 	
-	this.game_player.set_data_change(Data_Change.SHOP_CHANGE);
+	this.game_player.set_data_change();
 }
 	
 Shop.prototype.get_product = function(shop_type, product_id){

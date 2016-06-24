@@ -76,7 +76,7 @@ Hero.prototype.add_hero_star = function(buffer) {
 	}
 	hero_detail.star++;
 	this.refresh_hero_property(hero_detail);
-	this.game_player.set_data_change(Data_Change.HERO_CHANGE);
+	this.game_player.set_data_change();
     	
 	var msg_res = new MSG_520301();
 	msg_res.hero_id = msg_req.hero_id;
@@ -113,7 +113,7 @@ Hero.prototype.add_hero_quality = function(buffer) {
 	}
 	hero_detail.quality++;
 	this.refresh_hero_property(hero_detail);
-	this.game_player.set_data_change(Data_Change.HERO_CHANGE);
+	this.game_player.set_data_change();
 
 	var msg_res = new MSG_520302();
 	msg_res.hero_id = msg_req.hero_id;
@@ -156,7 +156,7 @@ Hero.prototype.add_equip_level = function(buffer) {
     	equip.level++;
     }
     this.refresh_hero_property(hero_detail);
-	this.game_player.set_data_change(Data_Change.HERO_CHANGE);
+	this.game_player.set_data_change();
 
 	var msg_res = new MSG_520303();
 	msg_res.hero_id = msg_req.hero_id;
@@ -209,7 +209,7 @@ Hero.prototype.equip_on_off = function(buffer) {
 		hero_detail.equip_info[msg_req.equip_index] = new Item_Info();
 	}
 	this.refresh_hero_property(hero_detail);
-	this.game_player.set_data_change(Data_Change.HERO_CHANGE);
+	this.game_player.set_data_change();
 
 	var msg_res = new MSG_520304();
 	msg_res.hero_id = msg_req.hero_id;
@@ -242,7 +242,7 @@ Hero.prototype.add_skill_level = function(buffer) {
 			break;
 		}
 	}
-	this.game_player.set_data_change(Data_Change.HERO_CHANGE);
+	this.game_player.set_data_change();
 
 	var msg_res = new MSG_520305();
 	msg_res.hero_id = msg_req.hero_id;

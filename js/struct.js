@@ -777,18 +777,12 @@ MSG_150008.prototype.deserialize = function(buffer) {
 }
 
 function MSG_150101() {
-	this.msg_type = ""
-	this.index = 0;
 }
 
 MSG_150101.prototype.serialize = function(buffer) {
-	buffer.write_string(this.msg_type);
-	buffer.write_int64(this.index);
 }
 
 MSG_150101.prototype.deserialize = function(buffer) {
-	this.msg_type = buffer.read_string();
-	this.index = buffer.read_int64();
 }
 
 function MSG_150102() {
@@ -816,12 +810,10 @@ MSG_150102.prototype.deserialize = function(buffer) {
 }
 
 function MSG_150103() {
-	this.index = 0;
 	this.guild_list = new Array();
 }
 
 MSG_150103.prototype.serialize = function(buffer) {
-	buffer.write_int64(this.index);
 	var len = this.guild_list.length;
 	buffer.write_uint16(len);
 	for(var i = 0; i < len; ++i) {
@@ -830,7 +822,6 @@ MSG_150103.prototype.serialize = function(buffer) {
 }
 
 MSG_150103.prototype.deserialize = function(buffer) {
-	this.index = buffer.read_int64();
 	var len = buffer.read_uint16();
 	for(var i = 0; i < len; ++i) {
 		var guild_list_v = new Guild_Info();
@@ -861,12 +852,10 @@ MSG_550103.prototype.deserialize = function(buffer) {
 }
 
 function MSG_150104() {
-	this.index = 0;
 	this.offline_list = new Array();
 }
 
 MSG_150104.prototype.serialize = function(buffer) {
-	buffer.write_int64(this.index);
 	var len = this.offline_list.length;
 	buffer.write_uint16(len);
 	for(var i = 0; i < len; ++i) {
@@ -875,7 +864,6 @@ MSG_150104.prototype.serialize = function(buffer) {
 }
 
 MSG_150104.prototype.deserialize = function(buffer) {
-	this.index = buffer.read_int64();
 	var len = buffer.read_uint16();
 	for(var i = 0; i < len; ++i) {
 		var offline_list_v = new Offline_Info();
@@ -906,12 +894,10 @@ MSG_550104.prototype.deserialize = function(buffer) {
 }
 
 function MSG_150105() {
-	this.index = 0;
 	this.rank_list = new Array();
 }
 
 MSG_150105.prototype.serialize = function(buffer) {
-	buffer.write_int64(this.index);
 	var len = this.rank_list.length;
 	buffer.write_uint16(len);
 	for(var i = 0; i < len; ++i) {
@@ -920,7 +906,6 @@ MSG_150105.prototype.serialize = function(buffer) {
 }
 
 MSG_150105.prototype.deserialize = function(buffer) {
-	this.index = buffer.read_int64();
 	var len = buffer.read_uint16();
 	for(var i = 0; i < len; ++i) {
 		var rank_list_v = new Rank_Info();

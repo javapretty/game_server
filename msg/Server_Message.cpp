@@ -284,24 +284,16 @@ MSG_150101::~MSG_150101() {
 }
 
 void MSG_150101::serialize(Block_Buffer &buffer) const {
-	buffer.write_string(msg_type);
-	buffer.write_int64(index);
 }
 
 int MSG_150101::deserialize(Block_Buffer &buffer) {
-	msg_type = buffer.read_string();
-	index = buffer.read_int64();
 	return 0;
 }
 
 void MSG_150101::reset(void) {
-	msg_type.clear();
-	index = 0;
 }
 
 void MSG_150101::print(void) {
-	printf("msg_type: %s, ", msg_type.c_str());
-	printf("index: %ld, ", index);
 	printf("\n");
 }
 
@@ -356,7 +348,6 @@ MSG_150103::~MSG_150103() {
 }
 
 void MSG_150103::serialize(Block_Buffer &buffer) const {
-	buffer.write_int64(index);
 	uint16_t guild_list_size = guild_list.size();
 	buffer.write_uint16(guild_list_size);
 	for(uint16_t i = 0; i < guild_list_size; ++i) {
@@ -365,7 +356,6 @@ void MSG_150103::serialize(Block_Buffer &buffer) const {
 }
 
 int MSG_150103::deserialize(Block_Buffer &buffer) {
-	index = buffer.read_int64();
 	uint16_t guild_list_size = buffer.read_uint16();
 	Guild_Info guild_list_v;
 	for(uint16_t i = 0; i < guild_list_size; ++i) {
@@ -376,12 +366,10 @@ int MSG_150103::deserialize(Block_Buffer &buffer) {
 }
 
 void MSG_150103::reset(void) {
-	index = 0;
 	guild_list.clear();
 }
 
 void MSG_150103::print(void) {
-	printf("index: %ld, ", index);
 	uint16_t guild_list_size = (guild_list.size() > 5 ? 5 : guild_list.size());
 	printf("guild_list.size: %ld [", guild_list.size());
 	for(uint16_t i = 0; i < guild_list_size; ++i) {
@@ -438,7 +426,6 @@ MSG_150104::~MSG_150104() {
 }
 
 void MSG_150104::serialize(Block_Buffer &buffer) const {
-	buffer.write_int64(index);
 	uint16_t offline_list_size = offline_list.size();
 	buffer.write_uint16(offline_list_size);
 	for(uint16_t i = 0; i < offline_list_size; ++i) {
@@ -447,7 +434,6 @@ void MSG_150104::serialize(Block_Buffer &buffer) const {
 }
 
 int MSG_150104::deserialize(Block_Buffer &buffer) {
-	index = buffer.read_int64();
 	uint16_t offline_list_size = buffer.read_uint16();
 	Offline_Info offline_list_v;
 	for(uint16_t i = 0; i < offline_list_size; ++i) {
@@ -458,12 +444,10 @@ int MSG_150104::deserialize(Block_Buffer &buffer) {
 }
 
 void MSG_150104::reset(void) {
-	index = 0;
 	offline_list.clear();
 }
 
 void MSG_150104::print(void) {
-	printf("index: %ld, ", index);
 	uint16_t offline_list_size = (offline_list.size() > 5 ? 5 : offline_list.size());
 	printf("offline_list.size: %ld [", offline_list.size());
 	for(uint16_t i = 0; i < offline_list_size; ++i) {
@@ -520,7 +504,6 @@ MSG_150105::~MSG_150105() {
 }
 
 void MSG_150105::serialize(Block_Buffer &buffer) const {
-	buffer.write_int64(index);
 	uint16_t rank_list_size = rank_list.size();
 	buffer.write_uint16(rank_list_size);
 	for(uint16_t i = 0; i < rank_list_size; ++i) {
@@ -529,7 +512,6 @@ void MSG_150105::serialize(Block_Buffer &buffer) const {
 }
 
 int MSG_150105::deserialize(Block_Buffer &buffer) {
-	index = buffer.read_int64();
 	uint16_t rank_list_size = buffer.read_uint16();
 	Rank_Info rank_list_v;
 	for(uint16_t i = 0; i < rank_list_size; ++i) {
@@ -540,12 +522,10 @@ int MSG_150105::deserialize(Block_Buffer &buffer) {
 }
 
 void MSG_150105::reset(void) {
-	index = 0;
 	rank_list.clear();
 }
 
 void MSG_150105::print(void) {
-	printf("index: %ld, ", index);
 	uint16_t rank_list_size = (rank_list.size() > 5 ? 5 : rank_list.size());
 	printf("rank_list.size: %ld [", rank_list.size());
 	for(uint16_t i = 0; i < rank_list_size; ++i) {

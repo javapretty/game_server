@@ -108,7 +108,7 @@ if (typeof Msg_Db == "undefined") {
 
 if (typeof Msg_MD == "undefined") {
 	var Msg_MD = {};
-	Msg_MD.SYNC_MASTER_DB_LOAD_DATA = 150101; //拉取数据库信息
+	Msg_MD.SYNC_MASTER_DB_LOAD_PUBLIC_DATA = 150101; //拉取数据库信息
 	Msg_MD.SYNC_MASTER_DB_DELETE_DATA = 150102; //删除数据库信息
 	Msg_MD.SYNC_MASTER_DB_SAVE_GUILD_INFO = 150103; //保存公会信息
 	Msg_MD.SYNC_MASTER_DB_SAVE_OFFLINE_INFO = 150104; //保存离线信息

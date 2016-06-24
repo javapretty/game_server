@@ -29,6 +29,7 @@ public:
 	~DB_Definition();
 	void init_table(int64_t index);
 	void save_data(Block_Buffer &buffer);
+	void save_data_vector(Block_Buffer &buffer);
 	void load_data(int64_t index, Block_Buffer &buffer);
 	void delete_data(Block_Buffer &buffer);
 	int32_t cmdid(){return cmdid_;}
@@ -37,6 +38,7 @@ public:
 	std::string index(){return index_;}
 	DB_TYPE_DESC_VEC& type_vec(){return type_vec_;}
 private:
+
 	void init_table_arg(DB_Type_Description &des, BSONObjBuilder &builder, int64_t role_id);
 	void init_table_vector(DB_Type_Description &des, BSONObjBuilder &builder);
 	void init_table_fixed(DB_Type_Description &des, BSONObjBuilder &builder);

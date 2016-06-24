@@ -35,6 +35,8 @@ int Master_Manager::init(void) {
 	MASTER_CLIENT_MESSAGER;					/// 外部消息处理
 	MASTER_TIMER->thr_create();			///	定时器
 
+	set_msg_count_onoff(1);
+
 	return 0;
 }
 
@@ -306,17 +308,9 @@ void Master_Manager::print_msg_count(void) {
 	LOG_INFO("inner_msg_count_map_.size = %d\n%s\n", inner_msg_count_map_.size(), stream.str().c_str());
 }
 
-//int Master_Manager::load_db_info(){
-//	Block_Buffer buf;
-//	buf.make_inner_message(SYNC_MASTER_DB_LOAD_PUBLIC_INFO);
-//	buf.finish_message();
-//	send_to_db(buf);
-//
-//	buf.reset();
-//	buf.make_inner_message(SYNC_MASTER_DB_LOAD_DATA);
-//	buf.write_string("Rank_Info");
-//	buf.write_int64(0);
-//	buf.finish_message();
-//	send_to_db(buf);
-//	return 0;
-//}
+void Master_Manager::load_public_data(){
+	Block_Buffer buf;
+	buf.make_inner_message(SYNC_MASTER_DB_LOAD_PUBLIC_DATA);
+	buf.finish_message();
+	send_to_db(buf);
+}

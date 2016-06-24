@@ -63,31 +63,29 @@ void DB_Definition::init_table(int64_t index){
 }
 
 void DB_Definition::save_data(Block_Buffer &buffer){
-	BSONObjBuilder set_builder ;
+	BSONObjBuilder set_builder;
 	int64_t index_value = buffer.peek_int64();
-	LOG_DEBUG("DB IDEX IS %ld", index_value);
-	uint16_t count = 1;
-	if(index_value == 0){
-		buffer.read_int64();
-		count = buffer.read_uint16();
-		LOG_DEBUG("%s save list size is %d", dbname_.c_str(), count);
-	}
-	for(int i = 0; i < count; i++){
-		index_value = buffer.peek_int64();
-		for(std::vector<DB_Type_Description>::iterator iter = type_vec_.begin();
-				iter != type_vec_.end(); iter++){
-			if((*iter).label_name == "arg"){
-				build_bson_obj_arg(*iter, buffer, set_builder);
-			}
-			else if((*iter).label_name == "vector"){
-				build_bson_obj_vector(*iter, buffer, set_builder);
-			}
-			else if((*iter).label_name == "fixed"){
-				build_bson_obj_fixed(*iter, buffer, set_builder);
-			}
+	for(std::vector<DB_Type_Description>::iterator iter = type_vec_.begin();
+			iter != type_vec_.end(); iter++){
+		if((*iter).label_name == "arg"){
+			build_bson_obj_arg(*iter, buffer, set_builder);
 		}
-		CACHED_CONNECTION.update(dbname_, MONGO_QUERY(index_ << (long long int)index_value),
-					BSON("$set" << set_builder.obj() ), true);
+		else if((*iter).label_name == "vector"){
+			build_bson_obj_vector(*iter, buffer, set_builder);
+		}
+		else if((*iter).label_name == "fixed"){
+			build_bson_obj_fixed(*iter, buffer, set_builder);
+		}
+	}
+	CACHED_CONNECTION.update(dbname_, MONGO_QUERY(index_ << (long long int)index_value),
+			BSON("$set" << set_builder.obj() ), true);
+}
+
+void DB_Definition::save_data_vector(Block_Buffer &buffer){
+	uint16_t count = buffer.read_uint16();
+	LOG_DEBUG("%s save list size is %d", dbname_.c_str(), count);
+	for(int i = 0; i < count; i++){
+		save_data(buffer);
 	}
 }
 

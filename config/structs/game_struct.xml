@@ -148,8 +148,15 @@
 		<unordered_map type="Shop_Detail" key_type="int32" key_name="shop_type" value="shop_map"/>
 	</Shop_Info>
 	
+	<Public_Data type="mem_only">
+		<!--玩家个人数据在此定义-->
+		<fixed type="Rank_Info" value="rank_info"/>
+		<fixed type="Guild_Info" value="guild_info"/>
+		<fixed type="Offline_Info" value="offline_info"/>
+	</Public_Data>
+	
 	<Rank_Info>
-		<persistence dbname="mmo.rank" index="role_id" cmdid="150105"/>
+		<persistence dbname="mmo.rank" index="rank_type" cmdid="150105"/>
 		<arg type="int64" value="rank_type"/>
 		<arg type="int32" value="min_value"/>
 		<arg type="int64" value="min_role_id"/>
@@ -157,7 +164,7 @@
 	</Rank_Info>
 
 	<Guild_Info>
-		<persistence dbname="mmo.guild" index="role_id" cmdid="150103"/>
+		<persistence dbname="mmo.guild" index="guild_id" cmdid="150103"/>
 		<arg type="int64" value="guild_id"/>
 		<arg type="bool" value="change"/>
 		<arg type="string" value="guild_name"/>

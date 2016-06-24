@@ -130,7 +130,7 @@ Bag.prototype.bag_active_money = function() {
 	msg_active.serialize(buf);
 	this.game_player.cplayer.respond_success_result(Msg_Active.ACTIVE_MONEY_INFO, buf);
 	push_game_buffer(buf);
-	this.game_player.set_data_change(Data_Change.BAG_CHANGE);
+	this.game_player.set_data_change();
 }
 	
 Bag.prototype.bag_active_item = function() {
@@ -143,5 +143,5 @@ Bag.prototype.bag_active_item = function() {
 	msg_active.serialize(buf);
 	this.game_player.cplayer.respond_success_result(Msg_Active.ACTIVE_ITEM_INFO, buf);
 	push_game_buffer(buf);
-	this.game_player.set_data_change(Data_Change.BAG_CHANGE);
+	this.game_player.set_data_change();
 }

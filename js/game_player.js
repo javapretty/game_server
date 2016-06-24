@@ -8,7 +8,7 @@ function Game_Player() {
 	this.sync_player_data_tick = util.now_sec();
 	this.cid = 0;
 	this.cplayer = null;
-	this.change_module = new Array();
+	this.is_change = false;
 	this.player_info = new Game_Player_Info();
 	this.hero = new Hero();
 	this.bag = new Bag();
@@ -43,72 +43,28 @@ Game_Player.prototype.load_player_data = function(buffer) {
 Game_Player.prototype.save_player_data = function() {
 	print('------game_player save_data,role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name);
 	
-	this.sync_player_data(true);
+	this.sync_player_data();
 	game_player_cid_map.remove(this.cid);
 	game_player_role_id_map.remove(this.player_info.role_id);
 }
 
-Game_Player.prototype.sync_player_data = function(is_logout = false) {
+Game_Player.prototype.sync_player_data = function() {
 	var buffer = this.cplayer.get_save_data_buffer();
 	if (buffer == null) {
 		return;
 	}
 
-	var change_len = this.change_module.length;
-	if(is_logout == true){
-		this.set_data_change(Data_Change.PLAYER_CHANGE);
-		this.set_data_change(Data_Change.HERO_CHANGE);
-		this.set_data_change(Data_Change.BAG_CHANGE);
-		this.set_data_change(Data_Change.MAIL_CHANGE);
-		this.set_data_change(Data_Change.SHOP_CHANGE);
-		change_len = this.change_module.length;
-	}
-	else {
-		if(change_len == 0){
-			print("No player module changed");
-			return;
-		}
-	}
+	this.player_info.serialize(buffer);
+	this.hero.save_data(buffer);
+	this.bag.save_data(buffer);
+	this.mail.save_data(buffer);
+	this.shop.save_data(buffer);
 
-	this.change_module.sort();
-	for(var i = 0; i < change_len; i++){
-		var change_id = this.change_module[i];
-		print("The Change_id is ", change_id);
-		buffer.write_int32(change_id);
-		switch(change_id){
-		case Data_Change.PLAYER_CHANGE:
-			this.player_info.serialize(buffer);
-			break;
-		case Data_Change.HERO_CHANGE:
-			this.hero.save_data(buffer);
-			break;
-		case Data_Change.BAG_CHANGE:
-			this.bag.save_data(buffer);
-			break;
-		case Data_Change.MAIL_CHANGE:
-			this.mail.save_data(buffer);
-			break;
-		case Data_Change.SHOP_CHANGE:
-			this.shop.save_data(buffer);
-			break;
-		default:
-			break;
-		}
-	}
-	this.change_module = [];
+	this.is_change = false;
 }
 
-Game_Player.prototype.set_data_change = function(change_id) {
-	var exist = false;
-	for (var i = 0; i < this.change_module.length; ++i) {
-		if (this.change_module[i] == change_id) {
-			exist = true;
-			break;
-		}
-	}
-	if (!exist) {
-		this.change_module.push(change_id);
-	}
+Game_Player.prototype.set_data_change = function() {
+	this.is_change = true;
 }
 
 Game_Player.prototype.tick = function(now) {
@@ -121,9 +77,11 @@ Game_Player.prototype.tick = function(now) {
 	}
 	
 	//同步玩家数据到C++,15s一次
-	if (now - this.sync_player_data_tick >= 15) {
-		this.sync_player_data();
-		this.sync_player_data_tick = now;
+	if(this.is_change == true){
+		if (now - this.sync_player_data_tick >= 30) {
+			this.sync_player_data();
+			this.sync_player_data_tick = now;
+		}
 	}
 }
 
@@ -158,7 +116,7 @@ Game_Player.prototype.add_exp = function(exp) {
 	msg_active.serialize(buf);
 	this.cplayer.respond_success_result(Msg_Active.ACTIVE_PLAYER_INFO, buf);
 	push_game_buffer(buf);
-	this.set_data_change(Data_Change.PLAYER_CHANGE);
+	this.set_data_change();
 }
 	
 Game_Player.prototype.update_vip = function(charge_id) {
@@ -181,7 +139,7 @@ Game_Player.prototype.update_vip = function(charge_id) {
 	msg_active.serialize(buf);
 	this.cplayer.respond_success_result(Msg_Active.ACTIVE_VIP_INFO, buf);
 	push_game_buffer(buf);
-	this.set_data_change(Data_Change.PLAYER_CHANGE);
+	this.set_data_change();
 }
 	
 Game_Player.prototype.buy_vitality = function() {
@@ -214,7 +172,7 @@ Game_Player.prototype.buy_vitality = function() {
 	buf.write_int32(this.player_info.vitality);
 	this.cplayer.respond_success_result(Msg_GC.RES_BUY_VITALITY, buf);
 	push_game_buffer(buf);
-	this.set_data_change(Data_Change.PLAYER_CHANGE);
+	this.set_data_change();
 }
 
 Game_Player.prototype.exchange_money = function(buffer){
@@ -248,7 +206,7 @@ Game_Player.prototype.exchange_money = function(buffer){
 	this.cplayer.respond_success_result(Msg_GC.RES_EXCHANGE_MONEY, buf);
 	push_game_buffer(buf);
 	
-	this.set_data_change(Data_Change.PLAYER_CHANGE);
+	this.set_data_change();
 }
 
 Game_Player.prototype.set_guild_info = function(buffer) {
@@ -256,7 +214,7 @@ Game_Player.prototype.set_guild_info = function(buffer) {
 	msg.deserialize(buffer);
 	this.player_info.guild_id = msg.guild_id;
 	this.player_info.guild_name = msg.guild_name;
-	this.set_data_change(Data_Change.PLAYER_CHANGE);
+	this.set_data_change();
 	print('set_guild_info, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, 
 	" guild_id:", this.player_info.guild_id, " guild_name:", this.player_info.guild_name);
 }

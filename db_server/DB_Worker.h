@@ -56,6 +56,8 @@ public:
 	/// 保存玩家数据
 	int process_save_player(int cid, Block_Buffer &buffer);
 
+	int process_load_public_data(int cid, Block_Buffer &buffer);
+
 private:
 	Data_List data_list_;						///通用数据保存列表
 	Data_List load_player_list_; 		///等待加载的玩家列表
