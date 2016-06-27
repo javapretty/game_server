@@ -149,7 +149,7 @@
 	</Shop_Info>
 	
 	<Public_Data type="mem_only">
-		<!--玩家个人数据在此定义-->
+		<!--公共数据在此定义-->
 		<fixed type="Rank_Info" value="rank_info"/>
 		<fixed type="Guild_Info" value="guild_info"/>
 		<fixed type="Offline_Info" value="offline_info"/>

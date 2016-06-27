@@ -78,7 +78,7 @@ Game_Player.prototype.tick = function(now) {
 	
 	//同步玩家数据到C++,15s一次
 	if(this.is_change == true){
-		if (now - this.sync_player_data_tick >= 30) {
+		if (now - this.sync_player_data_tick >= 15) {
 			this.sync_player_data();
 			this.sync_player_data_tick = now;
 		}

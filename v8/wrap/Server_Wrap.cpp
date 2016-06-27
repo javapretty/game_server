@@ -320,3 +320,7 @@ void get_game_player_sync_buffer(const FunctionCallbackInfo<Value>& args){
 		args.GetReturnValue().SetNull();
 	}
 }
+
+void buffer_test(const FunctionCallbackInfo<Value>& args){
+	LOG_DEBUG("THIS IS BUFFER_TEST METHOD");
+}

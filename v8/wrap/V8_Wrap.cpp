@@ -15,6 +15,10 @@
 #include "Time_Value.h"
 #include "Log.h"
 
+Global<ObjectTemplate> _g_buffer_template;
+Global<ObjectTemplate> _g_game_player_template;
+Global<ObjectTemplate> _g_master_player_template;
+
 Local<Context> Create_Context(Isolate* isolate) {
 	Local<ObjectTemplate> global = ObjectTemplate::New(isolate);
 	global->Set(String::NewFromUtf8(isolate, "require", NewStringType::kNormal).ToLocalChecked(),
@@ -108,6 +112,128 @@ Local<Context> Create_Context(Isolate* isolate) {
 
 	global->Set(String::NewFromUtf8(isolate, "get_game_player_sync_buffer", NewStringType::kNormal).ToLocalChecked(),
 				FunctionTemplate::New(isolate, get_game_player_sync_buffer));
+
+	//////////////////////////////////buffer相关函数////////////////////////////////
+	Local<ObjectTemplate> buffer_template = ObjectTemplate::New(isolate);
+	buffer_template->SetInternalFieldCount(1);
+
+	buffer_template->Set(String::NewFromUtf8(isolate, "reset", NewStringType::kNormal).ToLocalChecked(),
+		                    FunctionTemplate::New(isolate, buffer_reset));
+
+	buffer_template->Set(String::NewFromUtf8(isolate, "make_inner_message", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, make_inner_message));
+
+	buffer_template->Set(String::NewFromUtf8(isolate, "make_player_message", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, make_player_message));
+
+	buffer_template->Set(String::NewFromUtf8(isolate, "finish_message", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, finish_message));
+
+	buffer_template->Set(String::NewFromUtf8(isolate, "read_int8", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, read_int8));
+
+	buffer_template->Set(String::NewFromUtf8(isolate, "read_int16", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, read_int16));
+
+	buffer_template->Set(String::NewFromUtf8(isolate, "read_int32", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, read_int32));
+
+	buffer_template->Set(String::NewFromUtf8(isolate, "read_int64", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, read_int64));
+
+	buffer_template->Set(String::NewFromUtf8(isolate, "read_uint8", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, read_uint8));
+
+	buffer_template->Set(String::NewFromUtf8(isolate, "read_uint16", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, read_uint16));
+
+	buffer_template->Set(String::NewFromUtf8(isolate, "read_uint32", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, read_uint32));
+
+	buffer_template->Set(String::NewFromUtf8(isolate, "read_uint64", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, read_uint64));
+
+	buffer_template->Set(String::NewFromUtf8(isolate, "read_double", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, read_double));
+
+	buffer_template->Set(String::NewFromUtf8(isolate, "read_bool", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, read_bool));
+
+	buffer_template->Set(String::NewFromUtf8(isolate, "read_string", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, read_string));
+
+	buffer_template->Set(String::NewFromUtf8(isolate, "write_int8", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, write_int8));
+
+	buffer_template->Set(String::NewFromUtf8(isolate, "write_int16", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, write_int16));
+
+	buffer_template->Set(String::NewFromUtf8(isolate, "write_int32", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, write_int32));
+
+	buffer_template->Set(String::NewFromUtf8(isolate, "write_int64", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, write_int64));
+
+	buffer_template->Set(String::NewFromUtf8(isolate, "write_uint8", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, write_uint8));
+
+	buffer_template->Set(String::NewFromUtf8(isolate, "write_uint16", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, write_uint16));
+
+	buffer_template->Set(String::NewFromUtf8(isolate, "write_uint32", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, write_uint32));
+
+	buffer_template->Set(String::NewFromUtf8(isolate, "write_uint64", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, write_uint64));
+
+	buffer_template->Set(String::NewFromUtf8(isolate, "write_double", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, write_double));
+
+	buffer_template->Set(String::NewFromUtf8(isolate, "write_bool", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, write_bool));
+
+	buffer_template->Set(String::NewFromUtf8(isolate, "write_string", NewStringType::kNormal).ToLocalChecked(),
+	                    FunctionTemplate::New(isolate, write_string));
+
+	_g_buffer_template.Reset(isolate, buffer_template);
+
+	//////////////////////////////////game_player相关函数////////////////////////////////
+	Local<ObjectTemplate> game_player_template = ObjectTemplate::New(isolate);
+	game_player_template->SetInternalFieldCount(1);
+
+	game_player_template->Set(String::NewFromUtf8(isolate, "get_save_data_buffer", NewStringType::kNormal).ToLocalChecked(),
+			                  FunctionTemplate::New(isolate, get_game_player_save_data_buffer)) ;
+
+	game_player_template->Set(String::NewFromUtf8(isolate, "respond_success_result", NewStringType::kNormal).ToLocalChecked(),
+		                    FunctionTemplate::New(isolate, game_player_respond_success_result)) ;
+
+	game_player_template->Set(String::NewFromUtf8(isolate, "respond_error_result", NewStringType::kNormal).ToLocalChecked(),
+		                    FunctionTemplate::New(isolate, game_player_respond_error_result)) ;
+
+	game_player_template->Set(String::NewFromUtf8(isolate, "sync_data_to_master", NewStringType::kNormal).ToLocalChecked(),
+					              FunctionTemplate::New(isolate, sync_data_to_master)) ;
+
+	_g_game_player_template.Reset(isolate, game_player_template);
+
+	//////////////////////////////////master_player相关函数////////////////////////////////
+	Local<ObjectTemplate> master_player_template = ObjectTemplate::New(isolate);
+	master_player_template->SetInternalFieldCount(1);
+
+	// 为当前对象设置其对外函数接口
+	master_player_template->Set(String::NewFromUtf8(isolate, "get_save_data_buffer", NewStringType::kNormal).ToLocalChecked(),
+		                    FunctionTemplate::New(isolate, get_master_player_save_data_buffer)) ;
+
+	master_player_template->Set(String::NewFromUtf8(isolate, "respond_success_result", NewStringType::kNormal).ToLocalChecked(),
+		                    FunctionTemplate::New(isolate, master_player_respond_success_result)) ;
+
+	master_player_template->Set(String::NewFromUtf8(isolate, "respond_error_result", NewStringType::kNormal).ToLocalChecked(),
+		                    FunctionTemplate::New(isolate, master_player_respond_error_result)) ;
+
+	master_player_template->Set(String::NewFromUtf8(isolate, "sync_data_to_game", NewStringType::kNormal).ToLocalChecked(),
+		                    FunctionTemplate::New(isolate, sync_data_to_game)) ;
+
+
+	_g_master_player_template.Reset(isolate, master_player_template);
 
 	return Context::New(isolate, NULL, global);
 }

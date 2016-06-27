@@ -106,6 +106,7 @@ int Master_Inner_Messager::game_master_player_signin(int game_cid, int player_ci
 int Master_Inner_Messager::game_master_player_signout(Block_Buffer &buf) {
 	MSG_160001 msg;
 	msg.deserialize(buf);
+	LOG_DEBUG("MASTERINNER ROLE_ID%ld", msg.role_id);
 	Master_Player *player = MASTER_MANAGER->find_role_id_master_player(msg.role_id);
 	if (!player) {
 		LOG_INFO("can't find role_id:%ld master player", msg.role_id);

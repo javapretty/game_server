@@ -67,5 +67,5 @@ void get_master_player_by_cid(const FunctionCallbackInfo<Value>& args);
 void get_master_player_by_name(const FunctionCallbackInfo<Value>& args);
 //函数说明：获取game过来的角色同步信息	参数：无	返回值：buffer对象
 void get_game_player_sync_buffer(const FunctionCallbackInfo<Value>& args);
-
+void buffer_test(const FunctionCallbackInfo<Value>& args);
 #endif /* SERVER_WRAP_H_ */

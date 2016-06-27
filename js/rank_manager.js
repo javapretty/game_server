@@ -12,6 +12,7 @@ Rank_Manager.prototype.load_data = function(buffer){
 	print('load rank_manager data, util.now_msec:', util.now_msec());
 	var msg = new MSG_550105();
 	msg.deserialize(buffer);
+	print('rank list size is ', msg.rank_list.length);
 	for(var i = 0; i < msg.rank_list.length; i++){
 		var rank = msg.rank_list[i];
 		this.rank_map.insert(rank.rank_type, rank);

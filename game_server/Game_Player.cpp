@@ -78,7 +78,7 @@ int Game_Player::save_player(bool is_logout) {
 	if (save_player_data_buffer_->readable_bytes() <= 0) {
 		return 0;
 	}
-
+LOG_DEBUG("%ld player's save data size is %d", player_info_.role_id, save_player_data_buffer_->readable_bytes());
 	player_info_.deserialize(*save_player_data_buffer_);
 
 	if (is_logout) {

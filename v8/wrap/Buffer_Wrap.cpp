@@ -9,94 +9,17 @@
 #include "Buffer_Wrap.h"
 #include "Log.h"
 
+extern Global<ObjectTemplate> _g_buffer_template;
+
 Local<Object> wrap_buffer(Isolate* isolate, Block_Buffer *buf) {
 	EscapableHandleScope handle_scope(isolate);
 
-	Local<ObjectTemplate> localTemplate = ObjectTemplate::New(isolate);
+	Local<ObjectTemplate> localTemplate = Local<ObjectTemplate>::New(isolate, _g_buffer_template);
 	localTemplate->SetInternalFieldCount(1);
 	Local<External> buf_ptr = External::New(isolate, buf);
 	//将指针存在V8对象内部
 	Local<Object> buf_obj = localTemplate->NewInstance(isolate->GetCurrentContext()).ToLocalChecked();
 	buf_obj->SetInternalField(0, buf_ptr);
-
-	// 为当前对象设置其对外函数接口
-	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "reset", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, buffer_reset)->GetFunction());
-
-	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "make_inner_message", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, make_inner_message)->GetFunction());
-
-	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "make_player_message", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, make_player_message)->GetFunction());
-
-	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "finish_message", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, finish_message)->GetFunction());
-
-	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "read_int8", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, read_int8)->GetFunction());
-
-	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "read_int16", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, read_int16)->GetFunction());
-
-	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "read_int32", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, read_int32)->GetFunction());
-
-	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "read_int64", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, read_int64)->GetFunction());
-
-	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "read_uint8", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, read_uint8)->GetFunction());
-
-	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "read_uint16", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, read_uint16)->GetFunction());
-
-	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "read_uint32", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, read_uint32)->GetFunction());
-
-	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "read_uint64", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, read_uint64)->GetFunction());
-
-	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "read_double", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, read_double)->GetFunction());
-
-	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "read_bool", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, read_bool)->GetFunction());
-
-	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "read_string", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, read_string)->GetFunction());
-
-	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "write_int8", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, write_int8)->GetFunction());
-
-	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "write_int16", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, write_int16)->GetFunction());
-
-	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "write_int32", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, write_int32)->GetFunction());
-
-	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "write_int64", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, write_int64)->GetFunction());
-
-	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "write_uint8", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, write_uint8)->GetFunction());
-
-	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "write_uint16", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, write_uint16)->GetFunction());
-
-	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "write_uint32", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, write_uint32)->GetFunction());
-
-	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "write_uint64", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, write_uint64)->GetFunction());
-
-	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "write_double", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, write_double)->GetFunction());
-
-	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "write_bool", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, write_bool)->GetFunction());
-
-	buf_obj->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, "write_string", NewStringType::kNormal).ToLocalChecked(),
-	                    FunctionTemplate::New(isolate, write_string)->GetFunction());
 
 	return handle_scope.Escape(buf_obj);
 }
