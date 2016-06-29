@@ -39,10 +39,6 @@ int Gate_Player::link_close() {
 	buf.finish_message();
 	GATE_MANAGER->send_to_game(buf);
 
-	buf.reset();
-	buf.make_player_message(SYNC_GATE_MASTER_PLAYER_SIGNOUT, 0, cid_);
-	buf.finish_message();
-	GATE_MANAGER->send_to_master(buf);
 	return 0;
 }
 

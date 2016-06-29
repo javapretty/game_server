@@ -100,6 +100,7 @@ public:
 
 	Logining_Map &logining_map(void);
 	Saving_Map &saving_map(void);
+	inline Game_Player_Role_Id_Map& game_player_role_id_map(void){return player_role_id_map_;}
 
 	/// 定时器处理
 	int tick(void);

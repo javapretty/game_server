@@ -64,8 +64,12 @@ int Master_Player::load_player(Master_Player_Info &player_info) {
 	LOG_DEBUG("***********load_master_player*********** account=[%s], gate_cid=%d, player_cid=%d, role_id=%ld, name=%s",
 			player_info_.account.c_str(), gate_cid_, player_cid_, player_info_.role_id, player_info_.role_name.c_str());
 
+	MASTER_MANAGER->bind_gate_cid_master_player(gate_cid_ * 10000 + player_cid_, *this);
+	MASTER_MANAGER->bind_role_name_master_player(player_info_.role_name, *this);
+
 	load_player_data_buffer_ = MASTER_MANAGER->pop_block_buffer();
 	save_player_data_buffer_ = MASTER_MANAGER->pop_block_buffer();
+
 	load_player_data_buffer_->reset();
 	save_player_data_buffer_->reset();
 	load_player_data_buffer_->write_int32(gate_cid_);
@@ -85,10 +89,12 @@ int Master_Player::save_player(bool is_logout) {
 }
 
 int Master_Player::sign_in(void) {
+	LOG_DEBUG("***********add_master_player %d***********", MASTER_MANAGER->master_player_role_id_map().size());
 	return 0;
 }
 
 int Master_Player::sign_out(void) {
+	LOG_DEBUG("***********delete_master_player %d***********", MASTER_MANAGER->master_player_role_id_map().size());
 	save_player(true);
 	reset();
 	MASTER_MANAGER->push_block_buffer(load_player_data_buffer_);

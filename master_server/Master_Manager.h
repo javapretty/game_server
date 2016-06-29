@@ -99,6 +99,8 @@ public:
 
 	int unbind_master_player(Master_Player &player);
 
+	inline Master_Player_Role_Id_Map& master_player_role_id_map(void){return player_role_id_map_;}
+
 	/// 定时器处理
 	int tick(void);
 	/// 返回上次tick的绝对时间, 最大误差有100毫秒,主要为减少系统调用gettimeofday()调用次数
@@ -186,8 +188,7 @@ inline int Master_Manager::push_master_gate_data(Block_Buffer *buf) {
 	buf->set_read_idx(read_idx);
 
 	switch (msg_id) {
-	case SYNC_GATE_MASTER_PLAYER_SIGNIN:
-	case SYNC_GATE_MASTER_PLAYER_SIGNOUT: {
+	case SYNC_GATE_MASTER_PLAYER_SIGNIN: {
 		player_login_data_list_.push_back(buf);
 		break;
 	}

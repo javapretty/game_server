@@ -61,8 +61,12 @@ int Game_Player::load_player(Block_Buffer &buffer, Game_Player_Info &player_info
 	LOG_DEBUG("***********load_game_player*********** account=[%s], gate_cid=%d, player_cid=%d, role_id=%ld, name=%s",
 			player_info_.account.c_str(), gate_cid_, player_cid_, player_info_.role_id, player_info_.role_name.c_str());
 
+	GAME_MANAGER->bind_cid_game_player(gate_cid_ * 10000 + player_cid_, *this);
+	GAME_MANAGER->bind_role_id_game_player(player_info_.role_id, *this);
+
 	load_player_data_buffer_ = GAME_MANAGER->pop_block_buffer();
 	save_player_data_buffer_ = GAME_MANAGER->pop_block_buffer();
+
 	load_player_data_buffer_->reset();
 	save_player_data_buffer_->reset();
 	load_player_data_buffer_->write_int32(gate_cid_);
@@ -78,17 +82,11 @@ int Game_Player::save_player(bool is_logout) {
 	if (save_player_data_buffer_->readable_bytes() <= 0) {
 		return 0;
 	}
-LOG_DEBUG("%ld player's save data size is %d", player_info_.role_id, save_player_data_buffer_->readable_bytes());
-	player_info_.deserialize(*save_player_data_buffer_);
-
-	if (is_logout) {
-		player_info_.last_sign_out_time = GAME_MANAGER->tick_time().sec();
-	}
 
 	Block_Buffer buf;
+	buf.reset();
 	buf.make_inner_message(SYNC_GAME_DB_SAVE_PLAYER_INFO);
 	buf.write_int32(is_logout);
-	player_info_.serialize(buf);
 	buf.copy(save_player_data_buffer_);
 	buf.finish_message();
 	GAME_MANAGER->send_to_db(buf);
@@ -101,12 +99,14 @@ LOG_DEBUG("%ld player's save data size is %d", player_info_.role_id, save_player
 }
 
 int Game_Player::sign_in() {
+	LOG_DEBUG("***********add_game_player %d***********", GAME_MANAGER->game_player_role_id_map().size());
 	sync_signin_to_master();
 	respond_role_login();
 	return 0;
 }
 
 int Game_Player::sign_out(void) {
+	LOG_DEBUG("***********delete_game_player %d***********", GAME_MANAGER->game_player_role_id_map().size());
 	sync_signout_to_master();
 	save_player(true);
 	reset();
@@ -195,6 +195,7 @@ int Game_Player::tick(Time_Value &now) {
 	}
 
 	if (now - last_save_tick_ > save_interval_) {
+		//LOG_DEBUG("player save, role_id:%ld, role_name:%s", player_info_.role_id, player_info_.role_name.c_str());
 		save_player();
 		last_save_tick_ = now;
 	}

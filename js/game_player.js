@@ -34,6 +34,9 @@ Game_Player.prototype.load_player_data = function(buffer) {
 	print('------game_player load_data, role_id:', this.player_info.role_id, ' role_name:', this.player_info.role_name);
 	this.cid = gate_cid * 10000 + player_cid;
 	this.cplayer = get_game_player_by_cid(gate_cid, player_cid);
+	if(this.cplayer == null){
+		print('master_player ', this.player_info.role_id, 'cid is ', this.cid, ' cplayer is null')
+	}
 	
 	game_player_cid_map.insert(this.cid, this);
 	game_player_role_id_map.insert(this.player_info.role_id, this);
@@ -41,8 +44,9 @@ Game_Player.prototype.load_player_data = function(buffer) {
 
 //玩家离线，保存数据
 Game_Player.prototype.save_player_data = function() {
-	print('------game_player save_data,role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name);
+	//print('------game_player save_data,role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name);
 	
+	this.player_info.last_sign_out_time = util.now_sec();
 	this.sync_player_data();
 	game_player_cid_map.remove(this.cid);
 	game_player_role_id_map.remove(this.player_info.role_id);
@@ -76,9 +80,9 @@ Game_Player.prototype.tick = function(now) {
 		}
 	}
 	
-	//同步玩家数据到C++,15s一次
+	//同步玩家数据到C++,30s一次
 	if(this.is_change == true){
-		if (now - this.sync_player_data_tick >= 15) {
+		if (now - this.sync_player_data_tick >= 30) {
 			this.sync_player_data();
 			this.sync_player_data_tick = now;
 		}

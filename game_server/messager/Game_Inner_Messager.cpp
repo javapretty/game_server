@@ -175,8 +175,6 @@ int Game_Inner_Messager::process_success_login(int gate_cid, int player_cid, Blo
 	player->set_cid(gate_cid, player_cid);
 	player->load_player(buffer, player_info);
 	player->sign_in();
-	GAME_MANAGER->bind_cid_game_player(gate_cid * 10000 + player_cid, *player);
-	GAME_MANAGER->bind_role_id_game_player(player->player_info().role_id, *player);
 
 	Player_DB_Cache db_cache;
 	db_cache.role_id = player_info.role_id;

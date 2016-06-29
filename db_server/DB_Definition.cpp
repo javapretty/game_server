@@ -64,9 +64,7 @@ void DB_Definition::init_table(int64_t index){
 
 void DB_Definition::save_data(Block_Buffer &buffer){
 	BSONObjBuilder set_builder;
-	LOG_DEBUG("BUFFER'S READABLE SIZE IS %d", buffer.readable_bytes());
 	int64_t index_value = buffer.peek_int64();
-	LOG_DEBUG("BUFFER'S READABLE SIZE IS %d, INDEX IS %ld", buffer.readable_bytes(), index_value);
 	for(std::vector<DB_Type_Description>::iterator iter = type_vec_.begin();
 			iter != type_vec_.end(); iter++){
 		if((*iter).label_name == "arg"){

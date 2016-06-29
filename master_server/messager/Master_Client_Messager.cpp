@@ -31,10 +31,6 @@ int Master_Client_Messager::process_client_login_block(Block_Buffer &buf) {
 		gate_master_player_signin(gate_cid, player_cid, buf);
 		break;
 	}
-	case SYNC_GATE_MASTER_PLAYER_SIGNOUT: {
-		gate_master_player_signout(gate_cid, player_cid);
-		break;
-	}
 	default:
 		LOG_ERROR("msg_id:%d error", msg_id);
 	}
@@ -54,8 +50,6 @@ int Master_Client_Messager::gate_master_player_signin(int gate_cid, int player_c
 		master_player->set_player_cid(player_cid);
 		master_player->load_player(msg.player_info);
 		master_player->sign_in();
-		MASTER_MANAGER->bind_gate_cid_master_player(gate_cid * 10000 + player_cid, *master_player);
-		MASTER_MANAGER->bind_role_name_master_player(msg.player_info.role_name, *master_player);
 	} else {
 		Master_Player *player = MASTER_MANAGER->pop_master_player();
 		if (! player) {
@@ -66,20 +60,9 @@ int Master_Client_Messager::gate_master_player_signin(int gate_cid, int player_c
 		player->reset();
 		player->set_gate_cid(gate_cid);
 		player->set_player_cid(player_cid);
+		MASTER_MANAGER->bind_role_id_master_player(msg.player_info.role_id, *player);
 		player->load_player(msg.player_info);
 		player->sign_in();
-		MASTER_MANAGER->bind_role_id_master_player(msg.player_info.role_id, *player);
-		MASTER_MANAGER->bind_gate_cid_master_player(gate_cid * 10000 + player_cid, *player);
-		MASTER_MANAGER->bind_role_name_master_player(msg.player_info.role_name, *player);
-	}
-	return 0;
-}
-
-int Master_Client_Messager::gate_master_player_signout(int gate_cid, int player_cid) {
-	int cid = gate_cid * 10000 + player_cid;
-	Master_Player *player = MASTER_MANAGER->find_gate_cid_master_player(cid);
-	if (player) {
-		player->link_close();
 	}
 	return 0;
 }
