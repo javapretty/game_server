@@ -8,7 +8,7 @@
 #ifndef DB_DEFINITION_H_
 #define DB_DEFINITION_H_
 
-#include "xml.h"
+#include "Xml.h"
 #include "Block_Buffer.h"
 #include "mongo/client/dbclient.h"
 #include <vector>
