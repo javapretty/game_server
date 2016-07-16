@@ -9,6 +9,7 @@
 #include "Game_Manager.h"
 #include "Game_Server.h"
 #include "Game_Connector.h"
+#include "Log_Connector.h"
 #include "Game_Client_Messager.h"
 #include "Game_Inner_Messager.h"
 
@@ -84,6 +85,15 @@ int Game_Manager::send_to_db(Block_Buffer &buf) {
 		return -1;
 	}
 	return GAME_DB_CONNECTOR->send_block(db_cid, buf);
+}
+
+int Game_Manager::send_to_log(Block_Buffer &buf) {
+	int log_cid = LOG_CONNECTOR->get_cid();
+	if (log_cid < 2) {
+		LOG_INFO("db_cid = %d", log_cid);
+		return -1;
+	}
+	return LOG_CONNECTOR->send_block(log_cid, buf);
 }
 
 int Game_Manager::close_client(int gate_cid, int player_cid, int error_code) {

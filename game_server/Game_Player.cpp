@@ -107,6 +107,7 @@ int Game_Player::sign_in() {
 
 int Game_Player::sign_out(void) {
 	LOG_DEBUG("***********delete_game_player %d***********", GAME_MANAGER->game_player_role_id_map().size());
+	sync_signout_to_log();
 	sync_signout_to_master();
 	save_player(true);
 	reset();
@@ -123,13 +124,30 @@ void Game_Player::reset(void) {
 	player_info_.reset();
 }
 
+int Game_Player::sync_signout_to_log(void) {
+	Block_Buffer buf;
+	buf.make_inner_message(SYNC_LOG_LOGINOUT);
+	MSG_180001 msg;
+	msg.role_id = player_info_.role_id;
+	msg.role_name = player_info_.role_name;
+	msg.account = player_info_.account;
+	msg.level = player_info_.level;
+	msg.client_ip = player_info_.client_ip;
+	msg.login_time = player_info_.last_sign_in_time;
+	msg.logout_time = player_info_.last_sign_out_time;
+	msg.online_time = player_info_.last_sign_out_time - player_info_.last_sign_in_time;
+	msg.serialize(buf);
+	buf.finish_message();
+	return GAME_MANAGER->send_to_log(buf);
+}
+
 int Game_Player::sync_signin_to_master(void) {
 	Block_Buffer buf;
 	buf.make_player_message(SYNC_GAME_MASTER_PLYAER_SIGNIN, 0, player_cid_);
 	MSG_160000 msg;
 	msg.player_info.role_id = player_info_.role_id;
 	msg.player_info.account = player_info_.account;
-	msg.player_info.role_name =player_info_.role_name;
+	msg.player_info.role_name = player_info_.role_name;
 	msg.player_info.level = player_info_.level;
 	msg.player_info.gender = player_info_.gender;
 	msg.player_info.career = player_info_.career;
@@ -155,9 +173,7 @@ int Game_Player::sync_data_to_master(int msg_id, Block_Buffer *buf){
 	buffer.write_int64(player_info_.role_id);
 	buffer.copy(buf);
 	buffer.finish_message();
-	GAME_MANAGER->send_to_master(buffer);
-
-	return 0;
+	return GAME_MANAGER->send_to_master(buffer);
 }
 
 int Game_Player::respond_role_login(void) {

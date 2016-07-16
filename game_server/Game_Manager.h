@@ -58,6 +58,7 @@ public:
 	int send_to_gate(int gate_cid, Block_Buffer &buf);
 	int send_to_master(Block_Buffer &buf);
 	int send_to_db(Block_Buffer &buf);
+	int send_to_log(Block_Buffer &buf);
 	/// 关闭客户端连接
 	int close_client(int gate_cid, int player_cid, int error_code);
 	/// 主动关闭处理
