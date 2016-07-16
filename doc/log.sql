@@ -1,15 +1,15 @@
-CREATE DATABASE IF NOT EXISTS `back_stream` DEFAULT CHARACTER SET utf8;
+CREATE DATABASE IF NOT EXISTS `log` DEFAULT CHARACTER SET utf8;
 
-USE `back_stream`;
+USE `log`;
 
-DROP TABLE IF EXISTS `log_test`;
-CREATE TABLE `log_test` (
+DROP TABLE IF EXISTS `test`;
+CREATE TABLE `test` (
   `role_id` int(11),
   `role_name` varchar(120)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `loginout_stream`;
-CREATE TABLE `loginout_stream` (
+DROP TABLE IF EXISTS `loginout`;
+CREATE TABLE `loginout` (
   role_id int(11) ,
   role_name varchar(120), 
   account varchar(120),

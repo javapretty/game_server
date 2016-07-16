@@ -48,7 +48,7 @@ private:
 	void init_collector(void);
 
 	void init_test_collector(void);
-	void init_loginout_stream_collector(void);
+	void init_loginout_collector(void);
 
 private:
 	bool mysql_on_off_;
@@ -65,7 +65,7 @@ private:
 	sql::Connection *conn_;
 
 	Data_Collector test_collector_;
-	Data_Collector loginout_stream_collector_;
+	Data_Collector loginout_collector_;
 	Mysql_DB_Conn* mysql_db_conn_;
 };
 

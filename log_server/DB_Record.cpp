@@ -46,8 +46,8 @@ int DB_Record::set(std::string ip, int port, std::string &user, std::string &pas
 	mysql_port_ = port;
 	mysql_user_ = user;
 	mysql_pw_ = passwd;
-	mysql_dbname_ = "back_stream";
-	mysql_poolname_ = "back_stream_pool";
+	mysql_dbname_ = "log";
+	mysql_poolname_ = "log_pool";
 	return 0;
 }
 
@@ -104,9 +104,9 @@ int DB_Record::tick_collector(Time_Value &now) {
 		execute_collector(test_collector_);
 		test_collector_.reset_used();
 	}
-	if (loginout_stream_collector_.is_timeout(now)) {
-		execute_collector(loginout_stream_collector_);
-		loginout_stream_collector_.reset_used();
+	if (loginout_collector_.is_timeout(now)) {
+		execute_collector(loginout_collector_);
+		loginout_collector_.reset_used();
 	}
 
 	return 0;
@@ -132,19 +132,19 @@ int DB_Record::process_mysql_errcode(int err_code) {
 
 void DB_Record::init_collector(void) {
 	init_test_collector();
-	init_loginout_stream_collector();
+	init_loginout_collector();
 }
 
 void DB_Record::init_test_collector(void) {
-	std::string insert_head("INSERT INTO log_test (role_id,role_name) VALUES");
+	std::string insert_head("INSERT INTO test (role_id,role_name) VALUES");
 	test_collector_.set(insert_head, collector_max_num, collector_timeout);
 }
 
-void DB_Record::init_loginout_stream_collector(void) {
-	std::string insert_head("INSERT INTO loginout_stream "
+void DB_Record::init_loginout_collector(void) {
+	std::string insert_head("INSERT INTO loginout "
 			"(`role_id`,`role_name`,`account`,`level`,`client_ip`,`login_time`,`logout_time`,`online_time`) "
 			"VALUES");
-	loginout_stream_collector_.set(insert_head, collector_max_num, collector_timeout);
+	loginout_collector_.set(insert_head, collector_max_num, collector_timeout);
 }
 
 int DB_Record::process_180000(int msg_id, int status, Block_Buffer &buf) {
@@ -174,7 +174,7 @@ int DB_Record::process_180001(int msg_id, int status, Block_Buffer &buf) {
 	table.logout_time_.data_ = msg.logout_time;
 	table.online_time_.data_ = msg.online_time;
 
-	table.append_insert_content(loginout_stream_collector_);
-	cond_execute_collector(loginout_stream_collector_);
+	table.append_insert_content(loginout_collector_);
+	cond_execute_collector(loginout_collector_);
 	return 0;
 }
