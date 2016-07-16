@@ -1,15 +1,12 @@
 环境：安装Vm 10.0以上版本，Centos 7.0以上版本
 使用root账号进入系统，执行以下步骤
 
-一、从git下载代码
-git clone https://github.com/jice1001/server.git
-
-二、安装eclipse
+一、安装eclipse
 http://www.eclipse.rg/downloads/download.php?file=/technology/epp/downloads/release/mars/1/eclipse-cpp-mars-1-linux-gtk-x86_64.tar.gz
 从这里下载64位eclipse for c++，放到/root 目录下面，执行下面命令
 tar -zxvf eclipse-cpp-mars-1-linux-gtk-x86_64.tar.gz
 
-三、安装openssl
+二、安装openssl
 1、按照boost
     yum install boost  
     yum install boost-devel
@@ -43,7 +40,7 @@ ldconfig
 执行命令查看openssl依赖库版本是否为1.0.1g：
 openssl version
 
-四、安装jsoncpp
+三、安装jsoncpp
 1、tar -jxvf jsoncpp-bin-0.5.0-release.tar.bz2
 2、cd jsoncpp-bin-0.5.0-release
 3、cp -rf include/json /usr/local/include
@@ -63,7 +60,7 @@ python $MYSCONS/script/scons platform=linux-gcc  编译生成相应的库
 cp libs/linux-gcc-4.8.3/libjson_linux-gcc-4.8.3_libmt.a /usr/local/lib  将json库拷贝到系统库文件
 cp libs/linux-gcc-4.8.3/libjson_linux-gcc-4.8.3_libmt.so /usr/local/lib
 
-五、安装mysql
+四、安装mysql
 1. 下载mysql的repo源
 wget http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
 2. 安装mysql-community-release-el7-5.noarch.rpm包
@@ -94,7 +91,7 @@ vim /etc/sysconfig/iptables
 systemctl restart firewalld.service
 这样从其它客户机也可以连接上mysql服务了。
 
-六、安装mongodb（安装到/root/mongodb）
+五、安装mongodb（安装到/root/mongodb）
 1、安装mongodb服务器
 tar -zxvf mongodb-bin-linux-x86_64-3.0.8.tar.gz
 mv mongodb-linux-x86_64-3.0.8 mongodb
@@ -129,7 +126,7 @@ yum install pcre-devel
 编译mongodb  scons --prefix=/usr/mongo --sharedclient install
 将在usr/mongo下生成bin, include, lib目录，lib下包括动态、静态mongoclient库。
 
-七、拷贝netlib库 mysql-connector库  v8库
+六、拷贝netlib库 mysql-connector库  v8库
 进入server/doc目录下面
 1、拷贝netlib
 tar -zxvf libnetlib.tar.gz
