@@ -29,7 +29,6 @@ struct MSG_150104;
 struct MSG_550104;
 struct MSG_150105;
 struct MSG_550105;
-struct MSG_180000;
 struct MSG_180001;
 struct MSG_160000;
 struct MSG_160001;
@@ -236,18 +235,6 @@ struct MSG_550105 : public MSG {
 	void print(void);
 };
 
-struct MSG_180000 : public MSG {
-	int32_t id;	
-	std::string name;	
-
-	MSG_180000(void);
-	~MSG_180000();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
 struct MSG_180001 : public MSG {
 	int64_t role_id;	
 	std::string role_name;	
@@ -256,7 +243,6 @@ struct MSG_180001 : public MSG {
 	std::string client_ip;	
 	int32_t login_time;	
 	int32_t logout_time;	
-	int32_t online_time;	
 
 	MSG_180001(void);
 	~MSG_180001();

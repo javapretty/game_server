@@ -84,13 +84,6 @@
 	</MSG_550105>
 
 <!--Log_Message--> 
-
-	<MSG_180000>
-		<!--后台MySQL数据库插入测试-->
-    	<arg type="int32" value="id"/> 
-    	<arg type="string" value="name"/>
-	</MSG_180000>
-
 	<MSG_180001>
 		<!--后台登录退出流水-->
     	<arg type="int64" value="role_id"/>
@@ -100,7 +93,6 @@
     	<arg type="string" value="client_ip"/>
     	<arg type="int32" value="login_time"/>
     	<arg type="int32" value="logout_time"/>
-    	<arg type="int32" value="online_time"/>
 	</MSG_180001>
 	
 <!--Game_Master_Message-->

@@ -131,40 +131,21 @@ int DB_Record::process_mysql_errcode(int err_code) {
 }
 
 void DB_Record::init_collector(void) {
-	init_test_collector();
 	init_loginout_collector();
-}
-
-void DB_Record::init_test_collector(void) {
-	std::string insert_head("INSERT INTO test (role_id,role_name) VALUES");
-	test_collector_.set(insert_head, collector_max_num, collector_timeout);
 }
 
 void DB_Record::init_loginout_collector(void) {
 	std::string insert_head("INSERT INTO loginout "
-			"(`role_id`,`role_name`,`account`,`level`,`client_ip`,`login_time`,`logout_time`,`online_time`) "
+			"(`role_id`,`role_name`,`account`,`level`,`client_ip`,`login_time`,`logout_time`) "
 			"VALUES");
 	loginout_collector_.set(insert_head, collector_max_num, collector_timeout);
-}
-
-int DB_Record::process_180000(int msg_id, int status, Block_Buffer &buf) {
-	MSG_180000 msg;
-	msg.deserialize(buf);
-
-	Test_Table table;
-	table.role_id_.data_ = msg.id;
-	table.role_name_.data_ = msg.name;
-
-	table.append_insert_content(test_collector_);
-	cond_execute_collector(test_collector_);
-	return 0;
 }
 
 int DB_Record::process_180001(int msg_id, int status, Block_Buffer &buf) {
 	MSG_180001 msg;
 	msg.deserialize(buf);
 
-	Loginout_Stream table;
+	Loginout_Table table;
 	table.role_id_.data_ = msg.role_id;
 	table.role_name_.data_ = msg.role_name;
 	table.account_.data_ = msg.account;
@@ -172,7 +153,6 @@ int DB_Record::process_180001(int msg_id, int status, Block_Buffer &buf) {
 	table.client_ip_.data_ = msg.client_ip;
 	table.login_time_.data_ = msg.login_time;
 	table.logout_time_.data_ = msg.logout_time;
-	table.online_time_.data_ = msg.online_time;
 
 	table.append_insert_content(loginout_collector_);
 	cond_execute_collector(loginout_collector_);

@@ -135,7 +135,6 @@ int Game_Player::sync_signout_to_log(void) {
 	msg.client_ip = player_info_.client_ip;
 	msg.login_time = player_info_.last_sign_in_time;
 	msg.logout_time = player_info_.last_sign_out_time;
-	msg.online_time = player_info_.last_sign_out_time - player_info_.last_sign_in_time;
 	msg.serialize(buf);
 	buf.finish_message();
 	return GAME_MANAGER->send_to_log(buf);

@@ -935,21 +935,6 @@ MSG_550105.prototype.deserialize = function(buffer) {
 	}
 }
 
-function MSG_180000() {
-	this.id = 0;
-	this.name = ""
-}
-
-MSG_180000.prototype.serialize = function(buffer) {
-	buffer.write_int32(this.id);
-	buffer.write_string(this.name);
-}
-
-MSG_180000.prototype.deserialize = function(buffer) {
-	this.id = buffer.read_int32();
-	this.name = buffer.read_string();
-}
-
 function MSG_180001() {
 	this.role_id = 0;
 	this.role_name = ""
@@ -958,7 +943,6 @@ function MSG_180001() {
 	this.client_ip = ""
 	this.login_time = 0;
 	this.logout_time = 0;
-	this.online_time = 0;
 }
 
 MSG_180001.prototype.serialize = function(buffer) {
@@ -969,7 +953,6 @@ MSG_180001.prototype.serialize = function(buffer) {
 	buffer.write_string(this.client_ip);
 	buffer.write_int32(this.login_time);
 	buffer.write_int32(this.logout_time);
-	buffer.write_int32(this.online_time);
 }
 
 MSG_180001.prototype.deserialize = function(buffer) {
@@ -980,7 +963,6 @@ MSG_180001.prototype.deserialize = function(buffer) {
 	this.client_ip = buffer.read_string();
 	this.login_time = buffer.read_int32();
 	this.logout_time = buffer.read_int32();
-	this.online_time = buffer.read_int32();
 }
 
 function MSG_160000() {

@@ -34,7 +34,6 @@ public:
 	void mysql_err_handler(void);
 	void generate_mysql_err_file(void);
 
-	int process_180000(int msg_id, int status, Block_Buffer &buf);
 	int process_180001(int msg_id, int status, Block_Buffer &buf);
 
 private:
@@ -47,7 +46,6 @@ private:
 	int cond_execute_collector(Data_Collector &collector);
 	void init_collector(void);
 
-	void init_test_collector(void);
 	void init_loginout_collector(void);
 
 private:

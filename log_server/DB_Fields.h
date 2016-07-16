@@ -79,14 +79,7 @@ struct Table {
 	virtual void append_insert_handler(Data_Collector &collector) = 0;
 };
 
-struct Test_Table: public Table {
-	My_Fields<int> role_id_;
-	My_Fields<std::string> role_name_;
-
-	virtual void append_insert_handler(Data_Collector &collector);
-};
-
-struct Loginout_Stream: public Table {
+struct Loginout_Table: public Table {
 	My_Fields<int64_t> role_id_;
 	My_Fields<std::string> role_name_;
 	My_Fields<std::string> account_;
@@ -94,7 +87,6 @@ struct Loginout_Stream: public Table {
 	My_Fields<std::string> client_ip_;
 	My_Fields<uint32_t> login_time_;
 	My_Fields<uint32_t> logout_time_;
-	My_Fields<uint32_t> online_time_;
 
 	virtual void append_insert_handler(Data_Collector &collector);
 };

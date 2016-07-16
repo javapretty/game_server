@@ -99,13 +99,9 @@ int Log_Manager::process_block(Block_Buffer &buf) {
 		file_record_.process_log_file_block(buf);
 		break;
 	}
-	case SYNC_LOG_TEST: {
-		db_record_.process_180000(msg_id, status, buf);
-		break;
 	case SYNC_LOG_LOGINOUT: {
 		db_record_.process_180001(msg_id, status, buf);
 		break;
-	}
 	}
 	default: {
 		break;

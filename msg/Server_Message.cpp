@@ -574,35 +574,6 @@ void MSG_550105::print(void) {
 	printf("\n");
 }
 
-MSG_180000::MSG_180000(void) {
-	reset();
-}
-
-MSG_180000::~MSG_180000() {
-}
-
-void MSG_180000::serialize(Block_Buffer &buffer) const {
-	buffer.write_int32(id);
-	buffer.write_string(name);
-}
-
-int MSG_180000::deserialize(Block_Buffer &buffer) {
-	id = buffer.read_int32();
-	name = buffer.read_string();
-	return 0;
-}
-
-void MSG_180000::reset(void) {
-	id = 0;
-	name.clear();
-}
-
-void MSG_180000::print(void) {
-	printf("id: %d, ", id);
-	printf("name: %s, ", name.c_str());
-	printf("\n");
-}
-
 MSG_180001::MSG_180001(void) {
 	reset();
 }
@@ -618,7 +589,6 @@ void MSG_180001::serialize(Block_Buffer &buffer) const {
 	buffer.write_string(client_ip);
 	buffer.write_int32(login_time);
 	buffer.write_int32(logout_time);
-	buffer.write_int32(online_time);
 }
 
 int MSG_180001::deserialize(Block_Buffer &buffer) {
@@ -629,7 +599,6 @@ int MSG_180001::deserialize(Block_Buffer &buffer) {
 	client_ip = buffer.read_string();
 	login_time = buffer.read_int32();
 	logout_time = buffer.read_int32();
-	online_time = buffer.read_int32();
 	return 0;
 }
 
@@ -641,7 +610,6 @@ void MSG_180001::reset(void) {
 	client_ip.clear();
 	login_time = 0;
 	logout_time = 0;
-	online_time = 0;
 }
 
 void MSG_180001::print(void) {
@@ -652,7 +620,6 @@ void MSG_180001::print(void) {
 	printf("client_ip: %s, ", client_ip.c_str());
 	printf("login_time: %d, ", login_time);
 	printf("logout_time: %d, ", logout_time);
-	printf("online_time: %d, ", online_time);
 	printf("\n");
 }
 

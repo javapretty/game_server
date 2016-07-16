@@ -139,7 +139,6 @@ enum Game_Master_Message {
 };
 
 enum LOG_Message {
-	SYNC_LOG_TEST = 180000, //后台MySQL数据库插入测试
 	SYNC_LOG_LOGINOUT = 180001, //后台登录退出流水
 };
 
