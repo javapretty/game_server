@@ -44,7 +44,7 @@ int DB_Manager::init(void) {
 		}
 		db_worker_vec_.push_back(worker);
 	}
-	load_struct("config/structs/game_struct.xml");
+	load_struct("config/struct/game_struct.xml");
 
 	return 0;
 }
@@ -55,9 +55,9 @@ int DB_Manager::load_struct(const char *path){
 	TiXmlNode *node = xml.get_root_node();
 	XML_LOOP_BEGIN(node)
 		DB_Definition *def = new DB_Definition(xml, node);
-		if(def->cmdid() != 0)
-			db_id_definition_map_.insert(std::pair<int32_t, DB_Definition*>(def->cmdid(), def));
-		db_name_definition_map_.insert(std::pair<std::string, DB_Definition*>(def->def_name(), def));
+		if(def->msgid() != 0)
+			db_id_definition_map_.insert(std::pair<int32_t, DB_Definition*>(def->msgid(), def));
+		db_name_definition_map_.insert(std::pair<std::string, DB_Definition*>(def->defname(), def));
 	XML_LOOP_END(node)
 	return 0;
 }

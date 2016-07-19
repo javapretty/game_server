@@ -1,0 +1,363 @@
+<root>
+<!--客户端与服务端通信消息类型在此定义-->
+	
+	<MSG_300000>
+		<!--服务器主动断开连接-->
+	</MSG_300000>
+
+	<MSG_300001>
+		<!--更新玩家信息-->
+    	<arg type="int32" name="player_level"/>
+    	<arg type="int32" name="player_exp"/>
+	</MSG_300001>
+
+	<MSG_300002>
+		<!--更新vip信息-->
+    	<arg type="int32" name="vip_level"/>
+    	<arg type="int32" name="vip_exp"/>
+	</MSG_300002>
+
+	<MSG_300100>
+		<!--金钱更新-->
+    	<arg type="int32" name="copper"/>
+    	<arg type="int32" name="gold"/>
+	</MSG_300100>
+
+	<MSG_300101>
+		<!--物品信息更新-->
+    	<vector type="Item_Info" name="item_info"/>
+	</MSG_300101>
+
+	<MSG_300200>
+		<!--邮件信息更新-->
+    	<vector type="Mail_Detail" name="mail_info"/>
+	</MSG_300200>
+
+	<MSG_300300>
+		<!--英雄属性信息更新-->
+    	<vector type="Property_Detail" name="property_info"/>
+	</MSG_300300>
+
+	<MSG_120001>
+		<!--获取角色信息-->
+    	<arg type="string" name="account"/>
+    	<arg type="int64" name="role_id"/>
+    	<arg type="string" name="timestamp"/>
+    	<arg type="string" name="ip"/>
+    	<arg type="int32" name="agent_num"/>
+    	<arg type="int32" name="server_num"/>
+	</MSG_120001>
+
+	<MSG_520001>
+    	<struct type="Role_Info" name="role_info"/>
+	</MSG_520001>
+
+	<MSG_120002>
+		<!--创建角色-->
+    	<arg type="string" name="account"/>
+    	<arg type="string" name="role_name"/>
+    	<arg type="uint8" name="gender"/>
+    	<arg type="int32" name="agent_num"/>
+    	<arg type="int32" name="server_num"/>
+	</MSG_120002>
+
+	<MSG_520002>
+    	<arg type="int64" name="role_id"/>
+	</MSG_520002>
+
+	<MSG_120003>
+		<!--购买体力-->
+	</MSG_120003>
+
+	<MSG_520003>
+    	<arg type="int32" name="vitality"/>
+	</MSG_520003>
+
+	<MSG_120004>
+		<!--聚宝盆兑换铜币-->
+	</MSG_120004>
+
+	<MSG_520004>
+		<arg type="int32" name="copper"/>
+	</MSG_520004>
+
+	<MSG_120100>
+		<!--获取背包信息-->
+	</MSG_120100>
+
+	<MSG_520100>
+    	<vector type="Item_Info" name="item_info"/>
+	</MSG_520100>
+
+	<MSG_120101>
+		<!--使用物品-->
+    	<struct type="Item_Info" name="item"/>
+	</MSG_120101>
+
+	<MSG_520101>
+	</MSG_520101>
+
+	<MSG_120102>
+		<!--出售物品-->
+	    <struct type="Item_Info" name="item"/>
+	</MSG_120102>
+
+	<MSG_520102>
+	</MSG_520102>
+
+	<MSG_120200>
+		<!--获取邮件信息-->
+	</MSG_120200>
+
+	<MSG_520200>
+    	<vector type="Mail_Detail" name="mail_info"/>
+	</MSG_520200>
+
+	<MSG_120201>
+		<!--收取附件-->
+	    <arg type="int32" name="mail_id" desc="邮件ID,收取所有邮件附件时候id为0"/>
+	</MSG_120201>
+
+	<MSG_520201>
+    	<vector type="int32" name="mail_id_info" desc="成功收取附件的邮件id"/>
+	</MSG_520201>
+
+	<MSG_120202>
+		<!--删除邮件-->
+	    <arg type="int32" name="mail_id" desc="邮件ID,删除所有邮件时候id为0"/>
+	</MSG_120202>
+
+	<MSG_520202>
+	    <vector type="int32" name="mail_id_info" desc="删除的邮件ID数组"/>
+	</MSG_520202>
+
+	<MSG_120203>
+		<!--发送邮件-->
+	    <arg type="string" name="receiver_name"/>
+	    <struct type="Mail_Detail" name="mail_detail"/>
+	</MSG_120203>
+
+	<MSG_520203>
+	</MSG_520203>
+
+	<MSG_120300>
+		<!--获取英雄信息-->
+	</MSG_120300>
+
+	<MSG_520300>
+	    <vector type="Hero_Detail" name="hero_info"/>
+	</MSG_520300>
+
+	<MSG_120301>
+		<!--提高英雄星级-->
+	    <arg type="int32" name="hero_id"/>
+	</MSG_120301>
+
+	<MSG_520301>
+	    <arg type="int32" name="hero_id"/>
+	    <arg type="int32" name="star" desc="英雄星级"/>
+	</MSG_520301>
+
+	<MSG_120302>
+		<!--提高英雄品质-->
+	    <arg type="int32" name="hero_id"/>
+	</MSG_120302>
+
+	<MSG_520302>
+	    <arg type="int32" name="hero_id"/>
+	    <arg type="int32" name="quality" desc="英雄品质等级"/>
+	</MSG_520302>
+
+	<MSG_120303>
+		<!--提高英雄装备等级-->
+	    <arg type="int32" name="hero_id"/>
+	    <arg type="int32" name="equip_index" desc="装备位置索引"/>
+	    <vector type="Item_Info" name="item_info" desc="喂掉的装备列表"/>
+	</MSG_120303>
+
+	<MSG_520303>
+	    <arg type="int32" name="hero_id"/>
+	    <arg type="int32" name="equip_index"/>
+	    <arg type="int32" name="equip_level"/>
+	    <arg type="int32" name="equip_exp"/>
+	</MSG_520303>
+
+	<MSG_120304>
+		<!--英雄装备穿脱-->
+	    <arg type="int32" name="hero_id"/>
+	    <arg type="int32" name="equip_index" desc="装备位置索引"/>
+	    <arg type="bool" name="on" desc="true表示穿，false表示脱"/>
+	    <struct type="Item_Info" name="equip_info" desc="装备信息"/>
+	</MSG_120304>
+
+	<MSG_520304>
+	    <arg type="int32" name="hero_id"/>
+	    <arg type="int32" name="equip_index" desc="装备位置索引"/>
+	    <arg type="bool" name="on" desc="true表示穿，false表示脱"/>
+	    <struct type="Item_Info" name="equip_info" desc="装备信息"/>
+	</MSG_520304>
+
+	<MSG_120305>
+		<!--提高英雄技能等级-->
+	    <arg type="int32" name="hero_id"/>
+	    <arg type="int32" name="skill_id"/>
+	</MSG_120305>
+
+	<MSG_520305>
+	    <arg type="int32" name="hero_id"/>
+	    <arg type="int32" name="skill_id"/>
+	</MSG_520305>
+
+	<MSG_120306>
+		<!--增加英雄经验-->
+	    <arg type="int32" name="exp"/>
+	</MSG_120306>
+
+	<MSG_520306>
+	</MSG_520306>
+
+	<MSG_120400>
+		<!--获取商店列表-->
+	    <arg type="int32" name="shopype" desc="商店类型"/>
+	</MSG_120400>
+
+	<MSG_520400>
+	    <struct type="Shop_Detail" name="shop"/>
+	</MSG_520400>
+
+	<MSG_120401>
+		<!--购买商店物品-->
+	    <arg type="int32" name="shopype" desc="商店类型"/>
+	    <arg type="int32" name="product_id"/>
+	    <arg type="int32" name="amount"/>
+	</MSG_120401>
+
+	<MSG_520401>
+	</MSG_520401>
+
+	<MSG_120402>
+	    <arg type="int32" name="shopype" desc="商店类型"/>
+	</MSG_120402>
+
+	<MSG_520402>
+	</MSG_520402>
+
+	<MSG_100000>
+		<!--注册-->
+	    <arg type="string" name="account"/>
+	    <arg type="string" name="password"/>
+	</MSG_100000>
+
+	<MSG_500000>
+	    <arg type="string" name="ip" desc="gate_ip"/>
+	    <arg type="int32" name="port" desc="gate_port"/>
+	    <arg type="string" name="session"/>
+	</MSG_500000>
+
+	<MSG_100001>
+		<!--登录-->
+	    <arg type="string" name="account"/>
+	    <arg type="string" name="password"/>
+	</MSG_100001>
+
+	<MSG_500001>
+   		<arg type="string" name="ip" desc="gate_ip"/>
+    	<arg type="int32" name="port" desc="gate_port"/>
+    	<arg type="string" name="session"/>
+	</MSG_500001>
+
+	<MSG_100002>
+		<!--客户端登录gate-->
+    	<arg type="string" name="account"/>
+    	<arg type="string" name="session" desc="登录验证的seesion"/>
+	</MSG_100002>
+
+	<MSG_500002>
+    	<arg type="string" name="account"/>
+	</MSG_500002>
+
+	<MSG_100003>
+		<!--心跳-->
+    	<arg type="int32" name="client_time"/>
+	</MSG_100003>
+
+	<MSG_500003>
+	    <arg type="int32" name="client_time"/>
+	    <arg type="int32" name="server_time"/>
+	</MSG_500003>
+
+	<!--MASTER_SERVER通信-->
+
+	<MSG_110001>
+		<!--发送世界聊天-->
+	    <arg type="int8" name="chatype" desc="1世界聊天2私聊3帮派聊天4队伍聊天"/>
+	    <arg type="string" name="chat_content"/>
+    	<arg type="string" name="role_name" desc="私聊时候发送对方名字"/>
+	</MSG_110001>
+
+	<MSG_510001>
+	    <arg type="int8" name="chatype"/>
+	    <arg type="string" name="chat_content"/>
+	    <arg type="string" name="role_name"/>
+	    <arg type="int32" name="gender"/>
+	    <arg type="int32" name="career"/>
+	    <arg type="int32" name="vip_level"/>
+	</MSG_510001>
+
+	<MSG_110101>
+		<!--申请创建公会-->
+	    <arg type="string" name="guild_name"/>
+	</MSG_110101>
+
+	<MSG_510101>
+	    <arg type="int64" name="guild_id"/>
+	</MSG_510101>
+
+	<MSG_110102>
+		<!--申请解散工会-->
+	    <arg type="int64" name="guild_id"/>
+	</MSG_110102>
+
+	<MSG_510102>
+	    <arg type="int64" name="guild_id"/>
+	</MSG_510102>
+
+	<MSG_110103>
+		<!--申请加入公会-->
+   		<arg type="int64" name="guild_id"/>
+	</MSG_110103>
+
+	<MSG_510103>
+	</MSG_510103>
+
+	<MSG_110104>
+		<!--允许加入公会-->
+    	<arg type="int64" name="guild_id"/>
+    	<arg type="int64" name="role_id"/>
+    	<arg type="bool" name="allow" desc="允许加入(true)或拒绝加入(false)"/>
+	</MSG_110104>
+
+	<MSG_510104>
+	</MSG_510104>
+
+	<MSG_110105>
+		<!--踢出帮会-->
+    	<arg type="int64" name="guild_id"/>
+    	<arg type="int64" name="role_id"/>
+	</MSG_110105>
+
+	<MSG_510105>
+	</MSG_510105>
+
+	<MSG_110201>
+		<!--拉取排行榜信息-->
+	    <arg type="int32" name="type"/>
+	</MSG_110201>
+
+	<MSG_510201>
+		<arg type="int32" name="rank_type"/>
+		<arg type="int32" name="self_rank"/>
+	  <vector type="Rank_Member" name="rank_list"/>
+	</MSG_510201>
+
+</root>

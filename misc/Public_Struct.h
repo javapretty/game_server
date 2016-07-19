@@ -20,8 +20,11 @@ enum	 {
 	ROLE_SAVE_OFFLINE,	/// 角色下线保存
 };
 
-struct Ip_Info;
-struct Login_Player_Info;
+struct Field_Info {
+	std::string field_label;
+	std::string field_type;
+	std::string field_name;
+};
 
 struct Server_Conf {
 	Time_Value server_sleep_time;

@@ -15,7 +15,7 @@ require('timer.js');
 require('master_player.js');
 require('guild.js');
 require('offline.js');
-require('rank_manager.js');
+require('rank.js');
 
 //cid----master_player  全局玩家对象
 var master_player_cid_map = new Map();
@@ -31,7 +31,7 @@ var guild_manager = new Guild();
 //离线管理器
 var offline_manager = new Offline();
 //排行榜
-var rank_manager = new Rank_Manager();
+var rank_manager = new Rank();
 
 //定时器管理器
 var timer = new Timer();
@@ -57,7 +57,6 @@ function main() {
 			all_empty = false;
 			var master_player = new Master_Player();
 			master_player.load_player_data(buffer);
-			//offline_manager.fetch_offline_msg(master_player);
 		}
 	
 		//获得下线玩家的cid

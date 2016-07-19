@@ -1,0 +1,142 @@
+<root>
+<!--服务器内部消息在此定义-->
+	<MSG_150000>
+		<!--加载db_cache-->
+	</MSG_150000>
+
+	<MSG_550000>
+    	<vector type="Player_DB_Cache" name="db_cache_vec"/>
+	</MSG_550000>
+
+	<MSG_150001>
+		<!--加载玩家信息-->
+    	<struct type="Account_Info" name="account_info"/>
+	</MSG_150001>
+
+	<MSG_550001>
+	</MSG_550001>
+
+	<MSG_150002>
+		<!--创建玩家-->
+    	<struct type="Game_Player_Info" name="player_info"/>
+	</MSG_150002>
+
+	<MSG_550002>
+	</MSG_550002>
+
+	<MSG_150003>
+		<!--保存玩家信息-->
+	</MSG_150003>
+
+	<MSG_550003>
+    	<arg type="int64" name="role_id"/>
+	</MSG_550003>
+
+	<MSG_150004>
+		<!--保存邮件信息-->
+    	<arg type="int64" name="role_id"/>
+    	<struct type="Mail_Detail" name="mail_detail"/>
+	</MSG_150004>
+
+	<MSG_150008>
+		<!--删除数据库信息-->
+    	<arg type="string" name="table_name" desc="删除数据表名称"/>
+    	<vector type="int64" name="delete_list"/>
+	</MSG_150008>
+
+<!--MASTER到DB的消息-->
+
+	<MSG_150101>
+		<!--拉取数据库信息-->
+	</MSG_150101>
+
+	<MSG_150102>
+		<!--删除数据库信息-->
+    	<arg type="string" name="table_name" desc="删除数据表名称"/>
+    	<vector type="int64" name="delete_list"/>
+	</MSG_150102>
+
+	<MSG_150103>
+		<!--保存公会信息-->
+    	<vector type="Guild_Info" name="guild_list"/>
+	</MSG_150103>
+
+	<MSG_550103>
+    	<vector type="Guild_Info" name="guild_list"/>
+	</MSG_550103>
+
+	<MSG_150104>
+		<!--保存离线信息-->
+    	<vector type="Offline_Info" name="offline_list"/>
+	</MSG_150104>
+
+	<MSG_550104>
+    	<vector type="Offline_Info" name="offline_list"/>
+	</MSG_550104>
+
+	<MSG_150105>
+		<!--保存排行榜信息-->
+    	<vector type="Rank_Info" name="rank_list"/>
+	</MSG_150105>
+
+	<MSG_550105>
+    	<vector type="Rank_Info" name="rank_list"/>
+	</MSG_550105>
+
+<!--Log_Message--> 
+	<MSG_180001>
+		<!--后台登录退出流水-->
+    	<arg type="int64" name="role_id"/>
+    	<arg type="string" name="role_name"/>
+    	<arg type="string" name="account"/>
+    	<arg type="uint16" name="level"/>
+    	<arg type="string" name="client_ip"/>
+    	<arg type="int32" name="login_time"/>
+    	<arg type="int32" name="logout_time"/>
+	</MSG_180001>
+	
+<!--Game_Master_Message-->
+
+	<MSG_160000>
+    	<struct type="Master_Player_Info" name="player_info"/>
+	</MSG_160000>
+
+	<MSG_160001>
+    	<arg type="int64" name="role_id"/>
+	</MSG_160001>
+
+	<MSG_160100> 		
+		<!--master通知game设置公会信息-->
+    	<arg type="int64" name="guild_id"/>
+    	<arg type="string" name="guild_name"/>
+	</MSG_160100>
+
+	<MSG_165000>
+    	<arg type="int32" name="level"/>
+	</MSG_165000>
+	
+<!--Gate_Message-->
+
+	<MSG_140000>
+		<!--gate->login校验玩家-->
+    	<arg type="string" name="account"/>
+    	<arg type="string" name="session"/>
+    	<arg type="string" name="gate_ip"/>
+    	<arg type="int32" name="gate_port"/>
+	</MSG_140000>
+
+	<MSG_140001>
+		<!--login->gate校验玩家结果-->
+    	<arg type="string" name="account"/>
+	</MSG_140001>
+
+	<MSG_140100>
+		<!--gate同步玩家下线到game-->
+	</MSG_140100>
+
+	<MSG_140200>
+		<!--gate同步玩家上线到master-->
+    	<struct type="Master_Player_Info" name="player_info"/>
+	</MSG_140200>
+
+</root>

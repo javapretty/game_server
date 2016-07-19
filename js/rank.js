@@ -4,11 +4,11 @@
 *	时间：2016/05/25
 */
 
-function Rank_Manager() {
+function Rank() {
 	this.rank_map = new Map();
 }
 
-Rank_Manager.prototype.load_data = function(buffer){
+Rank.prototype.load_data = function(buffer){
 	print('load rank_manager data, util.now_msec:', util.now_msec());
 	var msg = new MSG_550105();
 	msg.deserialize(buffer);
@@ -19,7 +19,7 @@ Rank_Manager.prototype.load_data = function(buffer){
 	}
 }
 
-Rank_Manager.prototype.save_data = function(){
+Rank.prototype.save_data = function(){
 	var msg = new MSG_150105();
 	this.rank_map.each(function(key,value,index) {
 		msg.rank_list.push(value);
@@ -32,7 +32,7 @@ Rank_Manager.prototype.save_data = function(){
 	push_master_buffer(buf);
 }
 
-Rank_Manager.prototype.fetch_rank_info = function(player, buffer) {
+Rank.prototype.fetch_rank_info = function(player, buffer) {
 	print('fetch rank info, util.now_msec:', util.now_msec());
 	var msg = new MSG_110201();
 	msg.deserialize(buffer);
@@ -60,18 +60,18 @@ Rank_Manager.prototype.fetch_rank_info = function(player, buffer) {
 	push_master_buffer(buf);
 }
 
-Rank_Manager.prototype.update_rank_level = function(player) {
+Rank.prototype.update_rank_level = function(player) {
 	this.update_rank(Rank_Type.LEVEL_RANK, player);
 }
 
-Rank_Manager.prototype.get_player_value = function(type, player){
+Rank.prototype.get_player_value = function(type, player){
 	//按照类型获取player对应数值
 	return (type == Rank_Type.LEVEL_RANK) ? player.player_info.level :
 			(type == Rank_Type.BATTLE_RANK) ? -1 :
 			-1;
 }
 
-Rank_Manager.prototype.update_rank = function(type, player){
+Rank.prototype.update_rank = function(type, player){
 	var rank_info = this.rank_map.get(type);
 	if(rank_info == null){
 		rank_info = new Rank_Info();
@@ -115,7 +115,7 @@ Rank_Manager.prototype.update_rank = function(type, player){
 	
 }
 
-Rank_Manager.prototype.refresh_min_value = function(rank_info){
+Rank.prototype.refresh_min_value = function(rank_info){
 	rank_info.min_value = 0x7fffffff;
 	rank_info.member_map.each(function(key,value,index) {
 		if(value.value < rank_info.min_value){
