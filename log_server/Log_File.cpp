@@ -1,5 +1,5 @@
 /*
- * File_Record.cpp
+ * Log_File.cpp
  *
  *  Created on: 2016年3月1日
  *      Author: zhangyalei
@@ -14,21 +14,21 @@
 #include <sstream>
 #include "Log.h"
 #include "Block_Buffer.h"
-#include "File_Record.h"
 #include "Time_Value.h"
+#include "Log_File.h"
 
-File_Record::File_Record(void) { }
+Log_File::Log_File(void) { }
 
-File_Record::~File_Record(void) { }
+Log_File::~Log_File(void) { }
 
-void File_Record::make_log_dir(void) {
+void Log_File::make_log_dir(void) {
 	int ret = mkdir("./log", 0775);
 	if (ret == -1 && errno != EEXIST) {
 		perror("mkdir error");
 	}
 }
 
-int File_Record::make_log_filepath(File_Info &file_info) {
+int Log_File::make_log_filepath(File_Info &file_info) {
 	time_t time_v = file_info.tv.sec();
 	struct tm tm_v;
 	localtime_r(&time_v, &tm_v);
@@ -80,11 +80,11 @@ int File_Record::make_log_filepath(File_Info &file_info) {
 	return 0;
 }
 
-int File_Record::get_key_val(int type, int sub_type) {
+int Log_File::get_key_val(int type, int sub_type) {
 	return type * 1000 + sub_type;
 }
 
-int File_Record::logging_file(int log_type, int log_sub_type, std::string &log_str) {
+int Log_File::logging_file(int log_type, int log_sub_type, std::string &log_str) {
 	File_Info *file_info = 0;
 	int key = get_key_val(log_type, log_sub_type);
 
@@ -125,7 +125,7 @@ int File_Record::logging_file(int log_type, int log_sub_type, std::string &log_s
 	return 0;
 }
 
-int File_Record::process_log_file_block(Block_Buffer &buf) {
+int Log_File::process_log_file_block(Block_Buffer &buf) {
 	int log_type = buf.read_int32();
 	int log_sub_type = buf.read_int32();
 	std::string log_str = buf.read_string();

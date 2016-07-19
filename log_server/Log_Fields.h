@@ -1,12 +1,12 @@
 /*
- * DB_Fields.h
+ * Log_Fields.h
  *
  *  Created on: 2016年3月1日
  *      Author: zhangyalei
  */
 
-#ifndef MY_DB_FIELDS_H_
-#define MY_DB_FIELDS_H_
+#ifndef LOG_FIELDS_H_
+#define LOG_FIELDS_H_
 
 #include "Time_Value.h"
 #include <stdint.h>
@@ -91,4 +91,4 @@ struct Loginout_Table: public Table {
 	virtual void append_insert_handler(Data_Collector &collector);
 };
 
-#endif /* MY_DB_FIELDS_H_ */
+#endif /* LOG_FIELDS_H_ */

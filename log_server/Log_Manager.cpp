@@ -5,13 +5,13 @@
  *      Author: zhangyalei
  */
 
+#include <sys/stat.h>
 #include "Log.h"
 #include "Log_Timer.h"
 #include "Log_Manager.h"
 #include "Log_Server.h"
 #include "Server_Config.h"
 #include "Msg_Define.h"
-#include <sys/stat.h>
 
 Log_Manager::Log_Manager(void) { }
 
@@ -35,8 +35,8 @@ int Log_Manager::init(void) {
 	std::string mysql_user(server_misc["mysql_server"]["user"].asString());
 	std::string mysql_pw(server_misc["mysql_server"]["password"].asString());
 
-	db_record_.set(mysql_ip.c_str(), mysql_port, mysql_user, mysql_pw);
-	db_record_.init();
+	log_db_.set(mysql_ip.c_str(), mysql_port, mysql_user, mysql_pw);
+	log_db_.init();
 
 	LOG_TIMER->thr_create();
 
@@ -96,11 +96,11 @@ int Log_Manager::process_block(Block_Buffer &buf) {
 
 	switch (msg_id) {
 	case 999999: {
-		file_record_.process_log_file_block(buf);
+		log_file_.process_log_file_block(buf);
 		break;
 	}
 	case SYNC_LOG_LOGINOUT: {
-		db_record_.process_180001(msg_id, status, buf);
+		log_db_.process_180001(msg_id, status, buf);
 		break;
 	}
 	default: {
@@ -112,7 +112,7 @@ int Log_Manager::process_block(Block_Buffer &buf) {
 
 int Log_Manager::tick(void) {
 	Time_Value now(Time_Value::gettimeofday());
-	db_record_.tick(now);
+	log_db_.tick(now);
 
 	return 0;
 }

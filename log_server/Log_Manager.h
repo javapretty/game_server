@@ -8,12 +8,12 @@
 #ifndef LOG_MANAGER_H_
 #define LOG_MANAGER_H_
 
+#include <Log_DB.h>
+#include <Log_File.h>
 #include "Thread.h"
 #include "Thread_Mutex.h"
 #include "List.h"
 #include "Block_Buffer.h"
-#include "File_Record.h"
-#include "DB_Record.h"
 
 class Log_Manager: public Thread {
 public:
@@ -45,8 +45,8 @@ private:
 	Block_List block_list_;
 	Tick_List tick_list_;
 
-	File_Record file_record_;
-	DB_Record db_record_;
+	Log_File log_file_;
+	Log_DB log_db_;
 };
 
 #define LOG_MANAGER Log_Manager::instance()

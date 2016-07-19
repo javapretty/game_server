@@ -1,14 +1,10 @@
 /*
- * DB_Record.cpp
+ * Log_DB.cpp
  *
  *  Created on: 2016年3月1日
  *      Author: zhangyalei
  */
 
-#include "DB_Record.h"
-#include "Server_Config.h"
-#include "Block_Buffer.h"
-#include "Log.h"
 #include <mysql_connection.h>
 #include <mysql_driver.h>
 #include <cppconn/driver.h>
@@ -16,32 +12,29 @@
 #include <cppconn/resultset.h>
 #include <cppconn/statement.h>
 #include <cppconn/prepared_statement.h>
+#include "Log_DB.h"
 #include "Msg_Define.h"
+#include "Server_Config.h"
+#include "Block_Buffer.h"
+#include "Log.h"
 
-DB_Record::DB_Record(void)
+Log_DB::Log_DB(void)
 : mysql_on_off_(true),
   mysql_port_(0),
-  mysql_err_times_(0),
   driver_(0),
   conn_(0),
   mysql_db_conn_(NULL)
 { }
 
 
-DB_Record::~DB_Record(void) {
+Log_DB::~Log_DB(void) {
 	MYSQL_DB_MANAGER->RelDBConn(mysql_db_conn_);
 }
 
-#ifdef LOCAL_DEBUG
-const int DB_Record::collector_max_num = 5;
-const Time_Value DB_Record::collector_timeout = Time_Value(20, 0);
-#else
-const int DB_Record::collector_max_num = 1000;
-const Time_Value DB_Record::collector_timeout = Time_Value(5, 0);
-#endif
-const int DB_Record::mysql_err_max_times = 20;
+const int Log_DB::collector_max_num = 5;
+const Time_Value Log_DB::collector_timeout = Time_Value(5, 0);
 
-int DB_Record::set(std::string ip, int port, std::string &user, std::string &passwd) {
+int Log_DB::set(std::string ip, int port, std::string &user, std::string &passwd) {
 	mysql_ip_ = ip;
 	mysql_port_ = port;
 	mysql_user_ = user;
@@ -51,7 +44,7 @@ int DB_Record::set(std::string ip, int port, std::string &user, std::string &pas
 	return 0;
 }
 
-int DB_Record::init(void) {
+int Log_DB::init(void) {
 	mysql_on_off_ = true;
 	MYSQL_DB_MANAGER->Init(mysql_ip_, mysql_port_, mysql_user_, mysql_pw_, mysql_dbname_, mysql_poolname_, 16);
 	mysql_db_conn_ = MYSQL_DB_MANAGER->GetDBConn(mysql_poolname_);
@@ -60,50 +53,27 @@ int DB_Record::init(void) {
 	return 0;
 }
 
-int DB_Record::tick(Time_Value &now) {
+int Log_DB::tick(Time_Value &now) {
 	tick_collector(now);
 	return 0;
 }
 
-void DB_Record::mysql_err_handler(void) {
-	if (++mysql_err_times_ > mysql_err_max_times) {
-		generate_mysql_err_file();
-		mysql_err_times_ = 0;
-	}
-}
-
-void DB_Record::generate_mysql_err_file(void) {
-	FILE *fp = fopen("./mysql_err", "w");
-	if (! fp) {
-		LOG_ERROR("fopen mysql_err error");
-		return;
-	}
-	fclose(fp);
-}
-
-int DB_Record::execute_collector(Data_Collector &collector) {
-	if (! mysql_on_off_) /// MySQL off
+int Log_DB::execute_collector(Data_Collector &collector) {
+	if (! mysql_on_off_)
 		return -1;
-	//add
+
 	try {
 		LOG_DEBUG("execute SQL=[%s]", collector.sql_str_.c_str());
 		mysql_db_conn_->Execute(collector.sql_str_.c_str());
 	} catch (sql::SQLException &e) {
-		int err_code = e.getErrorCode();
-		LOG_ERROR("SQLException, MySQL Error Code = %d, SQLState = [%s], [%s]", err_code, e.getSQLState().c_str(), e.what());
-		mysql_err_handler();
-		process_mysql_errcode(err_code);
+		LOG_ERROR("SQLException, MySQL Error Code = %d, SQLState = [%s], [%s]", e.getErrorCode(), e.getSQLState().c_str(), e.what());
 		return -1;
 	}
 
 	return 0;
 }
 
-int DB_Record::tick_collector(Time_Value &now) {
-	if (test_collector_.is_timeout(now)) {
-		execute_collector(test_collector_);
-		test_collector_.reset_used();
-	}
+int Log_DB::tick_collector(Time_Value &now) {
 	if (loginout_collector_.is_timeout(now)) {
 		execute_collector(loginout_collector_);
 		loginout_collector_.reset_used();
@@ -112,7 +82,7 @@ int DB_Record::tick_collector(Time_Value &now) {
 	return 0;
 }
 
-int DB_Record::cond_execute_collector(Data_Collector &collector) {
+int Log_DB::cond_execute_collector(Data_Collector &collector) {
 	if (collector.num_ > collector.max_num_) {
 		execute_collector(collector);
 		collector.reset_used();
@@ -120,28 +90,18 @@ int DB_Record::cond_execute_collector(Data_Collector &collector) {
 	return 0;
 }
 
-int DB_Record::process_mysql_errcode(int err_code) {
-	switch (err_code) {
-	default : {
-		break;
-	}
-	}
-
-	return 0;
-}
-
-void DB_Record::init_collector(void) {
+void Log_DB::init_collector(void) {
 	init_loginout_collector();
 }
 
-void DB_Record::init_loginout_collector(void) {
+void Log_DB::init_loginout_collector(void) {
 	std::string insert_head("INSERT INTO loginout "
 			"(`role_id`,`role_name`,`account`,`level`,`client_ip`,`login_time`,`logout_time`) "
 			"VALUES");
 	loginout_collector_.set(insert_head, collector_max_num, collector_timeout);
 }
 
-int DB_Record::process_180001(int msg_id, int status, Block_Buffer &buf) {
+int Log_DB::process_180001(int msg_id, int status, Block_Buffer &buf) {
 	MSG_180001 msg;
 	msg.deserialize(buf);
 

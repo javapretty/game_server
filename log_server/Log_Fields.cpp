@@ -1,12 +1,12 @@
 /*
- * My_DB_Fields.h
+ * Log_Fields.h
  *
  *  Created on: 2016年3月1日
  *      Author: zhangyalei
  */
 
-#include <DB_Fields.h>
-#include "DB_Record.h"
+#include "Log_DB.h"
+#include "Log_Fields.h"
 
 void Loginout_Table::append_insert_handler(Data_Collector &collector) {
 	collector.sql_str_ += "(";

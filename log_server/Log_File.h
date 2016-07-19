@@ -1,12 +1,12 @@
 /*
- * File_Record.h
+ * Log_File.h
  *
  *  Created on: 2016年3月1日
  *      Author: zhangyalei
  */
 
-#ifndef FILE_RECORD_H_
-#define FILE_RECORD_H_
+#ifndef LOG_FILE_H_
+#define LOG_FILE_H_
 
 #include "Time_Value.h"
 #include "boost/unordered_map.hpp"
@@ -19,12 +19,12 @@ struct File_Info {
 	FILE *fp;
 };
 
-class File_Record {
+class Log_File {
 public:
 	typedef boost::unordered_map<int, File_Info> File_Info_Map;
 
-	File_Record(void);
-	virtual ~File_Record(void);
+	Log_File(void);
+	virtual ~Log_File(void);
 
 	int process_log_file_block(Block_Buffer &buf);
 
@@ -39,4 +39,4 @@ private:
 	File_Info_Map file_info_map_;
 };
 
-#endif /* FILE_RECORD_H_ */
+#endif /* LOG_FILE_H_ */
