@@ -97,7 +97,7 @@ struct Close_Info {
 struct Msg_Info {
 	bool is_inited;
 	int cid;
-	unsigned int hash_key;								/// 用于加解密的hash key
+	int hash_key;								/// 用于加解密的hash key
 	uint32_t msg_serial;					/// 上一条消息序号
 	Time_Value msg_timestamp;			/// 上一条消息时间戳
 	uint32_t msg_interval_count_;	/// 操作频率统计
