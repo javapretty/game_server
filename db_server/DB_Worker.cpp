@@ -15,49 +15,49 @@ DB_Worker::DB_Worker(void) { }
 DB_Worker::~DB_Worker(void) { }
 
 int DB_Worker::load_player_data(int64_t role_id, Block_Buffer &buffer) {
-	DB_Definition *player_def = DB_MANAGER->get_player_data_definition();
+	DB_Struct *player_def = DB_MANAGER->get_player_data_struct();
 	for(std::vector<Field_Info>::iterator iter = player_def->field_vec().begin();
 			iter != player_def->field_vec().end(); iter++){
-		DB_Manager::DB_Name_Definition_Map::iterator it = DB_MANAGER->db_name_definition_map().find((*iter).field_type);
-		if(it == DB_MANAGER->db_name_definition_map().end()){
+		DB_Manager::DB_Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find((*iter).field_type);
+		if(it == DB_MANAGER->db_struct_name_map().end()){
 			LOG_ERROR("Can not find the module %s", (*iter).field_type.c_str());
 			return -1;
 		}
-		DB_Definition *def = it->second;
+		DB_Struct *def = it->second;
 		def->load_data(role_id, buffer);
 	}
 	return 0;
 }
 
-int DB_Worker::save_player_data(Block_Buffer &buffer) {
-	DB_Definition *role_def = DB_MANAGER->get_player_data_definition();
+int DB_Worker::create_player_data(int64_t role_id) {
+	DB_Struct *role_def = DB_MANAGER->get_player_data_struct();
 	for(std::vector<Field_Info>::iterator iter = role_def->field_vec().begin();
 			iter != role_def->field_vec().end(); iter++){
-		std::string type_name = (*iter).field_type;
-		DB_Manager::DB_Name_Definition_Map::iterator it = DB_MANAGER->db_name_definition_map().find(type_name);
-		if(it == DB_MANAGER->db_name_definition_map().end()){
-			LOG_ERROR("Can not find the module %s", type_name.c_str());
+		DB_Manager::DB_Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find((*iter).field_type);
+		if((*iter).field_type == "Game_Player_Info")
+			continue;
+		if(it == DB_MANAGER->db_struct_name_map().end()){
+			LOG_ERROR("Can not find the module %s", (*iter).field_type.c_str());
 			return -1;
 		}
-		DB_Definition *def = it->second;
-		def->save_data(buffer);
+		DB_Struct *def = it->second;
+		def->create_data(role_id);
 	}
 	return 0;
 }
 
-int DB_Worker::init_player_table(int64_t role_id) {
-	DB_Definition *role_def = DB_MANAGER->get_player_data_definition();
+int DB_Worker::save_player_data(Block_Buffer &buffer) {
+	DB_Struct *role_def = DB_MANAGER->get_player_data_struct();
 	for(std::vector<Field_Info>::iterator iter = role_def->field_vec().begin();
 			iter != role_def->field_vec().end(); iter++){
-		DB_Manager::DB_Name_Definition_Map::iterator it = DB_MANAGER->db_name_definition_map().find((*iter).field_type);
-		if((*iter).field_type == "Game_Player_Info")
-			continue;
-		if(it == DB_MANAGER->db_name_definition_map().end()){
-			LOG_ERROR("Can not find the module %s", (*iter).field_type.c_str());
+		std::string type_name = (*iter).field_type;
+		DB_Manager::DB_Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find(type_name);
+		if(it == DB_MANAGER->db_struct_name_map().end()){
+			LOG_ERROR("Can not find the module %s", type_name.c_str());
 			return -1;
 		}
-		DB_Definition *def = it->second;
-		def->init_table(role_id);
+		DB_Struct *def = it->second;
+		def->save_data(buffer);
 	}
 	return 0;
 }
@@ -142,22 +142,22 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 	case SYNC_MASTER_DB_DELETE_DATA:
 	case SYNC_GAME_DB_DELETE_DATA: {
 		std::string msg_type = buf->read_string();
-		DB_Manager::DB_Name_Definition_Map::iterator iter = DB_MANAGER->db_name_definition_map().find(msg_type);
-		if(iter == DB_MANAGER->db_name_definition_map().end()){
+		DB_Manager::DB_Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(msg_type);
+		if(iter == DB_MANAGER->db_struct_name_map().end()){
 			LOG_ERROR("Can not find the module %s", msg_type.c_str());
 			break;
 		}
-		DB_Definition *def = iter->second;
+		DB_Struct *def = iter->second;
 		def->delete_data(*buf);
 		break;
 	}
 	default: {
-		DB_Manager::DB_Id_Definition_Map::iterator iter = DB_MANAGER->db_id_definition_map().find(msg_id);
-		if(iter == DB_MANAGER->db_id_definition_map().end()){
+		DB_Manager::DB_Struct_Id_Map::iterator iter = DB_MANAGER->db_struct_id_map().find(msg_id);
+		if(iter == DB_MANAGER->db_struct_id_map().end()){
 			LOG_ERROR("Can not find the msg_id %d", msg_id);
 			break;
 		}
-		DB_Definition *def = iter->second;
+		DB_Struct *def = iter->second;
 		def->save_data_vector(*buf);
 		break;
 	}
@@ -203,7 +203,7 @@ int DB_Worker::process_create_player(int cid, Game_Player_Info &player_info) {
 	} else {
 		status = SUCCESS_CREATED;
 		//创建所有玩家表
-		init_player_table(player_info.role_id);
+		create_player_data(player_info.role_id);
 	}
 	buf.write_int32(status);
 	load_player_data(player_info.role_id, buf);
@@ -236,20 +236,20 @@ int DB_Worker::process_save_player(int cid, Block_Buffer &buffer) {
 }
 
 int DB_Worker::process_load_public_data(int cid, Block_Buffer &buffer) {
-	DB_Definition *public_data = DB_MANAGER->get_public_data_definition();
+	DB_Struct *public_data = DB_MANAGER->get_public_data_struct();
 
 	for(std::vector<Field_Info>::iterator iter = public_data->field_vec().begin();
 				iter != public_data->field_vec().end(); iter++){
 		std::string type_name = (*iter).field_type;
-		DB_Manager::DB_Name_Definition_Map::iterator it = DB_MANAGER->db_name_definition_map().find(type_name);
-		if(it == DB_MANAGER->db_name_definition_map().end()){
+		DB_Manager::DB_Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find(type_name);
+		if(it == DB_MANAGER->db_struct_name_map().end()){
 			LOG_ERROR("Can not find the module %s", type_name.c_str());
 			return -1;
 		}
 
-		DB_Definition *def = it->second;
+		DB_Struct *def = it->second;
 		Block_Buffer buf;
-		buf.make_inner_message(def->msgid() + 400000);
+		buf.make_inner_message(def->msg_id() + 400000);
 		def->load_data(0, buf);
 		buf.finish_message();
 		DB_MANAGER->send_data_block(cid, buf);

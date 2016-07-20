@@ -13,11 +13,21 @@
 #include "Server_Message.h"
 
 enum	 {
-	SUCCESS_LOADED = 1,			/// 加载成功
-	SUCCESS_CREATED,		/// 创建成功
-	ROLE_NOT_EXIST,			/// 角色不存在
-	ROLE_HAS_EXIST,			///	角色已经存在
-	ROLE_SAVE_OFFLINE,	/// 角色下线保存
+	SUCCESS_LOADED = 1,		//加载成功
+	SUCCESS_CREATED,			//创建成功
+	ROLE_NOT_EXIST,				//角色不存在
+	ROLE_HAS_EXIST,				//	角色已经存在
+	ROLE_SAVE_OFFLINE,		//角色下线保存
+};
+
+enum Server_Type {
+	MULTI_THREAD = 1,			//多线程
+	MULTI_PROCESS = 2,		//多进程
+};
+
+enum DB_Type {
+	MONGODB = 1,
+	MYSQL = 2,
 };
 
 struct Field_Info {

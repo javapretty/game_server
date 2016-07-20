@@ -119,9 +119,9 @@ int DB_Operator::create_index(void) {
 		CACHED_CONNECTION.createIndex("mmo.role", BSON("account" << 1 << "level" << -1));
 	}
 	{
-		for(DB_Manager::DB_Id_Definition_Map::iterator iter = DB_MANAGER->db_id_definition_map().begin();
-				iter != DB_MANAGER->db_id_definition_map().end(); iter++){
-			CACHED_CONNECTION.createIndex(iter->second->dbname(), BSON(iter->second->index() << 1));
+		for(DB_Manager::DB_Struct_Id_Map::iterator iter = DB_MANAGER->db_struct_id_map().begin();
+				iter != DB_MANAGER->db_struct_id_map().end(); iter++){
+			CACHED_CONNECTION.createIndex(iter->second->db_name(), BSON(iter->second->index() << 1));
 		}
 	}
 	return 0;

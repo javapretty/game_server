@@ -8,21 +8,19 @@
 #ifndef DB_MANAGER_H_
 #define DB_MANAGER_H_
 
+#include "DB_Struct.h"
 #include "DB_Worker.h"
-#include "DB_Definition.h"
 #include "Log.h"
 #include "Object_Pool.h"
 #include "Block_Buffer.h"
 #include "Thread_Mutex.h"
-#include <vector>
-#include <map>
 
 class DB_Manager {
 public:
 	typedef Object_Pool<DB_Worker, Thread_Mutex> DB_Worker_Pool;
 	typedef std::vector<DB_Worker *> DB_Worker_Vector;
-	typedef std::map<int32_t, DB_Definition *> DB_Id_Definition_Map;
-	typedef std::map<std::string, DB_Definition *> DB_Name_Definition_Map;
+	typedef boost::unordered_map<int32_t, DB_Struct *> DB_Struct_Id_Map;
+	typedef boost::unordered_map<std::string, DB_Struct *> DB_Struct_Name_Map;
 
 	static DB_Manager *instance(void);
 	static void destroy(void);
@@ -36,11 +34,11 @@ public:
 	void object_pool_size(void);
 	void free_pool_cache(void);
 
-	DB_Name_Definition_Map& db_name_definition_map();
-	DB_Id_Definition_Map& db_id_definition_map();
+	DB_Struct_Id_Map& db_struct_id_map();
+	DB_Struct_Name_Map& db_struct_name_map();
 
-	DB_Definition *get_player_data_definition();
-	DB_Definition *get_public_data_definition();
+	DB_Struct *get_player_data_struct();
+	DB_Struct *get_public_data_struct();
 
 private:
 	DB_Manager(void);
@@ -58,8 +56,8 @@ private:
 
 	DB_Worker_Pool db_worker_pool_;
 	DB_Worker_Vector db_worker_vec_;
-	DB_Id_Definition_Map db_id_definition_map_;
-	DB_Name_Definition_Map db_name_definition_map_;
+	DB_Struct_Id_Map db_struct_id_map_;
+	DB_Struct_Name_Map db_struct_name_map_;
 };
 
 #define DB_MANAGER DB_Manager::instance()
@@ -73,20 +71,20 @@ inline void DB_Manager::free_pool_cache(void) {
 	db_worker_pool_.shrink_all();
 }
 
-inline DB_Manager::DB_Name_Definition_Map& DB_Manager::db_name_definition_map(){
-	return db_name_definition_map_;
+inline DB_Manager::DB_Struct_Name_Map& DB_Manager::db_struct_name_map(){
+	return db_struct_name_map_;
 }
 
-inline DB_Manager::DB_Id_Definition_Map& DB_Manager::db_id_definition_map(){
-	return db_id_definition_map_;
+inline DB_Manager::DB_Struct_Id_Map& DB_Manager::db_struct_id_map(){
+	return db_struct_id_map_;
 }
 
-inline DB_Definition *DB_Manager::get_player_data_definition(){
-	return db_name_definition_map_.find("Player_Data")->second;
+inline DB_Struct *DB_Manager::get_player_data_struct(){
+	return db_struct_name_map_.find("Player_Data")->second;
 }
 
-inline DB_Definition *DB_Manager::get_public_data_definition(){
-	return db_name_definition_map_.find("Public_Data")->second;
+inline DB_Struct *DB_Manager::get_public_data_struct(){
+	return db_struct_name_map_.find("Public_Data")->second;
 }
 
 #endif /* DB_MANAGER_H_ */

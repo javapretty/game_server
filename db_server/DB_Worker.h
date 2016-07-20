@@ -32,8 +32,8 @@ public:
 
 	//玩家数据处理
 	int load_player_data(int64_t role_id, Block_Buffer &buffer);
+	int create_player_data(int64_t role_id);
 	int save_player_data(Block_Buffer &buffer);
-	int init_player_table(int64_t role_id);
 
 	/// 通用消息
 	int push_data_block(Block_Buffer *buf);

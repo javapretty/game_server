@@ -1,5 +1,6 @@
 {
-	"server_type" : 2,			
+	"server_type" : 2,
+	"db_type" : 1,			
 	"server_label" : "test", 
 	"game_open_time" : 1381370400,
 	"gate_md5_key" : "",
@@ -31,7 +32,6 @@
 			"port" : 7507
 		}
     },
-
 	"server_list" : [
         {
 			"agent_num" : 1,			

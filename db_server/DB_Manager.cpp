@@ -5,10 +5,13 @@
  *      Author: zhangyalei
  */
 
+#include "Server_Config.h"
 #include "Msg_Define.h"
 #include "DB_Server.h"
 #include "DB_Manager.h"
 #include "DB_Operator.h"
+#include "Mongo_Struct.h"
+#include "Mysql_Struct.h"
 
 DB_Manager::DB_Manager(void) :
 	load_player_num_(0),
@@ -44,20 +47,30 @@ int DB_Manager::init(void) {
 		}
 		db_worker_vec_.push_back(worker);
 	}
-	load_struct("config/struct/game_struct.xml");
 
+	load_struct("config/struct/game_struct.xml");
 	return 0;
 }
 
 int DB_Manager::load_struct(const char *path){
+	int db_type = SERVER_CONFIG->server_misc()["db_type"].asInt();
 	Xml xml;
 	xml.load_xml(path);
 	TiXmlNode *node = xml.get_root_node();
 	XML_LOOP_BEGIN(node)
-		DB_Definition *def = new DB_Definition(xml, node);
-		if(def->msgid() != 0)
-			db_id_definition_map_.insert(std::pair<int32_t, DB_Definition*>(def->msgid(), def));
-		db_name_definition_map_.insert(std::pair<std::string, DB_Definition*>(def->defname(), def));
+		DB_Struct *def = nullptr;
+		if (db_type == MONGODB)	{
+			def = new Mongo_Struct(xml, node);
+		} else if (db_type == MYSQL) {
+			def = new Mysql_Struct(xml, node);
+		} else {
+			LOG_FATAL("db init type = %d error abort", db_type);
+		}
+
+		if(def->msg_id() != 0) {
+			db_struct_id_map_.insert(std::pair<int32_t, DB_Struct*>(def->msg_id(), def));
+		}
+		db_struct_name_map_.insert(std::pair<std::string, DB_Struct*>(def->struct_name(), def));
 	XML_LOOP_END(node)
 	return 0;
 }
