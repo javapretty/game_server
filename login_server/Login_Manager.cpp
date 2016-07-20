@@ -66,7 +66,7 @@ int Login_Manager::init_gate_ip(void) {
 }
 
 void Login_Manager::get_gate_ip(std::string &account, std::string &ip, int &port) {
-	long hash = elf_hash(account.c_str(), account.size());
+	unsigned int hash = elf_hash(account.c_str(), account.size());
 	int index = hash % (gate_ip_vec_.size());
 	ip = gate_ip_vec_[index].ip;
 	port = gate_ip_vec_[index].port;
