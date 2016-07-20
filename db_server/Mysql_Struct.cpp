@@ -5,8 +5,8 @@
  *      Author: zhangyalei
  */
 
+#include "Mysql_Operator.h"
 #include "Mysql_Struct.h"
-#include "DB_Operator.h"
 #include "DB_Manager.h"
 
 Mysql_Struct::Mysql_Struct(Xml &xml, TiXmlNode *node) : DB_Struct(xml, node){}

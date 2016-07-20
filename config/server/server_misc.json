@@ -8,15 +8,33 @@
 	"server_num" : 1,				
 	"game_server_js_path" : "js/game_server.js",
 	"master_server_js_path" : "js/master_server.js",
-	"mongodb_server" : {
+	"mongodb_game" : {
 		"ip" : "127.0.0.1",
 		"port" : 27017
 	},
-	"mysql_server" : {
+	"mysql_game" : {
 		"ip" : "127.0.0.1",
 		"port" : 3306,
 		"user" : "root",
-		"password" : "123456"
+		"password" : "123456",
+		"dbname" : "game",
+		"dbpoolname" : "game_pool"
+	},
+	"mysql_account" : {
+		"ip" : "127.0.0.1",
+		"port" : 3306,
+		"user" : "root",
+		"password" : "123456",
+		"dbname" : "account",
+		"dbpoolname" : "account_pool"
+	},
+	"mysql_log" : {
+		"ip" : "127.0.0.1",
+		"port" : 3306,
+		"user" : "root",
+		"password" : "123456",
+		"dbname" : "log",
+		"dbpoolname" : "log_pool"
 	},
 	"gate_server_list" : {
 		"0" : {

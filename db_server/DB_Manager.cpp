@@ -5,11 +5,11 @@
  *      Author: zhangyalei
  */
 
+#include <Mongo_Operator.h>
 #include "Server_Config.h"
 #include "Msg_Define.h"
 #include "DB_Server.h"
 #include "DB_Manager.h"
-#include "DB_Operator.h"
 #include "Mongo_Struct.h"
 #include "Mysql_Struct.h"
 
@@ -37,7 +37,7 @@ void DB_Manager::destroy(void) {
 }
 
 int DB_Manager::init(void) {
-	CACHED_INSTANCE->init();
+	MONGO_INSTANCE->init();
 
 	DB_Worker *worker = 0;
 	for (int i = 0; i < 10; ++i) {

@@ -26,17 +26,18 @@ Log_Manager *Log_Manager::instance(void) {
 }
 
 int Log_Manager::init(void) {
-	const Json::Value &server_misc = SERVER_CONFIG->server_misc();
-	if (server_misc == Json::Value::null) {
+	const Json::Value &mysql_log = SERVER_CONFIG->server_misc()["mysql_log"];
+	if (mysql_log == Json::Value::null) {
 		LOG_FATAL("server_misc config error");
 	}
-	std::string mysql_ip(server_misc["mysql_server"]["ip"].asString());
-	int mysql_port = server_misc["mysql_server"]["port"].asInt();
-	std::string mysql_user(server_misc["mysql_server"]["user"].asString());
-	std::string mysql_pw(server_misc["mysql_server"]["password"].asString());
 
-	log_db_.set(mysql_ip.c_str(), mysql_port, mysql_user, mysql_pw);
-	log_db_.init();
+	std::string ip(mysql_log["ip"].asString());
+	int port = mysql_log["port"].asInt();
+	std::string user(mysql_log["user"].asString());
+	std::string password(mysql_log["password"].asString());
+	std::string dbname(mysql_log["dbname"].asString());
+	std::string dbpoolname(mysql_log["dbpoolname"].asString());
+	log_db_.init(ip, port, user, password, dbname, dbpoolname);
 
 	LOG_TIMER->thr_create();
 

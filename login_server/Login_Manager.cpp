@@ -322,19 +322,19 @@ void Login_Manager::print_msg_count(void) {
 }
 
 int Login_Manager::connect_mysql_db() {
-	const Json::Value &server_misc = SERVER_CONFIG->server_misc();
-	if (server_misc == Json::Value::null) {
+	const Json::Value &mysql_account = SERVER_CONFIG->server_misc()["mysql_account"];
+	if (mysql_account == Json::Value::null) {
 		LOG_FATAL("server_misc config error");
 	}
-	std::string mysql_ip(server_misc["mysql_server"]["ip"].asString());
-	int mysql_port = server_misc["mysql_server"]["port"].asInt();
-	std::string mysql_user(server_misc["mysql_server"]["user"].asString());
-	std::string mysql_pw(server_misc["mysql_server"]["password"].asString());
-	std::string db_name("account");
-	std::string pool_name("account_pool");
+	std::string ip(mysql_account["ip"].asString());
+	int port = mysql_account["port"].asInt();
+	std::string user(mysql_account["user"].asString());
+	std::string password(mysql_account["password"].asString());
+	std::string dbname(mysql_account["dbname"].asString());
+	std::string dbpoolname(mysql_account["dbpoolname"].asString());
 
-	MYSQL_DB_MANAGER->Init(mysql_ip, mysql_port, mysql_user, mysql_pw, db_name, pool_name, 16);
-	mysql_db_conn_ = MYSQL_DB_MANAGER->GetDBConn(pool_name);
+	MYSQL_DB_MANAGER->Init(ip, port, user, password, dbname, dbpoolname, 16);
+	mysql_db_conn_ = MYSQL_DB_MANAGER->GetDBConn(dbpoolname);
 	return 0;
 }
 

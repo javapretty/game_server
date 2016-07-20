@@ -5,24 +5,12 @@
  *      Author: zhangyalei
  */
 
-#include <mysql_connection.h>
-#include <mysql_driver.h>
-#include <cppconn/driver.h>
-#include <cppconn/exception.h>
-#include <cppconn/resultset.h>
-#include <cppconn/statement.h>
-#include <cppconn/prepared_statement.h>
 #include "Log_DB.h"
 #include "Msg_Define.h"
-#include "Server_Config.h"
-#include "Block_Buffer.h"
 #include "Log.h"
 
 Log_DB::Log_DB(void)
 : mysql_on_off_(true),
-  mysql_port_(0),
-  driver_(0),
-  conn_(0),
   mysql_db_conn_(NULL)
 { }
 
@@ -34,19 +22,10 @@ Log_DB::~Log_DB(void) {
 const int Log_DB::collector_max_num = 5;
 const Time_Value Log_DB::collector_timeout = Time_Value(5, 0);
 
-int Log_DB::set(std::string ip, int port, std::string &user, std::string &passwd) {
-	mysql_ip_ = ip;
-	mysql_port_ = port;
-	mysql_user_ = user;
-	mysql_pw_ = passwd;
-	mysql_dbname_ = "log";
-	mysql_poolname_ = "log_pool";
-	return 0;
-}
-
-int Log_DB::init(void) {
+int Log_DB::init(std::string &ip, int port, std::string &user, std::string &password, std::string &dbname, std::string &dbpoolname) {
 	mysql_on_off_ = true;
-	MYSQL_DB_MANAGER->Init(mysql_ip_, mysql_port_, mysql_user_, mysql_pw_, mysql_dbname_, mysql_poolname_, 16);
+	mysql_poolname_ = dbpoolname;
+	MYSQL_DB_MANAGER->Init(ip, port, user, password, dbname, dbpoolname, 16);
 	mysql_db_conn_ = MYSQL_DB_MANAGER->GetDBConn(mysql_poolname_);
 	init_collector();
 

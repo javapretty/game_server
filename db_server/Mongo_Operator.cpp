@@ -1,31 +1,28 @@
 /*
- * DB_Operator_A.cpp
+ * Mongo_Operator.cpp
  *
  *  Created on: Dec 29, 2015
  *      Author: zhangyalei
  */
 
 #include "Msg_Define.h"
-#include "DB_Operator.h"
+#include "Mongo_Operator.h"
 #include "Server_Config.h"
 #include "DB_Manager.h"
-#include "mongo/client/dbclient.h"
 
-using namespace mongo;
+Mongo_Operator::Mongo_Operator(void) : agent_num_(0), server_num_(0) { }
 
-DB_Operator::DB_Operator(void) : agent_num_(0), server_num_(0), agent_and_server_prefix_(0), min_server_diff_key_(0), max_server_diff_key_(0){ }
+Mongo_Operator::~Mongo_Operator(void) { }
 
-DB_Operator::~DB_Operator(void) { }
+Mongo_Operator *Mongo_Operator::instance_;
 
-DB_Operator *DB_Operator::instance_;
-
-DB_Operator *DB_Operator::instance(void) {
+Mongo_Operator *Mongo_Operator::instance(void) {
 	if (instance_ == 0)
-		instance_ = new DB_Operator;
+		instance_ = new Mongo_Operator;
 	return instance_;
 }
 
-DBClientConnection &DB_Operator::connection(void) {
+DBClientConnection &Mongo_Operator::connection(void) {
 	GUARD(MUTEX, mon, connection_map_lock_);
 
 	const int64_t thread_key = pthread_self();
@@ -36,13 +33,13 @@ DBClientConnection &DB_Operator::connection(void) {
 
 		std::string err_msg;
 		std::stringstream host_stream;
-		const Json::Value &mongodb_server = SERVER_CONFIG->server_misc()["mongodb_server"];
-		if (mongodb_server == Json::Value::null) {
-			LOG_FATAL("server_misc config cannot find mongodb_server");
+		const Json::Value &mongodb_game = SERVER_CONFIG->server_misc()["mongodb_game"];
+		if (mongodb_game == Json::Value::null) {
+			LOG_FATAL("server_misc config cannot find mongodb_game");
 		}
-		host_stream << (mongodb_server["ip"].asString());
-		if (mongodb_server.isMember("port")) {
-			host_stream << ":" << (mongodb_server["port"].asInt());
+		host_stream << (mongodb_game["ip"].asString());
+		if (mongodb_game.isMember("port")) {
+			host_stream << ":" << (mongodb_game["port"].asInt());
 		}
 		conn->connect(host_stream.str().c_str(), err_msg);
 		connection_map_[thread_key] = conn;
@@ -53,7 +50,7 @@ DBClientConnection &DB_Operator::connection(void) {
   return *conn;
 }
 
-int DB_Operator::init(void) {
+int Mongo_Operator::init(void) {
 	/// 创建所有索引
 	this->create_index();
 
@@ -90,45 +87,42 @@ int DB_Operator::init(void) {
 		LOG_FATAL("agent_num = %d, server_num = %d, config error", agent_num_, server_num_);
 		return -1;
 	}
-	agent_and_server_prefix_ = agent_num_ * 10000000000000L + server_num_ * 1000000000L;
-	min_server_diff_key_ = agent_and_server_prefix_ + 1;
-	max_server_diff_key_ = agent_and_server_prefix_ + 999999999L;
 
 	return 0;
 }
 
-int DB_Operator::create_index(void) {
+int Mongo_Operator::create_index(void) {
 	{//global
-		CACHED_CONNECTION.createIndex("mmo.global", BSON("key" << 1));
+		MONGO_CONNECTION.createIndex("mmo.global", BSON("key" << 1));
 
-		if (CACHED_CONNECTION.count("mmo.global", BSON("key" << "role")) == 0) {
+		if (MONGO_CONNECTION.count("mmo.global", BSON("key" << "role")) == 0) {
 			BSONObjBuilder builder;
 			builder << "key" << "role" << "id" << 0;
 
-			CACHED_CONNECTION.update("mmo.global", MONGO_QUERY("key" << "role"),
+			MONGO_CONNECTION.update("mmo.global", MONGO_QUERY("key" << "role"),
 					BSON("$set" << builder.obj()), true);
 		}
 	}
 	{
 		//role
-		CACHED_CONNECTION.createIndex("mmo.role", BSON("role_id" << 1));
-		CACHED_CONNECTION.createIndex("mmo.role", BSON("role_name" << 1));
-		CACHED_CONNECTION.createIndex("mmo.role", BSON("account" << 1));
+		MONGO_CONNECTION.createIndex("mmo.role", BSON("role_id" << 1));
+		MONGO_CONNECTION.createIndex("mmo.role", BSON("role_name" << 1));
+		MONGO_CONNECTION.createIndex("mmo.role", BSON("account" << 1));
 
-		CACHED_CONNECTION.createIndex("mmo.role", BSON("account" << 1 << "agent_num" << 1 << "server_num" << 1));
-		CACHED_CONNECTION.createIndex("mmo.role", BSON("account" << 1 << "level" << -1));
+		MONGO_CONNECTION.createIndex("mmo.role", BSON("account" << 1 << "agent_num" << 1 << "server_num" << 1));
+		MONGO_CONNECTION.createIndex("mmo.role", BSON("account" << 1 << "level" << -1));
 	}
 	{
 		for(DB_Manager::DB_Struct_Id_Map::iterator iter = DB_MANAGER->db_struct_id_map().begin();
 				iter != DB_MANAGER->db_struct_id_map().end(); iter++){
-			CACHED_CONNECTION.createIndex(iter->second->db_name(), BSON(iter->second->index() << 1));
+			MONGO_CONNECTION.createIndex(iter->second->db_name(), BSON(iter->second->index() << 1));
 		}
 	}
 	return 0;
 }
 
-int DB_Operator::load_db_cache(int cid) {
-	unsigned long long res_count = CACHED_CONNECTION.count("mmo.role");
+int Mongo_Operator::load_db_cache(int cid) {
+	unsigned long long res_count = MONGO_CONNECTION.count("mmo.role");
 	BSONObjBuilder field_builder;
 	field_builder << "role_id" << 1
 					<< "account" << 1
@@ -144,7 +138,7 @@ int DB_Operator::load_db_cache(int cid) {
 	std::vector<BSONObj> iter_record;
 	iter_record.reserve(res_count);
 
-	CACHED_CONNECTION.findN(iter_record, "mmo.role", mongo::Query(), res_count, 0, &field_bson);
+	MONGO_CONNECTION.findN(iter_record, "mmo.role", mongo::Query(), res_count, 0, &field_bson);
 
 	MSG_550000 msg;
 	for (std::vector<BSONObj>::iterator iter = iter_record.begin(); iter != iter_record.end(); ++iter) {
@@ -170,7 +164,7 @@ int DB_Operator::load_db_cache(int cid) {
 	return 0;
 }
 
-int64_t DB_Operator::create_init_player(Game_Player_Info &player_info) {
+int64_t Mongo_Operator::create_init_player(Game_Player_Info &player_info) {
 	player_info.agent_num = player_info.agent_num ? player_info.agent_num : 1;
 	player_info.server_num = player_info.server_num ? player_info.server_num : 1;
 
@@ -189,7 +183,7 @@ int64_t DB_Operator::create_init_player(Game_Player_Info &player_info) {
 	}
 
 	BSONObj fields = BSON("account" << 1 << "role_id" << 1 << "role_name" << 1);
-	BSONObj res = CACHED_CONNECTION.findOne("mmo.role",
+	BSONObj res = MONGO_CONNECTION.findOne("mmo.role",
 			MONGO_QUERY("role_name" << player_info.role_name), &fields);
 
 	if (!res.isEmpty()) {
@@ -198,7 +192,7 @@ int64_t DB_Operator::create_init_player(Game_Player_Info &player_info) {
 	}
 
 	BSONObj cmd = fromjson("{findandmodify:'global', query:{key:'role'}, update:{$inc:{id:1}}}");
-	if (CACHED_CONNECTION.runCommand("mmo", cmd, res) == false) {
+	if (MONGO_CONNECTION.runCommand("mmo", cmd, res) == false) {
 		LOG_INFO("increase role key failed.");
 		return -1;
 	}
@@ -210,7 +204,7 @@ int64_t DB_Operator::create_init_player(Game_Player_Info &player_info) {
 
 	player_info.role_id = role_id;
 	int now_sec = Time_Value::gettimeofday().sec();
-	CACHED_CONNECTION.update("mmo.role", MONGO_QUERY("role_id" << ((long long int)role_id)), BSON("$set" <<
+	MONGO_CONNECTION.update("mmo.role", MONGO_QUERY("role_id" << ((long long int)role_id)), BSON("$set" <<
 			BSON("role_id" << (long long int)role_id
 					<< "agent_num" << player_info.agent_num
 					<< "server_num" << player_info.server_num
@@ -224,8 +218,8 @@ int64_t DB_Operator::create_init_player(Game_Player_Info &player_info) {
 	return role_id;
 }
 
-bool DB_Operator::has_role_by_account(std::string &account, const int agent_num, const int server_num) {
-	BSONObj res = CACHED_CONNECTION.findOne("mmo.role", MONGO_QUERY("account" << account << "agent_num" << agent_num << "server_num" << server_num));
+bool Mongo_Operator::role_exist(std::string &account, const int agent_num, const int server_num) {
+	BSONObj res = MONGO_CONNECTION.findOne("mmo.role", MONGO_QUERY("account" << account << "agent_num" << agent_num << "server_num" << server_num));
 	if (res.isEmpty()) {
 		return false;
 	} else {
@@ -233,10 +227,10 @@ bool DB_Operator::has_role_by_account(std::string &account, const int agent_num,
 	}
 }
 
-int64_t DB_Operator::get_role_id(const std::string &account, const int agent_num, const int server_num) {
-	BSONObj res = CACHED_CONNECTION.findOne("mmo.role", MONGO_QUERY("account" << account << "agent_num" << agent_num << "server_num" << server_num));
+int64_t Mongo_Operator::get_role_id(const std::string &account, const int agent_num, const int server_num) {
+	BSONObj res = MONGO_CONNECTION.findOne("mmo.role", MONGO_QUERY("account" << account << "agent_num" << agent_num << "server_num" << server_num));
 	if (res.isEmpty()) {
-		res = CACHED_CONNECTION.findOne("mmo.role", MONGO_QUERY("account" << account).sort(BSON("level" << -1)));
+		res = MONGO_CONNECTION.findOne("mmo.role", MONGO_QUERY("account" << account).sort(BSON("level" << -1)));
 		if (!res.isEmpty()) {
 			return res["role_id"].numberLong();
 		}

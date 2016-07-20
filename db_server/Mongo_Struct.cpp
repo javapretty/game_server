@@ -5,8 +5,8 @@
  *      Author: zhangyalei
  */
 
+#include "Mongo_Operator.h"
 #include "Mongo_Struct.h"
-#include "DB_Operator.h"
 #include "DB_Manager.h"
 
 Mongo_Struct::Mongo_Struct(Xml &xml, TiXmlNode *node) : DB_Struct(xml, node){}
@@ -27,19 +27,19 @@ void Mongo_Struct::create_data(int64_t index){
 			create_data_struct(*iter, set_builder);
 		}
 	}
-	CACHED_CONNECTION.update(db_name_, MONGO_QUERY(index_ << (long long int)index),
+	MONGO_CONNECTION.update(db_name_, MONGO_QUERY(index_ << (long long int)index),
 				BSON("$set" << set_builder.obj() ), true);
 }
 
 void Mongo_Struct::load_data(int64_t index, Block_Buffer &buffer){
 	std::vector<BSONObj> total_record;
 	if(index == 0){
-		int total_count = CACHED_CONNECTION.count(db_name_);
+		int total_count = MONGO_CONNECTION.count(db_name_);
 		if(total_count > 0)
-			CACHED_CONNECTION.findN(total_record, db_name_, Query(), total_count);
+			MONGO_CONNECTION.findN(total_record, db_name_, Query(), total_count);
 	}
 	else {
-		BSONObj obj = CACHED_CONNECTION.findOne(db_name_, MONGO_QUERY(index_ << (long long int)index));
+		BSONObj obj = MONGO_CONNECTION.findOne(db_name_, MONGO_QUERY(index_ << (long long int)index));
 		total_record.push_back(obj);
 	}
 
@@ -78,7 +78,7 @@ void Mongo_Struct::save_data(Block_Buffer &buffer){
 			build_bson_struct(*iter, buffer, set_builder);
 		}
 	}
-	CACHED_CONNECTION.update(db_name_, MONGO_QUERY(index_ << (long long int)index_value),
+	MONGO_CONNECTION.update(db_name_, MONGO_QUERY(index_ << (long long int)index_value),
 			BSON("$set" << set_builder.obj() ), true);
 }
 
@@ -95,7 +95,7 @@ void Mongo_Struct::delete_data(Block_Buffer &buffer) {
 	int64_t index = 0;
 	for(int i = 0; i < count; i++){
 		index = buffer.read_int64();
-		CACHED_CONNECTION.remove(db_name_, MONGO_QUERY(index_ << (long long int)(index)));
+		MONGO_CONNECTION.remove(db_name_, MONGO_QUERY(index_ << (long long int)(index)));
 	}
 }
 

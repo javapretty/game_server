@@ -5,10 +5,10 @@
  *      Author: zhangyalei
  */
 
+#include <Mongo_Operator.h>
 #include "DB_Server.h"
 #include "DB_Worker.h"
 #include "DB_Manager.h"
-#include "DB_Operator.h"
 
 DB_Worker::DB_Worker(void) { }
 
@@ -169,7 +169,7 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 
 /// 加载db_cache
 int DB_Worker::process_load_db_cache(int cid) {
-	CACHED_INSTANCE->load_db_cache(cid);
+	MONGO_INSTANCE->load_db_cache(cid);
 	return 0;
 }
 
@@ -177,7 +177,7 @@ int DB_Worker::process_load_player(int cid, Account_Info &account_info) {
 	Block_Buffer buf;
 	buf.make_inner_message(SYNC_DB_GAME_LOAD_PLAYER_INFO);
 	Game_Player_Info player_info;
-	int has_role = CACHED_INSTANCE->has_role_by_account(account_info.account, account_info.agent_num, account_info.server_num);
+	int has_role = MONGO_INSTANCE->role_exist(account_info.account, account_info.agent_num, account_info.server_num);
 	if (! has_role) {
 		buf.write_int32(ROLE_NOT_EXIST);
 		player_info.account = account_info.account;
@@ -185,7 +185,7 @@ int DB_Worker::process_load_player(int cid, Account_Info &account_info) {
 		player_info.server_num = account_info.server_num;
 	}	else {
 		buf.write_int32(SUCCESS_LOADED);
-		int64_t role_id = CACHED_INSTANCE->get_role_id(account_info.account, account_info.agent_num, account_info.server_num);
+		int64_t role_id = MONGO_INSTANCE->get_role_id(account_info.account, account_info.agent_num, account_info.server_num);
 		load_player_data(role_id, buf);
 	}
 
@@ -198,7 +198,7 @@ int DB_Worker::process_create_player(int cid, Game_Player_Info &player_info) {
 	Block_Buffer buf;
 	buf.make_inner_message(SYNC_DB_GAME_CREATE_PLAYER);
 	int32_t status;
-	if (CACHED_INSTANCE->create_init_player(player_info) < 0) {
+	if (MONGO_INSTANCE->create_init_player(player_info) < 0) {
 		status = ROLE_HAS_EXIST;
 	} else {
 		status = SUCCESS_CREATED;

@@ -8,16 +8,12 @@
 #ifndef LOG_DB_H_
 #define LOG_DB_H_
 
-#include <Log_Fields.h>
+#include "Log_Fields.h"
 #include "Mysql_Conn.h"
+#include "Block_Buffer.h"
 #include <string>
 
 class Block_Buffer;
-
-namespace sql {
-class Driver;
-class Connection;
-}
 
 class Log_DB {
 public:
@@ -26,9 +22,8 @@ public:
 
 	Log_DB(void);
 	virtual ~Log_DB(void);
-	int set(std::string ip, int port, std::string &user, std::string &passwd);
-	int init(void);
 
+	int init(std::string &ip, int port, std::string &user, std::string &password, std::string &dbname, std::string &dbpoolname);
 	int tick(Time_Value &now);
 
 	int process_180001(int msg_id, int status, Block_Buffer &buf);
@@ -45,15 +40,7 @@ private:
 
 private:
 	bool mysql_on_off_;
-	std::string mysql_ip_;
-	int mysql_port_;
-	std::string mysql_user_;
-	std::string mysql_pw_;
-	std::string mysql_dbname_;
 	std::string mysql_poolname_;
-
-	sql::Driver *driver_;
-	sql::Connection *conn_;
 
 	Data_Collector loginout_collector_;
 	Mysql_DB_Conn* mysql_db_conn_;
