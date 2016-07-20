@@ -16,7 +16,7 @@
 Gate_Manager::Gate_Manager(void):
   player_cid_map_(get_hash_table_size(12000)),
   server_status_(STATUS_NORMAL),
-  verify_pack_onoff_(true),
+  verify_pack_onoff_(false),
   msg_count_onoff_(true) { }
 
 Gate_Manager::~Gate_Manager(void) { }
