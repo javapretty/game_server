@@ -58,7 +58,7 @@ int Game_Player::load_player(Block_Buffer &buffer, Game_Player_Info &player_info
 	GAME_MANAGER->logining_map().erase(player_info.account);
 	player_info_ = player_info;
 
-	LOG_DEBUG("***********load_game_player*********** account=[%s], gate_cid=%d, player_cid=%d, role_id=%ld, name=%s",
+	LOG_DEBUG("***********load game_player*********** account=[%s], gate_cid=%d, player_cid=%d, role_id=%ld, name=%s",
 			player_info_.account.c_str(), gate_cid_, player_cid_, player_info_.role_id, player_info_.role_name.c_str());
 
 	GAME_MANAGER->bind_cid_game_player(gate_cid_ * 10000 + player_cid_, *this);
@@ -83,6 +83,9 @@ int Game_Player::save_player(bool is_logout) {
 		return 0;
 	}
 
+	LOG_DEBUG("***********save game_player*********** account=[%s], gate_cid=%d, player_cid=%d, role_id=%ld, name=%s",
+			player_info_.account.c_str(), gate_cid_, player_cid_, player_info_.role_id, player_info_.role_name.c_str());
+
 	Block_Buffer buf;
 	buf.reset();
 	buf.make_inner_message(SYNC_GAME_DB_SAVE_PLAYER_INFO);
@@ -99,14 +102,12 @@ int Game_Player::save_player(bool is_logout) {
 }
 
 int Game_Player::sign_in() {
-	LOG_DEBUG("***********add_game_player %d***********", GAME_MANAGER->game_player_role_id_map().size());
 	sync_signin_to_master();
 	respond_role_login();
 	return 0;
 }
 
 int Game_Player::sign_out(void) {
-	LOG_DEBUG("***********delete_game_player %d***********", GAME_MANAGER->game_player_role_id_map().size());
 	sync_signout_to_log();
 	sync_signout_to_master();
 	save_player(true);
@@ -210,7 +211,6 @@ int Game_Player::tick(Time_Value &now) {
 	}
 
 	if (now - last_save_tick_ > save_interval_) {
-		//LOG_DEBUG("player save, role_id:%ld, role_name:%s", player_info_.role_id, player_info_.role_name.c_str());
 		save_player();
 		last_save_tick_ = now;
 	}

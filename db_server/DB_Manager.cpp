@@ -107,8 +107,8 @@ int DB_Manager::push_data_block(Block_Buffer *buf) {
 	}
 	}
 
-	LOG_DEBUG("push db message load_player_num_=%d, create_player_num_=%d, save_player_num_=%d",
-			load_player_num_, create_player_num_, save_player_num_);
+	//LOG_DEBUG("push db message load_player_num_=%d, create_player_num_=%d, save_player_num_=%d",
+	//		load_player_num_, create_player_num_, save_player_num_);
 	return 0;
 }
 

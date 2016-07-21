@@ -80,11 +80,13 @@ void Mongo_Struct::save_data(Block_Buffer &buffer){
 	}
 	MONGO_CONNECTION.update(db_name_, MONGO_QUERY(index_ << (long long int)index_value),
 			BSON("$set" << set_builder.obj() ), true);
+
+	LOG_DEBUG("table %s save index:%ld", db_name_.c_str(), index_value);
 }
 
 void Mongo_Struct::save_data_vector(Block_Buffer &buffer){
 	uint16_t count = buffer.read_uint16();
-	LOG_DEBUG("%s save list size is %d", db_name_.c_str(), count);
+	LOG_DEBUG("table %s save size:%d", db_name_.c_str(), count);
 	for(int i = 0; i < count; i++){
 		save_data(buffer);
 	}

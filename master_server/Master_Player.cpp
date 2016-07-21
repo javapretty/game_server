@@ -61,7 +61,7 @@ int Master_Player::sync_data_to_game(int msg_id, Block_Buffer *buf) {
 int Master_Player::load_player(Master_Player_Info &player_info) {
 	player_info_ = player_info;
 
-	LOG_DEBUG("***********load_master_player*********** account=[%s], gate_cid=%d, player_cid=%d, role_id=%ld, name=%s",
+	LOG_DEBUG("***********load master_player*********** account=[%s], gate_cid=%d, player_cid=%d, role_id=%ld, name=%s",
 			player_info_.account.c_str(), gate_cid_, player_cid_, player_info_.role_id, player_info_.role_name.c_str());
 
 	MASTER_MANAGER->bind_gate_cid_master_player(gate_cid_ * 10000 + player_cid_, *this);
@@ -80,6 +80,9 @@ int Master_Player::load_player(Master_Player_Info &player_info) {
 }
 
 int Master_Player::save_player(bool is_logout) {
+	LOG_DEBUG("***********save master_player*********** account=[%s], gate_cid=%d, player_cid=%d, role_id=%ld, name=%s",
+			player_info_.account.c_str(), gate_cid_, player_cid_, player_info_.role_id, player_info_.role_name.c_str());
+
 	//js端写入值后，反序列化获取值
 	if (save_player_data_buffer_->readable_bytes() > 0) {
 		player_info_.deserialize(*save_player_data_buffer_);
@@ -89,12 +92,10 @@ int Master_Player::save_player(bool is_logout) {
 }
 
 int Master_Player::sign_in(void) {
-	LOG_DEBUG("***********add_master_player %d***********", MASTER_MANAGER->master_player_role_id_map().size());
 	return 0;
 }
 
 int Master_Player::sign_out(void) {
-	LOG_DEBUG("***********delete_master_player %d***********", MASTER_MANAGER->master_player_role_id_map().size());
 	save_player(true);
 	reset();
 	MASTER_MANAGER->push_block_buffer(load_player_data_buffer_);
