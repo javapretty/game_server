@@ -36,7 +36,6 @@ struct Shop_Info;
 struct Rank_Info;
 struct Guild_Info;
 struct Offline_Info;
-struct Account_Info;
 struct Player_DB_Cache;
 struct Master_Player_Info;
 
@@ -305,19 +304,6 @@ struct Offline_Info : public MSG {
 
 	Offline_Info(void);
 	~Offline_Info();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct Account_Info : public MSG {
-	std::string account;	
-	int32_t agent_num;	
-	int32_t server_num;	
-
-	Account_Info(void);
-	~Account_Info();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

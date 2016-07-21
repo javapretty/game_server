@@ -9,7 +9,7 @@
 #include "Msg_Define.h"
 #include "Log.h"
 
-Mysql_Operator::Mysql_Operator(void) : mysql_db_conn_(NULL), agent_num_(0), server_num_(0) { }
+Mysql_Operator::Mysql_Operator(void) : mysql_db_conn_(nullptr) { }
 
 Mysql_Operator::~Mysql_Operator(void) {
 	MYSQL_DB_MANAGER->RelDBConn(mysql_db_conn_);

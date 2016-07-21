@@ -915,39 +915,6 @@ void Offline_Info::print(void) {
 	printf("\n");
 }
 
-Account_Info::Account_Info(void) {
-	reset();
-}
-
-Account_Info::~Account_Info() {
-}
-
-void Account_Info::serialize(Block_Buffer &buffer) const {
-	buffer.write_string(account);
-	buffer.write_int32(agent_num);
-	buffer.write_int32(server_num);
-}
-
-int Account_Info::deserialize(Block_Buffer &buffer) {
-	account = buffer.read_string();
-	agent_num = buffer.read_int32();
-	server_num = buffer.read_int32();
-	return 0;
-}
-
-void Account_Info::reset(void) {
-	account.clear();
-	agent_num = 0;
-	server_num = 0;
-}
-
-void Account_Info::print(void) {
-	printf("account: %s, ", account.c_str());
-	printf("agent_num: %d, ", agent_num);
-	printf("server_num: %d, ", server_num);
-	printf("\n");
-}
-
 Player_DB_Cache::Player_DB_Cache(void) {
 	reset();
 }

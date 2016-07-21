@@ -8,15 +8,11 @@
 #ifndef MYSQL_OPERATOR_H_
 #define MYSQL_OPERATOR_H_
 
-#include "Public_Struct.h"
 #include "Mysql_Conn.h"
 #include <string>
 
 class Mysql_Operator {
 public:
-	typedef std::set<int> Int_Set;
-	typedef boost::unordered_map<int, Int_Set> Int_IntSet_Map;
-
 	static Mysql_Operator *instance(void);
 	Mysql_DB_Conn *connection(void) { return mysql_db_conn_; }
 
@@ -32,10 +28,6 @@ private:
 	static Mysql_Operator *instance_;
 	std::string mysql_poolname_;
 	Mysql_DB_Conn* mysql_db_conn_;
-
-	int agent_num_; 									//代理编号
-	int server_num_; 									//服编号
-	Int_IntSet_Map server_map_;				//代理-服编号
 };
 
 #define MYSQL_INSTANCE			Mongo_Operator::instance()
