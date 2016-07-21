@@ -110,7 +110,7 @@ struct Item_Info : public MSG {
 
 struct Property_Detail : public MSG {
 	int32_t type;	
-	int32_t value;	
+	int32_t name;	
 
 	Property_Detail(void);
 	~Property_Detail();
@@ -270,7 +270,7 @@ struct Rank_Info : public MSG {
 	int64_t rank_type;	
 	int32_t min_value;	
 	int64_t min_role_id;	
-	std::map<int64_t, Rank_Member> member_map;	
+	boost::unordered_map<int64_t, Rank_Member> member_map;	
 
 	Rank_Info(void);
 	~Rank_Info();

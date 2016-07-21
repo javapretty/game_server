@@ -257,23 +257,23 @@ Property_Detail::~Property_Detail() {
 
 void Property_Detail::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(type);
-	buffer.write_int32(value);
+	buffer.write_int32(name);
 }
 
 int Property_Detail::deserialize(Block_Buffer &buffer) {
 	type = buffer.read_int32();
-	value = buffer.read_int32();
+	name = buffer.read_int32();
 	return 0;
 }
 
 void Property_Detail::reset(void) {
 	type = 0;
-	value = 0;
+	name = 0;
 }
 
 void Property_Detail::print(void) {
 	printf("type: %d, ", type);
-	printf("value: %d, ", value);
+	printf("name: %d, ", name);
 	printf("\n");
 }
 
@@ -771,7 +771,7 @@ void Rank_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int64(min_role_id);
 
 	buffer.write_uint16(member_map.size());
-	for(std::map<int64_t,Rank_Member>::const_iterator it = member_map.begin();
+	for(boost::unordered_map<int64_t,Rank_Member>::const_iterator it = member_map.begin();
 		it != member_map.end(); ++it) {
 		it->second.serialize(buffer);
 	}
@@ -785,7 +785,7 @@ int Rank_Info::deserialize(Block_Buffer &buffer) {
 	for (int16_t i = 0; i < member_map_size; ++i) {
 		Rank_Member _v;
 		_v.deserialize(buffer);
-		member_map.insert(std::make_pair(_v.role_id, _v));
+		member_map[_v.role_id] =  _v;
 	}
 	return 0;
 }

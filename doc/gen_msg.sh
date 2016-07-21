@@ -15,19 +15,19 @@ function gen_msg(){
 }
 
 function gen_cpp(){
-	./serialize_tool cpp $DEFINE_PATH 'game_struct.xml' 'Game_Struct'
-	./serialize_tool cpp $DEFINE_PATH 'outer_msg.xml' 'Client_Message'
-	./serialize_tool cpp $DEFINE_PATH 'inner_msg.xml' 'Server_Message'
+	./struct_tool cpp $DEFINE_PATH 'game_struct.xml' 'Game_Struct'
+	./struct_tool cpp $DEFINE_PATH 'outer_msg.xml' 'Client_Message'
+	./struct_tool cpp $DEFINE_PATH 'inner_msg.xml' 'Server_Message'
 }
 
 function gen_js(){
-	./serialize_tool js $DEFINE_PATH 'game_struct.xml' 'struct'
-	./serialize_tool js $DEFINE_PATH 'inner_msg.xml' 'struct'
-	./serialize_tool js $DEFINE_PATH 'outer_msg.xml' 'struct'
+	./struct_tool js $DEFINE_PATH 'game_struct.xml' 'struct'
+	./struct_tool js $DEFINE_PATH 'inner_msg.xml' 'struct'
+	./struct_tool js $DEFINE_PATH 'outer_msg.xml' 'struct'
 }
 
 function gen_msgd(){
-	./serialize_tool msg $DEFINE_PATH 'Message.define' 'msg'
+	./struct_tool msg $DEFINE_PATH 'Message.define' 'msg'
 }
 
 function cp_file(){

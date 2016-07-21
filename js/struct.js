@@ -156,17 +156,17 @@ Item_Info.prototype.deserialize = function(buffer) {
 
 function Property_Detail() {
 	this.type = 0;
-	this.value = 0;
+	this.name = 0;
 }
 
 Property_Detail.prototype.serialize = function(buffer) {
 	buffer.write_int32(this.type);
-	buffer.write_int32(this.value);
+	buffer.write_int32(this.name);
 }
 
 Property_Detail.prototype.deserialize = function(buffer) {
 	this.type = buffer.read_int32();
-	this.value = buffer.read_int32();
+	this.name = buffer.read_int32();
 }
 
 function Mail_Detail() {
@@ -563,24 +563,6 @@ Offline_Info.prototype.deserialize = function(buffer) {
 	this.flag = buffer.read_int16();
 }
 
-function Account_Info() {
-	this.account = ""
-	this.agent_num = 0;
-	this.server_num = 0;
-}
-
-Account_Info.prototype.serialize = function(buffer) {
-	buffer.write_string(this.account);
-	buffer.write_int32(this.agent_num);
-	buffer.write_int32(this.server_num);
-}
-
-Account_Info.prototype.deserialize = function(buffer) {
-	this.account = buffer.read_string();
-	this.agent_num = buffer.read_int32();
-	this.server_num = buffer.read_int32();
-}
-
 function Player_DB_Cache() {
 	this.role_id = 0;
 	this.account = ""
@@ -675,15 +657,15 @@ MSG_550000.prototype.deserialize = function(buffer) {
 }
 
 function MSG_150001() {
-	this.account_info = new Account_Info();
+	this.account = ""
 }
 
 MSG_150001.prototype.serialize = function(buffer) {
-	this.account_info.serialize(buffer);
+	buffer.write_string(this.account);
 }
 
 MSG_150001.prototype.deserialize = function(buffer) {
-	this.account_info.deserialize(buffer);
+	this.account = buffer.read_string();
 }
 
 function MSG_550001() {
@@ -1230,24 +1212,18 @@ function MSG_120002() {
 	this.account = ""
 	this.role_name = ""
 	this.gender = 0;
-	this.agent_num = 0;
-	this.server_num = 0;
 }
 
 MSG_120002.prototype.serialize = function(buffer) {
 	buffer.write_string(this.account);
 	buffer.write_string(this.role_name);
 	buffer.write_uint8(this.gender);
-	buffer.write_int32(this.agent_num);
-	buffer.write_int32(this.server_num);
 }
 
 MSG_120002.prototype.deserialize = function(buffer) {
 	this.account = buffer.read_string();
 	this.role_name = buffer.read_string();
 	this.gender = buffer.read_uint8();
-	this.agent_num = buffer.read_int32();
-	this.server_num = buffer.read_int32();
 }
 
 function MSG_520002() {

@@ -61,7 +61,7 @@ struct MSG_550000 : public MSG {
 };
 
 struct MSG_150001 : public MSG {
-	std::string account;
+	std::string account;	
 
 	MSG_150001(void);
 	~MSG_150001();
