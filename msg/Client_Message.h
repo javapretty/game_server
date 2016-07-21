@@ -193,8 +193,6 @@ struct MSG_120002 : public MSG {
 	std::string account;	
 	std::string role_name;	
 	uint8_t gender;	
-	int32_t agent_num;	
-	int32_t server_num;	
 
 	MSG_120002(void);
 	~MSG_120002();

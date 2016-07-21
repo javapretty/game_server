@@ -114,7 +114,7 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 	case SYNC_GAME_DB_LOAD_PLAYER_INFO: {
 		MSG_150001 msg;
 		msg.deserialize(*buf);
-		process_load_player(cid, msg.account_info);
+		process_load_player(cid, msg.account);
 		break;
 	}
 	case SYNC_GAME_DB_CREATE_PLAYER: {
@@ -173,19 +173,18 @@ int DB_Worker::process_load_db_cache(int cid) {
 	return 0;
 }
 
-int DB_Worker::process_load_player(int cid, Account_Info &account_info) {
+int DB_Worker::process_load_player(int cid, std::string &account) {
 	Block_Buffer buf;
 	buf.make_inner_message(SYNC_DB_GAME_LOAD_PLAYER_INFO);
-	Game_Player_Info player_info;
-	int has_role = MONGO_INSTANCE->role_exist(account_info.account, account_info.agent_num, account_info.server_num);
+	buf.write_string(account);
+	int has_role = MONGO_INSTANCE->role_exist(account);
 	if (! has_role) {
+		//角色不存在，直接返回
 		buf.write_int32(ROLE_NOT_EXIST);
-		player_info.account = account_info.account;
-		player_info.agent_num = account_info.agent_num;
-		player_info.server_num = account_info.server_num;
 	}	else {
+		//角色存在，开始加载数据
 		buf.write_int32(SUCCESS_LOADED);
-		int64_t role_id = MONGO_INSTANCE->get_role_id(account_info.account, account_info.agent_num, account_info.server_num);
+		int64_t role_id = MONGO_INSTANCE->get_role_id(account);
 		load_player_data(role_id, buf);
 	}
 
@@ -197,7 +196,7 @@ int DB_Worker::process_load_player(int cid, Account_Info &account_info) {
 int DB_Worker::process_create_player(int cid, Game_Player_Info &player_info) {
 	Block_Buffer buf;
 	buf.make_inner_message(SYNC_DB_GAME_CREATE_PLAYER);
-	int32_t status;
+	int32_t status = 0;
 	if (MONGO_INSTANCE->create_init_player(player_info) < 0) {
 		status = ROLE_HAS_EXIST;
 	} else {
@@ -205,6 +204,7 @@ int DB_Worker::process_create_player(int cid, Game_Player_Info &player_info) {
 		//创建所有玩家表
 		create_player_data(player_info.role_id);
 	}
+	buf.write_string(player_info.account);
 	buf.write_int32(status);
 	load_player_data(player_info.role_id, buf);
 	buf.finish_message();

@@ -312,16 +312,12 @@ void MSG_120002::serialize(Block_Buffer &buffer) const {
 	buffer.write_string(account);
 	buffer.write_string(role_name);
 	buffer.write_uint8(gender);
-	buffer.write_int32(agent_num);
-	buffer.write_int32(server_num);
 }
 
 int MSG_120002::deserialize(Block_Buffer &buffer) {
 	account = buffer.read_string();
 	role_name = buffer.read_string();
 	gender = buffer.read_uint8();
-	agent_num = buffer.read_int32();
-	server_num = buffer.read_int32();
 	return 0;
 }
 
@@ -329,16 +325,12 @@ void MSG_120002::reset(void) {
 	account.clear();
 	role_name.clear();
 	gender = 0;
-	agent_num = 0;
-	server_num = 0;
 }
 
 void MSG_120002::print(void) {
 	printf("account: %s, ", account.c_str());
 	printf("role_name: %s, ", role_name.c_str());
 	printf("gender: %d, ", gender);
-	printf("agent_num: %d, ", agent_num);
-	printf("server_num: %d, ", server_num);
 	printf("\n");
 }
 

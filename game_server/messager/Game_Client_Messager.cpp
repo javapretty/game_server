@@ -86,9 +86,7 @@ int Game_Client_Messager::fetch_role_info(int gate_cid, int player_cid, MSG_1200
 			Block_Buffer msg_buf;
 			msg_buf.make_inner_message(SYNC_GAME_DB_LOAD_PLAYER_INFO);
 			MSG_150001 db_msg;
-			db_msg.account_info.account = msg.account;
-			db_msg.account_info.agent_num = msg.agent_num;
-			db_msg.account_info.server_num = msg.server_num;
+			db_msg.account = msg.account;
 			db_msg.serialize(msg_buf);
 			msg_buf.finish_message();
 			GAME_MANAGER->send_to_db(msg_buf);
@@ -138,8 +136,6 @@ int Game_Client_Messager::create_role(int gate_cid, int player_cid, MSG_120002 &
 	Block_Buffer msg_buf;
 	msg_buf.make_inner_message(SYNC_GAME_DB_CREATE_PLAYER);
 	MSG_150002 db_msg;
-	db_msg.player_info.agent_num = msg.agent_num;
-	db_msg.player_info.server_num = msg.server_num;
 	db_msg.player_info.account = msg.account;
 	db_msg.player_info.role_name = msg.role_name;
 	db_msg.player_info.gender = msg.gender;

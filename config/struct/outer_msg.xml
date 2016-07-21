@@ -57,8 +57,6 @@
     	<arg type="string" name="account"/>
     	<arg type="string" name="role_name"/>
     	<arg type="uint8" name="gender"/>
-    	<arg type="int32" name="agent_num"/>
-    	<arg type="int32" name="server_num"/>
 	</MSG_120002>
 
 	<MSG_520002>

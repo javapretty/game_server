@@ -18,8 +18,6 @@ class Mongo_Operator {
 public:
 	typedef boost::unordered_map<int64_t, DBClientConnection *> Connection_Map;
 	typedef Object_Pool<DBClientConnection, Thread_Mutex> Connection_Pool;
-	typedef std::set<int> Int_Set;
-	typedef boost::unordered_map<int, Int_Set> Int_IntSet_Map;
 
 	static Mongo_Operator *instance(void);
 	mongo::DBClientConnection &connection(void);
@@ -29,8 +27,8 @@ public:
 	int load_db_cache(int cid);
 
 	int64_t create_init_player(Game_Player_Info &player_info);
-	bool role_exist(std::string &account, const int agent_num, const int server_num);
-	int64_t get_role_id(const std::string &account, const int agent_num, const int server_num);
+	bool role_exist(std::string &account);
+	int64_t get_role_id(const std::string &account);
 
 private:
 	Mongo_Operator(void);
@@ -43,10 +41,6 @@ private:
 	Connection_Pool connection_pool_;
 	Connection_Map connection_map_;
 	MUTEX connection_map_lock_;
-
-	int agent_num_; 									//代理编号
-	int server_num_; 									//服编号
-	Int_IntSet_Map server_map_;				//代理-服编号
 };
 
 #define MONGO_INSTANCE			Mongo_Operator::instance()

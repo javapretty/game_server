@@ -10,7 +10,7 @@
 
 	<MSG_150001>
 		<!--加载玩家信息-->
-    	<struct type="Account_Info" name="account_info"/>
+		<arg type="string" name="account"/>
 	</MSG_150001>
 
 	<MSG_550001>

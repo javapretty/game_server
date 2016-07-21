@@ -1,6 +1,6 @@
 #! /bin/bash
 
-DEFINE_PATH='../config/structs/'
+DEFINE_PATH='../config/struct/'
 SERVER_PATH='../misc/'
 CPP_TARGET='../msg'
 JS_TARGET='../js'

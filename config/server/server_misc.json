@@ -49,12 +49,6 @@
 			"ip" : "127.0.0.1",
 			"port" : 7507
 		}
-    },
-	"server_list" : [
-        {
-			"agent_num" : 1,			
-			"server_num" : 1			
-        }
-    ]
+    }
 }
 

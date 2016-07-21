@@ -74,20 +74,20 @@ MSG_150001::~MSG_150001() {
 }
 
 void MSG_150001::serialize(Block_Buffer &buffer) const {
-	account_info.serialize(buffer);
+	buffer.write_string(account);
 }
 
 int MSG_150001::deserialize(Block_Buffer &buffer) {
-	account_info.deserialize(buffer);
+	account = buffer.read_string();
 	return 0;
 }
 
 void MSG_150001::reset(void) {
-	account_info.reset();
+	account.clear();
 }
 
 void MSG_150001::print(void) {
-	account_info.print();
+	printf("account: %s, ", account.c_str());
 	printf("\n");
 }
 

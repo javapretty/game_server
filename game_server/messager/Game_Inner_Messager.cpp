@@ -92,25 +92,18 @@ int Game_Inner_Messager::process_load_db_cache(Block_Buffer &buf) {
 }
 
 int Game_Inner_Messager::process_loaded_player_data(Block_Buffer &buf) {
+	std::string account = buf.read_string();
 	int32_t status = buf.read_int32();
-	Game_Player_Info player_info;
-	player_info.deserialize(buf);
-	if (player_info.agent_num == 0) {
-		player_info.agent_num = player_info.role_id / 10000000000000L;
-	}
-	if (player_info.server_num == 0) {
-		player_info.server_num = player_info.role_id / 1000000000L % 10000L;
-	}
-	Game_Manager::Logining_Map::iterator logining_it = GAME_MANAGER->logining_map().find(player_info.account);
+	Game_Manager::Logining_Map::iterator logining_it = GAME_MANAGER->logining_map().find(account);
 	if (logining_it == GAME_MANAGER->logining_map().end()) {
-		LOG_INFO("account not exist in logining map, account = %s.", player_info.account.c_str());
+		LOG_INFO("account not exist in logining map, account = %s.", account.c_str());
 		return -1;
 	}
 
 	int gate_cid = logining_it->second.gate_cid;
 	int player_cid = logining_it->second.player_cid;
 	if (gate_cid < 2 || player_cid < 2) {
-		LOG_INFO("player cid error, gate_cid = %d, player_cid = %d, account = %s", gate_cid, player_cid, player_info.account.c_str());
+		LOG_INFO("player cid error, gate_cid = %d, player_cid = %d, account = %s", gate_cid, player_cid, account.c_str());
 		return -1;
 	}
 
@@ -140,6 +133,8 @@ int Game_Inner_Messager::process_loaded_player_data(Block_Buffer &buf) {
 	}
 	case SUCCESS_CREATED: {
 		/// [创建角色]创建角色成功
+		Game_Player_Info player_info;
+		player_info.deserialize(buf);
 		Block_Buffer res_buf;
 		res_buf.make_player_message(RES_CREATE_ROLE, 0, player_cid);
 		MSG_520002 res_msg;
@@ -153,6 +148,8 @@ int Game_Inner_Messager::process_loaded_player_data(Block_Buffer &buf) {
 	}
 	case SUCCESS_LOADED: {
 		/// 数据加载成功
+		Game_Player_Info player_info;
+		player_info.deserialize(buf);
 		process_success_login(gate_cid, player_cid, buf, player_info);
 		break;
 	}
