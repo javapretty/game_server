@@ -71,14 +71,6 @@
     	<arg type="int32" name="vitality"/>
 	</MSG_520003>
 
-	<MSG_120004>
-		<!--聚宝盆兑换铜币-->
-	</MSG_120004>
-
-	<MSG_520004>
-		<arg type="int32" name="copper"/>
-	</MSG_520004>
-
 	<MSG_120100>
 		<!--获取背包信息-->
 	</MSG_120100>
@@ -205,14 +197,6 @@
 	    <arg type="int32" name="hero_id"/>
 	    <arg type="int32" name="skill_id"/>
 	</MSG_520305>
-
-	<MSG_120306>
-		<!--增加英雄经验-->
-	    <arg type="int32" name="exp"/>
-	</MSG_120306>
-
-	<MSG_520306>
-	</MSG_520306>
 
 	<MSG_120400>
 		<!--获取商店列表-->

@@ -24,7 +24,7 @@ public:
 	virtual void delete_data(Block_Buffer &buffer);
 
 private:
-	void create_data_arg(Field_Info &field_info, BSONObjBuilder &builder, int64_t role_id);
+	void create_data_arg(Field_Info &field_info, BSONObjBuilder &builder, int64_t index);
 	void create_data_vector(Field_Info &field_info, BSONObjBuilder &builder);
 	void create_data_struct(Field_Info &field_info, BSONObjBuilder &builder);
 

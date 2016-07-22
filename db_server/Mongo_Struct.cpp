@@ -9,7 +9,11 @@
 #include "Mongo_Struct.h"
 #include "DB_Manager.h"
 
-Mongo_Struct::Mongo_Struct(Xml &xml, TiXmlNode *node) : DB_Struct(xml, node){}
+Mongo_Struct::Mongo_Struct(Xml &xml, TiXmlNode *node) : DB_Struct(xml, node) {
+	std::stringstream stream;
+	stream.str("mmo.");
+	db_name_ = stream.str() + db_name_;
+}
 
 Mongo_Struct::~Mongo_Struct(){}
 

@@ -35,7 +35,6 @@ function Role_Info() {
 	this.vip_level = 0;
 	this.vip_exp = 0;
 	this.charge_gold = 0;
-	this.skill_point = 0;
 }
 
 Role_Info.prototype.serialize = function(buffer) {
@@ -51,7 +50,6 @@ Role_Info.prototype.serialize = function(buffer) {
 	buffer.write_int32(this.vip_level);
 	buffer.write_int32(this.vip_exp);
 	buffer.write_int32(this.charge_gold);
-	buffer.write_int32(this.skill_point);
 }
 
 Role_Info.prototype.deserialize = function(buffer) {
@@ -67,7 +65,6 @@ Role_Info.prototype.deserialize = function(buffer) {
 	this.vip_level = buffer.read_int32();
 	this.vip_exp = buffer.read_int32();
 	this.charge_gold = buffer.read_int32();
-	this.skill_point = buffer.read_int32();
 }
 
 function Hero_Detail() {
@@ -308,9 +305,6 @@ function Game_Player_Info() {
 	this.vip_level = 0;
 	this.vip_exp = 0;
 	this.charge_gold = 0;
-	this.skill_point = 0;
-	this.recover_skill_time = 0;
-	this.exchange_count = 0;
 	this.guild_id = 0;
 	this.guild_name = ""
 }
@@ -334,9 +328,6 @@ Game_Player_Info.prototype.serialize = function(buffer) {
 	buffer.write_int32(this.vip_level);
 	buffer.write_int32(this.vip_exp);
 	buffer.write_int32(this.charge_gold);
-	buffer.write_int32(this.skill_point);
-	buffer.write_int64(this.recover_skill_time);
-	buffer.write_int32(this.exchange_count);
 	buffer.write_int32(this.guild_id);
 	buffer.write_string(this.guild_name);
 }
@@ -360,9 +351,6 @@ Game_Player_Info.prototype.deserialize = function(buffer) {
 	this.vip_level = buffer.read_int32();
 	this.vip_exp = buffer.read_int32();
 	this.charge_gold = buffer.read_int32();
-	this.skill_point = buffer.read_int32();
-	this.recover_skill_time = buffer.read_int64();
-	this.exchange_count = buffer.read_int32();
 	this.guild_id = buffer.read_int32();
 	this.guild_name = buffer.read_string();
 }
@@ -1259,27 +1247,6 @@ MSG_520003.prototype.deserialize = function(buffer) {
 	this.vitality = buffer.read_int32();
 }
 
-function MSG_120004() {
-}
-
-MSG_120004.prototype.serialize = function(buffer) {
-}
-
-MSG_120004.prototype.deserialize = function(buffer) {
-}
-
-function MSG_520004() {
-	this.copper = 0;
-}
-
-MSG_520004.prototype.serialize = function(buffer) {
-	buffer.write_int32(this.copper);
-}
-
-MSG_520004.prototype.deserialize = function(buffer) {
-	this.copper = buffer.read_int32();
-}
-
 function MSG_120100() {
 }
 
@@ -1674,27 +1641,6 @@ MSG_520305.prototype.serialize = function(buffer) {
 MSG_520305.prototype.deserialize = function(buffer) {
 	this.hero_id = buffer.read_int32();
 	this.skill_id = buffer.read_int32();
-}
-
-function MSG_120306() {
-	this.exp = 0;
-}
-
-MSG_120306.prototype.serialize = function(buffer) {
-	buffer.write_int32(this.exp);
-}
-
-MSG_120306.prototype.deserialize = function(buffer) {
-	this.exp = buffer.read_int32();
-}
-
-function MSG_520306() {
-}
-
-MSG_520306.prototype.serialize = function(buffer) {
-}
-
-MSG_520306.prototype.deserialize = function(buffer) {
 }
 
 function MSG_120400() {

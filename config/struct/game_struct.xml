@@ -20,7 +20,6 @@
     	<arg type="int32" name="vip_level" desc="vip等级"/>
     	<arg type="int32" name="vip_exp" desc="vip经验"/>
     	<arg type="int32" name="charge_gold" desc="总共充值的元宝数"/>
-    	<arg type="int32" name="skill_point" desc="技能点"/>
 	</Role_Info>
 
 	<Hero_Detail>
@@ -92,7 +91,7 @@
 	</Player_Data>
 
 	<Game_Player_Info>
-		<db dbname="mmo.role" index="role_id"/>
+		<db dbname="role" index="role_id"/>
 		<arg type="int64" name="role_id"/>
 		<arg type="string" name="account"/>
 		<arg type="string" name="role_name"/>
@@ -111,21 +110,18 @@
 		<arg type="int32" name="vip_level"/>
 		<arg type="int32" name="vip_exp"/>
 		<arg type="int32" name="charge_gold"/>
-		<arg type="int32" name="skill_point"/>
-		<arg type="int64" name="recover_skill_time"/>
-		<arg type="int32" name="exchange_count"/>
 		<arg type="int32" name="guild_id"/>
 		<arg type="string" name="guild_name"/>
 	</Game_Player_Info>
 	
 	<Hero_Info>
-		<db dbname="mmo.hero" index="role_id"/>
+		<db dbname="hero" index="role_id"/>
 		<arg type="int64" name="role_id"/>
 		<unordered_map type="Hero_Detail" key_name="hero_id" key_type="int32" name="hero_map"/>
 	</Hero_Info>
 
 	<Bag_Info>
-		<db dbname="mmo.bag" index="role_id"/>
+		<db dbname="bag" index="role_id"/>
 		<arg type="int64" name="role_id"/>
 		<arg type="int32" name="copper"/>
 		<arg type="int32" name="gold"/>
@@ -133,14 +129,14 @@
 	</Bag_Info>
 	
 	<Mail_Info>
-		<db dbname="mmo.mail" index="role_id"/>
+		<db dbname="mail" index="role_id"/>
 		<arg type="int64" name="role_id"/>
 		<arg type="int32" name="total_count"/>
 		<unordered_map type="Mail_Detail" key_type="int32" key_name="mail_id" name="mail_map"/>
 	</Mail_Info>
 	
 	<Shop_Info>
-		<db dbname="mmo.shop" index="role_id"/>
+		<db dbname="shop" index="role_id"/>
 		<arg type="int64" name="role_id"/>
 		<unordered_map type="Shop_Detail" key_type="int32" key_name="shop_type" name="shop_map"/>
 	</Shop_Info>
@@ -153,7 +149,7 @@
 	</Public_Data>
 	
 	<Rank_Info>
-		<db dbname="mmo.rank" index="rank_type" msgid="150105"/>
+		<db dbname="rank" index="rank_type" msgid="150105"/>
 		<arg type="int64" name="rank_type"/>
 		<arg type="int32" name="min_value"/>
 		<arg type="int64" name="min_role_id"/>
@@ -161,7 +157,7 @@
 	</Rank_Info>
 
 	<Guild_Info>
-		<db dbname="mmo.guild" index="guild_id" msgid="150103"/>
+		<db dbname="guild" index="guild_id" msgid="150103"/>
 		<arg type="int64" name="guild_id"/>
 		<arg type="bool" name="change"/>
 		<arg type="string" name="guild_name"/>
@@ -171,7 +167,7 @@
 	</Guild_Info>
 
 	<Offline_Info>
-		<db dbname="mmo.offlinemsg" index="role_id" msgid="150104"/>
+		<db dbname="offlinemsg" index="role_id" msgid="150104"/>
 		<arg type="int64" name="role_id"/>
 		<arg type="int64" name="guild_id"/>
 		<arg type="string" name="guild_name"/>

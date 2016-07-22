@@ -59,7 +59,6 @@ void Role_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(vip_level);
 	buffer.write_int32(vip_exp);
 	buffer.write_int32(charge_gold);
-	buffer.write_int32(skill_point);
 }
 
 int Role_Info::deserialize(Block_Buffer &buffer) {
@@ -75,7 +74,6 @@ int Role_Info::deserialize(Block_Buffer &buffer) {
 	vip_level = buffer.read_int32();
 	vip_exp = buffer.read_int32();
 	charge_gold = buffer.read_int32();
-	skill_point = buffer.read_int32();
 	return 0;
 }
 
@@ -92,7 +90,6 @@ void Role_Info::reset(void) {
 	vip_level = 0;
 	vip_exp = 0;
 	charge_gold = 0;
-	skill_point = 0;
 }
 
 void Role_Info::print(void) {
@@ -108,7 +105,6 @@ void Role_Info::print(void) {
 	printf("vip_level: %d, ", vip_level);
 	printf("vip_exp: %d, ", vip_exp);
 	printf("charge_gold: %d, ", charge_gold);
-	printf("skill_point: %d, ", skill_point);
 	printf("\n");
 }
 
@@ -503,9 +499,6 @@ void Game_Player_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(vip_level);
 	buffer.write_int32(vip_exp);
 	buffer.write_int32(charge_gold);
-	buffer.write_int32(skill_point);
-	buffer.write_int64(recover_skill_time);
-	buffer.write_int32(exchange_count);
 	buffer.write_int32(guild_id);
 	buffer.write_string(guild_name);
 }
@@ -529,9 +522,6 @@ int Game_Player_Info::deserialize(Block_Buffer &buffer) {
 	vip_level = buffer.read_int32();
 	vip_exp = buffer.read_int32();
 	charge_gold = buffer.read_int32();
-	skill_point = buffer.read_int32();
-	recover_skill_time = buffer.read_int64();
-	exchange_count = buffer.read_int32();
 	guild_id = buffer.read_int32();
 	guild_name = buffer.read_string();
 	return 0;
@@ -556,9 +546,6 @@ void Game_Player_Info::reset(void) {
 	vip_level = 0;
 	vip_exp = 0;
 	charge_gold = 0;
-	skill_point = 0;
-	recover_skill_time = 0;
-	exchange_count = 0;
 	guild_id = 0;
 	guild_name.clear();
 }
@@ -582,9 +569,6 @@ void Game_Player_Info::print(void) {
 	printf("vip_level: %d, ", vip_level);
 	printf("vip_exp: %d, ", vip_exp);
 	printf("charge_gold: %d, ", charge_gold);
-	printf("skill_point: %d, ", skill_point);
-	printf("recover_skill_time: %ld, ", recover_skill_time);
-	printf("exchange_count: %d, ", exchange_count);
 	printf("guild_id: %d, ", guild_id);
 	printf("guild_name: %s, ", guild_name.c_str());
 	printf("\n");

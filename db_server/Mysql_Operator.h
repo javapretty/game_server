@@ -16,7 +16,7 @@ public:
 	static Mysql_Operator *instance(void);
 	Mysql_DB_Conn *connection(void) { return mysql_db_conn_; }
 
-	int init(std::string &ip, int port, std::string &user, std::string &password, std::string &dbname, std::string &dbpoolname);
+	int init();
 
 private:
 	Mysql_Operator(void);
@@ -26,11 +26,10 @@ private:
 
 private:
 	static Mysql_Operator *instance_;
-	std::string mysql_poolname_;
 	Mysql_DB_Conn* mysql_db_conn_;
 };
 
-#define MYSQL_INSTANCE			Mongo_Operator::instance()
+#define MYSQL_INSTANCE			Mysql_Operator::instance()
 #define MYSQL_CONNECTION		MYSQL_INSTANCE->connection()
 
 #endif /* MYSQL_OPERATOR_H_ */

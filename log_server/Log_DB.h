@@ -36,13 +36,13 @@ private:
 	int cond_execute_collector(Data_Collector &collector);
 	void init_collector(void);
 
-	void init_loginout_collector(void);
+	void init_logout_collector(void);
 
 private:
 	bool mysql_on_off_;
 	std::string mysql_poolname_;
 
-	Data_Collector loginout_collector_;
+	Data_Collector logout_collector_;
 	Mysql_DB_Conn* mysql_db_conn_;
 };
 

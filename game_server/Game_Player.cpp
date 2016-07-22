@@ -103,7 +103,6 @@ int Game_Player::save_player(bool is_logout) {
 
 int Game_Player::sign_in() {
 	sync_signin_to_master();
-	respond_role_login();
 	return 0;
 }
 
@@ -174,31 +173,6 @@ int Game_Player::sync_data_to_master(int msg_id, Block_Buffer *buf){
 	buffer.copy(buf);
 	buffer.finish_message();
 	return GAME_MANAGER->send_to_master(buffer);
-}
-
-int Game_Player::respond_role_login(void) {
-	MSG_520001 msg;
-	msg.role_info.role_id = player_info_.role_id;
-	msg.role_info.account = player_info_.account;
-	msg.role_info.role_name = player_info_.role_name;
-	msg.role_info.level = player_info_.level;
-	msg.role_info.exp = player_info_.exp;
-	msg.role_info.career = player_info_.career;
-	msg.role_info.gender = player_info_.gender;
-	msg.role_info.vitality = player_info_.vitality;
-	msg.role_info.buy_vitality_times = player_info_.buy_vitality_times;
-	msg.role_info.vip_level = player_info_.vip_level;
-	msg.role_info.vip_exp = player_info_.vip_exp;
-	msg.role_info.charge_gold = player_info_.charge_gold;
-	msg.role_info.skill_point = player_info_.skill_point;
-
-	Block_Buffer buf;
-	buf.make_player_message(RES_FETCH_ROLE_INFO, 0, player_cid_);
-	msg.serialize(buf);
-	buf.finish_message();
-	GAME_MANAGER->send_to_gate(gate_cid_, buf);
-
-	return 0;
 }
 
 int Game_Player::tick(Time_Value &now) {

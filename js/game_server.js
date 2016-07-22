@@ -108,9 +108,6 @@ function process_game_client_buffer(buffer) {
 	case Msg_CG.REQ_BUY_VITALITY:
 		game_player.buy_vitality();
 		break;	
-	case Msg_CG.REQ_EXCHANGE_MONEY:
-		game_player.exchange_money(buffer);
-		break;
 	case Msg_CG.REQ_FETCH_BAG_INFO:
 		game_player.bag.fetch_bag_info();
 		break;

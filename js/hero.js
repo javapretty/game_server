@@ -224,10 +224,6 @@ Hero.prototype.equip_on_off = function(buffer) {
 Hero.prototype.add_skill_level = function(buffer) {
 	print('add_skill_level, role_id:', this.game_player.player_info.role_id, " role_name:", this.game_player.player_info.role_name, " util.now_msec:", util.now_msec());
 	
-	if (this.game_player.player_info.skill_point <= 0) {
-		return this.game_player.cplayer.respond_error_result(Msg_GC.RES_ADD_SKILL_LEVEL, Error_Code.ERROR_SKILL_POINT_NOT_ENOUGH);
-	}
-	
 	var msg_req = new MSG_120305();
 	msg_req.deserialize(buffer); 
 	var hero_detail = this.hero_info.hero_map.get(msg_req.hero_id);
@@ -238,7 +234,6 @@ Hero.prototype.add_skill_level = function(buffer) {
 	for (var i = 0; i < hero_detail.skill_info.length; ++i) {
 		if (msg_req.skill_id == hero_detail.skill_info[i]) {
 			hero_detail.skill_info[i]++;
-			this.game_player.player_info.skill_point--;
 			break;
 		}
 	}

@@ -65,7 +65,6 @@ struct Role_Info : public MSG {
 	int32_t vip_level;	//vip等级
 	int32_t vip_exp;	//vip经验
 	int32_t charge_gold;	//总共充值的元宝数
-	int32_t skill_point;	//技能点
 
 	Role_Info(void);
 	~Role_Info();
@@ -201,9 +200,6 @@ struct Game_Player_Info : public MSG {
 	int32_t vip_level;	
 	int32_t vip_exp;	
 	int32_t charge_gold;	
-	int32_t skill_point;	
-	int64_t recover_skill_time;	
-	int32_t exchange_count;	
 	int32_t guild_id;	
 	std::string guild_name;	
 

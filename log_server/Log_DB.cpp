@@ -53,9 +53,9 @@ int Log_DB::execute_collector(Data_Collector &collector) {
 }
 
 int Log_DB::tick_collector(Time_Value &now) {
-	if (loginout_collector_.is_timeout(now)) {
-		execute_collector(loginout_collector_);
-		loginout_collector_.reset_used();
+	if (logout_collector_.is_timeout(now)) {
+		execute_collector(logout_collector_);
+		logout_collector_.reset_used();
 	}
 
 	return 0;
@@ -70,14 +70,14 @@ int Log_DB::cond_execute_collector(Data_Collector &collector) {
 }
 
 void Log_DB::init_collector(void) {
-	init_loginout_collector();
+	init_logout_collector();
 }
 
-void Log_DB::init_loginout_collector(void) {
-	std::string insert_head("INSERT INTO loginout "
+void Log_DB::init_logout_collector(void) {
+	std::string insert_head("INSERT INTO logout "
 			"(`role_id`,`role_name`,`account`,`level`,`client_ip`,`login_time`,`logout_time`) "
 			"VALUES");
-	loginout_collector_.set(insert_head, collector_max_num, collector_timeout);
+	logout_collector_.set(insert_head, collector_max_num, collector_timeout);
 }
 
 int Log_DB::process_180001(int msg_id, int status, Block_Buffer &buf) {
@@ -93,7 +93,7 @@ int Log_DB::process_180001(int msg_id, int status, Block_Buffer &buf) {
 	table.login_time_.data_ = msg.login_time;
 	table.logout_time_.data_ = msg.logout_time;
 
-	table.append_insert_content(loginout_collector_);
-	cond_execute_collector(loginout_collector_);
+	table.append_insert_content(logout_collector_);
+	cond_execute_collector(logout_collector_);
 	return 0;
 }

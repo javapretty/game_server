@@ -53,6 +53,7 @@ private:
 	int create_player_num_;			//创建的玩家数量
 	int save_player_num_;				//保存数据的玩家数量
 	int db_data_num_;						//保存数据库的消息数量
+	int db_type_;								//数据库类型
 
 	DB_Worker_Pool db_worker_pool_;
 	DB_Worker_Vector db_worker_vec_;

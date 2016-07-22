@@ -24,8 +24,6 @@ struct MSG_120002;
 struct MSG_520002;
 struct MSG_120003;
 struct MSG_520003;
-struct MSG_120004;
-struct MSG_520004;
 struct MSG_120100;
 struct MSG_520100;
 struct MSG_120101;
@@ -52,8 +50,6 @@ struct MSG_120304;
 struct MSG_520304;
 struct MSG_120305;
 struct MSG_520305;
-struct MSG_120306;
-struct MSG_520306;
 struct MSG_120400;
 struct MSG_520400;
 struct MSG_120401;
@@ -228,27 +224,6 @@ struct MSG_520003 : public MSG {
 
 	MSG_520003(void);
 	~MSG_520003();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct MSG_120004 : public MSG {
-
-	MSG_120004(void);
-	~MSG_120004();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct MSG_520004 : public MSG {
-	int32_t copper;	
-
-	MSG_520004(void);
-	~MSG_520004();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
@@ -545,27 +520,6 @@ struct MSG_520305 : public MSG {
 
 	MSG_520305(void);
 	~MSG_520305();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct MSG_120306 : public MSG {
-	int32_t exp;	
-
-	MSG_120306(void);
-	~MSG_120306();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct MSG_520306 : public MSG {
-
-	MSG_520306(void);
-	~MSG_520306();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

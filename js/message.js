@@ -47,7 +47,6 @@ if (typeof Msg_CG == "undefined") {
 	Msg_CG.REQ_FETCH_ROLE_INFO = 120001; //获取角色信息
 	Msg_CG.REQ_CREATE_ROLE = 120002; //创建角色
 	Msg_CG.REQ_BUY_VITALITY = 120003; //购买体力
-	Msg_CG.REQ_EXCHANGE_MONEY = 120004; //兑换聚宝盆
 	Msg_CG.REQ_FETCH_BAG_INFO = 120100; //获取背包信息
 	Msg_CG.REQ_USE_ITEM = 120101; //使用物品
 	Msg_CG.REQ_SELL_ITEM = 120102; //出售物品

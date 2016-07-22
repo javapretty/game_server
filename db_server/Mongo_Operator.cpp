@@ -52,37 +52,25 @@ DBClientConnection &Mongo_Operator::connection(void) {
 
 int Mongo_Operator::init(void) {
 	/// 创建所有索引
-	this->create_index();
-	return 0;
-}
-
-int Mongo_Operator::create_index(void) {
-	{//global
-		MONGO_CONNECTION.createIndex("mmo.global", BSON("key" << 1));
-
-		if (MONGO_CONNECTION.count("mmo.global", BSON("key" << "role")) == 0) {
-			BSONObjBuilder builder;
-			builder << "key" << "role" << "id" << 0;
-
-			MONGO_CONNECTION.update("mmo.global", MONGO_QUERY("key" << "role"),
-					BSON("$set" << builder.obj()), true);
-		}
+	MONGO_CONNECTION.createIndex("mmo.global", BSON("key" << 1));
+	if (MONGO_CONNECTION.count("mmo.global", BSON("key" << "role")) == 0) {
+		BSONObjBuilder builder;
+		builder << "key" << "role" << "id" << 0;
+		MONGO_CONNECTION.update("mmo.global", MONGO_QUERY("key" << "role"),
+				BSON("$set" << builder.obj()), true);
 	}
-	{
-		//role
-		MONGO_CONNECTION.createIndex("mmo.role", BSON("role_id" << 1));
-		MONGO_CONNECTION.createIndex("mmo.role", BSON("role_name" << 1));
-		MONGO_CONNECTION.createIndex("mmo.role", BSON("account" << 1));
 
-		MONGO_CONNECTION.createIndex("mmo.role", BSON("account" << 1 << "agent_num" << 1 << "server_num" << 1));
-		MONGO_CONNECTION.createIndex("mmo.role", BSON("account" << 1 << "level" << -1));
+	//role
+	MONGO_CONNECTION.createIndex("mmo.role", BSON("role_id" << 1));
+	MONGO_CONNECTION.createIndex("mmo.role", BSON("role_name" << 1));
+	MONGO_CONNECTION.createIndex("mmo.role", BSON("account" << 1));
+	MONGO_CONNECTION.createIndex("mmo.role", BSON("account" << 1 << "level" << -1));
+
+	for(DB_Manager::DB_Struct_Id_Map::iterator iter = DB_MANAGER->db_struct_id_map().begin();
+			iter != DB_MANAGER->db_struct_id_map().end(); iter++){
+		MONGO_CONNECTION.createIndex(iter->second->db_name(), BSON(iter->second->index() << 1));
 	}
-	{
-		for(DB_Manager::DB_Struct_Id_Map::iterator iter = DB_MANAGER->db_struct_id_map().begin();
-				iter != DB_MANAGER->db_struct_id_map().end(); iter++){
-			MONGO_CONNECTION.createIndex(iter->second->db_name(), BSON(iter->second->index() << 1));
-		}
-	}
+
 	return 0;
 }
 

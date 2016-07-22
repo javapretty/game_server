@@ -36,8 +36,10 @@ Game_Player.prototype.load_player_data = function(buffer) {
 	this.cplayer = get_game_player_by_cid(gate_cid, player_cid);
 	if(this.cplayer == null){
 		print('master_player ', this.player_info.role_id, 'cid is ', this.cid, ' cplayer is null')
+		return;
 	}
 	
+	this.login_success();
 	game_player_cid_map.insert(this.cid, this);
 	game_player_role_id_map.insert(this.player_info.role_id, this);
 }
@@ -72,14 +74,6 @@ Game_Player.prototype.set_data_change = function() {
 }
 
 Game_Player.prototype.tick = function(now) {
-	//技能点回复，五分钟回复一点
-	if (this.player_info.skill_point < 10) {
-		if (now - this.player_info.recover_skill_time >= 300) {
-			this.player_info.skill_point++;
-			this.player_info.recover_skill_time = now;
-		}
-	}
-	
 	//同步玩家数据到C++,30s一次
 	if(this.is_change == true){
 		if (now - this.sync_player_data_tick >= 30) {
@@ -91,7 +85,27 @@ Game_Player.prototype.tick = function(now) {
 
 Game_Player.prototype.daily_refresh = function() {
 	this.player_info.buy_vitality_times = 0;
-	this.player_info.exchange_count = 0;
+}
+
+Game_Player.prototype.login_success = function() {
+	var msg_res = new MSG_520001();
+	msg_res.role_info.role_id = this.player_info.role_id;
+	msg_res.role_info.account = this.player_info.account;
+	msg_res.role_info.role_name = this.player_info.role_name;
+	msg_res.role_info.level = this.player_info.level;
+	msg_res.role_info.exp = this.player_info.exp;
+	msg_res.role_info.career = this.player_info.career;
+	msg_res.role_info.gender = this.player_info.gender;
+	msg_res.role_info.vitality = this.player_info.vitality;
+	msg_res.role_info.buy_vitality_times = this.player_info.buy_vitality_times;
+	msg_res.role_info.vip_level = this.player_info.vip_level;
+	msg_res.role_info.vip_exp = this.player_info.vip_exp;
+	msg_res.role_info.charge_gold = this.player_info.charge_gold;
+	
+  var buf = pop_game_buffer();
+  msg_res.serialize(buf);
+	this.cplayer.respond_success_result(Msg_GC.RES_FETCH_ROLE_INFO, buf);
+	push_game_buffer(buf);
 }
 
 Game_Player.prototype.add_exp = function(exp) {
@@ -179,40 +193,6 @@ Game_Player.prototype.buy_vitality = function() {
 	this.set_data_change();
 }
 
-Game_Player.prototype.exchange_money = function(buffer){
-	print('exchange_money, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
-	
-	//检查是否还有剩余次数
-	if(this.player_info.exchange_count >= config.vip_json[this.player_info.vip_level].exchange_count)
-		return this.cplayer.respond_error_result(Msg_GC.RES_EXCHANGE_MONEY, Error_Code.ERROR_EXCHANGE_COUNT_NOT_ENOUGH);
-	
-	var cost = config.util_json.exchange_array[this.player_info.exchange_count].gold;
-	//元宝是否足够
-	var error = this.bag.bag_sub_money(0, cost);
-	if(error != 0)
-		return this.cplayer.respond_error_result(Msg_GC.RES_EXCHANGE_MONEY, error);
-	
-	var add_copper = config.util_json.exchange_array[this.player_info.exchange_count].copper;
-	var msg_res = new MSG_520004();
-	msg_res.copper = 0;
-
-	var rate = Math.floor(Math.random() * 100);
-	if(rate < config.util_json['exchange_rate']){
-		add_copper *= 2;
-		msg_res.copper = add_copper;
-	}
-	this.bag.bag_add_money(add_copper, 0);
-	this.player_info.exchange_count++;
-
-	//返回消息给客户端
-	var buf = pop_game_buffer();
-	msg_res.serialize(buf);
-	this.cplayer.respond_success_result(Msg_GC.RES_EXCHANGE_MONEY, buf);
-	push_game_buffer(buf);
-	
-	this.set_data_change();
-}
-
 Game_Player.prototype.set_guild_info = function(buffer) {
 	var msg = new MSG_160100();
 	msg.deserialize(buffer);
@@ -232,12 +212,3 @@ Game_Player.prototype.sync_data_to_master = function() {
 	this.cplayer.sync_data_to_master(Msg_GM.SYNC_GAME_MASTER_PLAYER_INFO, buf);
 	push_game_buffer(buf);
 }
-
-Game_Player.prototype.add_hero_exp_test = function(buffer) {
-	print('add hero exp test, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
-	var msg = new MSG_120306();
-	msg.deserialize(buffer);
-	this.add_exp(msg.exp);
-	this.sync_data_to_master();
-}
-

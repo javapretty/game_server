@@ -5,9 +5,9 @@
  *      Author: zhangyalei
  */
 
-#include "Mysql_Operator.h"
-#include "Msg_Define.h"
 #include "Log.h"
+#include "Mysql_Operator.h"
+#include "Server_Config.h"
 
 Mysql_Operator::Mysql_Operator(void) : mysql_db_conn_(nullptr) { }
 
@@ -23,10 +23,20 @@ Mysql_Operator *Mysql_Operator::instance(void) {
 	return instance_;
 }
 
-int Mysql_Operator::init(std::string &ip, int port, std::string &user, std::string &password, std::string &dbname, std::string &dbpoolname) {
-	mysql_poolname_ = dbpoolname;
+int Mysql_Operator::init() {
+	const Json::Value &mysql_game = SERVER_CONFIG->server_misc()["mysql_game"];
+	if (mysql_game == Json::Value::null) {
+		LOG_FATAL("server_misc config error");
+	}
+
+	std::string ip(mysql_game["ip"].asString());
+	int port = mysql_game["port"].asInt();
+	std::string user(mysql_game["user"].asString());
+	std::string password(mysql_game["password"].asString());
+	std::string dbname(mysql_game["dbname"].asString());
+	std::string dbpoolname(mysql_game["dbpoolname"].asString());
 	MYSQL_DB_MANAGER->Init(ip, port, user, password, dbname, dbpoolname, 16);
-	mysql_db_conn_ = MYSQL_DB_MANAGER->GetDBConn(mysql_poolname_);
+	mysql_db_conn_ = MYSQL_DB_MANAGER->GetDBConn(dbpoolname);
 
 	return 0;
 }

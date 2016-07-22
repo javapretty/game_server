@@ -405,52 +405,6 @@ void MSG_520003::print(void) {
 	printf("\n");
 }
 
-MSG_120004::MSG_120004(void) {
-	reset();
-}
-
-MSG_120004::~MSG_120004() {
-}
-
-void MSG_120004::serialize(Block_Buffer &buffer) const {
-}
-
-int MSG_120004::deserialize(Block_Buffer &buffer) {
-	return 0;
-}
-
-void MSG_120004::reset(void) {
-}
-
-void MSG_120004::print(void) {
-	printf("\n");
-}
-
-MSG_520004::MSG_520004(void) {
-	reset();
-}
-
-MSG_520004::~MSG_520004() {
-}
-
-void MSG_520004::serialize(Block_Buffer &buffer) const {
-	buffer.write_int32(copper);
-}
-
-int MSG_520004::deserialize(Block_Buffer &buffer) {
-	copper = buffer.read_int32();
-	return 0;
-}
-
-void MSG_520004::reset(void) {
-	copper = 0;
-}
-
-void MSG_520004::print(void) {
-	printf("copper: %d, ", copper);
-	printf("\n");
-}
-
 MSG_120100::MSG_120100(void) {
 	reset();
 }
@@ -1222,52 +1176,6 @@ void MSG_520305::reset(void) {
 void MSG_520305::print(void) {
 	printf("hero_id: %d, ", hero_id);
 	printf("skill_id: %d, ", skill_id);
-	printf("\n");
-}
-
-MSG_120306::MSG_120306(void) {
-	reset();
-}
-
-MSG_120306::~MSG_120306() {
-}
-
-void MSG_120306::serialize(Block_Buffer &buffer) const {
-	buffer.write_int32(exp);
-}
-
-int MSG_120306::deserialize(Block_Buffer &buffer) {
-	exp = buffer.read_int32();
-	return 0;
-}
-
-void MSG_120306::reset(void) {
-	exp = 0;
-}
-
-void MSG_120306::print(void) {
-	printf("exp: %d, ", exp);
-	printf("\n");
-}
-
-MSG_520306::MSG_520306(void) {
-	reset();
-}
-
-MSG_520306::~MSG_520306() {
-}
-
-void MSG_520306::serialize(Block_Buffer &buffer) const {
-}
-
-int MSG_520306::deserialize(Block_Buffer &buffer) {
-	return 0;
-}
-
-void MSG_520306::reset(void) {
-}
-
-void MSG_520306::print(void) {
 	printf("\n");
 }
 
