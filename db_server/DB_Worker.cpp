@@ -227,7 +227,7 @@ int DB_Worker::process_load_public_data(int cid) {
 
 		DB_Struct *def = it->second;
 		Block_Buffer buf;
-		buf.make_inner_message(def->msg_id() + 40000);
+		buf.make_inner_message(def->msg_id() + 400000);
 		def->load_data(0, buf);
 		buf.finish_message();
 		DB_MANAGER->send_data_block(cid, buf);

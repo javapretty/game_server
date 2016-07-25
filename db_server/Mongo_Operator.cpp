@@ -64,12 +64,14 @@ int Mongo_Operator::init(void) {
 	if (server_num_ < 1) server_num_ = 1;
 
 	/// 创建所有索引
-	MONGO_CONNECTION.createIndex("game.global", BSON("key" << 1));
-	if (MONGO_CONNECTION.count("game.global", BSON("key" << "role")) == 0) {
-		BSONObjBuilder builder;
-		builder << "key" << "role" << "id" << 0;
-		MONGO_CONNECTION.update("game.global", MONGO_QUERY("key" << "role"),
-				BSON("$set" << builder.obj()), true);
+	MONGO_CONNECTION.createIndex("game.global", BSON("type" << 1));
+	if (MONGO_CONNECTION.count("game.global", MONGO_QUERY("type" << "role_id")) == 0) {
+		MONGO_CONNECTION.update("game.global", MONGO_QUERY("type" << "role_id"), BSON("$set" <<
+				BSON("type" << "role_id" << "value" << 0)), true);
+	}
+	if (MONGO_CONNECTION.count("game.global", MONGO_QUERY("type" << "guild_id")) == 0) {
+		MONGO_CONNECTION.update("game.global", MONGO_QUERY("type" << "guild_id"), BSON("$set" <<
+				BSON("type" << "guild_id" << "value" << 0)), true);
 	}
 
 	//role
@@ -112,18 +114,18 @@ int Mongo_Operator::load_db_cache(void) {
 int64_t Mongo_Operator::create_player(Game_Player_Info &player_info) {
 	BSONObj res = MONGO_CONNECTION.findOne("game.role", MONGO_QUERY("role_name" << player_info.role_name));
 	if (!res.isEmpty()) {
-		LOG_ERROR("role_name = %s has existed.", player_info.role_name.c_str());
+		LOG_ERROR("create_player role_name = %s existed", player_info.role_name.c_str());
 		return -1;
 	}
 
 	//从global表查询当前role_id最大值
-	BSONObj cmd = fromjson("{findandmodify:'global', query:{key:'role'}, update:{$inc:{id:1}}}");
+	BSONObj cmd = fromjson("{findandmodify:'global', query:{type:'role_id'}, update:{$inc:{value:1}}}");
 	if (MONGO_CONNECTION.runCommand("game", cmd, res) == false) {
-		LOG_ERROR("increase role key failed.");
+		LOG_ERROR("increase global type='role_id' value failed");
 		return -1;
 	}
 
-	int order = res.getFieldDotted("value.id").numberLong() + 1;
+	int order = res.getFieldDotted("value.value").numberLong() + 1;
 	int64_t agent = agent_num_ * 10000000000000L;
 	int64_t server = server_num_ * 1000000000L;
 	int64_t role_id = agent + server + order;

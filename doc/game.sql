@@ -2,9 +2,16 @@ CREATE DATABASE IF NOT EXISTS `game` DEFAULT CHARACTER SET utf8;
 
 USE `game`;
 
+DROP TABLE IF EXISTS `global`;
+CREATE TABLE `global` (
+  type varchar(120) not null,
+  value bigint(20) not null,
+  PRIMARY KEY (`type`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 DROP TABLE IF EXISTS `role`;
 CREATE TABLE `role` (
-  role_id bigint(20) ,
+  role_id bigint(20),
   role_name varchar(120), 
   account varchar(120),
   client_ip varchar(120),
