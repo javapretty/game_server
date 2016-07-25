@@ -47,12 +47,12 @@ int Mysql_Operator::init(void) {
 	MYSQL_DB_MANAGER->Init(ip, port, user, password, dbname, dbpoolname, 16);
 	mysql_db_conn_ = MYSQL_DB_MANAGER->GetDBConn(dbpoolname);
 
-	sql::ResultSet *resultSet = mysql_db_conn_->ExecuteQuery("select * from global where type='role_id'");
-	if (!resultSet) {
+	sql::ResultSet *result = mysql_db_conn_->ExecuteQuery("select * from global where type='role_id'");
+	if (result && result->rowsCount() <= 0) {
 		mysql_db_conn_->Execute("insert into global(type, value) values ('role_id', 0)");
 	}
-	resultSet = mysql_db_conn_->ExecuteQuery("select * from global where type='guild_id'");
-	if (!resultSet) {
+	result = mysql_db_conn_->ExecuteQuery("select * from global where type='guild_id'");
+	if (result && result->rowsCount() <= 0) {
 		mysql_db_conn_->Execute("insert into global(type, value) values ('guild_id', 0)");
 	}
 
@@ -61,16 +61,16 @@ int Mysql_Operator::init(void) {
 }
 
 int Mysql_Operator::load_db_cache(void) {
-	sql::ResultSet *resultSet = mysql_db_conn_->ExecuteQuery("select * from role");
-	if (resultSet) {
-		while(resultSet->next()) {
+	sql::ResultSet *result = mysql_db_conn_->ExecuteQuery("select * from role");
+	if (result) {
+		while(result->next()) {
 			Player_DB_Cache db_cache;
-			db_cache.role_id = resultSet->getInt64("role_id");
-			db_cache.role_name = resultSet->getString("role_name");
-			db_cache.account = resultSet->getString("account");
-			db_cache.agent_num = resultSet->getInt("agent_num");
-			db_cache.server_num = resultSet->getInt("server_num");
-			db_cache.level = resultSet->getInt("level");
+			db_cache.role_id = result->getInt64("role_id");
+			db_cache.role_name = result->getString("role_name");
+			db_cache.account = result->getString("account");
+			db_cache.agent_num = result->getInt("agent_num");
+			db_cache.server_num = result->getInt("server_num");
+			db_cache.level = result->getInt("level");
 			DB_MANAGER->db_cache_id_map().insert(std::make_pair(db_cache.role_id, db_cache));
 			DB_MANAGER->db_cache_account_map().insert(std::make_pair(db_cache.account, db_cache));
 		}
@@ -81,27 +81,29 @@ int Mysql_Operator::load_db_cache(void) {
 
 int64_t Mysql_Operator::create_player(Game_Player_Info &player_info) {
 	char str_sql[256] = {0};
-	sprintf(str_sql, "select * from role where role_name=\"%s\" and account=\"%s\"", player_info.role_name.c_str(), player_info.account.c_str());
-	LOG_DEBUG("%s", str_sql);
-	sql::ResultSet *resultSet = mysql_db_conn_->ExecuteQuery(str_sql);
-	if (!resultSet) {
+	sprintf(str_sql, "select * from role where role_name='%s' and account='%s'", player_info.role_name.c_str(), player_info.account.c_str());
+	sql::ResultSet *result = mysql_db_conn_->ExecuteQuery(str_sql);
+	if (result && result->rowsCount() > 0) {
 		LOG_ERROR("create_player role_name = %s existed", player_info.role_name.c_str());
 		return -1;
 	}
 
 	//从global表查询当前role_id最大值
-	resultSet = mysql_db_conn_->ExecuteQuery("select * from global where type='role_id'");
-	if (!resultSet) {
+	result = mysql_db_conn_->ExecuteQuery("select * from global where type='role_id'");
+	if (result && result->rowsCount() <= 0) {
 		LOG_ERROR("find from global type='role_id' not existed");
 		return -1;
 	}
 
-	int order = resultSet->getInt64("role_id") + 1;
+	int order = 1;
+	while(result->next()) {
+		order = result->getInt64("value") + 1;
+		break;
+	}
 	int64_t agent = agent_num_ * 10000000000000L;
 	int64_t server = server_num_ * 1000000000L;
 	int64_t role_id = agent + server + order;
 	sprintf(str_sql, "update global set value=%d where type='role_id'", order);
-	LOG_DEBUG("%s", str_sql);
 	mysql_db_conn_->ExecuteUpdate(str_sql);
 
 	player_info.role_id = role_id;
@@ -112,7 +114,6 @@ int64_t Mysql_Operator::create_player(Game_Player_Info &player_info) {
 	sprintf(str_sql, "insert into role (role_id, role_name, account, agent_num, server_num, level, gender, career, last_sign_in_time, last_sign_out_time) values "
 			"(%ld, %s, %s, %d, %d, %d, %d, %d, %d, %d)", player_info.role_id, player_info.role_name.c_str(), player_info.account.c_str(), player_info.agent_num,
 			player_info.server_num, 1, player_info.gender, player_info.career, now_sec, now_sec);
-	LOG_DEBUG("%s", str_sql);
 	mysql_db_conn_->Execute(str_sql);
 
 	Player_DB_Cache db_cache;
