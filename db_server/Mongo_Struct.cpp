@@ -11,7 +11,7 @@
 
 Mongo_Struct::Mongo_Struct(Xml &xml, TiXmlNode *node) : DB_Struct(xml, node) {
 	std::stringstream stream;
-	stream.str("mmo.");
+	stream.str("game.");
 	db_name_ = stream.str() + db_name_;
 }
 

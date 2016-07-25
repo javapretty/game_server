@@ -52,19 +52,19 @@ DBClientConnection &Mongo_Operator::connection(void) {
 
 int Mongo_Operator::init(void) {
 	/// 创建所有索引
-	MONGO_CONNECTION.createIndex("mmo.global", BSON("key" << 1));
-	if (MONGO_CONNECTION.count("mmo.global", BSON("key" << "role")) == 0) {
+	MONGO_CONNECTION.createIndex("game.global", BSON("key" << 1));
+	if (MONGO_CONNECTION.count("game.global", BSON("key" << "role")) == 0) {
 		BSONObjBuilder builder;
 		builder << "key" << "role" << "id" << 0;
-		MONGO_CONNECTION.update("mmo.global", MONGO_QUERY("key" << "role"),
+		MONGO_CONNECTION.update("game.global", MONGO_QUERY("key" << "role"),
 				BSON("$set" << builder.obj()), true);
 	}
 
 	//role
-	MONGO_CONNECTION.createIndex("mmo.role", BSON("role_id" << 1));
-	MONGO_CONNECTION.createIndex("mmo.role", BSON("role_name" << 1));
-	MONGO_CONNECTION.createIndex("mmo.role", BSON("account" << 1));
-	MONGO_CONNECTION.createIndex("mmo.role", BSON("account" << 1 << "level" << -1));
+	MONGO_CONNECTION.createIndex("game.role", BSON("role_id" << 1));
+	MONGO_CONNECTION.createIndex("game.role", BSON("role_name" << 1));
+	MONGO_CONNECTION.createIndex("game.role", BSON("account" << 1));
+	MONGO_CONNECTION.createIndex("game.role", BSON("account" << 1 << "level" << -1));
 
 	for(DB_Manager::DB_Struct_Id_Map::iterator iter = DB_MANAGER->db_struct_id_map().begin();
 			iter != DB_MANAGER->db_struct_id_map().end(); iter++){
@@ -76,7 +76,7 @@ int Mongo_Operator::init(void) {
 }
 
 int Mongo_Operator::load_db_cache(void) {
-	unsigned long long res_count = MONGO_CONNECTION.count("mmo.role");
+	unsigned long long res_count = MONGO_CONNECTION.count("game.role");
 	BSONObjBuilder field_builder;
 	field_builder << "role_id" << 1
 					<< "account" << 1
@@ -92,7 +92,7 @@ int Mongo_Operator::load_db_cache(void) {
 	std::vector<BSONObj> iter_record;
 	iter_record.reserve(res_count);
 
-	MONGO_CONNECTION.findN(iter_record, "mmo.role", mongo::Query(), res_count, 0, &field_bson);
+	MONGO_CONNECTION.findN(iter_record, "game.role", mongo::Query(), res_count, 0, &field_bson);
 	for (std::vector<BSONObj>::iterator iter = iter_record.begin(); iter != iter_record.end(); ++iter) {
 		BSONObj obj = *iter;
 
@@ -113,7 +113,7 @@ int Mongo_Operator::load_db_cache(void) {
 
 int64_t Mongo_Operator::create_player(Game_Player_Info &player_info) {
 	BSONObj fields = BSON("account" << 1 << "role_id" << 1 << "role_name" << 1);
-	BSONObj res = MONGO_CONNECTION.findOne("mmo.role",
+	BSONObj res = MONGO_CONNECTION.findOne("game.role",
 			MONGO_QUERY("role_name" << player_info.role_name), &fields);
 
 	if (!res.isEmpty()) {
@@ -122,7 +122,7 @@ int64_t Mongo_Operator::create_player(Game_Player_Info &player_info) {
 	}
 
 	BSONObj cmd = fromjson("{findandmodify:'global', query:{key:'role'}, update:{$inc:{id:1}}}");
-	if (MONGO_CONNECTION.runCommand("mmo", cmd, res) == false) {
+	if (MONGO_CONNECTION.runCommand("game", cmd, res) == false) {
 		LOG_ERROR("increase role key failed.");
 		return -1;
 	}
@@ -146,7 +146,7 @@ int64_t Mongo_Operator::create_player(Game_Player_Info &player_info) {
 	player_info.agent_num = agent_num;
 	player_info.server_num = server_num;
 	int now_sec = Time_Value::gettimeofday().sec();
-	MONGO_CONNECTION.update("mmo.role", MONGO_QUERY("role_id" << ((long long int)role_id)), BSON("$set" <<
+	MONGO_CONNECTION.update("game.role", MONGO_QUERY("role_id" << ((long long int)role_id)), BSON("$set" <<
 			BSON("role_id" << (long long int)role_id
 					<< "agent_num" << player_info.agent_num
 					<< "server_num" << player_info.server_num

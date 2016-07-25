@@ -6,8 +6,8 @@
 	"gate_md5_key" : "",
 	"agent_num" : 1,				
 	"server_num" : 1,				
-	"game_server_js_path" : "js/game_server.js",
-	"master_server_js_path" : "js/master_server.js",
+	"game_server_path" : "js/game_server.js",
+	"master_server_path" : "js/master_server.js",
 	"mongodb_game" : {
 		"ip" : "127.0.0.1",
 		"port" : 27017
