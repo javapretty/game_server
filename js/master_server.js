@@ -157,7 +157,6 @@ function process_master_db_buffer(buffer) {
 		guild_manager.load_data(buffer);
 		break;
 	case Msg_MD.SYNC_DB_MASTER_LOAD_OFFLINE_INFO:
-		//offline_manager.load_data(buffer);
 		break;
 	case Msg_MD.SYNC_DB_MASTER_LOAD_RANK_INFO:
 		rank_manager.load_data(buffer);

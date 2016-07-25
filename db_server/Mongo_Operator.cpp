@@ -10,7 +10,7 @@
 #include "Server_Config.h"
 #include "DB_Manager.h"
 
-Mongo_Operator::Mongo_Operator(void) { }
+Mongo_Operator::Mongo_Operator(void): agent_num_(1), server_num_(1) { }
 
 Mongo_Operator::~Mongo_Operator(void) { }
 
@@ -51,6 +51,18 @@ DBClientConnection &Mongo_Operator::connection(void) {
 }
 
 int Mongo_Operator::init(void) {
+	const Json::Value &server_misc = SERVER_CONFIG->server_misc();
+	if (server_misc == Json::Value::null) {
+		LOG_FATAL("db init, server_misc null");
+		return -1;
+	}
+
+	//初始化代理编号，服编号
+	agent_num_ = server_misc["agent_num"].asInt();
+	server_num_ = server_misc["server_num"].asInt();
+	if (agent_num_ < 1) agent_num_ = 1;
+	if (server_num_ < 1) server_num_ = 1;
+
 	/// 创建所有索引
 	MONGO_CONNECTION.createIndex("game.global", BSON("key" << 1));
 	if (MONGO_CONNECTION.count("game.global", BSON("key" << "role")) == 0) {
@@ -76,23 +88,10 @@ int Mongo_Operator::init(void) {
 }
 
 int Mongo_Operator::load_db_cache(void) {
-	unsigned long long res_count = MONGO_CONNECTION.count("game.role");
-	BSONObjBuilder field_builder;
-	field_builder << "role_id" << 1
-					<< "account" << 1
-					<< "role_name" << 1
-					<< "agent_num" << 1
-					<< "server_num" << 1
-					<< "level" << 1
-					<< "gender" << 1
-					<< "career" << 1
-					<< "last_sign_out_time" << 1;
-
-	BSONObj field_bson = field_builder.obj();
+	unsigned long long count = MONGO_CONNECTION.count("game.role");
 	std::vector<BSONObj> iter_record;
-	iter_record.reserve(res_count);
-
-	MONGO_CONNECTION.findN(iter_record, "game.role", mongo::Query(), res_count, 0, &field_bson);
+	iter_record.reserve(count);
+	MONGO_CONNECTION.findN(iter_record, "game.role", Query(), count);
 	for (std::vector<BSONObj>::iterator iter = iter_record.begin(); iter != iter_record.end(); ++iter) {
 		BSONObj obj = *iter;
 
@@ -106,45 +105,32 @@ int Mongo_Operator::load_db_cache(void) {
 		DB_MANAGER->db_cache_id_map().insert(std::make_pair(db_cache.role_id, db_cache));
 		DB_MANAGER->db_cache_account_map().insert(std::make_pair(db_cache.account, db_cache));
 	}
-
 	LOG_INFO("***********load db_cache player count:%d*************", DB_MANAGER->db_cache_account_map().size());
 	return 0;
 }
 
 int64_t Mongo_Operator::create_player(Game_Player_Info &player_info) {
-	BSONObj fields = BSON("account" << 1 << "role_id" << 1 << "role_name" << 1);
-	BSONObj res = MONGO_CONNECTION.findOne("game.role",
-			MONGO_QUERY("role_name" << player_info.role_name), &fields);
-
+	BSONObj res = MONGO_CONNECTION.findOne("game.role", MONGO_QUERY("role_name" << player_info.role_name));
 	if (!res.isEmpty()) {
 		LOG_ERROR("role_name = %s has existed.", player_info.role_name.c_str());
 		return -1;
 	}
 
+	//从global表查询当前role_id最大值
 	BSONObj cmd = fromjson("{findandmodify:'global', query:{key:'role'}, update:{$inc:{id:1}}}");
 	if (MONGO_CONNECTION.runCommand("game", cmd, res) == false) {
 		LOG_ERROR("increase role key failed.");
 		return -1;
 	}
 
-	const Json::Value &server_misc = SERVER_CONFIG->server_misc();
-	if (server_misc == Json::Value::null) {
-		LOG_ERROR("server_misc is null");
-		return -1;
-	}
-	int agent_num = server_misc["agent_num"].asInt();
-	int server_num = server_misc["server_num"].asInt();
-	if (agent_num < 1) agent_num = 1;
-	if (server_num < 1) server_num = 1;
-
 	int order = res.getFieldDotted("value.id").numberLong() + 1;
-	int64_t agent = agent_num * 10000000000000L;
-	int64_t server = server_num * 1000000000L;
+	int64_t agent = agent_num_ * 10000000000000L;
+	int64_t server = server_num_ * 1000000000L;
 	int64_t role_id = agent + server + order;
 
 	player_info.role_id = role_id;
-	player_info.agent_num = agent_num;
-	player_info.server_num = server_num;
+	player_info.agent_num = agent_num_;
+	player_info.server_num = server_num_;
 	int now_sec = Time_Value::gettimeofday().sec();
 	MONGO_CONNECTION.update("game.role", MONGO_QUERY("role_id" << ((long long int)role_id)), BSON("$set" <<
 			BSON("role_id" << (long long int)role_id
@@ -162,8 +148,8 @@ int64_t Mongo_Operator::create_player(Game_Player_Info &player_info) {
 	db_cache.role_id = role_id;
 	db_cache.account = player_info.account;
 	db_cache.role_name = player_info.role_name;
-	db_cache.agent_num = agent_num;
-	db_cache.server_num = server_num;
+	db_cache.agent_num = player_info.agent_num;
+	db_cache.server_num = player_info.server_num;
 	db_cache.level = 1;
 	DB_MANAGER->db_cache_id_map().insert(std::make_pair(db_cache.role_id, db_cache));
 	DB_MANAGER->db_cache_account_map().insert(std::make_pair(db_cache.account, db_cache));

@@ -36,7 +36,9 @@ void Mysql_Struct::create_data(int64_t index){
 }
 
 void Mysql_Struct::load_data(int64_t index, Block_Buffer &buffer){
-
+	if (index == 0) {
+		buffer.write_uint16(0);
+	}
 }
 
 void Mysql_Struct::save_data(Block_Buffer &buffer){

@@ -44,8 +44,8 @@ public:
 	int process_create_player(int cid, Game_Player_Info &player_info);
 	/// 保存玩家数据
 	int process_save_player(int cid, Block_Buffer &buffer);
-
-	int process_load_public_data(int cid, Block_Buffer &buffer);
+	/// 加载master公共数据
+	int process_load_public_data(int cid);
 
 private:
 	Data_List data_list_;						///通用数据保存列表

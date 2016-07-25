@@ -123,9 +123,7 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 		break;
 	}
 	case SYNC_MASTER_DB_LOAD_PUBLIC_DATA:{
-		MSG_150101 msg;
-		msg.deserialize(*buf);
-		process_load_public_data(cid, *buf);
+		process_load_public_data(cid);
 		break;
 	}
 	case SYNC_MASTER_DB_DELETE_DATA: {
@@ -216,9 +214,8 @@ int DB_Worker::process_save_player(int cid, Block_Buffer &buffer) {
 	return 0;
 }
 
-int DB_Worker::process_load_public_data(int cid, Block_Buffer &buffer) {
+int DB_Worker::process_load_public_data(int cid) {
 	DB_Struct *public_data = DB_MANAGER->get_public_data_struct();
-
 	for(std::vector<Field_Info>::iterator iter = public_data->field_vec().begin();
 				iter != public_data->field_vec().end(); iter++){
 		std::string type_name = (*iter).field_type;
@@ -230,7 +227,7 @@ int DB_Worker::process_load_public_data(int cid, Block_Buffer &buffer) {
 
 		DB_Struct *def = it->second;
 		Block_Buffer buf;
-		buf.make_inner_message(def->msg_id() + 400000);
+		buf.make_inner_message(def->msg_id() + 40000);
 		def->load_data(0, buf);
 		buf.finish_message();
 		DB_MANAGER->send_data_block(cid, buf);

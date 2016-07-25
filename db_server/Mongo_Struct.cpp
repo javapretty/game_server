@@ -37,19 +37,19 @@ void Mongo_Struct::create_data(int64_t index){
 
 void Mongo_Struct::load_data(int64_t index, Block_Buffer &buffer){
 	std::vector<BSONObj> total_record;
-	if(index == 0){
+	if(index == 0) {
+		//加载master公共数据，返回消息是数据列表，需要写入长度
 		int total_count = MONGO_CONNECTION.count(db_name_);
-		if(total_count > 0)
+		if(total_count > 0) {
 			MONGO_CONNECTION.findN(total_record, db_name_, Query(), total_count);
-	}
-	else {
+		}
+		buffer.write_uint16(total_record.size());
+	} else {
+		//加载玩家数据，不需要写长度
 		BSONObj obj = MONGO_CONNECTION.findOne(db_name_, MONGO_QUERY(index_ << (long long int)index));
 		total_record.push_back(obj);
 	}
 
-	if(index == 0){
-		buffer.write_uint16(total_record.size());
-	}
 	for (std::vector<BSONObj>::iterator iter = total_record.begin();
 			iter != total_record.end(); ++iter) {
 		for(std::vector<Field_Info>::iterator it = field_vec_.begin();

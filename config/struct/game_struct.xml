@@ -143,19 +143,11 @@
 	
 	<Public_Data type="mem_only">
 		<!--公共数据在此定义-->
-		<struct type="Rank_Info" name="rank_info"/>
 		<struct type="Guild_Info" name="guild_info"/>
 		<struct type="Offline_Info" name="offline_info"/>
+		<struct type="Rank_Info" name="rank_info"/>
 	</Public_Data>
 	
-	<Rank_Info>
-		<db dbname="rank" index="rank_type" msgid="150105"/>
-		<arg type="int64" name="rank_type"/>
-		<arg type="int32" name="min_value"/>
-		<arg type="int64" name="min_role_id"/>
-		<unordered_map type="Rank_Member" key_type="int64" key_name="role_id" name="member_map"/>
-	</Rank_Info>
-
 	<Guild_Info>
 		<db dbname="guild" index="guild_id" msgid="150103"/>
 		<arg type="int64" name="guild_id"/>
@@ -173,6 +165,14 @@
 		<arg type="string" name="guild_name"/>
 		<arg type="int16" name="flag"/>
 	</Offline_Info>
+	
+	<Rank_Info>
+		<db dbname="rank" index="rank_type" msgid="150105"/>
+		<arg type="int64" name="rank_type"/>
+		<arg type="int32" name="min_value"/>
+		<arg type="int64" name="min_role_id"/>
+		<unordered_map type="Rank_Member" key_type="int64" key_name="role_id" name="member_map"/>
+	</Rank_Info>
 
 	<Master_Player_Info>
     	<arg type="int64" name="role_id"/>

@@ -29,6 +29,9 @@ private:
 private:
 	static Mysql_Operator *instance_;
 	Mysql_DB_Conn* mysql_db_conn_;
+
+	int agent_num_;				//代理编号
+	int server_num_;			//服务器编号
 };
 
 #define MYSQL_INSTANCE			Mysql_Operator::instance()

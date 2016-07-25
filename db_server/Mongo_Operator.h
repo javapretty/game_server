@@ -37,6 +37,9 @@ private:
 	Connection_Pool connection_pool_;
 	Connection_Map connection_map_;
 	MUTEX connection_map_lock_;
+
+	int agent_num_;					//代理编号
+	int server_num_;				//服务器编号
 };
 
 #define MONGO_INSTANCE			Mongo_Operator::instance()

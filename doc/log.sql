@@ -10,7 +10,6 @@ CREATE TABLE `logout` (
   level int(10),
   client_ip varchar(120), 
   login_time int(11),
-  logout_time int(11),
-  PRIMARY KEY (role_id)
+  logout_time int(11)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
