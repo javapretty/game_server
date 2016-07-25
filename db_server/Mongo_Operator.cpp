@@ -103,11 +103,11 @@ int Mongo_Operator::load_db_cache(void) {
 		db_cache.agent_num = obj["agent_num"].numberInt();
 		db_cache.server_num = obj["server_num"].numberInt();
 		db_cache.level = obj["level"].numberInt();
-		db_cache.gender = obj["gender"].numberInt();
-		db_cache.career = obj["career"].numberInt();
 		DB_MANAGER->db_cache_id_map().insert(std::make_pair(db_cache.role_id, db_cache));
 		DB_MANAGER->db_cache_account_map().insert(std::make_pair(db_cache.account, db_cache));
 	}
+
+	LOG_INFO("***********load db_cache player count:%d*************", DB_MANAGER->db_cache_account_map().size());
 	return 0;
 }
 
@@ -157,5 +157,16 @@ int64_t Mongo_Operator::create_player(Game_Player_Info &player_info) {
 					<< "career" << 0
 					<< "last_sign_in_time" << now_sec
 					<< "last_sign_out_time" << now_sec)), true);
+
+	Player_DB_Cache db_cache;
+	db_cache.role_id = role_id;
+	db_cache.account = player_info.account;
+	db_cache.role_name = player_info.role_name;
+	db_cache.agent_num = agent_num;
+	db_cache.server_num = server_num;
+	db_cache.level = 1;
+	DB_MANAGER->db_cache_id_map().insert(std::make_pair(db_cache.role_id, db_cache));
+	DB_MANAGER->db_cache_account_map().insert(std::make_pair(db_cache.account, db_cache));
+	LOG_INFO("*************create player,db_cache count:%d***************", DB_MANAGER->db_cache_account_map().size());
 	return role_id;
 }

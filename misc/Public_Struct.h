@@ -75,7 +75,15 @@ struct Cid_Info {
 	int player_cid;
 
 	Cid_Info(void) : gate_cid(0), player_cid(0) {}
-	Cid_Info(int gate_cid_, int player_cid_) : gate_cid(gate_cid_), player_cid(player_cid_) {};
+	Cid_Info(int gate_cid_, int player_cid_): gate_cid(gate_cid_), player_cid(player_cid_) {};
+};
+
+struct Ip_Info {
+	std::string ip;
+	int32_t port;
+
+	Ip_Info(void): ip("127.0.0.1"), port(0) {}
+	Ip_Info(std::string &ip_, int port_): ip(ip_), port(port_) {}
 };
 
 struct Saving_Info {
@@ -83,7 +91,7 @@ struct Saving_Info {
 	Time_Value timestamp;	// 保存时的时间错
 
 	Saving_Info(void) : role_id(0) {}
-	Saving_Info(int64_t role_id_, Time_Value timestamp_) : role_id(role_id_), timestamp(timestamp_) {};
+	Saving_Info(int64_t role_id_, Time_Value timestamp_): role_id(role_id_), timestamp(timestamp_) {};
 };
 
 struct Close_Info {
@@ -91,7 +99,7 @@ struct Close_Info {
 	Time_Value timestamp;
 
 	Close_Info(void) : cid(-1), timestamp(Time_Value::zero) { }
-	Close_Info(int p_cid, const Time_Value &p_timestamp) : cid(p_cid), timestamp(p_timestamp) { }
+	Close_Info(int cid_, const Time_Value &timestamp_): cid(cid_), timestamp(timestamp_) { }
 };
 
 struct Msg_Info {
@@ -103,6 +111,7 @@ struct Msg_Info {
 	uint32_t msg_interval_count_;	/// 操作频率统计
 	Time_Value msg_interval_timestamp;
 
+	Msg_Info() { reset(); }
 	void reset(void) {
 		is_inited = false;
 		cid = -1;
@@ -167,25 +176,16 @@ struct Player_DB_Cache {
 	int32_t agent_num;
 	int32_t server_num;
 	int32_t level;
-	int32_t gender;
-	int32_t career;
 
-	Player_DB_Cache(void);
-	~Player_DB_Cache();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-};
-
-struct Ip_Info {
-	std::string ip;
-	int32_t port;
-
-	Ip_Info(void);
-	~Ip_Info();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
+	Player_DB_Cache(void) { reset(); }
+	void reset(void) {
+		role_id = 0;
+		account.clear();
+		role_name.clear();
+		agent_num = 0;
+		server_num = 0;
+		level = 0;
+	}
 };
 
 struct Login_Player_Info {
