@@ -22,12 +22,12 @@ int main(int argc, char *argv[]) {
 
 	SERVER_CONFIG->load_server_config();
 	int server_type = SERVER_CONFIG->server_misc()["server_type"].asInt();
-	if (server_type == MULTI_THREAD) {
-		DEBUG_SERVER->init(argc, argv);
-		DEBUG_SERVER->start(argc, argv);
-	} else if (server_type == MULTI_PROCESS) {
+	if (server_type == MULTI_PROCESS) {
 		DAEMON_SERVER->init(argc, argv);
 		DAEMON_SERVER->start(argc, argv);
+	} else if (server_type == MULTI_THREAD) {
+		DEBUG_SERVER->init(argc, argv);
+		DEBUG_SERVER->start(argc, argv);
 	} else {
 		LOG_FATAL("server start type = %d error abort", server_type);
 	}

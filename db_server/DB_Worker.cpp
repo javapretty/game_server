@@ -5,7 +5,6 @@
  *      Author: zhangyalei
  */
 
-#include "Mongo_Operator.h"
 #include "DB_Server.h"
 #include "DB_Worker.h"
 #include "DB_Manager.h"
@@ -107,11 +106,7 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 	/*int32_t status*/ buf->read_int32();
 
 	switch (msg_id) {
-	case SYNC_GAME_DB_LOAD_DB_CACHE: {
-		process_load_db_cache(cid);
-		break;
-	}
-	case SYNC_GAME_DB_LOAD_PLAYER_INFO: {
+	case SYNC_GAME_DB_LOAD_PLAYER: {
 		MSG_150001 msg;
 		msg.deserialize(*buf);
 		process_load_player(cid, msg.account);
@@ -123,14 +118,8 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 		process_create_player(cid, msg.player_info);
 		break;
 	}
-	case SYNC_GAME_DB_SAVE_PLAYER_INFO: {
+	case SYNC_GAME_DB_SAVE_PLAYER: {
 		process_save_player(cid, *buf);
-		break;
-	}
-	case SYNC_GAME_DB_SAVE_MAIL_INFO: {
-		MSG_150004 msg;
-		msg.deserialize(*buf);
-		//process_save_mail(msg);
 		break;
 	}
 	case SYNC_MASTER_DB_LOAD_PUBLIC_DATA:{
@@ -139,8 +128,7 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 		process_load_public_data(cid, *buf);
 		break;
 	}
-	case SYNC_MASTER_DB_DELETE_DATA:
-	case SYNC_GAME_DB_DELETE_DATA: {
+	case SYNC_MASTER_DB_DELETE_DATA: {
 		std::string msg_type = buf->read_string();
 		DB_Manager::DB_Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(msg_type);
 		if(iter == DB_MANAGER->db_struct_name_map().end()){
@@ -167,27 +155,20 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 	return 0;
 }
 
-/// 加载db_cache
-int DB_Worker::process_load_db_cache(int cid) {
-	MONGO_INSTANCE->load_db_cache(cid);
-	return 0;
-}
-
 int DB_Worker::process_load_player(int cid, std::string &account) {
 	Block_Buffer buf;
-	buf.make_inner_message(SYNC_DB_GAME_LOAD_PLAYER_INFO);
+	buf.make_inner_message(SYNC_DB_GAME_LOAD_PLAYER);
 	buf.write_string(account);
-	int has_role = MONGO_INSTANCE->role_exist(account);
-	if (! has_role) {
-		//角色不存在，直接返回
-		buf.write_int32(ROLE_NOT_EXIST);
-	}	else {
+	DB_Manager::DB_Cache_Account_Map::iterator iter = DB_MANAGER->db_cache_account_map().find(account);
+	if (iter != DB_MANAGER->db_cache_account_map().end())	{
 		//角色存在，开始加载数据
 		buf.write_int32(SUCCESS_LOADED);
-		int64_t role_id = MONGO_INSTANCE->get_role_id(account);
+		int64_t role_id = iter->second.role_id;
 		load_player_data(role_id, buf);
+	} else {
+		//角色不存在，直接返回
+		buf.write_int32(ROLE_NOT_EXIST);
 	}
-
 	buf.finish_message();
 	DB_MANAGER->send_data_block(cid, buf);
 	return 0;
@@ -197,7 +178,7 @@ int DB_Worker::process_create_player(int cid, Game_Player_Info &player_info) {
 	Block_Buffer buf;
 	buf.make_inner_message(SYNC_DB_GAME_CREATE_PLAYER);
 	int32_t status = 0;
-	if (MONGO_INSTANCE->create_init_player(player_info) < 0) {
+	if (DB_MANAGER->create_player(player_info) < 0) {
 		status = ROLE_HAS_EXIST;
 	} else {
 		status = SUCCESS_CREATED;
@@ -223,7 +204,7 @@ int DB_Worker::process_save_player(int cid, Block_Buffer &buffer) {
 		save_player_data(buffer);
 
 		Block_Buffer buf;
-		buf.make_inner_message(SYNC_DB_GAME_SAVE_PLAYER_INFO);
+		buf.make_inner_message(SYNC_DB_GAME_SAVE_PLAYER);
 		MSG_550003 msg;
 		msg.role_id = role_id;
 		msg.serialize(buf);

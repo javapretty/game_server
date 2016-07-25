@@ -147,8 +147,9 @@ Mail.prototype.send_mail_inner = function(receiver_id, mail_detail) {
 		return Error_Code.ERROR_CLIENT_PARAM;
 	}
 
+	//玩家在线才能发邮件，离线暂时不处理
 	var receiver = game_player_role_id_map.get(receiver_id);
-	if (receiver != null) {
+	if (receiver) {	
 		var mail_info = receiver.mail.mail_info;
 		mail_info.total_count++;
 		mail_detail.mail_id = mail_info.total_count + 1000000;
@@ -168,13 +169,5 @@ Mail.prototype.send_mail_inner = function(receiver_id, mail_detail) {
 		push_game_buffer(buf);
 		
 		receiver.set_data_change();
-	} else {
-		var buf = pop_game_buffer();
-		buf.make_inner_message(Msg_Db.SYNC_GAME_DB_SAVE_MAIL_INFO);
-		buf.write_int64(receiver_id);
-		mail_detail.serialize(buf);
-		buf.finish_message();
-		send_game_buffer_to_db(buf);
-		push_game_buffer(buf);
 	}
 }

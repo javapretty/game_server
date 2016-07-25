@@ -71,10 +71,11 @@ int Mongo_Operator::init(void) {
 		MONGO_CONNECTION.createIndex(iter->second->db_name(), BSON(iter->second->index() << 1));
 	}
 
+	load_db_cache();
 	return 0;
 }
 
-int Mongo_Operator::load_db_cache(int cid) {
+int Mongo_Operator::load_db_cache(void) {
 	unsigned long long res_count = MONGO_CONNECTION.count("mmo.role");
 	BSONObjBuilder field_builder;
 	field_builder << "role_id" << 1
@@ -92,8 +93,6 @@ int Mongo_Operator::load_db_cache(int cid) {
 	iter_record.reserve(res_count);
 
 	MONGO_CONNECTION.findN(iter_record, "mmo.role", mongo::Query(), res_count, 0, &field_bson);
-
-	MSG_550000 msg;
 	for (std::vector<BSONObj>::iterator iter = iter_record.begin(); iter != iter_record.end(); ++iter) {
 		BSONObj obj = *iter;
 
@@ -106,18 +105,13 @@ int Mongo_Operator::load_db_cache(int cid) {
 		db_cache.level = obj["level"].numberInt();
 		db_cache.gender = obj["gender"].numberInt();
 		db_cache.career = obj["career"].numberInt();
-		msg.db_cache_vec.push_back(db_cache);
+		DB_MANAGER->db_cache_id_map().insert(std::make_pair(db_cache.role_id, db_cache));
+		DB_MANAGER->db_cache_account_map().insert(std::make_pair(db_cache.account, db_cache));
 	}
-
-	Block_Buffer buf;
-	buf.make_inner_message(SYNC_DB_GAME_LOAD_DB_CACHE);
-	msg.serialize(buf);
-	buf.finish_message();
-	DB_MANAGER->send_data_block(cid, buf);
 	return 0;
 }
 
-int64_t Mongo_Operator::create_init_player(Game_Player_Info &player_info) {
+int64_t Mongo_Operator::create_player(Game_Player_Info &player_info) {
 	BSONObj fields = BSON("account" << 1 << "role_id" << 1 << "role_name" << 1);
 	BSONObj res = MONGO_CONNECTION.findOne("mmo.role",
 			MONGO_QUERY("role_name" << player_info.role_name), &fields);
@@ -164,22 +158,4 @@ int64_t Mongo_Operator::create_init_player(Game_Player_Info &player_info) {
 					<< "last_sign_in_time" << now_sec
 					<< "last_sign_out_time" << now_sec)), true);
 	return role_id;
-}
-
-bool Mongo_Operator::role_exist(std::string &account) {
-	BSONObj res = MONGO_CONNECTION.findOne("mmo.role", MONGO_QUERY("account" << account));
-	if (res.isEmpty()) {
-		return false;
-	} else {
-		return true;
-	}
-}
-
-int64_t Mongo_Operator::get_role_id(const std::string &account) {
-	BSONObj res = MONGO_CONNECTION.findOne("mmo.role", MONGO_QUERY("account" << account).sort(BSON("level" << -1)));
-	if (res.isEmpty()) {
-		return 0;
-	} else {
-		return res["role_id"].numberLong();
-	}
 }

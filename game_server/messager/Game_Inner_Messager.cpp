@@ -27,16 +27,12 @@ int Game_Inner_Messager::process_db_block(Block_Buffer &buf) {
 
 	Perf_Mon perf_mon(msg_id);
 	switch (msg_id) {
-	case SYNC_DB_GAME_LOAD_DB_CACHE: {
-		process_load_db_cache(buf);
-		break;
-	}
-	case SYNC_DB_GAME_LOAD_PLAYER_INFO:
+	case SYNC_DB_GAME_LOAD_PLAYER:
 	case SYNC_DB_GAME_CREATE_PLAYER: {
 		process_loaded_player_data(buf);
 		break;
 	}
-	case SYNC_DB_GAME_SAVE_PLAYER_INFO: {
+	case SYNC_DB_GAME_SAVE_PLAYER: {
 		process_save_player_complete(buf);
 		break;
 	}
@@ -77,17 +73,6 @@ int Game_Inner_Messager::process_self_loop_block(Block_Buffer &buf) {
 		break;
 	}
 
-	return 0;
-}
-
-int Game_Inner_Messager::process_load_db_cache(Block_Buffer &buf) {
-	MSG_550000 msg;
-	msg.deserialize(buf);
-	for (std::vector<Player_DB_Cache>::iterator iter = msg.db_cache_vec.begin(); iter != msg.db_cache_vec.end(); ++iter) {
-		GAME_MANAGER->db_cache()->id_player_cache_map.insert(std::make_pair(iter->role_id, *iter));
-		GAME_MANAGER->db_cache()->account_player_cache_map.insert(std::make_pair(iter->account, *iter));
-	}
-	LOG_DEBUG("load_db_cache success, role count:%d", msg.db_cache_vec.size());
 	return 0;
 }
 
@@ -172,18 +157,6 @@ int Game_Inner_Messager::process_success_login(int gate_cid, int player_cid, Blo
 	player->set_cid(gate_cid, player_cid);
 	player->load_player(buffer, player_info);
 	player->sign_in();
-
-	Player_DB_Cache db_cache;
-	db_cache.role_id = player_info.role_id;
-	db_cache.account = player_info.account;
-	db_cache.role_name = player_info.role_name;
-	db_cache.agent_num = player_info.agent_num;
-	db_cache.server_num = player_info.server_num;
-	db_cache.gender = player_info.gender;
-	db_cache.career = player_info.career;
-	db_cache.level = player_info.level;
-	GAME_MANAGER->db_cache()->id_player_cache_map.insert(std::make_pair(db_cache.role_id, db_cache));
-	GAME_MANAGER->db_cache()->account_player_cache_map.insert(std::make_pair(db_cache.account, db_cache));
 
 	return 0;
 }

@@ -9,14 +9,16 @@
 #define MYSQL_OPERATOR_H_
 
 #include "Mysql_Conn.h"
-#include <string>
+#include "Public_Struct.h"
 
 class Mysql_Operator {
 public:
 	static Mysql_Operator *instance(void);
 	Mysql_DB_Conn *connection(void) { return mysql_db_conn_; }
 
-	int init();
+	int init(void);
+	int load_db_cache(void);
+	int64_t create_player(Game_Player_Info &player_info);
 
 private:
 	Mysql_Operator(void);

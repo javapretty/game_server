@@ -14,11 +14,11 @@
 #include "Game_Inner_Messager.h"
 
 Game_Manager::Game_Manager(void):
-	db_cache_(0),
 	logining_map_(get_hash_table_size(512)),
   saving_map_(get_hash_table_size(512)),
   player_cid_map_(get_hash_table_size(12000)),
   player_role_id_map_(get_hash_table_size(12000)),
+  player_role_name_map_(get_hash_table_size(12000)),
   server_status_(STATUS_NORMAL),
   msg_count_onoff_(true) { }
 
@@ -42,23 +42,11 @@ int Game_Manager::init(void) {
 	GAME_TIMER->thr_create();			///定时器
 
 	set_msg_count_onoff(1);
-
-	if ((db_cache_ = new DB_Cache) == 0) {
-		LOG_FATAL("new DB_Cache fatal");
-	}
 	return 0;
 }
 
 void Game_Manager::run_handler(void) {
 	process_list();
-}
-
-int Game_Manager::load_db_cache(void) {
-	Block_Buffer buf;
-	buf.make_inner_message(SYNC_GAME_DB_LOAD_DB_CACHE);
-	buf.finish_message();
-	send_to_db(buf);
-	return 0;
 }
 
 int Game_Manager::send_to_gate(int gate_cid, Block_Buffer &buf) {

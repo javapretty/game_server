@@ -1,13 +1,5 @@
 <root>
 <!--服务器内部消息在此定义-->
-	<MSG_150000>
-		<!--加载db_cache-->
-	</MSG_150000>
-
-	<MSG_550000>
-    	<vector type="Player_DB_Cache" name="db_cache_vec"/>
-	</MSG_550000>
-
 	<MSG_150001>
 		<!--加载玩家信息-->
 		<arg type="string" name="account"/>
@@ -32,20 +24,7 @@
     	<arg type="int64" name="role_id"/>
 	</MSG_550003>
 
-	<MSG_150004>
-		<!--保存邮件信息-->
-    	<arg type="int64" name="role_id"/>
-    	<struct type="Mail_Detail" name="mail_detail"/>
-	</MSG_150004>
-
-	<MSG_150008>
-		<!--删除数据库信息-->
-    	<arg type="string" name="table_name" desc="删除数据表名称"/>
-    	<vector type="int64" name="delete_list"/>
-	</MSG_150008>
-
 <!--MASTER到DB的消息-->
-
 	<MSG_150101>
 		<!--拉取数据库信息-->
 	</MSG_150101>

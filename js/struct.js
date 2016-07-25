@@ -551,39 +551,6 @@ Offline_Info.prototype.deserialize = function(buffer) {
 	this.flag = buffer.read_int16();
 }
 
-function Player_DB_Cache() {
-	this.role_id = 0;
-	this.account = ""
-	this.role_name = ""
-	this.agent_num = 0;
-	this.server_num = 0;
-	this.level = 0;
-	this.gender = 0;
-	this.career = 0;
-}
-
-Player_DB_Cache.prototype.serialize = function(buffer) {
-	buffer.write_int64(this.role_id);
-	buffer.write_string(this.account);
-	buffer.write_string(this.role_name);
-	buffer.write_int32(this.agent_num);
-	buffer.write_int32(this.server_num);
-	buffer.write_int32(this.level);
-	buffer.write_int32(this.gender);
-	buffer.write_int32(this.career);
-}
-
-Player_DB_Cache.prototype.deserialize = function(buffer) {
-	this.role_id = buffer.read_int64();
-	this.account = buffer.read_string();
-	this.role_name = buffer.read_string();
-	this.agent_num = buffer.read_int32();
-	this.server_num = buffer.read_int32();
-	this.level = buffer.read_int32();
-	this.gender = buffer.read_int32();
-	this.career = buffer.read_int32();
-}
-
 function Master_Player_Info() {
 	this.role_id = 0;
 	this.account = ""
@@ -612,36 +579,6 @@ Master_Player_Info.prototype.deserialize = function(buffer) {
 	this.gender = buffer.read_int32();
 	this.career = buffer.read_int32();
 	this.vip_level = buffer.read_int32();
-}
-
-function MSG_150000() {
-}
-
-MSG_150000.prototype.serialize = function(buffer) {
-}
-
-MSG_150000.prototype.deserialize = function(buffer) {
-}
-
-function MSG_550000() {
-	this.db_cache_vec = new Array();
-}
-
-MSG_550000.prototype.serialize = function(buffer) {
-	var len = this.db_cache_vec.length;
-	buffer.write_uint16(len);
-	for(var i = 0; i < len; ++i) {
-		this.db_cache_vec[i].serialize(buffer);
-	}
-}
-
-MSG_550000.prototype.deserialize = function(buffer) {
-	var len = buffer.read_uint16();
-	for(var i = 0; i < len; ++i) {
-		var db_cache_vec_v = new Player_DB_Cache();
-		db_cache_vec_v.deserialize(buffer);
-		this.db_cache_vec.push(db_cache_vec_v);
-	}
 }
 
 function MSG_150001() {
@@ -705,45 +642,6 @@ MSG_550003.prototype.serialize = function(buffer) {
 
 MSG_550003.prototype.deserialize = function(buffer) {
 	this.role_id = buffer.read_int64();
-}
-
-function MSG_150004() {
-	this.role_id = 0;
-	this.mail_detail = new Mail_Detail();
-}
-
-MSG_150004.prototype.serialize = function(buffer) {
-	buffer.write_int64(this.role_id);
-	this.mail_detail.serialize(buffer);
-}
-
-MSG_150004.prototype.deserialize = function(buffer) {
-	this.role_id = buffer.read_int64();
-	this.mail_detail.deserialize(buffer);
-}
-
-function MSG_150008() {
-	this.table_name = ""
-	this.delete_list = new Array();
-}
-
-MSG_150008.prototype.serialize = function(buffer) {
-	buffer.write_string(this.table_name);
-	var len = this.delete_list.length;
-	buffer.write_uint16(len);
-	for(var i = 0; i < len; ++i) {
-		buffer.write_int64(this.delete_list[i]);
-	}
-}
-
-MSG_150008.prototype.deserialize = function(buffer) {
-	this.table_name = buffer.read_string();
-	var len = buffer.read_uint16();
-	for(var i = 0; i < len; ++i) {
-		var delete_list_v;
-		delete_list_v = buffer.read_int64();
-		this.delete_list.push(delete_list_v);
-	}
 }
 
 function MSG_150101() {

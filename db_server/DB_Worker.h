@@ -38,8 +38,6 @@ public:
 	void run_handler(void);
 	void process_list(void);
 	int process_data_block(Block_Buffer *buf);
-	/// 加载db_cache
-	int process_load_db_cache(int cid);
 	/// 加载玩家数据
 	int process_load_player(int cid, std::string &account);
 	/// 创建新角色

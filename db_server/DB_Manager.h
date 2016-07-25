@@ -21,6 +21,8 @@ public:
 	typedef std::vector<DB_Worker *> DB_Worker_Vector;
 	typedef boost::unordered_map<int32_t, DB_Struct *> DB_Struct_Id_Map;
 	typedef boost::unordered_map<std::string, DB_Struct *> DB_Struct_Name_Map;
+	typedef boost::unordered_map<int64_t,Player_DB_Cache> DB_Cache_Id_Map;
+	typedef boost::unordered_map<std::string,Player_DB_Cache> DB_Cache_Account_Map;
 
 	static DB_Manager *instance(void);
 	static void destroy(void);
@@ -34,11 +36,19 @@ public:
 	void object_pool_size(void);
 	void free_pool_cache(void);
 
-	DB_Struct_Id_Map& db_struct_id_map();
-	DB_Struct_Name_Map& db_struct_name_map();
+	inline DB_Struct_Id_Map& db_struct_id_map() { return db_struct_id_map_; }
+	inline DB_Struct_Name_Map& db_struct_name_map() { return db_struct_name_map_; }
+	inline DB_Cache_Id_Map& db_cache_id_map() { return db_cache_id_map_; }
+	inline DB_Cache_Account_Map& db_cache_account_map() { return db_cache_account_map_; }
 
-	DB_Struct *get_player_data_struct();
-	DB_Struct *get_public_data_struct();
+	inline DB_Struct *get_player_data_struct() {
+		return db_struct_name_map_.find("Player_Data")->second;
+	}
+	inline DB_Struct *get_public_data_struct() {
+		return db_struct_name_map_.find("Public_Data")->second;
+	}
+
+	int64_t create_player(Game_Player_Info &player_info);
 
 private:
 	DB_Manager(void);
@@ -49,16 +59,20 @@ private:
 
 private:
 	static DB_Manager *instance_;
+
+	DB_Worker_Pool db_worker_pool_;
+	DB_Worker_Vector db_worker_vec_;
+
+	DB_Struct_Id_Map db_struct_id_map_;
+	DB_Struct_Name_Map db_struct_name_map_;
+	DB_Cache_Id_Map db_cache_id_map_;
+	DB_Cache_Account_Map db_cache_account_map_;
+
 	int load_player_num_;				//加载数据的玩家数量
 	int create_player_num_;			//创建的玩家数量
 	int save_player_num_;				//保存数据的玩家数量
 	int db_data_num_;						//保存数据库的消息数量
 	int db_type_;								//数据库类型
-
-	DB_Worker_Pool db_worker_pool_;
-	DB_Worker_Vector db_worker_vec_;
-	DB_Struct_Id_Map db_struct_id_map_;
-	DB_Struct_Name_Map db_struct_name_map_;
 };
 
 #define DB_MANAGER DB_Manager::instance()
@@ -70,22 +84,6 @@ inline void DB_Manager::object_pool_size(void) {
 
 inline void DB_Manager::free_pool_cache(void) {
 	db_worker_pool_.shrink_all();
-}
-
-inline DB_Manager::DB_Struct_Name_Map& DB_Manager::db_struct_name_map(){
-	return db_struct_name_map_;
-}
-
-inline DB_Manager::DB_Struct_Id_Map& DB_Manager::db_struct_id_map(){
-	return db_struct_id_map_;
-}
-
-inline DB_Struct *DB_Manager::get_player_data_struct(){
-	return db_struct_name_map_.find("Player_Data")->second;
-}
-
-inline DB_Struct *DB_Manager::get_public_data_struct(){
-	return db_struct_name_map_.find("Public_Data")->second;
 }
 
 #endif /* DB_MANAGER_H_ */

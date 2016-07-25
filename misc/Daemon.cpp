@@ -73,7 +73,7 @@ int Daemon::handle_timeout(const Time_Value &tv) {
 int Daemon::start_log_client(void) {
 	int cid = -1;
 	//Log_Connector
-	LOG_CONNECTOR->set(server_conf_.server_ip, server_conf_.log_port, server_conf_.connect_send_interval);
+	LOG_CONNECTOR->set(server_conf_.server_ip, server_conf_.log_port, server_conf_.connector_send_interval);
 	LOG_CONNECTOR->init();
 	LOG_CONNECTOR->start();
 	if ((cid = LOG_CONNECTOR->connect_server())< 2) {
@@ -279,7 +279,7 @@ void Daemon_Master::start_client(void) {
 	start_log_client();
 	
 	int cid = -1;
-	MASTER_DB_CONNECTOR->set(server_conf_.server_ip, server_conf_.db_port, server_conf_.connect_send_interval);
+	MASTER_DB_CONNECTOR->set(server_conf_.server_ip, server_conf_.db_port, server_conf_.connector_send_interval);
 	MASTER_DB_CONNECTOR->init();
 	MASTER_DB_CONNECTOR->start();
 	if ((cid = MASTER_DB_CONNECTOR->connect_server()) < 2) {
@@ -339,18 +339,16 @@ void Daemon_Game::start_client(void) {
 
 	int cid = -1;
 	/// Game DB Connector
-	GAME_DB_CONNECTOR->set(server_conf_.server_ip, server_conf_.db_port, server_conf_.connect_send_interval);
+	GAME_DB_CONNECTOR->set(server_conf_.server_ip, server_conf_.db_port, server_conf_.connector_send_interval);
 	GAME_DB_CONNECTOR->init();
 	GAME_DB_CONNECTOR->start();
 	if ((cid = GAME_DB_CONNECTOR->connect_server()) < 2) {
 		LOG_FATAL("game_db_connector fatal cid:%d,port:%d", cid, server_conf_.db_port);
 	}
 	GAME_DB_CONNECTOR->thr_create();
-	//加载DB缓存数据
-	GAME_MANAGER->load_db_cache();
 
 	/// Game Master Connector
-	GAME_MASTER_CONNECTOR->set(server_conf_.server_ip, server_conf_.master_game_port, server_conf_.connect_send_interval);
+	GAME_MASTER_CONNECTOR->set(server_conf_.server_ip, server_conf_.master_game_port, server_conf_.connector_send_interval);
 	GAME_MASTER_CONNECTOR->init();
 	GAME_MASTER_CONNECTOR->start();
 	if ((cid = GAME_MASTER_CONNECTOR->connect_server()) < 2) {
@@ -409,7 +407,7 @@ void Daemon_Gate::start_client(void) {
 
 	int cid = -1;
 	/// Gate Login Connector
-	GATE_LOGIN_CONNECTOR->set(server_conf_.server_ip, server_conf_.login_gate_port, server_conf_.connect_send_interval);
+	GATE_LOGIN_CONNECTOR->set(server_conf_.server_ip, server_conf_.login_gate_port, server_conf_.connector_send_interval);
 	GATE_LOGIN_CONNECTOR->init();
 	GATE_LOGIN_CONNECTOR->start();
 	if ((cid = GATE_LOGIN_CONNECTOR->connect_server()) < 2) {
@@ -418,7 +416,7 @@ void Daemon_Gate::start_client(void) {
 	GATE_LOGIN_CONNECTOR->thr_create();
 
 	/// Gate Game Connector
-	GATE_GAME_CONNECTOR->set(server_conf_.server_ip, server_conf_.game_gate_port, server_conf_.connect_send_interval);
+	GATE_GAME_CONNECTOR->set(server_conf_.server_ip, server_conf_.game_gate_port, server_conf_.connector_send_interval);
 	GATE_GAME_CONNECTOR->init();
 	GATE_GAME_CONNECTOR->start();
 	if ((cid = GATE_GAME_CONNECTOR->connect_server()) < 2) {
@@ -427,7 +425,7 @@ void Daemon_Gate::start_client(void) {
 	GATE_GAME_CONNECTOR->thr_create();
 
 	/// Gate Master Connector
-	GATE_MASTER_CONNECTOR->set(server_conf_.server_ip, server_conf_.master_gate_port, server_conf_.connect_send_interval);
+	GATE_MASTER_CONNECTOR->set(server_conf_.server_ip, server_conf_.master_gate_port, server_conf_.connector_send_interval);
 	GATE_MASTER_CONNECTOR->init();
 	GATE_MASTER_CONNECTOR->start();
 	if ((cid = GATE_MASTER_CONNECTOR->connect_server()) < 2) {

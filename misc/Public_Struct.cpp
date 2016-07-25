@@ -13,11 +13,11 @@ void Server_Conf::init_server_conf(void) {
 	Log::instance()->set_file_switcher(server_conf["server_log_switcher"].asInt());
 
 	server_sleep_time = Time_Value(1, 0);					//1s
-	receive_timeout = Time_Value(server_conf["recv_timeout"].asInt(), 0);
-	server_send_interval = Time_Value(0, 100);		//100us
-	connect_send_interval = Time_Value(0, 100);		//100us
+	receive_timeout = Time_Value(server_conf["receive_timeout"].asInt(), 0);	//900s
+	server_send_interval = Time_Value(0, server_conf["server_send_interval"].asInt());				//100us
+	connector_send_interval = Time_Value(0, server_conf["connector_send_interval"].asInt());	//100us
 
-	server_ip = "127.0.0.1";
+	server_ip = server_conf["server_ip"].asString();
 	log_port = server_conf["log_server"]["port"].asInt();
 	db_port = server_conf["db_server"]["port"].asInt();
 	login_client_network_protocol = server_conf["login_server"]["client_network_protocol"].asInt();
@@ -28,6 +28,47 @@ void Server_Conf::init_server_conf(void) {
 	game_gate_port = server_conf["game_server"]["gate_port"].asInt();
 	gate_client_network_protocol = server_conf["gate_server"]["client_network_protocol"].asInt();
 	gate_client_port = server_conf["gate_server"]["client_port"].asInt();
+}
+
+Player_DB_Cache::Player_DB_Cache(void) {
+	reset();
+}
+
+Player_DB_Cache::~Player_DB_Cache() {
+}
+
+void Player_DB_Cache::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(role_id);
+	buffer.write_string(account);
+	buffer.write_string(role_name);
+	buffer.write_int32(agent_num);
+	buffer.write_int32(server_num);
+	buffer.write_int32(level);
+	buffer.write_int32(gender);
+	buffer.write_int32(career);
+}
+
+int Player_DB_Cache::deserialize(Block_Buffer &buffer) {
+	role_id = buffer.read_int64();
+	account = buffer.read_string();
+	role_name = buffer.read_string();
+	agent_num = buffer.read_int32();
+	server_num = buffer.read_int32();
+	level = buffer.read_int32();
+	gender = buffer.read_int32();
+	career = buffer.read_int32();
+	return 0;
+}
+
+void Player_DB_Cache::reset(void) {
+	role_id = 0;
+	account.clear();
+	role_name.clear();
+	agent_num = 0;
+	server_num = 0;
+	level = 0;
+	gender = 0;
+	career = 0;
 }
 
 Ip_Info::Ip_Info(void) {

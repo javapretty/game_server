@@ -43,9 +43,6 @@ public:
 	int init(void);
 	void run_handler(void);
 
-	int load_db_cache(void);
-	inline DB_Cache *db_cache(void) { return db_cache_; }
-
 	/// 服务器状态
 	inline int server_status(void) { return server_status_; }
 
@@ -130,7 +127,6 @@ private:
 
 private:
 	static Game_Manager *instance_;
-	DB_Cache *db_cache_;
 
 	Block_Pool block_pool_;
 	Game_Player_Pool game_player_pool_;
@@ -229,7 +225,7 @@ inline int Game_Manager::push_game_db_data(Block_Buffer *buf) {
 	buf->set_read_idx(read_idx);
 
 	switch (msg_id) {
-	case SYNC_DB_GAME_LOAD_PLAYER_INFO:
+	case SYNC_DB_GAME_LOAD_PLAYER:
 	case SYNC_DB_GAME_CREATE_PLAYER: {
 		loaded_player_data_list_.push_back(buf);
 		break;

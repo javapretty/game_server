@@ -21,8 +21,8 @@ enum	 {
 };
 
 enum Server_Type {
-	MULTI_THREAD = 1,			//多线程
-	MULTI_PROCESS = 2,		//多进程
+	MULTI_PROCESS = 1,		//多进程
+	MULTI_THREAD = 2,			//多线程
 };
 
 enum DB_Type {
@@ -40,7 +40,7 @@ struct Server_Conf {
 	Time_Value server_sleep_time;
 	Time_Value receive_timeout;
 	Time_Value server_send_interval;
-	Time_Value connect_send_interval;
+	Time_Value connector_send_interval;
 
 	std::string server_ip;
 	int log_port;
@@ -160,18 +160,22 @@ struct Recycle_Tick {
 	}
 };
 
-struct DB_Cache {
-	const static int player_cache_map_bucket_num = 50000;
+struct Player_DB_Cache {
+	int64_t role_id;
+	std::string account;
+	std::string role_name;
+	int32_t agent_num;
+	int32_t server_num;
+	int32_t level;
+	int32_t gender;
+	int32_t career;
 
-	DB_Cache(void)
-	: id_player_cache_map(player_cache_map_bucket_num),
-	  account_player_cache_map(player_cache_map_bucket_num)
-	{ }
-
-	boost::unordered_map<int64_t,Player_DB_Cache> id_player_cache_map;
-	boost::unordered_map<std::string,Player_DB_Cache> account_player_cache_map;
+	Player_DB_Cache(void);
+	~Player_DB_Cache();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
 };
-
 
 struct Ip_Info {
 	std::string ip;
@@ -182,7 +186,6 @@ struct Ip_Info {
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
-	void print(void);
 };
 
 struct Login_Player_Info {
@@ -197,7 +200,6 @@ struct Login_Player_Info {
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
-	void print(void);
 };
 
 #endif /* PUBLIC_STURCT_H_ */

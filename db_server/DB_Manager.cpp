@@ -5,6 +5,7 @@
  *      Author: zhangyalei
  */
 
+#include "Common_Func.h"
 #include "Server_Config.h"
 #include "Msg_Define.h"
 #include "DB_Server.h"
@@ -15,6 +16,10 @@
 #include "Mysql_Operator.h"
 
 DB_Manager::DB_Manager(void) :
+	db_struct_id_map_(get_hash_table_size(512)),
+	db_struct_name_map_(get_hash_table_size(512)),
+	db_cache_id_map_(get_hash_table_size(50000)),
+	db_cache_account_map_(get_hash_table_size(50000)),
 	load_player_num_(0),
 	create_player_num_(0),
 	save_player_num_(0),
@@ -100,7 +105,7 @@ int DB_Manager::push_data_block(Block_Buffer *buf) {
 	buf->set_read_idx(read_idx);
 
 	switch (msg_id) {
-	case SYNC_GAME_DB_LOAD_PLAYER_INFO: {
+	case SYNC_GAME_DB_LOAD_PLAYER: {
 		db_worker_vec_[load_player_num_++ % 10]->push_load_player(buf);
 		break;
 	}
@@ -108,7 +113,7 @@ int DB_Manager::push_data_block(Block_Buffer *buf) {
 		db_worker_vec_[create_player_num_++ % 10]->push_create_player(buf);
 		break;
 	}
-	case SYNC_GAME_DB_SAVE_PLAYER_INFO: {
+	case SYNC_GAME_DB_SAVE_PLAYER: {
 		db_worker_vec_[save_player_num_++ % 10]->push_save_player(buf);
 		break;
 	}
@@ -128,4 +133,14 @@ int DB_Manager::send_data_block(int cid, Block_Buffer &buf) {
 		return -1;
 	}
 	return DB_SERVER->send_block(cid, buf);
+}
+
+int64_t DB_Manager::create_player(Game_Player_Info &player_info) {
+	if (db_type_ == MONGODB)	{
+		return MONGO_INSTANCE->create_player(player_info);
+	} else if (db_type_ == MYSQL) {
+		return MYSQL_INSTANCE->create_player(player_info);
+	} else {
+		return -1;
+	}
 }

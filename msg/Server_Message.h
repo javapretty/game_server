@@ -11,16 +11,12 @@
 #include "boost/unordered_map.hpp"
 #include "Game_Struct.h"
 
-struct MSG_150000;
-struct MSG_550000;
 struct MSG_150001;
 struct MSG_550001;
 struct MSG_150002;
 struct MSG_550002;
 struct MSG_150003;
 struct MSG_550003;
-struct MSG_150004;
-struct MSG_150008;
 struct MSG_150101;
 struct MSG_150102;
 struct MSG_150103;
@@ -38,27 +34,6 @@ struct MSG_140000;
 struct MSG_140001;
 struct MSG_140100;
 struct MSG_140200;
-
-struct MSG_150000 : public MSG {
-
-	MSG_150000(void);
-	~MSG_150000();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct MSG_550000 : public MSG {
-	std::vector<Player_DB_Cache> db_cache_vec;	
-
-	MSG_550000(void);
-	~MSG_550000();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
 
 struct MSG_150001 : public MSG {
 	std::string account;	
@@ -117,30 +92,6 @@ struct MSG_550003 : public MSG {
 
 	MSG_550003(void);
 	~MSG_550003();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct MSG_150004 : public MSG {
-	int64_t role_id;	
-	Mail_Detail mail_detail;	
-
-	MSG_150004(void);
-	~MSG_150004();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct MSG_150008 : public MSG {
-	std::string table_name;	//删除数据表名称
-	std::vector<int64_t> delete_list;	
-
-	MSG_150008(void);
-	~MSG_150008();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

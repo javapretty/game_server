@@ -174,17 +174,6 @@
 		<arg type="int16" name="flag"/>
 	</Offline_Info>
 
-	<Player_DB_Cache>
-    	<arg type="int64" name="role_id"/>
-    	<arg type="string" name="account"/>
-    	<arg type="string" name="role_name"/>
-    	<arg type="int32" name="agent_num"/>
-    	<arg type="int32" name="server_num"/>
-    	<arg type="int32" name="level"/>
-    	<arg type="int32" name="gender"/>
-    	<arg type="int32" name="career"/>
-	</Player_DB_Cache>
-
 	<Master_Player_Info>
     	<arg type="int64" name="role_id"/>
     	<arg type="string" name="account"/>

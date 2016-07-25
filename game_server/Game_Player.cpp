@@ -88,7 +88,7 @@ int Game_Player::save_player(bool is_logout) {
 
 	Block_Buffer buf;
 	buf.reset();
-	buf.make_inner_message(SYNC_GAME_DB_SAVE_PLAYER_INFO);
+	buf.make_inner_message(SYNC_GAME_DB_SAVE_PLAYER);
 	buf.write_int32(is_logout);
 	buf.copy(save_player_data_buffer_);
 	buf.finish_message();

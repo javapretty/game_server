@@ -13,7 +13,10 @@
 #include "Master_Inner_Messager.h"
 
 Master_Manager::Master_Manager(void):
-  player_role_id_map_(get_hash_table_size(12000)),
+	player_gate_cid_map_(get_hash_table_size(12000)),
+	player_game_cid_map_(get_hash_table_size(12000)),
+	player_role_id_map_(get_hash_table_size(12000)),
+	player_role_name_map_(get_hash_table_size(12000)),
   server_status_(STATUS_NORMAL),
   msg_count_onoff_(true) { }
 

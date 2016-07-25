@@ -899,59 +899,6 @@ void Offline_Info::print(void) {
 	printf("\n");
 }
 
-Player_DB_Cache::Player_DB_Cache(void) {
-	reset();
-}
-
-Player_DB_Cache::~Player_DB_Cache() {
-}
-
-void Player_DB_Cache::serialize(Block_Buffer &buffer) const {
-	buffer.write_int64(role_id);
-	buffer.write_string(account);
-	buffer.write_string(role_name);
-	buffer.write_int32(agent_num);
-	buffer.write_int32(server_num);
-	buffer.write_int32(level);
-	buffer.write_int32(gender);
-	buffer.write_int32(career);
-}
-
-int Player_DB_Cache::deserialize(Block_Buffer &buffer) {
-	role_id = buffer.read_int64();
-	account = buffer.read_string();
-	role_name = buffer.read_string();
-	agent_num = buffer.read_int32();
-	server_num = buffer.read_int32();
-	level = buffer.read_int32();
-	gender = buffer.read_int32();
-	career = buffer.read_int32();
-	return 0;
-}
-
-void Player_DB_Cache::reset(void) {
-	role_id = 0;
-	account.clear();
-	role_name.clear();
-	agent_num = 0;
-	server_num = 0;
-	level = 0;
-	gender = 0;
-	career = 0;
-}
-
-void Player_DB_Cache::print(void) {
-	printf("role_id: %ld, ", role_id);
-	printf("account: %s, ", account.c_str());
-	printf("role_name: %s, ", role_name.c_str());
-	printf("agent_num: %d, ", agent_num);
-	printf("server_num: %d, ", server_num);
-	printf("level: %d, ", level);
-	printf("gender: %d, ", gender);
-	printf("career: %d, ", career);
-	printf("\n");
-}
-
 Master_Player_Info::Master_Player_Info(void) {
 	reset();
 }

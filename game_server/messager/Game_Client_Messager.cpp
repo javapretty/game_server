@@ -76,31 +76,19 @@ int Game_Client_Messager::fetch_role_info(int gate_cid, int player_cid, MSG_1200
 	/// 重复登录判断
 	Game_Player *player = GAME_MANAGER->find_role_id_game_player(msg.role_id);
 	if (! player) {
-		if (GAME_MANAGER->db_cache()->account_player_cache_map.count(msg.account)) {
-			//登录加载玩家信息，玩家存在，直接从数据库取数据
-			LOG_DEBUG("role exist, load player info from db, account=%s",msg.account.c_str());
-			if (! GAME_MANAGER->logining_map().insert(std::make_pair(msg.account, Cid_Info(gate_cid, player_cid))).second) {
-				LOG_INFO("insert logining_map failure");
-				return -1;
-			}
-			Block_Buffer msg_buf;
-			msg_buf.make_inner_message(SYNC_GAME_DB_LOAD_PLAYER_INFO);
-			MSG_150001 db_msg;
-			db_msg.account = msg.account;
-			db_msg.serialize(msg_buf);
-			msg_buf.finish_message();
-			GAME_MANAGER->send_to_db(msg_buf);
-		} else {
-			//登录加载玩家信息，玩家不存在，返回客户端创建玩家
-			LOG_DEBUG("role not exist, need create role, account=%s",msg.account.c_str());
-			Block_Buffer res_buf;
-			res_buf.make_player_message(RES_FETCH_ROLE_INFO, ERROR_ROLE_NOT_EXIST, player_cid);
-			MSG_520001 res_msg;
-			res_msg.serialize(res_buf);
-			res_buf.finish_message();
-			GAME_MANAGER->send_to_gate(gate_cid, res_buf);
+		//登录加载玩家信息，玩家存在，直接从数据库取数据
+		LOG_DEBUG("fetch_role_info, load player info from db, account=%s",msg.account.c_str());
+		if (! GAME_MANAGER->logining_map().insert(std::make_pair(msg.account, Cid_Info(gate_cid, player_cid))).second) {
+			LOG_INFO("insert logining_map failure");
+			return -1;
 		}
-
+		Block_Buffer msg_buf;
+		msg_buf.make_inner_message(SYNC_GAME_DB_LOAD_PLAYER);
+		MSG_150001 db_msg;
+		db_msg.account = msg.account;
+		db_msg.serialize(msg_buf);
+		msg_buf.finish_message();
+		GAME_MANAGER->send_to_db(msg_buf);
 	} else {
 		/// 回收中处理
 		if (player->recycle_status() == Recycle_Tick::RECYCLE) {

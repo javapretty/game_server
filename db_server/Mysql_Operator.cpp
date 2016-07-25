@@ -23,7 +23,7 @@ Mysql_Operator *Mysql_Operator::instance(void) {
 	return instance_;
 }
 
-int Mysql_Operator::init() {
+int Mysql_Operator::init(void) {
 	const Json::Value &mysql_game = SERVER_CONFIG->server_misc()["mysql_game"];
 	if (mysql_game == Json::Value::null) {
 		LOG_FATAL("server_misc config error");
@@ -38,5 +38,14 @@ int Mysql_Operator::init() {
 	MYSQL_DB_MANAGER->Init(ip, port, user, password, dbname, dbpoolname, 16);
 	mysql_db_conn_ = MYSQL_DB_MANAGER->GetDBConn(dbpoolname);
 
+	load_db_cache();
 	return 0;
+}
+
+int Mysql_Operator::load_db_cache(void) {
+	return 0;
+}
+
+int64_t Mysql_Operator::create_player(Game_Player_Info &player_info) {
+	return -1;
 }

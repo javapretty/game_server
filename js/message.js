@@ -93,16 +93,12 @@ if (typeof Msg_GC == "undefined") {
 
 if (typeof Msg_Db == "undefined") {
 	var Msg_Db = {};
-	Msg_Db.SYNC_GAME_DB_LOAD_DB_CACHE = 150000; //加载db_cache
-	Msg_Db.SYNC_GAME_DB_LOAD_PLAYER_INFO = 150001; //加载玩家信息
+	Msg_Db.SYNC_GAME_DB_LOAD_PLAYER = 150001; //加载玩家信息
 	Msg_Db.SYNC_GAME_DB_CREATE_PLAYER = 150002; //创建玩家
-	Msg_Db.SYNC_GAME_DB_SAVE_PLAYER_INFO = 150003; //保存玩家信息
-	Msg_Db.SYNC_GAME_DB_SAVE_MAIL_INFO = 150004; //保存邮件信息
-	Msg_Db.SYNC_GAME_DB_DELETE_DATA = 150008; //删除数据库信息
-	Msg_Db.SYNC_DB_GAME_LOAD_DB_CACHE = 550000; //加载db_cache(返回)
-	Msg_Db.SYNC_DB_GAME_LOAD_PLAYER_INFO = 550001; //加载玩家信息(返回)
+	Msg_Db.SYNC_GAME_DB_SAVE_PLAYER = 150003; //保存玩家信息
+	Msg_Db.SYNC_DB_GAME_LOAD_PLAYER = 550001; //加载玩家信息(返回)
 	Msg_Db.SYNC_DB_GAME_CREATE_PLAYER = 550002; //创建玩家(返回)
-	Msg_Db.SYNC_DB_GAME_SAVE_PLAYER_INFO = 550003; //保存玩家信息(返回)
+	Msg_Db.SYNC_DB_GAME_SAVE_PLAYER = 550003; //保存玩家信息(返回)
 }
 
 if (typeof Msg_MD == "undefined") {

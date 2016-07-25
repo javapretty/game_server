@@ -23,11 +23,8 @@ public:
 	mongo::DBClientConnection &connection(void);
 
 	int init(void);
-	int load_db_cache(int cid);
-
-	int64_t create_init_player(Game_Player_Info &player_info);
-	bool role_exist(std::string &account);
-	int64_t get_role_id(const std::string &account);
+	int load_db_cache(void);
+	int64_t create_player(Game_Player_Info &player_info);
 
 private:
 	Mongo_Operator(void);
