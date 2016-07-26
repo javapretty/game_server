@@ -10,10 +10,10 @@
 #include "Server_Config.h"
 #include "DB_Manager.h"
 
-Mysql_Operator::Mysql_Operator(void) : mysql_db_conn_(nullptr), agent_num_(0), server_num_(0) { }
+Mysql_Operator::Mysql_Operator(void) : mysql_conn_(nullptr), agent_num_(0), server_num_(0) { }
 
 Mysql_Operator::~Mysql_Operator(void) {
-	MYSQL_DB_MANAGER->RelDBConn(mysql_db_conn_);
+	MYSQL_MANAGER->rel_mysql_conn(mysql_conn_);
 }
 
 Mysql_Operator *Mysql_Operator::instance_;
@@ -44,16 +44,16 @@ int Mysql_Operator::init(void) {
 	std::string password(server_misc["mysql_game"]["password"].asString());
 	std::string dbname(server_misc["mysql_game"]["dbname"].asString());
 	std::string dbpoolname(server_misc["mysql_game"]["dbpoolname"].asString());
-	MYSQL_DB_MANAGER->Init(ip, port, user, password, dbname, dbpoolname, 16);
-	mysql_db_conn_ = MYSQL_DB_MANAGER->GetDBConn(dbpoolname);
+	MYSQL_MANAGER->init(ip, port, user, password, dbname, dbpoolname, 16);
+	mysql_conn_ = MYSQL_MANAGER->get_mysql_conn(dbpoolname);
 
-	sql::ResultSet *result = mysql_db_conn_->ExecuteQuery("select * from global where type='role_id'");
+	sql::ResultSet *result = mysql_conn_->execute_query("select * from global where type='role_id'");
 	if (result && result->rowsCount() <= 0) {
-		mysql_db_conn_->Execute("insert into global(type, value) values ('role_id', 0)");
+		mysql_conn_->execute("insert into global(type, value) values ('role_id', 0)");
 	}
-	result = mysql_db_conn_->ExecuteQuery("select * from global where type='guild_id'");
+	result = mysql_conn_->execute_query("select * from global where type='guild_id'");
 	if (result && result->rowsCount() <= 0) {
-		mysql_db_conn_->Execute("insert into global(type, value) values ('guild_id', 0)");
+		mysql_conn_->execute("insert into global(type, value) values ('guild_id', 0)");
 	}
 
 	load_db_cache();
@@ -61,7 +61,7 @@ int Mysql_Operator::init(void) {
 }
 
 int Mysql_Operator::load_db_cache(void) {
-	sql::ResultSet *result = mysql_db_conn_->ExecuteQuery("select * from role");
+	sql::ResultSet *result = mysql_conn_->execute_query("select * from role");
 	if (result) {
 		while(result->next()) {
 			Player_DB_Cache db_cache;
@@ -82,14 +82,14 @@ int Mysql_Operator::load_db_cache(void) {
 int64_t Mysql_Operator::create_player(Game_Player_Info &player_info) {
 	char str_sql[256] = {0};
 	sprintf(str_sql, "select * from role where role_name='%s' and account='%s'", player_info.role_name.c_str(), player_info.account.c_str());
-	sql::ResultSet *result = mysql_db_conn_->ExecuteQuery(str_sql);
+	sql::ResultSet *result = mysql_conn_->execute_query(str_sql);
 	if (result && result->rowsCount() > 0) {
 		LOG_ERROR("create_player role_name = %s existed", player_info.role_name.c_str());
 		return -1;
 	}
 
 	//从global表查询当前role_id最大值
-	result = mysql_db_conn_->ExecuteQuery("select * from global where type='role_id'");
+	result = mysql_conn_->execute_query("select * from global where type='role_id'");
 	if (result && result->rowsCount() <= 0) {
 		LOG_ERROR("find from global type='role_id' not existed");
 		return -1;
@@ -104,7 +104,7 @@ int64_t Mysql_Operator::create_player(Game_Player_Info &player_info) {
 	int64_t server = server_num_ * 1000000000L;
 	int64_t role_id = agent + server + order;
 	sprintf(str_sql, "update global set value=%d where type='role_id'", order);
-	mysql_db_conn_->ExecuteUpdate(str_sql);
+	mysql_conn_->execute_update(str_sql);
 
 	player_info.role_id = role_id;
 	player_info.agent_num = agent_num_;
@@ -114,7 +114,7 @@ int64_t Mysql_Operator::create_player(Game_Player_Info &player_info) {
 	sprintf(str_sql, "insert into role (role_id, role_name, account, agent_num, server_num, level, gender, career, last_sign_in_time, last_sign_out_time) values (%ld, '%s', '%s', %d, %d, %d, %d, %d, %d, %d)",
 			player_info.role_id, player_info.role_name.c_str(), player_info.account.c_str(), player_info.agent_num,
 			player_info.server_num, 1, player_info.gender, player_info.career, now_sec, now_sec);
-	mysql_db_conn_->Execute(str_sql);
+	mysql_conn_->execute(str_sql);
 
 	Player_DB_Cache db_cache;
 	db_cache.role_id = role_id;

@@ -16,10 +16,10 @@ Login_Manager::Login_Manager(void):
   player_account_map_(get_hash_table_size(12000)),
 	server_status_(STATUS_NORMAL),
 	msg_count_onoff_(true),
-  mysql_db_conn_(NULL) {}
+  mysql_conn_(NULL) {}
 
 Login_Manager::~Login_Manager(void) {
-	MYSQL_DB_MANAGER->RelDBConn(mysql_db_conn_);
+	MYSQL_MANAGER->rel_mysql_conn(mysql_conn_);
 }
 
 Login_Manager *Login_Manager::instance_;
@@ -333,8 +333,8 @@ int Login_Manager::connect_mysql_db() {
 	std::string dbname(mysql_account["dbname"].asString());
 	std::string dbpoolname(mysql_account["dbpoolname"].asString());
 
-	MYSQL_DB_MANAGER->Init(ip, port, user, password, dbname, dbpoolname, 16);
-	mysql_db_conn_ = MYSQL_DB_MANAGER->GetDBConn(dbpoolname);
+	MYSQL_MANAGER->init(ip, port, user, password, dbname, dbpoolname, 16);
+	mysql_conn_ = MYSQL_MANAGER->get_mysql_conn(dbpoolname);
 	return 0;
 }
 
@@ -342,7 +342,7 @@ int Login_Manager::client_register(std::string& account, std::string& password){
 	int ret = 0;
 	try {
 		std::string sql_query = "insert into account_info values (\'" + account + "\', \'" +  password +"\')";
-		ret = mysql_db_conn_->Execute(sql_query.c_str());
+		ret = mysql_conn_->execute(sql_query.c_str());
 	} catch(sql::SQLException &e){
 		int err_code = e.getErrorCode();
 		LOG_ERROR("SQLException, MySQL Error Code = %d, SQLState = %s,%s, account = %s, password = %s",
@@ -357,7 +357,7 @@ int Login_Manager::client_login(std::string& account, std::string& password){
 	int ret = 0;
 	try {
 		std::string sql_query = "select count(1) from account_info where account = \'" + account + "\' and password = \'" + password + "\'";
-		sql::ResultSet* res = mysql_db_conn_->ExecuteQuery(sql_query.c_str());
+		sql::ResultSet* res = mysql_conn_->execute_query(sql_query.c_str());
 		int cnt = 0;
 		while (res->next()) {
 			cnt = res->getInt(1);

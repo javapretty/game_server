@@ -135,7 +135,7 @@ private:
 
 	Ip_Vec gate_ip_vec_;
 
-	Mysql_DB_Conn* mysql_db_conn_;
+	Mysql_Conn* mysql_conn_;
 };
 
 #define LOGIN_MANAGER Login_Manager::instance()

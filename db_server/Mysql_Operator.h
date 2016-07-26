@@ -14,7 +14,7 @@
 class Mysql_Operator {
 public:
 	static Mysql_Operator *instance(void);
-	Mysql_DB_Conn *connection(void) { return mysql_db_conn_; }
+	Mysql_Conn *connection(void) { return mysql_conn_; }
 
 	int init(void);
 	int load_db_cache(void);
@@ -28,7 +28,7 @@ private:
 
 private:
 	static Mysql_Operator *instance_;
-	Mysql_DB_Conn* mysql_db_conn_;
+	Mysql_Conn* mysql_conn_;
 
 	int agent_num_;				//代理编号
 	int server_num_;			//服务器编号

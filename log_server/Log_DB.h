@@ -43,7 +43,7 @@ private:
 	std::string mysql_poolname_;
 
 	Data_Collector logout_collector_;
-	Mysql_DB_Conn* mysql_db_conn_;
+	Mysql_Conn* mysql_conn_;
 };
 
 #endif /* LOG_DB_H_ */

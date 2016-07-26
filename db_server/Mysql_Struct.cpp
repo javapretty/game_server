@@ -33,7 +33,7 @@ void Mysql_Struct::create_data(int64_t index){
 	str_value = str_value.substr(0, str_value.length()-1);
 	char str_sql[512] = {0};
 	sprintf(str_sql, "INSERT INTO %s (%s) VALUES (%s)", db_name_.c_str(), str_name.c_str(), str_value.c_str());
-	MYSQL_CONNECTION->Execute(str_sql);
+	MYSQL_CONNECTION->execute(str_sql);
 }
 
 void Mysql_Struct::load_data(int64_t index, Block_Buffer &buffer){
@@ -45,7 +45,7 @@ void Mysql_Struct::load_data(int64_t index, Block_Buffer &buffer){
 		//加载玩家数据，不需要写长度
 		sprintf(str_sql, "select * from %s where %s=%ld", db_name_.c_str(), index_.c_str(), index);
 	}
-	sql::ResultSet *result = MYSQL_CONNECTION->ExecuteQuery(str_sql);
+	sql::ResultSet *result = MYSQL_CONNECTION->execute_query(str_sql);
 	if (result) {
 		if (index == 0) {
 			buffer.write_uint16(result->rowsCount());
@@ -89,7 +89,7 @@ void Mysql_Struct::save_data(Block_Buffer &buffer){
 	str_value = str_value.substr(0, str_value.length()-1);
 	char str_sql[512] = {0};
 	sprintf(str_sql, "INSERT INTO %s (%s) VALUES (%s)", db_name_.c_str(), str_name.c_str(), str_value.c_str());
-	MYSQL_CONNECTION->Execute(str_sql);
+	MYSQL_CONNECTION->execute(str_sql);
 
 	LOG_DEBUG("table %s save index:%ld", db_name_.c_str(), index_value);
 }
@@ -108,7 +108,7 @@ void Mysql_Struct::delete_data(Block_Buffer &buffer) {
 	for(int i = 0; i < count; i++){
 		int64_t index = buffer.read_int64();
 		sprintf(sql_str, "delete from %s where %s=%ld", db_name_.c_str(), index_.c_str(), index);
-		MYSQL_CONNECTION->Execute(sql_str);
+		MYSQL_CONNECTION->execute(sql_str);
 	}
 }
 

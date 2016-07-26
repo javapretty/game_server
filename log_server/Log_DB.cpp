@@ -11,12 +11,12 @@
 
 Log_DB::Log_DB(void)
 : mysql_on_off_(true),
-  mysql_db_conn_(NULL)
+  mysql_conn_(NULL)
 { }
 
 
 Log_DB::~Log_DB(void) {
-	MYSQL_DB_MANAGER->RelDBConn(mysql_db_conn_);
+	MYSQL_MANAGER->rel_mysql_conn(mysql_conn_);
 }
 
 const int Log_DB::collector_max_num = 5;
@@ -25,8 +25,8 @@ const Time_Value Log_DB::collector_timeout = Time_Value(5, 0);
 int Log_DB::init(std::string &ip, int port, std::string &user, std::string &password, std::string &dbname, std::string &dbpoolname) {
 	mysql_on_off_ = true;
 	mysql_poolname_ = dbpoolname;
-	MYSQL_DB_MANAGER->Init(ip, port, user, password, dbname, dbpoolname, 16);
-	mysql_db_conn_ = MYSQL_DB_MANAGER->GetDBConn(mysql_poolname_);
+	MYSQL_MANAGER->init(ip, port, user, password, dbname, dbpoolname, 16);
+	mysql_conn_ = MYSQL_MANAGER->get_mysql_conn(mysql_poolname_);
 	init_collector();
 
 	return 0;
@@ -43,7 +43,7 @@ int Log_DB::execute_collector(Data_Collector &collector) {
 
 	try {
 		LOG_DEBUG("execute SQL=[%s]", collector.sql_str_.c_str());
-		mysql_db_conn_->Execute(collector.sql_str_.c_str());
+		mysql_conn_->execute(collector.sql_str_.c_str());
 	} catch (sql::SQLException &e) {
 		LOG_ERROR("SQLException, MySQL Error Code = %d, SQLState = [%s], [%s]", e.getErrorCode(), e.getSQLState().c_str(), e.what());
 		return -1;
