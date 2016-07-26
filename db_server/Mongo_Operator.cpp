@@ -143,8 +143,8 @@ int64_t Mongo_Operator::create_player(Game_Player_Info &player_info) {
 					<< "level" << 1
 					<< "gender" << player_info.gender
 					<< "career" << 0
-					<< "last_sign_in_time" << now_sec
-					<< "last_sign_out_time" << now_sec)), true);
+					<< "login_time" << now_sec
+					<< "logout_time" << now_sec)), true);
 
 	Player_DB_Cache db_cache;
 	db_cache.role_id = role_id;

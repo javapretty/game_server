@@ -112,8 +112,5 @@ int Log_Manager::process_block(Block_Buffer &buf) {
 }
 
 int Log_Manager::tick(void) {
-	Time_Value now(Time_Value::gettimeofday());
-	log_db_.tick(now);
-
 	return 0;
 }

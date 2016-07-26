@@ -298,8 +298,8 @@ function Game_Player_Info() {
 	this.gender = 0;
 	this.career = 0;
 	this.create_time = 0;
-	this.last_sign_in_time = 0;
-	this.last_sign_out_time = 0;
+	this.login_time = 0;
+	this.logout_time = 0;
 	this.vitality = 0;
 	this.buy_vitality_times = 0;
 	this.vip_level = 0;
@@ -321,8 +321,8 @@ Game_Player_Info.prototype.serialize = function(buffer) {
 	buffer.write_int32(this.gender);
 	buffer.write_int32(this.career);
 	buffer.write_int32(this.create_time);
-	buffer.write_int32(this.last_sign_in_time);
-	buffer.write_int32(this.last_sign_out_time);
+	buffer.write_int32(this.login_time);
+	buffer.write_int32(this.logout_time);
 	buffer.write_int32(this.vitality);
 	buffer.write_int32(this.buy_vitality_times);
 	buffer.write_int32(this.vip_level);
@@ -344,8 +344,8 @@ Game_Player_Info.prototype.deserialize = function(buffer) {
 	this.gender = buffer.read_int32();
 	this.career = buffer.read_int32();
 	this.create_time = buffer.read_int32();
-	this.last_sign_in_time = buffer.read_int32();
-	this.last_sign_out_time = buffer.read_int32();
+	this.login_time = buffer.read_int32();
+	this.logout_time = buffer.read_int32();
 	this.vitality = buffer.read_int32();
 	this.buy_vitality_times = buffer.read_int32();
 	this.vip_level = buffer.read_int32();

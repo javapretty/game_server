@@ -492,8 +492,8 @@ void Game_Player_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(gender);
 	buffer.write_int32(career);
 	buffer.write_int32(create_time);
-	buffer.write_int32(last_sign_in_time);
-	buffer.write_int32(last_sign_out_time);
+	buffer.write_int32(login_time);
+	buffer.write_int32(logout_time);
 	buffer.write_int32(vitality);
 	buffer.write_int32(buy_vitality_times);
 	buffer.write_int32(vip_level);
@@ -515,8 +515,8 @@ int Game_Player_Info::deserialize(Block_Buffer &buffer) {
 	gender = buffer.read_int32();
 	career = buffer.read_int32();
 	create_time = buffer.read_int32();
-	last_sign_in_time = buffer.read_int32();
-	last_sign_out_time = buffer.read_int32();
+	login_time = buffer.read_int32();
+	logout_time = buffer.read_int32();
 	vitality = buffer.read_int32();
 	buy_vitality_times = buffer.read_int32();
 	vip_level = buffer.read_int32();
@@ -539,8 +539,8 @@ void Game_Player_Info::reset(void) {
 	gender = 0;
 	career = 0;
 	create_time = 0;
-	last_sign_in_time = 0;
-	last_sign_out_time = 0;
+	login_time = 0;
+	logout_time = 0;
 	vitality = 0;
 	buy_vitality_times = 0;
 	vip_level = 0;
@@ -562,8 +562,8 @@ void Game_Player_Info::print(void) {
 	printf("gender: %d, ", gender);
 	printf("career: %d, ", career);
 	printf("create_time: %d, ", create_time);
-	printf("last_sign_in_time: %d, ", last_sign_in_time);
-	printf("last_sign_out_time: %d, ", last_sign_out_time);
+	printf("login_time: %d, ", login_time);
+	printf("logout_time: %d, ", logout_time);
 	printf("vitality: %d, ", vitality);
 	printf("buy_vitality_times: %d, ", buy_vitality_times);
 	printf("vip_level: %d, ", vip_level);

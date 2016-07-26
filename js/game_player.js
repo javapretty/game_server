@@ -48,7 +48,7 @@ Game_Player.prototype.load_player_data = function(buffer) {
 Game_Player.prototype.save_player_data = function() {
 	//print('------game_player save_data,role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name);
 	
-	this.player_info.last_sign_out_time = util.now_sec();
+	this.player_info.logout_time = util.now_sec();
 	this.sync_player_data();
 	game_player_cid_map.remove(this.cid);
 	game_player_role_id_map.remove(this.player_info.role_id);

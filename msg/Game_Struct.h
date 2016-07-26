@@ -192,8 +192,8 @@ struct Game_Player_Info : public MSG {
 	int32_t gender;	
 	int32_t career;	
 	int32_t create_time;	
-	int32_t last_sign_in_time;	
-	int32_t last_sign_out_time;	
+	int32_t login_time;	
+	int32_t logout_time;	
 	int32_t vitality;	
 	int32_t buy_vitality_times;	
 	int32_t vip_level;	
