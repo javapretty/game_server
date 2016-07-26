@@ -742,6 +742,116 @@ void Shop_Info::print(void) {
 	printf("\n");
 }
 
+Guild_Info::Guild_Info(void) {
+	reset();
+}
+
+Guild_Info::~Guild_Info() {
+}
+
+void Guild_Info::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(guild_id);
+	buffer.write_string(guild_name);
+	buffer.write_int64(chief_id);
+	buffer.write_bool(is_change);
+	uint16_t applicant_list_size = applicant_list.size();
+	buffer.write_uint16(applicant_list_size);
+	for(uint16_t i = 0; i < applicant_list_size; ++i) {
+		applicant_list[i].serialize(buffer);
+	}
+	uint16_t member_list_size = member_list.size();
+	buffer.write_uint16(member_list_size);
+	for(uint16_t i = 0; i < member_list_size; ++i) {
+		member_list[i].serialize(buffer);
+	}
+}
+
+int Guild_Info::deserialize(Block_Buffer &buffer) {
+	guild_id = buffer.read_int64();
+	guild_name = buffer.read_string();
+	chief_id = buffer.read_int64();
+	is_change = buffer.read_bool();
+	uint16_t applicant_list_size = buffer.read_uint16();
+	Guild_Member_Detail applicant_list_v;
+	for(uint16_t i = 0; i < applicant_list_size; ++i) {
+		applicant_list_v.deserialize(buffer);
+		applicant_list.push_back(applicant_list_v);
+	}
+	uint16_t member_list_size = buffer.read_uint16();
+	Guild_Member_Detail member_list_v;
+	for(uint16_t i = 0; i < member_list_size; ++i) {
+		member_list_v.deserialize(buffer);
+		member_list.push_back(member_list_v);
+	}
+	return 0;
+}
+
+void Guild_Info::reset(void) {
+	guild_id = 0;
+	guild_name.clear();
+	chief_id = 0;
+	is_change = 0;
+	applicant_list.clear();
+	member_list.clear();
+}
+
+void Guild_Info::print(void) {
+	printf("guild_id: %ld, ", guild_id);
+	printf("guild_name: %s, ", guild_name.c_str());
+	printf("chief_id: %ld, ", chief_id);
+	printf("is_change: %d, ", is_change);
+	uint16_t applicant_list_size = (applicant_list.size() > 5 ? 5 : applicant_list.size());
+	printf("applicant_list.size: %ld [", applicant_list.size());
+	for(uint16_t i = 0; i < applicant_list_size; ++i) {
+		applicant_list[i].print();
+	}
+	printf("], ");
+	uint16_t member_list_size = (member_list.size() > 5 ? 5 : member_list.size());
+	printf("member_list.size: %ld [", member_list.size());
+	for(uint16_t i = 0; i < member_list_size; ++i) {
+		member_list[i].print();
+	}
+	printf("], ");
+	printf("\n");
+}
+
+Offline_Info::Offline_Info(void) {
+	reset();
+}
+
+Offline_Info::~Offline_Info() {
+}
+
+void Offline_Info::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(role_id);
+	buffer.write_int64(guild_id);
+	buffer.write_string(guild_name);
+	buffer.write_int32(flag);
+}
+
+int Offline_Info::deserialize(Block_Buffer &buffer) {
+	role_id = buffer.read_int64();
+	guild_id = buffer.read_int64();
+	guild_name = buffer.read_string();
+	flag = buffer.read_int32();
+	return 0;
+}
+
+void Offline_Info::reset(void) {
+	role_id = 0;
+	guild_id = 0;
+	guild_name.clear();
+	flag = 0;
+}
+
+void Offline_Info::print(void) {
+	printf("role_id: %ld, ", role_id);
+	printf("guild_id: %ld, ", guild_id);
+	printf("guild_name: %s, ", guild_name.c_str());
+	printf("flag: %d, ", flag);
+	printf("\n");
+}
+
 Rank_Info::Rank_Info(void) {
 	reset();
 }
@@ -786,116 +896,6 @@ void Rank_Info::print(void) {
 	printf("min_value: %d, ", min_value);
 	printf("min_role_id: %ld, ", min_role_id);
 	printf("member_map.size: %ld {}, ", member_map.size());
-	printf("\n");
-}
-
-Guild_Info::Guild_Info(void) {
-	reset();
-}
-
-Guild_Info::~Guild_Info() {
-}
-
-void Guild_Info::serialize(Block_Buffer &buffer) const {
-	buffer.write_int64(guild_id);
-	buffer.write_bool(change);
-	buffer.write_string(guild_name);
-	buffer.write_int64(chief_id);
-	uint16_t applicant_list_size = applicant_list.size();
-	buffer.write_uint16(applicant_list_size);
-	for(uint16_t i = 0; i < applicant_list_size; ++i) {
-		applicant_list[i].serialize(buffer);
-	}
-	uint16_t member_list_size = member_list.size();
-	buffer.write_uint16(member_list_size);
-	for(uint16_t i = 0; i < member_list_size; ++i) {
-		member_list[i].serialize(buffer);
-	}
-}
-
-int Guild_Info::deserialize(Block_Buffer &buffer) {
-	guild_id = buffer.read_int64();
-	change = buffer.read_bool();
-	guild_name = buffer.read_string();
-	chief_id = buffer.read_int64();
-	uint16_t applicant_list_size = buffer.read_uint16();
-	Guild_Member_Detail applicant_list_v;
-	for(uint16_t i = 0; i < applicant_list_size; ++i) {
-		applicant_list_v.deserialize(buffer);
-		applicant_list.push_back(applicant_list_v);
-	}
-	uint16_t member_list_size = buffer.read_uint16();
-	Guild_Member_Detail member_list_v;
-	for(uint16_t i = 0; i < member_list_size; ++i) {
-		member_list_v.deserialize(buffer);
-		member_list.push_back(member_list_v);
-	}
-	return 0;
-}
-
-void Guild_Info::reset(void) {
-	guild_id = 0;
-	change = 0;
-	guild_name.clear();
-	chief_id = 0;
-	applicant_list.clear();
-	member_list.clear();
-}
-
-void Guild_Info::print(void) {
-	printf("guild_id: %ld, ", guild_id);
-	printf("change: %d, ", change);
-	printf("guild_name: %s, ", guild_name.c_str());
-	printf("chief_id: %ld, ", chief_id);
-	uint16_t applicant_list_size = (applicant_list.size() > 5 ? 5 : applicant_list.size());
-	printf("applicant_list.size: %ld [", applicant_list.size());
-	for(uint16_t i = 0; i < applicant_list_size; ++i) {
-		applicant_list[i].print();
-	}
-	printf("], ");
-	uint16_t member_list_size = (member_list.size() > 5 ? 5 : member_list.size());
-	printf("member_list.size: %ld [", member_list.size());
-	for(uint16_t i = 0; i < member_list_size; ++i) {
-		member_list[i].print();
-	}
-	printf("], ");
-	printf("\n");
-}
-
-Offline_Info::Offline_Info(void) {
-	reset();
-}
-
-Offline_Info::~Offline_Info() {
-}
-
-void Offline_Info::serialize(Block_Buffer &buffer) const {
-	buffer.write_int64(role_id);
-	buffer.write_int64(guild_id);
-	buffer.write_string(guild_name);
-	buffer.write_int16(flag);
-}
-
-int Offline_Info::deserialize(Block_Buffer &buffer) {
-	role_id = buffer.read_int64();
-	guild_id = buffer.read_int64();
-	guild_name = buffer.read_string();
-	flag = buffer.read_int16();
-	return 0;
-}
-
-void Offline_Info::reset(void) {
-	role_id = 0;
-	guild_id = 0;
-	guild_name.clear();
-	flag = 0;
-}
-
-void Offline_Info::print(void) {
-	printf("role_id: %ld, ", role_id);
-	printf("guild_id: %ld, ", guild_id);
-	printf("guild_name: %s, ", guild_name.c_str());
-	printf("flag: %d, ", flag);
 	printf("\n");
 }
 

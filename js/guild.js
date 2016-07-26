@@ -24,9 +24,9 @@ Guild.prototype.load_data = function(buffer){
 Guild.prototype.save_data = function(){
 	var msg = new MSG_150103();
 	this.guild_info.each(function(key,value,index) {
-		if (value.change) {
+		if (value.is_change) {
 			msg.guild_list.push(value);
-			value.change = false;
+			value.is_change = false;
 		}
     });
 	var buf = pop_master_buffer();
@@ -102,9 +102,9 @@ Guild.prototype.create_guild = function(player, buffer) {
 
 	var guild_detail = new Guild_Info();
 	guild_detail.guild_id = this.get_guild_id();
-	guild_detail.change = true;
 	guild_detail.guild_name = msg.guild_name;
 	guild_detail.chief_id = player.player_info.role_id;
+	guild_detail.is_change = true;
 
 	this.member_join_guild(player, guild_detail);
 	this.guild_info.insert(guild_detail.guild_id, guild_detail);
@@ -157,7 +157,7 @@ Guild.prototype.join_guild = function(player, buffer) {
 		return;
 	}
 	this.member_join_guild(player, guild_detail, true);
-	guild_detail.change = true;
+	guild_detail.is_change = true;
 	
 	var msg_res = new MSG_510103();
 	var buf = pop_master_buffer();
@@ -191,7 +191,7 @@ Guild.prototype.allow_join_player = function(player, buffer) {
 				}
 			}
 			guild_detail.applicant_list.splice(i, 1);
-			guild_detail.change = true;
+			guild_detail.is_change = true;
 			
 			var msg_res = new MSG_510104();
 			var buf = pop_master_buffer();
@@ -217,7 +217,7 @@ Guild.prototype.kick_out_player = function(player, buffer) {
 	for(var i = 0; i < guild_detail.member_list.length; i++){
 		if(msg.role_id == guild_detail.member_list[i].role_id){
 			guild_detail.member_list.splice(i, 1);
-			guild_detail.change = true;
+			guild_detail.is_change = true;
 				
 			var mem_player = master_player_role_id_map.get(msg.role_id);
 			if(mem_player == null){

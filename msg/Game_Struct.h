@@ -33,9 +33,9 @@ struct Hero_Info;
 struct Bag_Info;
 struct Mail_Info;
 struct Shop_Info;
-struct Rank_Info;
 struct Guild_Info;
 struct Offline_Info;
+struct Rank_Info;
 struct Master_Player_Info;
 
 struct Rank_Member : public MSG {
@@ -261,25 +261,11 @@ struct Shop_Info : public MSG {
 	void print(void);
 };
 
-struct Rank_Info : public MSG {
-	int64_t rank_type;	
-	int32_t min_value;	
-	int64_t min_role_id;	
-	boost::unordered_map<int64_t, Rank_Member> member_map;	
-
-	Rank_Info(void);
-	~Rank_Info();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
 struct Guild_Info : public MSG {
 	int64_t guild_id;	
-	bool change;	
 	std::string guild_name;	
 	int64_t chief_id;	
+	bool is_change;	
 	std::vector<Guild_Member_Detail> applicant_list;	
 	std::vector<Guild_Member_Detail> member_list;	
 
@@ -295,10 +281,24 @@ struct Offline_Info : public MSG {
 	int64_t role_id;	
 	int64_t guild_id;	
 	std::string guild_name;	
-	int16_t flag;	
+	int32_t flag;	
 
 	Offline_Info(void);
 	~Offline_Info();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct Rank_Info : public MSG {
+	int64_t rank_type;	
+	int32_t min_value;	
+	int64_t min_role_id;	
+	boost::unordered_map<int64_t, Rank_Member> member_map;	
+
+	Rank_Info(void);
+	~Rank_Info();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

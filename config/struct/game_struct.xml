@@ -151,19 +151,19 @@
 	<Guild_Info>
 		<db dbname="guild" index="guild_id" msgid="150103"/>
 		<arg type="int64" name="guild_id"/>
-		<arg type="bool" name="change"/>
 		<arg type="string" name="guild_name"/>
 		<arg type="int64" name="chief_id"/>
+		<arg type="bool" name="is_change"/>
 		<vector type="Guild_Member_Detail" name="applicant_list"/>
 		<vector type="Guild_Member_Detail" name="member_list"/>
 	</Guild_Info>
 
 	<Offline_Info>
-		<db dbname="offlinemsg" index="role_id" msgid="150104"/>
+		<db dbname="offline" index="role_id" msgid="150104"/>
 		<arg type="int64" name="role_id"/>
 		<arg type="int64" name="guild_id"/>
 		<arg type="string" name="guild_name"/>
-		<arg type="int16" name="flag"/>
+		<arg type="int32" name="flag"/>
 	</Offline_Info>
 	
 	<Rank_Info>

@@ -8,6 +8,7 @@
 #ifndef MYSQL_STRUCT_H_
 #define MYSQL_STRUCT_H_
 
+#include "Mysql_Conn.h"
 #include "DB_Struct.h"
 
 class Mysql_Struct: public DB_Struct {
@@ -22,17 +23,17 @@ public:
 	virtual void delete_data(Block_Buffer &buffer);
 
 private:
-	void create_data_arg(Field_Info &field_info, char *str_name, char *str_value, int64_t index);
-	void create_data_vector(Field_Info &field_info, char *str_name, char *str_value);
-	void create_data_struct(Field_Info &field_info, char *str_name, char *str_value);
+	void create_data_arg(Field_Info &field_info, std::string &str_name, std::string &str_value, int64_t index);
+	void create_data_vector(Field_Info &field_info, std::string &str_name, std::string &str_value);
+	void create_data_struct(Field_Info &field_info, std::string &str_name, std::string &str_value);
 
-	void build_bson_arg(Field_Info &field_info, Block_Buffer &buffer, std::string &sql_str);
-	void build_bson_vector(Field_Info &field_info, Block_Buffer &buffer, std::string &sql_str);
-	void build_bson_struct(Field_Info &field_info, Block_Buffer &buffer, std::string &sql_str);
+	void build_buffer_arg(Field_Info &field_info, Block_Buffer &buffer, sql::ResultSet *result);
+	void build_buffer_vector(Field_Info &field_info, Block_Buffer &buffer, sql::ResultSet *result);
+	void build_buffer_struct(Field_Info &field_info, Block_Buffer &buffer, sql::ResultSet *result);
 
-	void build_buffer_arg(Field_Info &field_info, Block_Buffer &buffer, std::string &sql_str);
-	void build_buffer_vector(Field_Info &field_info, Block_Buffer &buffer, std::string &sql_str);
-	void build_buffer_struct(Field_Info &field_info, Block_Buffer &buffer, std::string &sql_str);
+	void build_sql_arg(Field_Info &field_info, Block_Buffer &buffer, std::string &str_name, std::string &str_value);
+	void build_sql_vector(Field_Info &field_info, Block_Buffer &buffer, std::string &str_name, std::string &str_value);
+	void build_sql_struct(Field_Info &field_info, Block_Buffer &buffer, std::string &str_name, std::string &str_value);
 };
 
 #endif /* MYSQL_STRUCT_H_ */

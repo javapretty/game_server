@@ -456,6 +456,72 @@ Shop_Info.prototype.deserialize = function(buffer) {
 	}
 }
 
+function Guild_Info() {
+	this.guild_id = 0;
+	this.guild_name = ""
+	this.chief_id = 0;
+	this.is_change = 0;
+	this.applicant_list = new Array();
+	this.member_list = new Array();
+}
+
+Guild_Info.prototype.serialize = function(buffer) {
+	buffer.write_int64(this.guild_id);
+	buffer.write_string(this.guild_name);
+	buffer.write_int64(this.chief_id);
+	buffer.write_bool(this.is_change);
+	var len = this.applicant_list.length;
+	buffer.write_uint16(len);
+	for(var i = 0; i < len; ++i) {
+		this.applicant_list[i].serialize(buffer);
+	}
+	var len = this.member_list.length;
+	buffer.write_uint16(len);
+	for(var i = 0; i < len; ++i) {
+		this.member_list[i].serialize(buffer);
+	}
+}
+
+Guild_Info.prototype.deserialize = function(buffer) {
+	this.guild_id = buffer.read_int64();
+	this.guild_name = buffer.read_string();
+	this.chief_id = buffer.read_int64();
+	this.is_change = buffer.read_bool();
+	var len = buffer.read_uint16();
+	for(var i = 0; i < len; ++i) {
+		var applicant_list_v = new Guild_Member_Detail();
+		applicant_list_v.deserialize(buffer);
+		this.applicant_list.push(applicant_list_v);
+	}
+	var len = buffer.read_uint16();
+	for(var i = 0; i < len; ++i) {
+		var member_list_v = new Guild_Member_Detail();
+		member_list_v.deserialize(buffer);
+		this.member_list.push(member_list_v);
+	}
+}
+
+function Offline_Info() {
+	this.role_id = 0;
+	this.guild_id = 0;
+	this.guild_name = ""
+	this.flag = 0;
+}
+
+Offline_Info.prototype.serialize = function(buffer) {
+	buffer.write_int64(this.role_id);
+	buffer.write_int64(this.guild_id);
+	buffer.write_string(this.guild_name);
+	buffer.write_int32(this.flag);
+}
+
+Offline_Info.prototype.deserialize = function(buffer) {
+	this.role_id = buffer.read_int64();
+	this.guild_id = buffer.read_int64();
+	this.guild_name = buffer.read_string();
+	this.flag = buffer.read_int32();
+}
+
 function Rank_Info() {
 	this.rank_type = 0;
 	this.min_value = 0;
@@ -483,72 +549,6 @@ Rank_Info.prototype.deserialize = function(buffer) {
 		_v.deserialize(buffer);
 		this.member_map.insert(_v.role_id, _v);
 	}
-}
-
-function Guild_Info() {
-	this.guild_id = 0;
-	this.change = 0;
-	this.guild_name = ""
-	this.chief_id = 0;
-	this.applicant_list = new Array();
-	this.member_list = new Array();
-}
-
-Guild_Info.prototype.serialize = function(buffer) {
-	buffer.write_int64(this.guild_id);
-	buffer.write_bool(this.change);
-	buffer.write_string(this.guild_name);
-	buffer.write_int64(this.chief_id);
-	var len = this.applicant_list.length;
-	buffer.write_uint16(len);
-	for(var i = 0; i < len; ++i) {
-		this.applicant_list[i].serialize(buffer);
-	}
-	var len = this.member_list.length;
-	buffer.write_uint16(len);
-	for(var i = 0; i < len; ++i) {
-		this.member_list[i].serialize(buffer);
-	}
-}
-
-Guild_Info.prototype.deserialize = function(buffer) {
-	this.guild_id = buffer.read_int64();
-	this.change = buffer.read_bool();
-	this.guild_name = buffer.read_string();
-	this.chief_id = buffer.read_int64();
-	var len = buffer.read_uint16();
-	for(var i = 0; i < len; ++i) {
-		var applicant_list_v = new Guild_Member_Detail();
-		applicant_list_v.deserialize(buffer);
-		this.applicant_list.push(applicant_list_v);
-	}
-	var len = buffer.read_uint16();
-	for(var i = 0; i < len; ++i) {
-		var member_list_v = new Guild_Member_Detail();
-		member_list_v.deserialize(buffer);
-		this.member_list.push(member_list_v);
-	}
-}
-
-function Offline_Info() {
-	this.role_id = 0;
-	this.guild_id = 0;
-	this.guild_name = ""
-	this.flag = 0;
-}
-
-Offline_Info.prototype.serialize = function(buffer) {
-	buffer.write_int64(this.role_id);
-	buffer.write_int64(this.guild_id);
-	buffer.write_string(this.guild_name);
-	buffer.write_int16(this.flag);
-}
-
-Offline_Info.prototype.deserialize = function(buffer) {
-	this.role_id = buffer.read_int64();
-	this.guild_id = buffer.read_int64();
-	this.guild_name = buffer.read_string();
-	this.flag = buffer.read_int16();
 }
 
 function Master_Player_Info() {

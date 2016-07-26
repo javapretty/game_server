@@ -28,13 +28,13 @@ private:
 	void create_data_vector(Field_Info &field_info, BSONObjBuilder &builder);
 	void create_data_struct(Field_Info &field_info, BSONObjBuilder &builder);
 
-	void build_bson_arg(Field_Info &field_info, Block_Buffer &buffer, BSONObjBuilder &builder);
-	void build_bson_vector(Field_Info &field_info, Block_Buffer &buffer, BSONObjBuilder &builder);
-	void build_bson_struct(Field_Info &field_info, Block_Buffer &buffer, BSONObjBuilder &builder);
-
 	void build_buffer_arg(Field_Info &field_info, Block_Buffer &buffer, BSONObj &bsonobj);
 	void build_buffer_vector(Field_Info &field_info, Block_Buffer &buffer, BSONObj &bsonobj);
 	void build_buffer_struct(Field_Info &field_info, Block_Buffer &buffer, BSONObj &bsonobj);
+
+	void build_bson_arg(Field_Info &field_info, Block_Buffer &buffer, BSONObjBuilder &builder);
+	void build_bson_vector(Field_Info &field_info, Block_Buffer &buffer, BSONObjBuilder &builder);
+	void build_bson_struct(Field_Info &field_info, Block_Buffer &buffer, BSONObjBuilder &builder);
 };
 
 #endif /* MONGO_STRUCT_H_ */

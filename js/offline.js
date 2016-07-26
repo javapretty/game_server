@@ -46,7 +46,7 @@ Offline.prototype.handle_offline_info = function(player){
 	
 	this.offline_info.offline_map.remove(role_id);
 	this.drop_list.push(role_id);
-	this.set_change();
+	this.set_change(true);
 }
 
 Offline.prototype.set_offline_detail = function(role_id, guild_id, guild_name) {
@@ -80,6 +80,6 @@ Offline.prototype.drop_offline = function(){
 	this.drop_list = [];
 }
 
-Offline.prototype.set_change = function(change = true){
-	this.is_change = change;
+Offline.prototype.set_change = function(is_change){
+	this.is_change = is_change;
 }
