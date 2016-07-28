@@ -13,13 +13,13 @@ Mysql_Struct::Mysql_Struct(Xml &xml, TiXmlNode *node) : DB_Struct(xml, node){}
 
 Mysql_Struct::~Mysql_Struct(){}
 
-void Mysql_Struct::create_data(int64_t index){
+void Mysql_Struct::create_data(int64_t key_index){
 	std::string str_name;
 	std::string str_value;
 	for(std::vector<Field_Info>::iterator iter = field_vec_.begin();
 			iter != field_vec_.end(); iter++){
 		if((*iter).field_label == "arg"){
-			create_data_arg(*iter, str_name, str_value, index);
+			create_data_arg(*iter, str_name, str_value, key_index);
 		}
 		else if((*iter).field_label == "vector"){
 			create_data_vector(*iter, str_name, str_value);
@@ -32,22 +32,22 @@ void Mysql_Struct::create_data(int64_t index){
 	str_name = str_name.substr(0, str_name.length()-1);
 	str_value = str_value.substr(0, str_value.length()-1);
 	char str_sql[512] = {0};
-	sprintf(str_sql, "INSERT INTO %s (%s) VALUES (%s)", db_name_.c_str(), str_name.c_str(), str_value.c_str());
+	sprintf(str_sql, "INSERT INTO %s (%s) VALUES (%s)", table_name_.c_str(), str_name.c_str(), str_value.c_str());
 	MYSQL_CONNECTION->execute(str_sql);
 }
 
-void Mysql_Struct::load_data(int64_t index, Block_Buffer &buffer){
+void Mysql_Struct::load_data(int64_t key_index, Block_Buffer &buffer){
 	char str_sql[256] = {0};
-	if(index == 0) {
+	if(key_index == 0) {
 		//加载master公共数据，返回消息是数据列表，需要写入长度
-		sprintf(str_sql, "select * from %s", db_name_.c_str());
+		sprintf(str_sql, "select * from %s", table_name_.c_str());
 	} else {
 		//加载玩家数据，不需要写长度
-		sprintf(str_sql, "select * from %s where %s=%ld", db_name_.c_str(), index_.c_str(), index);
+		sprintf(str_sql, "select * from %s where %s=%ld", table_name_.c_str(), key_index_.c_str(), key_index);
 	}
 	sql::ResultSet *result = MYSQL_CONNECTION->execute_query(str_sql);
 	if (result) {
-		if (index == 0) {
+		if (key_index == 0) {
 			buffer.write_uint16(result->rowsCount());
 		}
 
@@ -71,7 +71,7 @@ void Mysql_Struct::load_data(int64_t index, Block_Buffer &buffer){
 void Mysql_Struct::save_data(Block_Buffer &buffer){
 	std::string str_name;
 	std::string str_value;
-	int64_t index_value = buffer.peek_int64();
+	int64_t key_index = buffer.peek_int64();
 	for(std::vector<Field_Info>::iterator iter = field_vec_.begin();
 			iter != field_vec_.end(); iter++){
 		if((*iter).field_label == "arg"){
@@ -88,15 +88,15 @@ void Mysql_Struct::save_data(Block_Buffer &buffer){
 	str_name = str_name.substr(0, str_name.length()-1);
 	str_value = str_value.substr(0, str_value.length()-1);
 	char str_sql[512] = {0};
-	sprintf(str_sql, "INSERT INTO %s (%s) VALUES (%s)", db_name_.c_str(), str_name.c_str(), str_value.c_str());
+	sprintf(str_sql, "INSERT INTO %s (%s) VALUES (%s)", table_name_.c_str(), str_name.c_str(), str_value.c_str());
 	MYSQL_CONNECTION->execute(str_sql);
 
-	LOG_DEBUG("table %s save index:%ld", db_name_.c_str(), index_value);
+	LOG_DEBUG("table %s save key_index:%ld", table_name_.c_str(), key_index);
 }
 
 void Mysql_Struct::save_data_vector(Block_Buffer &buffer){
 	uint16_t count = buffer.read_uint16();
-	LOG_DEBUG("table %s save size:%d", db_name_.c_str(), count);
+	LOG_DEBUG("table %s save size:%d", table_name_.c_str(), count);
 	for(int i = 0; i < count; i++){
 		save_data(buffer);
 	}
@@ -107,30 +107,44 @@ void Mysql_Struct::delete_data(Block_Buffer &buffer) {
 	uint16_t count = buffer.read_uint16();
 	for(int i = 0; i < count; i++){
 		int64_t index = buffer.read_int64();
-		sprintf(sql_str, "delete from %s where %s=%ld", db_name_.c_str(), index_.c_str(), index);
+		sprintf(sql_str, "delete from %s where %s=%ld", table_name_.c_str(), key_index_.c_str(), index);
 		MYSQL_CONNECTION->execute(sql_str);
 	}
 }
 
-void Mysql_Struct::create_data_arg(Field_Info &field_info, std::string &str_name, std::string &str_value, int64_t index){
+void Mysql_Struct::create_data_arg(Field_Info &field_info, std::string &str_name, std::string &str_value, int64_t key_index){
 	std::stringstream stream;
 	stream.str("");
 	stream << field_info.field_name << "," ;
 	str_name += stream.str();
 
 	stream.str("");
-	if (field_info.field_type == "int8" || field_info.field_type == "int16" || field_info.field_type == "int32"
-			|| field_info.field_type == "double" || field_info.field_type == "bool" ) {
+	if(field_info.field_type == "int8"){
 		stream << 0 << ",";
-	} else if (field_info.field_type == "int64") {
+	}
+	else if(field_info.field_type == "int16"){
+		stream << 0 << ",";
+	}
+	else if(field_info.field_type == "int32"){
+		stream << 0 << ",";
+	}
+	else if(field_info.field_type == "int64"){
 		int64_t value = 0;
-		if(field_info.field_name == index_) {
-			value = index;
+		if(field_info.field_name == key_index_) {
+			value = key_index;
 		}
 		stream << value << ",";
-	} else if (field_info.field_type == "string") {
+	}
+	else if(field_info.field_type == "string"){
 		stream << "\'\'" << ",";
-	} else {
+	}
+	else if(field_info.field_type == "bool"){
+		stream << 0 << ",";
+	}
+	else if(field_info.field_type == "double"){
+		stream << 0 << ",";
+	}
+	else {
 		LOG_ERROR("Can not find the type %s", field_info.field_type.c_str());
 	}
 	str_value += stream.str();
@@ -148,7 +162,7 @@ void Mysql_Struct::create_data_vector(Field_Info &field_info, std::string &str_n
 }
 
 void Mysql_Struct::create_data_struct(Field_Info &field_info, std::string &str_name, std::string &str_value){
-	DB_Manager::DB_Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(field_info.field_type);
+	DB_Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(field_info.field_type);
 	if(iter == DB_MANAGER->db_struct_name_map().end()){
 		LOG_ERROR("Can not find the module %s", field_info.field_type.c_str());
 		return;
@@ -209,7 +223,7 @@ void Mysql_Struct::build_buffer_vector(Field_Info &field_info, Block_Buffer &buf
 }
 
 void Mysql_Struct::build_buffer_struct(Field_Info &field_info, Block_Buffer &buffer, sql::ResultSet *result) {
-	DB_Manager::DB_Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(field_info.field_type);
+	DB_Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(field_info.field_type);
 	if(iter == DB_MANAGER->db_struct_name_map().end()){
 		LOG_ERROR("Can not find the module %s", field_info.field_type.c_str());
 		return;
@@ -284,7 +298,7 @@ void Mysql_Struct::build_sql_vector(Field_Info &field_info, Block_Buffer &buffer
 }
 
 void Mysql_Struct::build_sql_struct(Field_Info &field_info, Block_Buffer &buffer, std::string &str_name, std::string &str_value){
-	DB_Manager::DB_Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(field_info.field_type);
+	DB_Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(field_info.field_type);
 	if(iter == DB_MANAGER->db_struct_name_map().end()){
 		LOG_ERROR("Can not find the module %s", field_info.field_type.c_str());
 		return;

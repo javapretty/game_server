@@ -6,6 +6,33 @@
 #include "Public_Struct.h"
 #include "Server_Config.h"
 #include "Log.h"
+#include "Mongo_Struct.h"
+#include "Mysql_Struct.h"
+#include "Log_Struct.h"
+
+int load_struct(const char *path, DB_Type db_type, DB_Struct_Id_Map &db_struct_id_map, DB_Struct_Name_Map &db_struct_name_map){
+	Xml xml;
+	xml.load_xml(path);
+	TiXmlNode *node = xml.get_root_node();
+	XML_LOOP_BEGIN(node)
+		DB_Struct *db_struct = nullptr;
+		if (db_type == MONGODB)	{
+			db_struct = new Mongo_Struct(xml, node);
+		} else if (db_type == MYSQL) {
+			db_struct = new Mysql_Struct(xml, node);
+		} else if (db_type == LOGDB) {
+			db_struct = new Log_Struct(xml, node);
+		} else {
+			LOG_FATAL("load_struct db_type = %d error abort", db_type);
+		}
+
+		if(db_struct->msg_id() != 0) {
+			db_struct_id_map.insert(std::pair<int32_t, DB_Struct*>(db_struct->msg_id(), db_struct));
+		}
+		db_struct_name_map.insert(std::pair<std::string, DB_Struct*>(db_struct->struct_name(), db_struct));
+	XML_LOOP_END(node)
+	return 0;
+}
 
 void Server_Conf::init_server_conf(void) {
 	const Json::Value &server_conf = SERVER_CONFIG->server_conf();

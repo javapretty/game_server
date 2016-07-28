@@ -453,7 +453,7 @@ void MSG_180001::serialize(Block_Buffer &buffer) const {
 	buffer.write_int64(role_id);
 	buffer.write_string(role_name);
 	buffer.write_string(account);
-	buffer.write_uint16(level);
+	buffer.write_int32(level);
 	buffer.write_string(client_ip);
 	buffer.write_int32(login_time);
 	buffer.write_int32(logout_time);
@@ -463,7 +463,7 @@ int MSG_180001::deserialize(Block_Buffer &buffer) {
 	role_id = buffer.read_int64();
 	role_name = buffer.read_string();
 	account = buffer.read_string();
-	level = buffer.read_uint16();
+	level = buffer.read_int32();
 	client_ip = buffer.read_string();
 	login_time = buffer.read_int32();
 	logout_time = buffer.read_int32();

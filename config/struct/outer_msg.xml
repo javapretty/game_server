@@ -56,7 +56,7 @@
 		<!--创建角色-->
     	<arg type="string" name="account"/>
     	<arg type="string" name="role_name"/>
-    	<arg type="uint8" name="gender"/>
+    	<arg type="int8" name="gender"/>
 	</MSG_120002>
 
 	<MSG_520002>

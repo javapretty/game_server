@@ -16,15 +16,15 @@ public:
 	DB_Struct(Xml &xml, TiXmlNode *node);
 	virtual ~DB_Struct();
 
-	virtual void create_data(int64_t index) = 0;
-	virtual void load_data(int64_t index, Block_Buffer &buffer) = 0;
-	virtual void save_data(Block_Buffer &buffer) = 0;
-	virtual void save_data_vector(Block_Buffer &buffer) = 0;
-	virtual void delete_data(Block_Buffer &buffer) = 0;
+	virtual void create_data(int64_t key_index) {}
+	virtual void load_data(int64_t key_index, Block_Buffer &buffer) {}
+	virtual void save_data(Block_Buffer &buffer) {}
+	virtual void save_data_vector(Block_Buffer &buffer) {}
+	virtual void delete_data(Block_Buffer &buffer) {}
 
 	inline std::string &struct_name() { return struct_name_; }
-	inline std::string &db_name() { return db_name_; }
-	inline std::string &index() { return index_; }
+	inline std::string &table_name() { return table_name_; }
+	inline std::string &key_index() { return key_index_; }
 	inline int32_t msg_id() { return msg_id_; }
 	inline std::vector<Field_Info>& field_vec() { return field_vec_; }
 
@@ -33,8 +33,8 @@ protected:
 	inline bool set_label(const std::string &src_label, std::string &dst_label);
 
 	std::string struct_name_;
-	std::string db_name_;
-	std::string index_;
+	std::string table_name_;
+	std::string key_index_;
 	int32_t msg_id_;
 	std::vector<Field_Info> field_vec_;
 };

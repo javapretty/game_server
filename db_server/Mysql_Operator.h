@@ -34,7 +34,7 @@ private:
 	int server_num_;			//服务器编号
 };
 
-#define MYSQL_INSTANCE			Mysql_Operator::instance()
-#define MYSQL_CONNECTION		MYSQL_INSTANCE->connection()
+#define MYSQL_INSTANCE		Mysql_Operator::instance()
+#define MYSQL_CONNECTION	MYSQL_INSTANCE->connection()
 
 #endif /* MYSQL_OPERATOR_H_ */

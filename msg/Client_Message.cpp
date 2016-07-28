@@ -311,13 +311,13 @@ MSG_120002::~MSG_120002() {
 void MSG_120002::serialize(Block_Buffer &buffer) const {
 	buffer.write_string(account);
 	buffer.write_string(role_name);
-	buffer.write_uint8(gender);
+	buffer.write_int8(gender);
 }
 
 int MSG_120002::deserialize(Block_Buffer &buffer) {
 	account = buffer.read_string();
 	role_name = buffer.read_string();
-	gender = buffer.read_uint8();
+	gender = buffer.read_int8();
 	return 0;
 }
 

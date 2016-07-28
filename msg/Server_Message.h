@@ -190,7 +190,7 @@ struct MSG_180001 : public MSG {
 	int64_t role_id;	
 	std::string role_name;	
 	std::string account;	
-	uint16_t level;	
+	int32_t level;	
 	std::string client_ip;	
 	int32_t login_time;	
 	int32_t logout_time;	

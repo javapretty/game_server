@@ -817,7 +817,7 @@ MSG_180001.prototype.serialize = function(buffer) {
 	buffer.write_int64(this.role_id);
 	buffer.write_string(this.role_name);
 	buffer.write_string(this.account);
-	buffer.write_uint16(this.level);
+	buffer.write_int32(this.level);
 	buffer.write_string(this.client_ip);
 	buffer.write_int32(this.login_time);
 	buffer.write_int32(this.logout_time);
@@ -827,7 +827,7 @@ MSG_180001.prototype.deserialize = function(buffer) {
 	this.role_id = buffer.read_int64();
 	this.role_name = buffer.read_string();
 	this.account = buffer.read_string();
-	this.level = buffer.read_uint16();
+	this.level = buffer.read_int32();
 	this.client_ip = buffer.read_string();
 	this.login_time = buffer.read_int32();
 	this.logout_time = buffer.read_int32();
@@ -1103,13 +1103,13 @@ function MSG_120002() {
 MSG_120002.prototype.serialize = function(buffer) {
 	buffer.write_string(this.account);
 	buffer.write_string(this.role_name);
-	buffer.write_uint8(this.gender);
+	buffer.write_int8(this.gender);
 }
 
 MSG_120002.prototype.deserialize = function(buffer) {
 	this.account = buffer.read_string();
 	this.role_name = buffer.read_string();
-	this.gender = buffer.read_uint8();
+	this.gender = buffer.read_int8();
 }
 
 function MSG_520002() {

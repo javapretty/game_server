@@ -188,7 +188,7 @@ struct MSG_520001 : public MSG {
 struct MSG_120002 : public MSG {
 	std::string account;	
 	std::string role_name;	
-	uint8_t gender;	
+	int8_t gender;	
 
 	MSG_120002(void);
 	~MSG_120002();

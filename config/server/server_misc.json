@@ -5,7 +5,10 @@
 	"game_open_time" : 1381370400,
 	"gate_md5_key" : "",
 	"agent_num" : 1,				
-	"server_num" : 1,				
+	"server_num" : 1,	
+	"game_db_struct_path" : "config/struct/game_db_struct.xml",
+	"log_db_struct_path" : "config/struct/log_db_struct.xml",
+	"msg_struct_path" : "config/struct/msg_struct.xml",			
 	"game_server_path" : "js/game_server.js",
 	"master_server_path" : "js/master_server.js",
 	"mongodb_game" : {

@@ -68,7 +68,7 @@
     	<arg type="int64" name="role_id"/>
     	<arg type="string" name="role_name"/>
     	<arg type="string" name="account"/>
-    	<arg type="uint16" name="level"/>
+    	<arg type="int32" name="level"/>
     	<arg type="string" name="client_ip"/>
     	<arg type="int32" name="login_time"/>
     	<arg type="int32" name="logout_time"/>

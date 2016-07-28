@@ -8,8 +8,7 @@
 #ifndef LOG_MANAGER_H_
 #define LOG_MANAGER_H_
 
-#include <Log_DB.h>
-#include <Log_File.h>
+#include "Log_File.h"
 #include "Thread.h"
 #include "Thread_Mutex.h"
 #include "List.h"
@@ -46,7 +45,6 @@ private:
 	Tick_List tick_list_;
 
 	Log_File log_file_;
-	Log_DB log_db_;
 };
 
 #define LOG_MANAGER Log_Manager::instance()

@@ -80,9 +80,9 @@ int Mongo_Operator::init(void) {
 	MONGO_CONNECTION.createIndex("game.role", BSON("account" << 1));
 	MONGO_CONNECTION.createIndex("game.role", BSON("account" << 1 << "level" << -1));
 
-	for(DB_Manager::DB_Struct_Id_Map::iterator iter = DB_MANAGER->db_struct_id_map().begin();
+	for(DB_Struct_Id_Map::iterator iter = DB_MANAGER->db_struct_id_map().begin();
 			iter != DB_MANAGER->db_struct_id_map().end(); iter++){
-		MONGO_CONNECTION.createIndex(iter->second->db_name(), BSON(iter->second->index() << 1));
+		MONGO_CONNECTION.createIndex(iter->second->table_name(), BSON(iter->second->key_index() << 1));
 	}
 
 	load_db_cache();

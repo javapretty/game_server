@@ -28,7 +28,14 @@ enum Server_Type {
 enum DB_Type {
 	MONGODB = 1,
 	MYSQL = 2,
+	LOGDB = 3,
 };
+
+class DB_Struct;
+typedef boost::unordered_map<int32_t, DB_Struct *> DB_Struct_Id_Map;
+typedef boost::unordered_map<std::string, DB_Struct *> DB_Struct_Name_Map;
+
+int load_struct(const char *path, DB_Type db_type, DB_Struct_Id_Map &db_struct_id_map, DB_Struct_Name_Map &db_struct_name_map);
 
 struct Field_Info {
 	std::string field_label;

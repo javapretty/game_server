@@ -5,12 +5,10 @@
  *      Author: zhangyalei
  */
 
-#include <sys/stat.h>
-#include "Log.h"
 #include "Log_Timer.h"
 #include "Log_Manager.h"
 #include "Log_Server.h"
-#include "Server_Config.h"
+#include "Log_DB.h"
 #include "Msg_Define.h"
 
 Log_Manager::Log_Manager(void) { }
@@ -26,19 +24,7 @@ Log_Manager *Log_Manager::instance(void) {
 }
 
 int Log_Manager::init(void) {
-	const Json::Value &mysql_log = SERVER_CONFIG->server_misc()["mysql_log"];
-	if (mysql_log == Json::Value::null) {
-		LOG_FATAL("server_misc config error");
-	}
-
-	std::string ip(mysql_log["ip"].asString());
-	int port = mysql_log["port"].asInt();
-	std::string user(mysql_log["user"].asString());
-	std::string password(mysql_log["password"].asString());
-	std::string dbname(mysql_log["dbname"].asString());
-	std::string dbpoolname(mysql_log["dbpoolname"].asString());
-	log_db_.init(ip, port, user, password, dbname, dbpoolname);
-
+	LOG_DB->init();
 	LOG_TIMER->thr_create();
 
 	return 0;
@@ -93,18 +79,18 @@ int Log_Manager::process_block(Block_Buffer &buf) {
 	/*int32_t cid*/ buf.read_int32();
 	/*int16_t len*/ buf.read_int16();
 	int32_t msg_id = buf.read_int32();
-	int32_t status = buf.read_int32();
+	/*int32_t status*/ buf.read_int32();
 
 	switch (msg_id) {
 	case 999999: {
 		log_file_.process_log_file_block(buf);
 		break;
 	}
-	case SYNC_LOG_LOGINOUT: {
-		log_db_.process_180001(msg_id, status, buf);
-		break;
-	}
 	default: {
+		DB_Struct_Id_Map::iterator iter = LOG_DB->db_struct_id_map().find(msg_id);
+		if(iter != LOG_DB->db_struct_id_map().end()){
+			iter->second->save_data(buf);
+		}
 		break;
 	}
 	}

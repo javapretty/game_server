@@ -9,8 +9,8 @@
 
 DB_Struct::DB_Struct(Xml &xml, TiXmlNode *node):
 	struct_name_(),
-	db_name_(),
-	index_(),
+	table_name_(),
+	key_index_(),
 	msg_id_(0)
 {
 	field_vec_.clear();
@@ -21,9 +21,9 @@ DB_Struct::DB_Struct(Xml &xml, TiXmlNode *node):
 		std::string label_name;
 		XML_LOOP_BEGIN(sub)
 			if((label_name = xml.get_key(sub)) == "db"){
-				db_name_ = xml.get_attr_str(sub, "dbname");
-				msg_id_ = xml.get_attr_int(sub, "msgid");
-				index_ = xml.get_attr_str(sub, "index");
+				table_name_ = xml.get_attr_str(sub, "table_name");
+				key_index_ = xml.get_attr_str(sub, "key_index");
+				msg_id_ = xml.get_attr_int(sub, "msg_id");
 			}
 			else if(set_label(xml.get_key(sub), label_name)){
 				Field_Info field_info;
@@ -38,7 +38,7 @@ DB_Struct::DB_Struct(Xml &xml, TiXmlNode *node):
 
 DB_Struct::~DB_Struct(){
 	struct_name_.clear();
-	db_name_.clear();
+	table_name_.clear();
 	msg_id_ = 0;
 	field_vec_.clear();
 }

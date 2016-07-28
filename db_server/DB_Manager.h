@@ -19,8 +19,6 @@ class DB_Manager {
 public:
 	typedef Object_Pool<DB_Worker, Thread_Mutex> DB_Worker_Pool;
 	typedef std::vector<DB_Worker *> DB_Worker_Vector;
-	typedef boost::unordered_map<int32_t, DB_Struct *> DB_Struct_Id_Map;
-	typedef boost::unordered_map<std::string, DB_Struct *> DB_Struct_Name_Map;
 	typedef boost::unordered_map<int64_t,Player_DB_Cache> DB_Cache_Id_Map;
 	typedef boost::unordered_map<std::string,Player_DB_Cache> DB_Cache_Account_Map;
 
@@ -55,7 +53,6 @@ private:
 	virtual ~DB_Manager(void);
 	DB_Manager(const DB_Manager &);
 	const DB_Manager &operator=(const DB_Manager &);
-	int load_struct(const char *path);
 
 private:
 	static DB_Manager *instance_;

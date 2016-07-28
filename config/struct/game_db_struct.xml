@@ -80,7 +80,7 @@
 		<arg type="int32" name="career"/>
 	</Guild_Member_Detail>
 	
-<!--游戏内需要保存数据库的数据添加db标签,并添加dbname和index属性(需要直接发消息到数据库保存的应赋值给(msgid) -->
+<!--游戏内需要保存数据库的数据添加db标签,并添加dbname和index属性(需要直接发消息到数据库保存的应赋值给(msg_id) -->
 	<Player_Data type="mem_only">
 		<!--玩家个人数据在此定义-->
 		<struct type="Game_Player_Info" name="role_info"/>
@@ -91,7 +91,7 @@
 	</Player_Data>
 
 	<Game_Player_Info>
-		<db dbname="role" index="role_id"/>
+		<db table_name="role" key_index="role_id"/>
 		<arg type="int64" name="role_id"/>
 		<arg type="string" name="account"/>
 		<arg type="string" name="role_name"/>
@@ -115,13 +115,13 @@
 	</Game_Player_Info>
 	
 	<Hero_Info>
-		<db dbname="hero" index="role_id"/>
+		<db table_name="hero" key_index="role_id"/>
 		<arg type="int64" name="role_id"/>
 		<unordered_map type="Hero_Detail" key_name="hero_id" key_type="int32" name="hero_map"/>
 	</Hero_Info>
 
 	<Bag_Info>
-		<db dbname="bag" index="role_id"/>
+		<db table_name="bag" key_index="role_id"/>
 		<arg type="int64" name="role_id"/>
 		<arg type="int32" name="copper"/>
 		<arg type="int32" name="gold"/>
@@ -129,14 +129,14 @@
 	</Bag_Info>
 	
 	<Mail_Info>
-		<db dbname="mail" index="role_id"/>
+		<db table_name="mail" key_index="role_id"/>
 		<arg type="int64" name="role_id"/>
 		<arg type="int32" name="total_count"/>
 		<unordered_map type="Mail_Detail" key_type="int32" key_name="mail_id" name="mail_map"/>
 	</Mail_Info>
 	
 	<Shop_Info>
-		<db dbname="shop" index="role_id"/>
+		<db table_name="shop" key_index="role_id"/>
 		<arg type="int64" name="role_id"/>
 		<unordered_map type="Shop_Detail" key_type="int32" key_name="shop_type" name="shop_map"/>
 	</Shop_Info>
@@ -149,7 +149,7 @@
 	</Public_Data>
 	
 	<Guild_Info>
-		<db dbname="guild" index="guild_id" msgid="150103"/>
+		<db table_name="guild" key_index="guild_id" msg_id="150103"/>
 		<arg type="int64" name="guild_id"/>
 		<arg type="string" name="guild_name"/>
 		<arg type="int64" name="chief_id"/>
@@ -159,7 +159,7 @@
 	</Guild_Info>
 
 	<Offline_Info>
-		<db dbname="offline" index="role_id" msgid="150104"/>
+		<db table_name="offline" key_index="role_id" msg_id="150104"/>
 		<arg type="int64" name="role_id"/>
 		<arg type="int64" name="guild_id"/>
 		<arg type="string" name="guild_name"/>
@@ -167,7 +167,7 @@
 	</Offline_Info>
 	
 	<Rank_Info>
-		<db dbname="rank" index="rank_type" msgid="150105"/>
+		<db table_name="rank" key_index="rank_type" msg_id="150105"/>
 		<arg type="int64" name="rank_type"/>
 		<arg type="int32" name="min_value"/>
 		<arg type="int64" name="min_role_id"/>

@@ -10,8 +10,6 @@
 #include "Msg_Define.h"
 #include "DB_Server.h"
 #include "DB_Manager.h"
-#include "Mongo_Struct.h"
-#include "Mysql_Struct.h"
 #include "Mongo_Operator.h"
 #include "Mysql_Operator.h"
 
@@ -45,7 +43,13 @@ void DB_Manager::destroy(void) {
 }
 
 int DB_Manager::init(void) {
-	db_type_ = SERVER_CONFIG->server_misc()["db_type"].asInt();
+	const Json::Value &server_misc = SERVER_CONFIG->server_misc();
+	if (server_misc == Json::Value::null) {
+		LOG_FATAL("db init, server_misc null");
+		return -1;
+	}
+	db_type_ = server_misc["db_type"].asInt();
+	load_struct(server_misc["game_db_struct_path"].asString().c_str(), (DB_Type)db_type_, db_struct_id_map_, db_struct_name_map_);
 
 	DB_Worker *worker = 0;
 	for (int i = 0; i < 10; ++i) {
@@ -64,29 +68,6 @@ int DB_Manager::init(void) {
 		LOG_FATAL("db init type = %d error abort", db_type_);
 	}
 
-	load_struct("config/struct/game_struct.xml");
-	return 0;
-}
-
-int DB_Manager::load_struct(const char *path){
-	Xml xml;
-	xml.load_xml(path);
-	TiXmlNode *node = xml.get_root_node();
-	XML_LOOP_BEGIN(node)
-		DB_Struct *def = nullptr;
-		if (db_type_ == MONGODB)	{
-			def = new Mongo_Struct(xml, node);
-		} else if (db_type_ == MYSQL) {
-			def = new Mysql_Struct(xml, node);
-		} else {
-			LOG_FATAL("db init type = %d error abort", db_type_);
-		}
-
-		if(def->msg_id() != 0) {
-			db_struct_id_map_.insert(std::pair<int32_t, DB_Struct*>(def->msg_id(), def));
-		}
-		db_struct_name_map_.insert(std::pair<std::string, DB_Struct*>(def->struct_name(), def));
-	XML_LOOP_END(node)
 	return 0;
 }
 

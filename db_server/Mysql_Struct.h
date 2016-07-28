@@ -16,14 +16,14 @@ public:
 	Mysql_Struct(Xml &xml, TiXmlNode *node);
 	virtual ~Mysql_Struct();
 
-	virtual void create_data(int64_t index);
-	virtual void load_data(int64_t index, Block_Buffer &buffer);
+	virtual void create_data(int64_t key_index);
+	virtual void load_data(int64_t key_index, Block_Buffer &buffer);
 	virtual void save_data(Block_Buffer &buffer);
 	virtual void save_data_vector(Block_Buffer &buffer);
 	virtual void delete_data(Block_Buffer &buffer);
 
 private:
-	void create_data_arg(Field_Info &field_info, std::string &str_name, std::string &str_value, int64_t index);
+	void create_data_arg(Field_Info &field_info, std::string &str_name, std::string &str_value, int64_t key_index);
 	void create_data_vector(Field_Info &field_info, std::string &str_name, std::string &str_value);
 	void create_data_struct(Field_Info &field_info, std::string &str_name, std::string &str_value);
 

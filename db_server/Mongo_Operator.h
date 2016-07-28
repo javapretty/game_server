@@ -42,7 +42,7 @@ private:
 	int server_num_;				//服务器编号
 };
 
-#define MONGO_INSTANCE			Mongo_Operator::instance()
-#define MONGO_CONNECTION		MONGO_INSTANCE->connection()
+#define MONGO_INSTANCE		Mongo_Operator::instance()
+#define MONGO_CONNECTION	MONGO_INSTANCE->connection()
 
 #endif /* DB_OPERATOR_H_ */
