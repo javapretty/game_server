@@ -34,8 +34,6 @@ int Gate_Manager::init(void) {
 	tick_time_ = Time_Value::gettimeofday();
 
 	SERVER_CONFIG;
-	md5_key_ = SERVER_CONFIG->server_misc()["gate_md5_key"].asString();
-
 	GATE_INNER_MESSAGER;					/// 内部消息处理
 	GATE_CLIENT_MESSAGER;					/// 外部消息处理
 	GATE_TIMER->thr_create();

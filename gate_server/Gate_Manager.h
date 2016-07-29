@@ -91,7 +91,6 @@ public:
 	void object_pool_size(void);
 	void free_cache(void);
 
-	std::string &md5_key(void) { return md5_key_; }
 	bool verify_pack(void) { return verify_pack_onoff_; }
 
 	/// 统计内部消息量
@@ -129,9 +128,6 @@ private:
 	Time_Value tick_time_;
 
 	int server_status_;
-
-	std::string md5_key_;
-
 	bool verify_pack_onoff_;
 	/// 消息统计
 	bool msg_count_onoff_;

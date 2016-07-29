@@ -3,14 +3,15 @@
 	<MSG_150001>
 		<!--加载玩家信息-->
 		<arg type="string" name="account"/>
+		<arg type="string" name="client_ip"/>
 	</MSG_150001>
 
 	<MSG_550001>
 	</MSG_550001>
 
 	<MSG_150002>
-		<!--创建玩家-->
-    	<struct type="Game_Player_Info" name="player_info"/>
+		<!--创建角色-->
+		<struct type="Create_Role_Info" name="role_info"/>
 	</MSG_150002>
 
 	<MSG_550002>
@@ -25,6 +26,16 @@
 	</MSG_550003>
 
 <!--MASTER到DB的消息-->
+	<MSG_150100>
+		<!--创建公会-->
+		<struct type="Create_Guild_Info" name="guild_info"/>
+	</MSG_150100>
+	
+	<MSG_550100>
+		<!--创建公会(返回)-->
+		<struct type="Create_Guild_Info" name="guild_info"/>
+	</MSG_550100>
+	
 	<MSG_150101>
 		<!--拉取数据库信息-->
 	</MSG_150101>

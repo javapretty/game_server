@@ -60,13 +60,6 @@ int Game_Client_Messager::fetch_role_info(int gate_cid, int player_cid, MSG_1200
 		return -1;
 	}
 
-	/// 超时验证
-	bool validate = false;
-	if (validate && abs(atoi(msg.timestamp.c_str()) - GAME_MANAGER->tick_time().sec()) > 120) {
-		LOG_INFO("login validate timeout account:%s  time:%s", msg.account.c_str(), msg.timestamp.c_str());
-		return GAME_MANAGER->close_client(gate_cid, player_cid, ERROR_LOGIN_VERIFY_FAIL);
-    }
-
 	/// 帐号还在登录/登出流程中判断
 	if (GAME_MANAGER->logining_map().count(msg.account) || GAME_MANAGER->saving_map().count(msg.role_id)) {
 		LOG_INFO("account has in logining status, account = %s.", msg.account.c_str());
@@ -86,6 +79,7 @@ int Game_Client_Messager::fetch_role_info(int gate_cid, int player_cid, MSG_1200
 		msg_buf.make_inner_message(SYNC_GAME_DB_LOAD_PLAYER);
 		MSG_150001 db_msg;
 		db_msg.account = msg.account;
+		db_msg.client_ip = msg.client_ip;
 		db_msg.serialize(msg_buf);
 		msg_buf.finish_message();
 		GAME_MANAGER->send_to_db(msg_buf);
@@ -106,29 +100,25 @@ int Game_Client_Messager::fetch_role_info(int gate_cid, int player_cid, MSG_1200
 }
 
 int Game_Client_Messager::create_role(int gate_cid, int player_cid, MSG_120002 &msg) {
-	if (msg.account.empty() || msg.role_name.empty() || msg.gender > 1) {
-		LOG_INFO("invalid parameter account = [%s], role_name = [%s], gender = %d", msg.account.c_str(), msg.role_name.c_str(), msg.gender);
+	if (msg.role_info.account.empty() || msg.role_info.role_name.empty()) {
+		LOG_INFO("invalid parameter account = [%s], role_name = [%s]", msg.role_info.account.c_str(), msg.role_info.role_name.c_str());
 		return -1;
 	}
 
-	if (GAME_MANAGER->logining_map().count(msg.account)) {
-		LOG_INFO("account has in logining status, account = %s.", msg.account.c_str());
+	if (GAME_MANAGER->logining_map().count(msg.role_info.account)) {
+		LOG_INFO("account has in logining status, account = %s.", msg.role_info.account.c_str());
 		return GAME_MANAGER->close_client(gate_cid, player_cid, ERROR_DISCONNECT_RELOGIN);
 	}
 
-	if (! GAME_MANAGER->logining_map().insert(std::make_pair(msg.account, Cid_Info(gate_cid, player_cid))).second) {
-		LOG_INFO("invalid parameter account = [%s], role_name = [%s], gender = %d", msg.account.c_str(), msg.role_name.c_str(), msg.gender);
+	if (! GAME_MANAGER->logining_map().insert(std::make_pair(msg.role_info.account, Cid_Info(gate_cid, player_cid))).second) {
+		LOG_INFO("invalid parameter account = [%s], role_name = [%s]", msg.role_info.account.c_str(), msg.role_info.role_name.c_str());
 	}
 
-	LOG_DEBUG("process_120002, push_create_player_data,account=%s, role_name=%s",msg.account.c_str(), msg.role_name.c_str());
+	LOG_DEBUG("process_120002, push_create_player_data,account=%s, role_name=%s",msg.role_info.account.c_str(), msg.role_info.role_name.c_str());
 	Block_Buffer msg_buf;
 	msg_buf.make_inner_message(SYNC_GAME_DB_CREATE_PLAYER);
 	MSG_150002 db_msg;
-	db_msg.player_info.account = msg.account;
-	db_msg.player_info.role_name = msg.role_name;
-	db_msg.player_info.gender = msg.gender;
-	db_msg.player_info.level = 1;
-	db_msg.player_info.create_time = Time_Value::gettimeofday().sec();
+	db_msg.role_info = msg.role_info;
 	db_msg.serialize(msg_buf);
 	msg_buf.finish_message();
 	GAME_MANAGER->send_to_db(msg_buf);

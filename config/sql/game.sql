@@ -19,8 +19,8 @@ CREATE TABLE `role` (
   server_num int(11) NOT NULL default '0',
   level int(11) NOT NULL default '0',
   exp int(11) NOT NULL default '0',
-  gender int(11) NOT NULL default '0',
-  career int(11) NOT NULL default '0',
+  gender tinyint(3) NOT NULL default '0',
+  career tinyint(3) NOT NULL default '0',
   create_time int(11) NOT NULL default '0',
   login_time int(11) NOT NULL default '0',
   logout_time int(11) NOT NULL default '0',
@@ -70,8 +70,9 @@ CREATE TABLE `guild` (
   guild_id bigint(20) NOT NULL auto_increment,
   guild_name varchar(120) NOT NULL default '',
   chief_id bigint(20) NOT NULL default '0',
-  is_change tinyint(2) NOT NULL default '0',
-  applicant_list blob NOT NULL,
+  create_time int(11) NOT NULL default '0',
+  is_change tinyint(3) NOT NULL default '0',
+  apply_list blob NOT NULL,
   member_list blob NOT NULL, 
   PRIMARY KEY (guild_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -78,7 +78,8 @@ int Game_Inner_Messager::process_self_loop_block(Block_Buffer &buf) {
 
 int Game_Inner_Messager::process_loaded_player_data(Block_Buffer &buf) {
 	std::string account = buf.read_string();
-	int32_t status = buf.read_int32();
+	std::string client_ip = buf.read_string();
+	int8_t status = buf.read_int8();
 	Game_Manager::Logining_Map::iterator logining_it = GAME_MANAGER->logining_map().find(account);
 	if (logining_it == GAME_MANAGER->logining_map().end()) {
 		LOG_INFO("account not exist in logining map, account = %s.", account.c_str());
@@ -120,6 +121,8 @@ int Game_Inner_Messager::process_loaded_player_data(Block_Buffer &buf) {
 		/// [创建角色]创建角色成功
 		Game_Player_Info player_info;
 		player_info.deserialize(buf);
+		player_info.client_ip = client_ip;
+
 		Block_Buffer res_buf;
 		res_buf.make_player_message(RES_CREATE_ROLE, 0, player_cid);
 		MSG_520002 res_msg;
@@ -135,6 +138,7 @@ int Game_Inner_Messager::process_loaded_player_data(Block_Buffer &buf) {
 		/// 数据加载成功
 		Game_Player_Info player_info;
 		player_info.deserialize(buf);
+		player_info.client_ip = client_ip;
 		process_success_login(gate_cid, player_cid, buf, player_info);
 		break;
 	}

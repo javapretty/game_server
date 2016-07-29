@@ -153,12 +153,16 @@ function process_master_db_buffer(buffer) {
 	var status = buffer.read_int32();
 	
 	switch(msg_id) {
-	case Msg_MD.SYNC_DB_MASTER_LOAD_GUILD_INFO:
+	case Msg_MD.SYNC_DB_MASTER_CREATE_GUILD:
+		guild_manager.create_guild_res(buffer);
+		break;
+	case Msg_MD.SYNC_DB_MASTER_LOAD_GUILD:
 		guild_manager.load_data(buffer);
 		break;
-	case Msg_MD.SYNC_DB_MASTER_LOAD_OFFLINE_INFO:
+	case Msg_MD.SYNC_DB_MASTER_LOAD_OFFLINE:
+		offline_manager.load_data(buffer);
 		break;
-	case Msg_MD.SYNC_DB_MASTER_LOAD_RANK_INFO:
+	case Msg_MD.SYNC_DB_MASTER_LOAD_RANK:
 		rank_manager.load_data(buffer);
 		break;
 	default:

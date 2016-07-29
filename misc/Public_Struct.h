@@ -178,8 +178,8 @@ struct Recycle_Tick {
 
 struct Player_DB_Cache {
 	int64_t role_id;
-	std::string account;
 	std::string role_name;
+	std::string account;
 	int32_t agent_num;
 	int32_t server_num;
 	int32_t level;
@@ -187,8 +187,8 @@ struct Player_DB_Cache {
 	Player_DB_Cache(void) { reset(); }
 	void reset(void) {
 		role_id = 0;
-		account.clear();
 		role_name.clear();
+		account.clear();
 		agent_num = 0;
 		server_num = 0;
 		level = 0;

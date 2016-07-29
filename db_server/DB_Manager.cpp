@@ -116,11 +116,21 @@ int DB_Manager::send_data_block(int cid, Block_Buffer &buf) {
 	return DB_SERVER->send_block(cid, buf);
 }
 
-int64_t DB_Manager::create_player(Game_Player_Info &player_info) {
+int64_t DB_Manager::create_player(Create_Role_Info &role_info) {
 	if (db_type_ == MONGODB)	{
-		return MONGO_INSTANCE->create_player(player_info);
+		return MONGO_INSTANCE->create_player(role_info);
 	} else if (db_type_ == MYSQL) {
-		return MYSQL_INSTANCE->create_player(player_info);
+		return MYSQL_INSTANCE->create_player(role_info);
+	} else {
+		return -1;
+	}
+}
+
+int64_t DB_Manager::create_guild(Create_Guild_Info &guild_info) {
+	if (db_type_ == MONGODB)	{
+		return MONGO_INSTANCE->create_guild(guild_info);
+	} else if (db_type_ == MYSQL) {
+		return MYSQL_INSTANCE->create_guild(guild_info);
 	} else {
 		return -1;
 	}

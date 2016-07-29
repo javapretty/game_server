@@ -4,8 +4,8 @@
 * [Version 1.4]
 */
 
-#ifndef __game_struct__H
-#define __game_struct__H
+#ifndef __game_db_struct__H
+#define __game_db_struct__H
 
 #include "Block_Buffer.h"
 #include "boost/unordered_map.hpp"
@@ -19,7 +19,8 @@ struct MSG {
 	virtual void print(void) = 0; 
 };
 
-struct Rank_Member;
+struct Create_Role_Info;
+struct Create_Guild_Info;
 struct Role_Info;
 struct Hero_Detail;
 struct Item_Info;
@@ -28,6 +29,8 @@ struct Mail_Detail;
 struct Shop_Detail;
 struct Product_Info;
 struct Guild_Member_Detail;
+struct Rank_Member;
+struct Master_Player_Info;
 struct Game_Player_Info;
 struct Hero_Info;
 struct Bag_Info;
@@ -36,15 +39,29 @@ struct Shop_Info;
 struct Guild_Info;
 struct Offline_Info;
 struct Rank_Info;
-struct Master_Player_Info;
 
-struct Rank_Member : public MSG {
-	int64_t role_id;	
+struct Create_Role_Info : public MSG {
+	std::string account;	
 	std::string role_name;	
-	int32_t value;	
+	std::string client_ip;	
+	int8_t gender;	
+	int8_t career;	
 
-	Rank_Member(void);
-	~Rank_Member();
+	Create_Role_Info(void);
+	~Create_Role_Info();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct Create_Guild_Info : public MSG {
+	int64_t guild_id;	
+	std::string guild_name;	
+	int64_t chief_id;	
+
+	Create_Guild_Info(void);
+	~Create_Guild_Info();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
@@ -53,12 +70,12 @@ struct Rank_Member : public MSG {
 
 struct Role_Info : public MSG {
 	int64_t role_id;	//玩家id
-	std::string account;	//玩家账号名
 	std::string role_name;	//玩家名字
+	std::string account;	//玩家账号名
 	int32_t level;	//玩家等级
 	int32_t exp;	//玩家经验
-	int32_t career;	//职业
-	int32_t gender;	//0(女)1(男)
+	int8_t gender;	//0(女)1(男)
+	int8_t career;	//职业
 	int32_t vitality;	//玩家体力
 	int32_t buy_vitality_times;	//今天购买次数
 	int32_t vip_level;	//vip等级
@@ -180,17 +197,47 @@ struct Guild_Member_Detail : public MSG {
 	void print(void);
 };
 
-struct Game_Player_Info : public MSG {
+struct Rank_Member : public MSG {
+	int64_t role_id;	
+	std::string role_name;	
+	int32_t value;	
+
+	Rank_Member(void);
+	~Rank_Member();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct Master_Player_Info : public MSG {
 	int64_t role_id;	
 	std::string account;	
 	std::string role_name;	
+	int32_t level;	
+	int32_t gender;	
+	int32_t career;	
+	int32_t vip_level;	
+
+	Master_Player_Info(void);
+	~Master_Player_Info();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct Game_Player_Info : public MSG {
+	int64_t role_id;	
+	std::string role_name;	
+	std::string account;	
 	std::string client_ip;	
 	int32_t agent_num;	
 	int32_t server_num;	
 	int32_t level;	
 	int32_t exp;	
-	int32_t gender;	
-	int32_t career;	
+	int8_t gender;	
+	int8_t career;	
 	int32_t create_time;	
 	int32_t login_time;	
 	int32_t logout_time;	
@@ -265,8 +312,9 @@ struct Guild_Info : public MSG {
 	int64_t guild_id;	
 	std::string guild_name;	
 	int64_t chief_id;	
+	int32_t create_time;	
 	bool is_change;	
-	std::vector<Guild_Member_Detail> applicant_list;	
+	std::vector<Guild_Member_Detail> apply_list;	
 	std::vector<Guild_Member_Detail> member_list;	
 
 	Guild_Info(void);
@@ -299,23 +347,6 @@ struct Rank_Info : public MSG {
 
 	Rank_Info(void);
 	~Rank_Info();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct Master_Player_Info : public MSG {
-	int64_t role_id;	
-	std::string account;	
-	std::string role_name;	
-	int32_t level;	
-	int32_t gender;	
-	int32_t career;	
-	int32_t vip_level;	
-
-	Master_Player_Info(void);
-	~Master_Player_Info();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

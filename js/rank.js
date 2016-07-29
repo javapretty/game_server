@@ -25,7 +25,7 @@ Rank.prototype.save_data = function(){
 		msg.rank_list.push(value);
     });
 	var buf = pop_master_buffer();
-	buf.make_inner_message(Msg_MD.SYNC_MASTER_DB_SAVE_RANK_INFO);
+	buf.make_inner_message(Msg_MD.SYNC_MASTER_DB_SAVE_RANK);
 	msg.serialize(buf);
 	buf.finish_message();
 	send_master_buffer_to_db(buf);

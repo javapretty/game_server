@@ -99,8 +99,8 @@ int Mongo_Operator::load_db_cache(void) {
 
 		Player_DB_Cache db_cache;
 		db_cache.role_id = obj["role_id"].numberLong();
-		db_cache.account = obj["account"].valuestrsafe();
 		db_cache.role_name = obj["role_name"].valuestrsafe();
+		db_cache.account = obj["account"].valuestrsafe();
 		db_cache.agent_num = obj["agent_num"].numberInt();
 		db_cache.server_num = obj["server_num"].numberInt();
 		db_cache.level = obj["level"].numberInt();
@@ -111,10 +111,10 @@ int Mongo_Operator::load_db_cache(void) {
 	return 0;
 }
 
-int64_t Mongo_Operator::create_player(Game_Player_Info &player_info) {
-	BSONObj res = MONGO_CONNECTION.findOne("game.role", MONGO_QUERY("role_name" << player_info.role_name));
+int64_t Mongo_Operator::create_player(Create_Role_Info &role_info) {
+	BSONObj res = MONGO_CONNECTION.findOne("game.role", MONGO_QUERY("account" << role_info.account << "role_name" << role_info.role_name));
 	if (!res.isEmpty()) {
-		LOG_ERROR("create_player role_name = %s existed", player_info.role_name.c_str());
+		LOG_ERROR("create_player account = %s role_name = %s existed", role_info.account.c_str(), role_info.role_name.c_str());
 		return -1;
 	}
 
@@ -130,31 +130,59 @@ int64_t Mongo_Operator::create_player(Game_Player_Info &player_info) {
 	int64_t server = server_num_ * 1000000000L;
 	int64_t role_id = agent + server + order;
 
-	player_info.role_id = role_id;
-	player_info.agent_num = agent_num_;
-	player_info.server_num = server_num_;
 	int now_sec = Time_Value::gettimeofday().sec();
 	MONGO_CONNECTION.update("game.role", MONGO_QUERY("role_id" << ((long long int)role_id)), BSON("$set" <<
 			BSON("role_id" << (long long int)role_id
-					<< "agent_num" << player_info.agent_num
-					<< "server_num" << player_info.server_num
-					<< "account" << player_info.account
-					<< "role_name" << player_info.role_name
+					<< "role_name" << role_info.role_name
+					<< "account" << role_info.account
+					<< "client_ip" << role_info.client_ip
+					<< "agent_num" << agent_num_
+					<< "server_num" << server_num_
 					<< "level" << 1
-					<< "gender" << player_info.gender
-					<< "career" << 0
-					<< "login_time" << now_sec
-					<< "logout_time" << now_sec)), true);
+					<< "gender" << role_info.gender
+					<< "career" << role_info.career
+					<< "create_time" << now_sec
+					<< "login_time" << now_sec)), true);
 
 	Player_DB_Cache db_cache;
 	db_cache.role_id = role_id;
-	db_cache.account = player_info.account;
-	db_cache.role_name = player_info.role_name;
-	db_cache.agent_num = player_info.agent_num;
-	db_cache.server_num = player_info.server_num;
+	db_cache.role_name = role_info.role_name;
+	db_cache.account = role_info.account;
+	db_cache.agent_num = agent_num_;
+	db_cache.server_num = server_num_;
 	db_cache.level = 1;
 	DB_MANAGER->db_cache_id_map().insert(std::make_pair(db_cache.role_id, db_cache));
 	DB_MANAGER->db_cache_account_map().insert(std::make_pair(db_cache.account, db_cache));
-	LOG_INFO("*************create player,db_cache count:%d***************", DB_MANAGER->db_cache_account_map().size());
+	LOG_INFO("***************create role, role_id:%ld, db_cache count:%d***************", role_id, DB_MANAGER->db_cache_account_map().size());
 	return role_id;
+}
+
+int64_t Mongo_Operator::create_guild(Create_Guild_Info &guild_info) {
+	BSONObj res = MONGO_CONNECTION.findOne("game.guild", MONGO_QUERY("guild_name" << guild_info.guild_name));
+	if (!res.isEmpty()) {
+		LOG_ERROR("create_guild guild_name = %s existed", guild_info.guild_name.c_str());
+		return -1;
+	}
+
+	//从global表查询当前role_id最大值
+	BSONObj cmd = fromjson("{findandmodify:'global', query:{type:'guild_id'}, update:{$inc:{value:1}}}");
+	if (MONGO_CONNECTION.runCommand("game", cmd, res) == false) {
+		LOG_ERROR("increase global type='guild_id' value failed");
+		return -1;
+	}
+
+	int order = res.getFieldDotted("value.value").numberLong() + 1;
+	int64_t agent = agent_num_ * 10000000000000L;
+	int64_t server = server_num_ * 1000000000L;
+	int64_t guild_id = agent + server + order;
+
+	int now_sec = Time_Value::gettimeofday().sec();
+	MONGO_CONNECTION.update("game.guild", MONGO_QUERY("guild_id" << ((long long int)guild_id)), BSON("$set" <<
+			BSON("guild_id" << (long long int)guild_id
+					<< "guild_name" << guild_info.guild_name
+					<< "chief_id" << (long long int)guild_info.chief_id
+					<< "create_time" << now_sec)), true);
+
+	LOG_INFO("***************create guild,guild_id:%ld***************", guild_id);
+	return guild_id;
 }

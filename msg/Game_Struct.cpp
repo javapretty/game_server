@@ -6,36 +6,77 @@
 
 #include "Game_Struct.h"
 
-Rank_Member::Rank_Member(void) {
+Create_Role_Info::Create_Role_Info(void) {
 	reset();
 }
 
-Rank_Member::~Rank_Member() {
+Create_Role_Info::~Create_Role_Info() {
 }
 
-void Rank_Member::serialize(Block_Buffer &buffer) const {
-	buffer.write_int64(role_id);
+void Create_Role_Info::serialize(Block_Buffer &buffer) const {
+	buffer.write_string(account);
 	buffer.write_string(role_name);
-	buffer.write_int32(value);
+	buffer.write_string(client_ip);
+	buffer.write_int8(gender);
+	buffer.write_int8(career);
 }
 
-int Rank_Member::deserialize(Block_Buffer &buffer) {
-	role_id = buffer.read_int64();
+int Create_Role_Info::deserialize(Block_Buffer &buffer) {
+	account = buffer.read_string();
 	role_name = buffer.read_string();
-	value = buffer.read_int32();
+	client_ip = buffer.read_string();
+	gender = buffer.read_int8();
+	career = buffer.read_int8();
 	return 0;
 }
 
-void Rank_Member::reset(void) {
-	role_id = 0;
+void Create_Role_Info::reset(void) {
+	account.clear();
 	role_name.clear();
-	value = 0;
+	client_ip.clear();
+	gender = 0;
+	career = 0;
 }
 
-void Rank_Member::print(void) {
-	printf("role_id: %ld, ", role_id);
+void Create_Role_Info::print(void) {
+	printf("account: %s, ", account.c_str());
 	printf("role_name: %s, ", role_name.c_str());
-	printf("value: %d, ", value);
+	printf("client_ip: %s, ", client_ip.c_str());
+	printf("gender: %d, ", gender);
+	printf("career: %d, ", career);
+	printf("\n");
+}
+
+Create_Guild_Info::Create_Guild_Info(void) {
+	reset();
+}
+
+Create_Guild_Info::~Create_Guild_Info() {
+}
+
+void Create_Guild_Info::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(guild_id);
+	buffer.write_string(guild_name);
+	buffer.write_int64(chief_id);
+}
+
+int Create_Guild_Info::deserialize(Block_Buffer &buffer) {
+	guild_id = buffer.read_int64();
+	guild_name = buffer.read_string();
+	chief_id = buffer.read_int64();
+	return 0;
+}
+
+void Create_Guild_Info::reset(void) {
+	guild_id = 0;
+	guild_name.clear();
+	chief_id = 0;
+}
+
+void Create_Guild_Info::print(void) {
+	printf("guild_id: %ld, ", guild_id);
+	printf("guild_name: %s, ", guild_name.c_str());
+	printf("chief_id: %ld, ", chief_id);
 	printf("\n");
 }
 
@@ -48,12 +89,12 @@ Role_Info::~Role_Info() {
 
 void Role_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int64(role_id);
-	buffer.write_string(account);
 	buffer.write_string(role_name);
+	buffer.write_string(account);
 	buffer.write_int32(level);
 	buffer.write_int32(exp);
-	buffer.write_int32(career);
-	buffer.write_int32(gender);
+	buffer.write_int8(gender);
+	buffer.write_int8(career);
 	buffer.write_int32(vitality);
 	buffer.write_int32(buy_vitality_times);
 	buffer.write_int32(vip_level);
@@ -63,12 +104,12 @@ void Role_Info::serialize(Block_Buffer &buffer) const {
 
 int Role_Info::deserialize(Block_Buffer &buffer) {
 	role_id = buffer.read_int64();
-	account = buffer.read_string();
 	role_name = buffer.read_string();
+	account = buffer.read_string();
 	level = buffer.read_int32();
 	exp = buffer.read_int32();
-	career = buffer.read_int32();
-	gender = buffer.read_int32();
+	gender = buffer.read_int8();
+	career = buffer.read_int8();
 	vitality = buffer.read_int32();
 	buy_vitality_times = buffer.read_int32();
 	vip_level = buffer.read_int32();
@@ -79,12 +120,12 @@ int Role_Info::deserialize(Block_Buffer &buffer) {
 
 void Role_Info::reset(void) {
 	role_id = 0;
-	account.clear();
 	role_name.clear();
+	account.clear();
 	level = 0;
 	exp = 0;
-	career = 0;
 	gender = 0;
+	career = 0;
 	vitality = 0;
 	buy_vitality_times = 0;
 	vip_level = 0;
@@ -94,12 +135,12 @@ void Role_Info::reset(void) {
 
 void Role_Info::print(void) {
 	printf("role_id: %ld, ", role_id);
-	printf("account: %s, ", account.c_str());
 	printf("role_name: %s, ", role_name.c_str());
+	printf("account: %s, ", account.c_str());
 	printf("level: %d, ", level);
 	printf("exp: %d, ", exp);
-	printf("career: %d, ", career);
 	printf("gender: %d, ", gender);
+	printf("career: %d, ", career);
 	printf("vitality: %d, ", vitality);
 	printf("buy_vitality_times: %d, ", buy_vitality_times);
 	printf("vip_level: %d, ", vip_level);
@@ -473,6 +514,88 @@ void Guild_Member_Detail::print(void) {
 	printf("\n");
 }
 
+Rank_Member::Rank_Member(void) {
+	reset();
+}
+
+Rank_Member::~Rank_Member() {
+}
+
+void Rank_Member::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(role_id);
+	buffer.write_string(role_name);
+	buffer.write_int32(value);
+}
+
+int Rank_Member::deserialize(Block_Buffer &buffer) {
+	role_id = buffer.read_int64();
+	role_name = buffer.read_string();
+	value = buffer.read_int32();
+	return 0;
+}
+
+void Rank_Member::reset(void) {
+	role_id = 0;
+	role_name.clear();
+	value = 0;
+}
+
+void Rank_Member::print(void) {
+	printf("role_id: %ld, ", role_id);
+	printf("role_name: %s, ", role_name.c_str());
+	printf("value: %d, ", value);
+	printf("\n");
+}
+
+Master_Player_Info::Master_Player_Info(void) {
+	reset();
+}
+
+Master_Player_Info::~Master_Player_Info() {
+}
+
+void Master_Player_Info::serialize(Block_Buffer &buffer) const {
+	buffer.write_int64(role_id);
+	buffer.write_string(account);
+	buffer.write_string(role_name);
+	buffer.write_int32(level);
+	buffer.write_int32(gender);
+	buffer.write_int32(career);
+	buffer.write_int32(vip_level);
+}
+
+int Master_Player_Info::deserialize(Block_Buffer &buffer) {
+	role_id = buffer.read_int64();
+	account = buffer.read_string();
+	role_name = buffer.read_string();
+	level = buffer.read_int32();
+	gender = buffer.read_int32();
+	career = buffer.read_int32();
+	vip_level = buffer.read_int32();
+	return 0;
+}
+
+void Master_Player_Info::reset(void) {
+	role_id = 0;
+	account.clear();
+	role_name.clear();
+	level = 0;
+	gender = 0;
+	career = 0;
+	vip_level = 0;
+}
+
+void Master_Player_Info::print(void) {
+	printf("role_id: %ld, ", role_id);
+	printf("account: %s, ", account.c_str());
+	printf("role_name: %s, ", role_name.c_str());
+	printf("level: %d, ", level);
+	printf("gender: %d, ", gender);
+	printf("career: %d, ", career);
+	printf("vip_level: %d, ", vip_level);
+	printf("\n");
+}
+
 Game_Player_Info::Game_Player_Info(void) {
 	reset();
 }
@@ -482,15 +605,15 @@ Game_Player_Info::~Game_Player_Info() {
 
 void Game_Player_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int64(role_id);
-	buffer.write_string(account);
 	buffer.write_string(role_name);
+	buffer.write_string(account);
 	buffer.write_string(client_ip);
 	buffer.write_int32(agent_num);
 	buffer.write_int32(server_num);
 	buffer.write_int32(level);
 	buffer.write_int32(exp);
-	buffer.write_int32(gender);
-	buffer.write_int32(career);
+	buffer.write_int8(gender);
+	buffer.write_int8(career);
 	buffer.write_int32(create_time);
 	buffer.write_int32(login_time);
 	buffer.write_int32(logout_time);
@@ -505,15 +628,15 @@ void Game_Player_Info::serialize(Block_Buffer &buffer) const {
 
 int Game_Player_Info::deserialize(Block_Buffer &buffer) {
 	role_id = buffer.read_int64();
-	account = buffer.read_string();
 	role_name = buffer.read_string();
+	account = buffer.read_string();
 	client_ip = buffer.read_string();
 	agent_num = buffer.read_int32();
 	server_num = buffer.read_int32();
 	level = buffer.read_int32();
 	exp = buffer.read_int32();
-	gender = buffer.read_int32();
-	career = buffer.read_int32();
+	gender = buffer.read_int8();
+	career = buffer.read_int8();
 	create_time = buffer.read_int32();
 	login_time = buffer.read_int32();
 	logout_time = buffer.read_int32();
@@ -529,8 +652,8 @@ int Game_Player_Info::deserialize(Block_Buffer &buffer) {
 
 void Game_Player_Info::reset(void) {
 	role_id = 0;
-	account.clear();
 	role_name.clear();
+	account.clear();
 	client_ip.clear();
 	agent_num = 0;
 	server_num = 0;
@@ -552,8 +675,8 @@ void Game_Player_Info::reset(void) {
 
 void Game_Player_Info::print(void) {
 	printf("role_id: %ld, ", role_id);
-	printf("account: %s, ", account.c_str());
 	printf("role_name: %s, ", role_name.c_str());
+	printf("account: %s, ", account.c_str());
 	printf("client_ip: %s, ", client_ip.c_str());
 	printf("agent_num: %d, ", agent_num);
 	printf("server_num: %d, ", server_num);
@@ -753,11 +876,12 @@ void Guild_Info::serialize(Block_Buffer &buffer) const {
 	buffer.write_int64(guild_id);
 	buffer.write_string(guild_name);
 	buffer.write_int64(chief_id);
+	buffer.write_int32(create_time);
 	buffer.write_bool(is_change);
-	uint16_t applicant_list_size = applicant_list.size();
-	buffer.write_uint16(applicant_list_size);
-	for(uint16_t i = 0; i < applicant_list_size; ++i) {
-		applicant_list[i].serialize(buffer);
+	uint16_t apply_list_size = apply_list.size();
+	buffer.write_uint16(apply_list_size);
+	for(uint16_t i = 0; i < apply_list_size; ++i) {
+		apply_list[i].serialize(buffer);
 	}
 	uint16_t member_list_size = member_list.size();
 	buffer.write_uint16(member_list_size);
@@ -770,12 +894,13 @@ int Guild_Info::deserialize(Block_Buffer &buffer) {
 	guild_id = buffer.read_int64();
 	guild_name = buffer.read_string();
 	chief_id = buffer.read_int64();
+	create_time = buffer.read_int32();
 	is_change = buffer.read_bool();
-	uint16_t applicant_list_size = buffer.read_uint16();
-	Guild_Member_Detail applicant_list_v;
-	for(uint16_t i = 0; i < applicant_list_size; ++i) {
-		applicant_list_v.deserialize(buffer);
-		applicant_list.push_back(applicant_list_v);
+	uint16_t apply_list_size = buffer.read_uint16();
+	Guild_Member_Detail apply_list_v;
+	for(uint16_t i = 0; i < apply_list_size; ++i) {
+		apply_list_v.deserialize(buffer);
+		apply_list.push_back(apply_list_v);
 	}
 	uint16_t member_list_size = buffer.read_uint16();
 	Guild_Member_Detail member_list_v;
@@ -790,8 +915,9 @@ void Guild_Info::reset(void) {
 	guild_id = 0;
 	guild_name.clear();
 	chief_id = 0;
+	create_time = 0;
 	is_change = 0;
-	applicant_list.clear();
+	apply_list.clear();
 	member_list.clear();
 }
 
@@ -799,11 +925,12 @@ void Guild_Info::print(void) {
 	printf("guild_id: %ld, ", guild_id);
 	printf("guild_name: %s, ", guild_name.c_str());
 	printf("chief_id: %ld, ", chief_id);
+	printf("create_time: %d, ", create_time);
 	printf("is_change: %d, ", is_change);
-	uint16_t applicant_list_size = (applicant_list.size() > 5 ? 5 : applicant_list.size());
-	printf("applicant_list.size: %ld [", applicant_list.size());
-	for(uint16_t i = 0; i < applicant_list_size; ++i) {
-		applicant_list[i].print();
+	uint16_t apply_list_size = (apply_list.size() > 5 ? 5 : apply_list.size());
+	printf("apply_list.size: %ld [", apply_list.size());
+	for(uint16_t i = 0; i < apply_list_size; ++i) {
+		apply_list[i].print();
 	}
 	printf("], ");
 	uint16_t member_list_size = (member_list.size() > 5 ? 5 : member_list.size());
@@ -896,54 +1023,5 @@ void Rank_Info::print(void) {
 	printf("min_value: %d, ", min_value);
 	printf("min_role_id: %ld, ", min_role_id);
 	printf("member_map.size: %ld {}, ", member_map.size());
-	printf("\n");
-}
-
-Master_Player_Info::Master_Player_Info(void) {
-	reset();
-}
-
-Master_Player_Info::~Master_Player_Info() {
-}
-
-void Master_Player_Info::serialize(Block_Buffer &buffer) const {
-	buffer.write_int64(role_id);
-	buffer.write_string(account);
-	buffer.write_string(role_name);
-	buffer.write_int32(level);
-	buffer.write_int32(gender);
-	buffer.write_int32(career);
-	buffer.write_int32(vip_level);
-}
-
-int Master_Player_Info::deserialize(Block_Buffer &buffer) {
-	role_id = buffer.read_int64();
-	account = buffer.read_string();
-	role_name = buffer.read_string();
-	level = buffer.read_int32();
-	gender = buffer.read_int32();
-	career = buffer.read_int32();
-	vip_level = buffer.read_int32();
-	return 0;
-}
-
-void Master_Player_Info::reset(void) {
-	role_id = 0;
-	account.clear();
-	role_name.clear();
-	level = 0;
-	gender = 0;
-	career = 0;
-	vip_level = 0;
-}
-
-void Master_Player_Info::print(void) {
-	printf("role_id: %ld, ", role_id);
-	printf("account: %s, ", account.c_str());
-	printf("role_name: %s, ", role_name.c_str());
-	printf("level: %d, ", level);
-	printf("gender: %d, ", gender);
-	printf("career: %d, ", career);
-	printf("vip_level: %d, ", vip_level);
 	printf("\n");
 }

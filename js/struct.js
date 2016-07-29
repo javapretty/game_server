@@ -4,32 +4,56 @@
 * [Version 1.4]
 */
 
-function Rank_Member() {
-	this.role_id = 0;
+function Create_Role_Info() {
+	this.account = ""
 	this.role_name = ""
-	this.value = 0;
+	this.client_ip = ""
+	this.gender = 0;
+	this.career = 0;
 }
 
-Rank_Member.prototype.serialize = function(buffer) {
-	buffer.write_int64(this.role_id);
+Create_Role_Info.prototype.serialize = function(buffer) {
+	buffer.write_string(this.account);
 	buffer.write_string(this.role_name);
-	buffer.write_int32(this.value);
+	buffer.write_string(this.client_ip);
+	buffer.write_int8(this.gender);
+	buffer.write_int8(this.career);
 }
 
-Rank_Member.prototype.deserialize = function(buffer) {
-	this.role_id = buffer.read_int64();
+Create_Role_Info.prototype.deserialize = function(buffer) {
+	this.account = buffer.read_string();
 	this.role_name = buffer.read_string();
-	this.value = buffer.read_int32();
+	this.client_ip = buffer.read_string();
+	this.gender = buffer.read_int8();
+	this.career = buffer.read_int8();
+}
+
+function Create_Guild_Info() {
+	this.guild_id = 0;
+	this.guild_name = ""
+	this.chief_id = 0;
+}
+
+Create_Guild_Info.prototype.serialize = function(buffer) {
+	buffer.write_int64(this.guild_id);
+	buffer.write_string(this.guild_name);
+	buffer.write_int64(this.chief_id);
+}
+
+Create_Guild_Info.prototype.deserialize = function(buffer) {
+	this.guild_id = buffer.read_int64();
+	this.guild_name = buffer.read_string();
+	this.chief_id = buffer.read_int64();
 }
 
 function Role_Info() {
 	this.role_id = 0;
-	this.account = ""
 	this.role_name = ""
+	this.account = ""
 	this.level = 0;
 	this.exp = 0;
-	this.career = 0;
 	this.gender = 0;
+	this.career = 0;
 	this.vitality = 0;
 	this.buy_vitality_times = 0;
 	this.vip_level = 0;
@@ -39,12 +63,12 @@ function Role_Info() {
 
 Role_Info.prototype.serialize = function(buffer) {
 	buffer.write_int64(this.role_id);
-	buffer.write_string(this.account);
 	buffer.write_string(this.role_name);
+	buffer.write_string(this.account);
 	buffer.write_int32(this.level);
 	buffer.write_int32(this.exp);
-	buffer.write_int32(this.career);
-	buffer.write_int32(this.gender);
+	buffer.write_int8(this.gender);
+	buffer.write_int8(this.career);
 	buffer.write_int32(this.vitality);
 	buffer.write_int32(this.buy_vitality_times);
 	buffer.write_int32(this.vip_level);
@@ -54,12 +78,12 @@ Role_Info.prototype.serialize = function(buffer) {
 
 Role_Info.prototype.deserialize = function(buffer) {
 	this.role_id = buffer.read_int64();
-	this.account = buffer.read_string();
 	this.role_name = buffer.read_string();
+	this.account = buffer.read_string();
 	this.level = buffer.read_int32();
 	this.exp = buffer.read_int32();
-	this.career = buffer.read_int32();
-	this.gender = buffer.read_int32();
+	this.gender = buffer.read_int8();
+	this.career = buffer.read_int8();
 	this.vitality = buffer.read_int32();
 	this.buy_vitality_times = buffer.read_int32();
 	this.vip_level = buffer.read_int32();
@@ -286,10 +310,58 @@ Guild_Member_Detail.prototype.deserialize = function(buffer) {
 	this.career = buffer.read_int32();
 }
 
-function Game_Player_Info() {
+function Rank_Member() {
+	this.role_id = 0;
+	this.role_name = ""
+	this.value = 0;
+}
+
+Rank_Member.prototype.serialize = function(buffer) {
+	buffer.write_int64(this.role_id);
+	buffer.write_string(this.role_name);
+	buffer.write_int32(this.value);
+}
+
+Rank_Member.prototype.deserialize = function(buffer) {
+	this.role_id = buffer.read_int64();
+	this.role_name = buffer.read_string();
+	this.value = buffer.read_int32();
+}
+
+function Master_Player_Info() {
 	this.role_id = 0;
 	this.account = ""
 	this.role_name = ""
+	this.level = 0;
+	this.gender = 0;
+	this.career = 0;
+	this.vip_level = 0;
+}
+
+Master_Player_Info.prototype.serialize = function(buffer) {
+	buffer.write_int64(this.role_id);
+	buffer.write_string(this.account);
+	buffer.write_string(this.role_name);
+	buffer.write_int32(this.level);
+	buffer.write_int32(this.gender);
+	buffer.write_int32(this.career);
+	buffer.write_int32(this.vip_level);
+}
+
+Master_Player_Info.prototype.deserialize = function(buffer) {
+	this.role_id = buffer.read_int64();
+	this.account = buffer.read_string();
+	this.role_name = buffer.read_string();
+	this.level = buffer.read_int32();
+	this.gender = buffer.read_int32();
+	this.career = buffer.read_int32();
+	this.vip_level = buffer.read_int32();
+}
+
+function Game_Player_Info() {
+	this.role_id = 0;
+	this.role_name = ""
+	this.account = ""
 	this.client_ip = ""
 	this.agent_num = 0;
 	this.server_num = 0;
@@ -311,15 +383,15 @@ function Game_Player_Info() {
 
 Game_Player_Info.prototype.serialize = function(buffer) {
 	buffer.write_int64(this.role_id);
-	buffer.write_string(this.account);
 	buffer.write_string(this.role_name);
+	buffer.write_string(this.account);
 	buffer.write_string(this.client_ip);
 	buffer.write_int32(this.agent_num);
 	buffer.write_int32(this.server_num);
 	buffer.write_int32(this.level);
 	buffer.write_int32(this.exp);
-	buffer.write_int32(this.gender);
-	buffer.write_int32(this.career);
+	buffer.write_int8(this.gender);
+	buffer.write_int8(this.career);
 	buffer.write_int32(this.create_time);
 	buffer.write_int32(this.login_time);
 	buffer.write_int32(this.logout_time);
@@ -334,15 +406,15 @@ Game_Player_Info.prototype.serialize = function(buffer) {
 
 Game_Player_Info.prototype.deserialize = function(buffer) {
 	this.role_id = buffer.read_int64();
-	this.account = buffer.read_string();
 	this.role_name = buffer.read_string();
+	this.account = buffer.read_string();
 	this.client_ip = buffer.read_string();
 	this.agent_num = buffer.read_int32();
 	this.server_num = buffer.read_int32();
 	this.level = buffer.read_int32();
 	this.exp = buffer.read_int32();
-	this.gender = buffer.read_int32();
-	this.career = buffer.read_int32();
+	this.gender = buffer.read_int8();
+	this.career = buffer.read_int8();
 	this.create_time = buffer.read_int32();
 	this.login_time = buffer.read_int32();
 	this.logout_time = buffer.read_int32();
@@ -460,8 +532,9 @@ function Guild_Info() {
 	this.guild_id = 0;
 	this.guild_name = ""
 	this.chief_id = 0;
+	this.create_time = 0;
 	this.is_change = 0;
-	this.applicant_list = new Array();
+	this.apply_list = new Array();
 	this.member_list = new Array();
 }
 
@@ -469,11 +542,12 @@ Guild_Info.prototype.serialize = function(buffer) {
 	buffer.write_int64(this.guild_id);
 	buffer.write_string(this.guild_name);
 	buffer.write_int64(this.chief_id);
+	buffer.write_int32(this.create_time);
 	buffer.write_bool(this.is_change);
-	var len = this.applicant_list.length;
+	var len = this.apply_list.length;
 	buffer.write_uint16(len);
 	for(var i = 0; i < len; ++i) {
-		this.applicant_list[i].serialize(buffer);
+		this.apply_list[i].serialize(buffer);
 	}
 	var len = this.member_list.length;
 	buffer.write_uint16(len);
@@ -486,12 +560,13 @@ Guild_Info.prototype.deserialize = function(buffer) {
 	this.guild_id = buffer.read_int64();
 	this.guild_name = buffer.read_string();
 	this.chief_id = buffer.read_int64();
+	this.create_time = buffer.read_int32();
 	this.is_change = buffer.read_bool();
 	var len = buffer.read_uint16();
 	for(var i = 0; i < len; ++i) {
-		var applicant_list_v = new Guild_Member_Detail();
-		applicant_list_v.deserialize(buffer);
-		this.applicant_list.push(applicant_list_v);
+		var apply_list_v = new Guild_Member_Detail();
+		apply_list_v.deserialize(buffer);
+		this.apply_list.push(apply_list_v);
 	}
 	var len = buffer.read_uint16();
 	for(var i = 0; i < len; ++i) {
@@ -551,46 +626,19 @@ Rank_Info.prototype.deserialize = function(buffer) {
 	}
 }
 
-function Master_Player_Info() {
-	this.role_id = 0;
-	this.account = ""
-	this.role_name = ""
-	this.level = 0;
-	this.gender = 0;
-	this.career = 0;
-	this.vip_level = 0;
-}
-
-Master_Player_Info.prototype.serialize = function(buffer) {
-	buffer.write_int64(this.role_id);
-	buffer.write_string(this.account);
-	buffer.write_string(this.role_name);
-	buffer.write_int32(this.level);
-	buffer.write_int32(this.gender);
-	buffer.write_int32(this.career);
-	buffer.write_int32(this.vip_level);
-}
-
-Master_Player_Info.prototype.deserialize = function(buffer) {
-	this.role_id = buffer.read_int64();
-	this.account = buffer.read_string();
-	this.role_name = buffer.read_string();
-	this.level = buffer.read_int32();
-	this.gender = buffer.read_int32();
-	this.career = buffer.read_int32();
-	this.vip_level = buffer.read_int32();
-}
-
 function MSG_150001() {
 	this.account = ""
+	this.client_ip = ""
 }
 
 MSG_150001.prototype.serialize = function(buffer) {
 	buffer.write_string(this.account);
+	buffer.write_string(this.client_ip);
 }
 
 MSG_150001.prototype.deserialize = function(buffer) {
 	this.account = buffer.read_string();
+	this.client_ip = buffer.read_string();
 }
 
 function MSG_550001() {
@@ -603,15 +651,15 @@ MSG_550001.prototype.deserialize = function(buffer) {
 }
 
 function MSG_150002() {
-	this.player_info = new Game_Player_Info();
+	this.role_info = new Create_Role_Info();
 }
 
 MSG_150002.prototype.serialize = function(buffer) {
-	this.player_info.serialize(buffer);
+	this.role_info.serialize(buffer);
 }
 
 MSG_150002.prototype.deserialize = function(buffer) {
-	this.player_info.deserialize(buffer);
+	this.role_info.deserialize(buffer);
 }
 
 function MSG_550002() {
@@ -642,6 +690,30 @@ MSG_550003.prototype.serialize = function(buffer) {
 
 MSG_550003.prototype.deserialize = function(buffer) {
 	this.role_id = buffer.read_int64();
+}
+
+function MSG_150100() {
+	this.guild_info = new Create_Guild_Info();
+}
+
+MSG_150100.prototype.serialize = function(buffer) {
+	this.guild_info.serialize(buffer);
+}
+
+MSG_150100.prototype.deserialize = function(buffer) {
+	this.guild_info.deserialize(buffer);
+}
+
+function MSG_550100() {
+	this.guild_info = new Create_Guild_Info();
+}
+
+MSG_550100.prototype.serialize = function(buffer) {
+	this.guild_info.serialize(buffer);
+}
+
+MSG_550100.prototype.deserialize = function(buffer) {
+	this.guild_info.deserialize(buffer);
 }
 
 function MSG_150101() {
@@ -1056,30 +1128,21 @@ MSG_300300.prototype.deserialize = function(buffer) {
 }
 
 function MSG_120001() {
-	this.account = ""
 	this.role_id = 0;
-	this.timestamp = ""
-	this.ip = ""
-	this.agent_num = 0;
-	this.server_num = 0;
+	this.account = ""
+	this.client_ip = ""
 }
 
 MSG_120001.prototype.serialize = function(buffer) {
-	buffer.write_string(this.account);
 	buffer.write_int64(this.role_id);
-	buffer.write_string(this.timestamp);
-	buffer.write_string(this.ip);
-	buffer.write_int32(this.agent_num);
-	buffer.write_int32(this.server_num);
+	buffer.write_string(this.account);
+	buffer.write_string(this.client_ip);
 }
 
 MSG_120001.prototype.deserialize = function(buffer) {
-	this.account = buffer.read_string();
 	this.role_id = buffer.read_int64();
-	this.timestamp = buffer.read_string();
-	this.ip = buffer.read_string();
-	this.agent_num = buffer.read_int32();
-	this.server_num = buffer.read_int32();
+	this.account = buffer.read_string();
+	this.client_ip = buffer.read_string();
 }
 
 function MSG_520001() {
@@ -1095,21 +1158,15 @@ MSG_520001.prototype.deserialize = function(buffer) {
 }
 
 function MSG_120002() {
-	this.account = ""
-	this.role_name = ""
-	this.gender = 0;
+	this.role_info = new Create_Role_Info();
 }
 
 MSG_120002.prototype.serialize = function(buffer) {
-	buffer.write_string(this.account);
-	buffer.write_string(this.role_name);
-	buffer.write_int8(this.gender);
+	this.role_info.serialize(buffer);
 }
 
 MSG_120002.prototype.deserialize = function(buffer) {
-	this.account = buffer.read_string();
-	this.role_name = buffer.read_string();
-	this.gender = buffer.read_int8();
+	this.role_info.deserialize(buffer);
 }
 
 function MSG_520002() {

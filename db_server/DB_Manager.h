@@ -42,11 +42,12 @@ public:
 	inline DB_Struct *get_player_data_struct() {
 		return db_struct_name_map_.find("Player_Data")->second;
 	}
-	inline DB_Struct *get_public_data_struct() {
-		return db_struct_name_map_.find("Public_Data")->second;
+	inline DB_Struct *get_master_data_struct() {
+		return db_struct_name_map_.find("Master_Data")->second;
 	}
 
-	int64_t create_player(Game_Player_Info &player_info);
+	int64_t create_player(Create_Role_Info &role_info);
+	int64_t create_guild(Create_Guild_Info &role_info);
 
 private:
 	DB_Manager(void);

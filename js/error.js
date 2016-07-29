@@ -17,15 +17,17 @@ if (typeof Error_Code == "undefined") {
 	Error_Code.ERROR_LEVEL_NOT_ENOUGH 					= 10103;				//角色等级不足
 	Error_Code.ERROR_VITALITY_TIMES_NOT_ENOUGH	=	10104;				//购买体力次数不足
 	Error_Code.ERROR_SKILL_POINT_NOT_ENOUGH			=	10105;				//技能点不足
-	Error_Code.ERROR_ROLE_ID_NOT_EXIST			=	10106;				//角色信息不存在
+	Error_Code.ERROR_ROLE_ID_NOT_EXIST					=	10106;				//角色信息不存在
 	
 	Error_Code.ERROR_BAG_FULL									= 10200,				//背包已满
 	Error_Code.ERROR_ITEM_NOT_EXIST						= 10201;				//物品不存在
 	Error_Code.ERROR_ITEM_NOT_ENOUGH						= 10202;				//物品不足
 	Error_Code.ERROR_COPPER_NOT_ENOUGH					= 10203;				//铜钱不足
 	Error_Code.ERROR_GOLD_NOT_ENOUGH						= 10204;				//元宝不足
-	Error_Code.ERROR_PRODUCT_NOT_EXIST						= 10205;				//商品不存在
-	Error_Code.ERROR_PRODUCT_NOT_ENOUGH						= 10206;				//商品数量不足
-	Error_Code.ERROR_REFRESH_NOT_ENOUGH						= 10207;				//商店刷新次数耗尽
-	Error_Code.ERROR_EXCHANGE_COUNT_NOT_ENOUGH				= 10208;				//兑换元宝次数耗尽
+	Error_Code.ERROR_PRODUCT_NOT_EXIST					= 10205;				//商品不存在
+	Error_Code.ERROR_PRODUCT_NOT_ENOUGH				= 10206;				//商品数量不足
+	Error_Code.ERROR_REFRESH_NOT_ENOUGH				= 10207;				//商店刷新次数耗尽
+	Error_Code.ERROR_EXCHANGE_COUNT_NOT_ENOUGH	= 10208;				//兑换元宝次数耗尽
+	
+	Error_Code.ERROR_GUILD_EXIST								= 10300;				//公会已存在
 }

@@ -15,19 +15,23 @@ MSG_150001::~MSG_150001() {
 
 void MSG_150001::serialize(Block_Buffer &buffer) const {
 	buffer.write_string(account);
+	buffer.write_string(client_ip);
 }
 
 int MSG_150001::deserialize(Block_Buffer &buffer) {
 	account = buffer.read_string();
+	client_ip = buffer.read_string();
 	return 0;
 }
 
 void MSG_150001::reset(void) {
 	account.clear();
+	client_ip.clear();
 }
 
 void MSG_150001::print(void) {
 	printf("account: %s, ", account.c_str());
+	printf("client_ip: %s, ", client_ip.c_str());
 	printf("\n");
 }
 
@@ -60,20 +64,20 @@ MSG_150002::~MSG_150002() {
 }
 
 void MSG_150002::serialize(Block_Buffer &buffer) const {
-	player_info.serialize(buffer);
+	role_info.serialize(buffer);
 }
 
 int MSG_150002::deserialize(Block_Buffer &buffer) {
-	player_info.deserialize(buffer);
+	role_info.deserialize(buffer);
 	return 0;
 }
 
 void MSG_150002::reset(void) {
-	player_info.reset();
+	role_info.reset();
 }
 
 void MSG_150002::print(void) {
-	player_info.print();
+	role_info.print();
 	printf("\n");
 }
 
@@ -141,6 +145,56 @@ void MSG_550003::reset(void) {
 
 void MSG_550003::print(void) {
 	printf("role_id: %ld, ", role_id);
+	printf("\n");
+}
+
+MSG_150100::MSG_150100(void) {
+	reset();
+}
+
+MSG_150100::~MSG_150100() {
+}
+
+void MSG_150100::serialize(Block_Buffer &buffer) const {
+	guild_info.serialize(buffer);
+}
+
+int MSG_150100::deserialize(Block_Buffer &buffer) {
+	guild_info.deserialize(buffer);
+	return 0;
+}
+
+void MSG_150100::reset(void) {
+	guild_info.reset();
+}
+
+void MSG_150100::print(void) {
+	guild_info.print();
+	printf("\n");
+}
+
+MSG_550100::MSG_550100(void) {
+	reset();
+}
+
+MSG_550100::~MSG_550100() {
+}
+
+void MSG_550100::serialize(Block_Buffer &buffer) const {
+	guild_info.serialize(buffer);
+}
+
+int MSG_550100::deserialize(Block_Buffer &buffer) {
+	guild_info.deserialize(buffer);
+	return 0;
+}
+
+void MSG_550100::reset(void) {
+	guild_info.reset();
+}
+
+void MSG_550100::print(void) {
+	guild_info.print();
 	printf("\n");
 }
 

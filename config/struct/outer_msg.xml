@@ -40,12 +40,9 @@
 
 	<MSG_120001>
 		<!--获取角色信息-->
+		<arg type="int64" name="role_id"/>
     	<arg type="string" name="account"/>
-    	<arg type="int64" name="role_id"/>
-    	<arg type="string" name="timestamp"/>
-    	<arg type="string" name="ip"/>
-    	<arg type="int32" name="agent_num"/>
-    	<arg type="int32" name="server_num"/>
+    	<arg type="string" name="client_ip"/>
 	</MSG_120001>
 
 	<MSG_520001>
@@ -54,9 +51,7 @@
 
 	<MSG_120002>
 		<!--创建角色-->
-    	<arg type="string" name="account"/>
-    	<arg type="string" name="role_name"/>
-    	<arg type="int8" name="gender"/>
+		<struct type="Create_Role_Info" name="role_info"/>
 	</MSG_120002>
 
 	<MSG_520002>

@@ -109,21 +109,27 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 	case SYNC_GAME_DB_LOAD_PLAYER: {
 		MSG_150001 msg;
 		msg.deserialize(*buf);
-		process_load_player(cid, msg.account);
+		process_load_player(cid, msg.account, msg.client_ip);
 		break;
 	}
 	case SYNC_GAME_DB_CREATE_PLAYER: {
 		MSG_150002 msg;
 		msg.deserialize(*buf);
-		process_create_player(cid, msg.player_info);
+		process_create_player(cid, msg.role_info);
 		break;
 	}
 	case SYNC_GAME_DB_SAVE_PLAYER: {
 		process_save_player(cid, *buf);
 		break;
 	}
-	case SYNC_MASTER_DB_LOAD_PUBLIC_DATA:{
-		process_load_public_data(cid);
+	case SYNC_MASTER_DB_CREATE_GUILD:{
+		MSG_150100 msg;
+		msg.deserialize(*buf);
+		process_create_guild(cid, msg.guild_info);
+		break;
+	}
+	case SYNC_MASTER_DB_LOAD_DATA:{
+		process_master_load_data(cid);
 		break;
 	}
 	case SYNC_MASTER_DB_DELETE_DATA: {
@@ -153,39 +159,42 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 	return 0;
 }
 
-int DB_Worker::process_load_player(int cid, std::string &account) {
+int DB_Worker::process_load_player(int cid, std::string &account, std::string &client_ip) {
 	Block_Buffer buf;
 	buf.make_inner_message(SYNC_DB_GAME_LOAD_PLAYER);
 	buf.write_string(account);
+	buf.write_string(client_ip);
 	DB_Manager::DB_Cache_Account_Map::iterator iter = DB_MANAGER->db_cache_account_map().find(account);
 	if (iter != DB_MANAGER->db_cache_account_map().end())	{
 		//角色存在，开始加载数据
-		buf.write_int32(SUCCESS_LOADED);
+		buf.write_int8(SUCCESS_LOADED);
 		int64_t role_id = iter->second.role_id;
 		load_player_data(role_id, buf);
 	} else {
 		//角色不存在，直接返回
-		buf.write_int32(ROLE_NOT_EXIST);
+		buf.write_int8(ROLE_NOT_EXIST);
 	}
 	buf.finish_message();
 	DB_MANAGER->send_data_block(cid, buf);
 	return 0;
 }
 
-int DB_Worker::process_create_player(int cid, Game_Player_Info &player_info) {
+int DB_Worker::process_create_player(int cid, Create_Role_Info &role_info) {
 	Block_Buffer buf;
 	buf.make_inner_message(SYNC_DB_GAME_CREATE_PLAYER);
 	int32_t status = 0;
-	if (DB_MANAGER->create_player(player_info) < 0) {
+	int64_t role_id = 0;
+	if ((role_id = DB_MANAGER->create_player(role_info)) < 0) {
 		status = ROLE_HAS_EXIST;
 	} else {
 		status = SUCCESS_CREATED;
 		//创建所有玩家表
-		create_player_data(player_info.role_id);
+		create_player_data(role_id);
 	}
-	buf.write_string(player_info.account);
-	buf.write_int32(status);
-	load_player_data(player_info.role_id, buf);
+	buf.write_string(role_info.account);
+	buf.write_string(role_info.client_ip);
+	buf.write_int8(status);
+	load_player_data(role_id, buf);
 	buf.finish_message();
 	DB_MANAGER->send_data_block(cid, buf);
 	return 0;
@@ -214,10 +223,20 @@ int DB_Worker::process_save_player(int cid, Block_Buffer &buffer) {
 	return 0;
 }
 
-int DB_Worker::process_load_public_data(int cid) {
-	DB_Struct *public_data = DB_MANAGER->get_public_data_struct();
-	for(std::vector<Field_Info>::iterator iter = public_data->field_vec().begin();
-				iter != public_data->field_vec().end(); iter++){
+int DB_Worker::process_create_guild(int cid, Create_Guild_Info &guild_info) {
+	Block_Buffer buf;
+	buf.make_inner_message(SYNC_DB_MASTER_CREATE_GUILD);
+	guild_info.guild_id = DB_MANAGER->create_guild(guild_info);
+	guild_info.serialize(buf);
+	buf.finish_message();
+	DB_MANAGER->send_data_block(cid, buf);
+	return 0;
+}
+
+int DB_Worker::process_master_load_data(int cid) {
+	DB_Struct *master_data = DB_MANAGER->get_master_data_struct();
+	for(std::vector<Field_Info>::iterator iter = master_data->field_vec().begin();
+				iter != master_data->field_vec().end(); iter++){
 		std::string type_name = (*iter).field_type;
 		DB_Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find(type_name);
 		if(it == DB_MANAGER->db_struct_name_map().end()){

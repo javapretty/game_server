@@ -24,7 +24,8 @@ public:
 
 	int init(void);
 	int load_db_cache(void);
-	int64_t create_player(Game_Player_Info &player_info);
+	int64_t create_player(Create_Role_Info &role_info);
+	int64_t create_guild(Create_Guild_Info &guild_info);
 
 private:
 	Mongo_Operator(void);

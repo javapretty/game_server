@@ -1,31 +1,31 @@
 {
-	"lib_log_switcher" : 0,						//网络库日志开关,是否写入磁盘文件
-  "server_log_switcher" : 0,					//服务器日志开关,是否写入磁盘文件
-	"verify_pack" : 1,								//是否开启包验证
-	"receive_timeout" : 900,					//接收线程超时时间 单位:s
-	"server_send_interval" : 100,			//服务器发送线程超时时间 单位:us
-	"connector_send_interval" : 100,		//连接器发生线程超时时间 单位:us
+	"lib_log_switcher" : 0,						//网络库日志开关,1表示写入磁盘文件
+  "server_log_switcher" : 0,					//服务器日志开关,1表示写入磁盘文件
+	"verify_pack" : 1,								//是否开启数据包安全验证
+	"receive_timeout" : 300,					//服务器与客户端心跳等待最大时间 单位:s
+	"server_send_interval" : 100,			//服务器定时发送数据时间 单位:us
+	"connector_send_interval" : 100,		//内部服务器定时发送数据时间 单位:us
 	"server_ip" : "127.0.0.1",					//服务器ip地址
    "log_server" : {
-    	"port" : 7500										//日志服监听端口
+    	"port" : 7500										//日志服务器监听端口
     },
    "db_server" : {
-    	"port" : 7501										//数据库服监听端口
+    	"port" : 7501										//数据库服务器监听端口
     },
    "login_server" : {
    	"client_network_protocol" : 0,		//网络协议类型 0:TCP 1:UDP 2:WEBSOCKET
-    	"client_port" : 7502,						//登录服监听客户端连接的端口
-    	"gate_port" : 7503							//登录服监听网关连接的端口
+    	"client_port" : 7502,						//登录服务器监听客户端连接的端口
+    	"gate_port" : 7503							//登录服务器监听网关连接的端口
     },
    "master_server" : {
-    	"gate_port" : 7504,							//master服监听游戏服连接的端口
-    	"game_port" : 7505							//master服监听网关服连接的端口
+    	"gate_port" : 7504,							//master服务器监听游戏服连接的端口
+    	"game_port" : 7505							//master服务器监听网关服连接的端口
     },
    "game_server" : {
-    	"gate_port" : 7506							//游戏服监听网关服连接的端口
+    	"gate_port" : 7506							//游戏服务器监听网关服连接的端口
     },
    "gate_server" : {
    	"client_network_protocol" : 0,		//网络协议类型 0:TCP 1:UDP 2:WEBSOCKET
-    	"client_port" : 7507						//网关服监听客户端连接的端口
+    	"client_port" : 7507						//网关服务器监听客户端连接的端口
     }
 }

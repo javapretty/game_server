@@ -26,26 +26,28 @@ public:
 	int create_player_data(int64_t role_id);
 	int save_player_data(Block_Buffer &buffer);
 
-	/// 通用消息
+	// 通用消息
 	int push_data_block(Block_Buffer *buf);
-	/// 按帐号加载玩家数据
+	// 按帐号加载玩家数据
 	int push_load_player(Block_Buffer *buf);
-	/// 创建角色
+	// 创建角色
 	int push_create_player(Block_Buffer *buf);
-	/// 保存玩家全部数据
+	// 保存玩家全部数据
 	int push_save_player(Block_Buffer *buf);
 
 	void run_handler(void);
 	void process_list(void);
 	int process_data_block(Block_Buffer *buf);
-	/// 加载玩家数据
-	int process_load_player(int cid, std::string &account);
-	/// 创建新角色
-	int process_create_player(int cid, Game_Player_Info &player_info);
-	/// 保存玩家数据
+	// 加载玩家数据
+	int process_load_player(int cid, std::string &account, std::string &client_ip);
+	// 创建新角色
+	int process_create_player(int cid, Create_Role_Info &role_info);
+	// 保存玩家数据
 	int process_save_player(int cid, Block_Buffer &buffer);
-	/// 加载master公共数据
-	int process_load_public_data(int cid);
+	// 创建公会
+	int process_create_guild(int cid, Create_Guild_Info &guild_info);
+	// 加载master各个表数据
+	int process_master_load_data(int cid);
 
 private:
 	Data_List data_list_;						///通用数据保存列表

@@ -239,40 +239,28 @@ MSG_120001::~MSG_120001() {
 }
 
 void MSG_120001::serialize(Block_Buffer &buffer) const {
-	buffer.write_string(account);
 	buffer.write_int64(role_id);
-	buffer.write_string(timestamp);
-	buffer.write_string(ip);
-	buffer.write_int32(agent_num);
-	buffer.write_int32(server_num);
+	buffer.write_string(account);
+	buffer.write_string(client_ip);
 }
 
 int MSG_120001::deserialize(Block_Buffer &buffer) {
-	account = buffer.read_string();
 	role_id = buffer.read_int64();
-	timestamp = buffer.read_string();
-	ip = buffer.read_string();
-	agent_num = buffer.read_int32();
-	server_num = buffer.read_int32();
+	account = buffer.read_string();
+	client_ip = buffer.read_string();
 	return 0;
 }
 
 void MSG_120001::reset(void) {
-	account.clear();
 	role_id = 0;
-	timestamp.clear();
-	ip.clear();
-	agent_num = 0;
-	server_num = 0;
+	account.clear();
+	client_ip.clear();
 }
 
 void MSG_120001::print(void) {
-	printf("account: %s, ", account.c_str());
 	printf("role_id: %ld, ", role_id);
-	printf("timestamp: %s, ", timestamp.c_str());
-	printf("ip: %s, ", ip.c_str());
-	printf("agent_num: %d, ", agent_num);
-	printf("server_num: %d, ", server_num);
+	printf("account: %s, ", account.c_str());
+	printf("client_ip: %s, ", client_ip.c_str());
 	printf("\n");
 }
 
@@ -309,28 +297,20 @@ MSG_120002::~MSG_120002() {
 }
 
 void MSG_120002::serialize(Block_Buffer &buffer) const {
-	buffer.write_string(account);
-	buffer.write_string(role_name);
-	buffer.write_int8(gender);
+	role_info.serialize(buffer);
 }
 
 int MSG_120002::deserialize(Block_Buffer &buffer) {
-	account = buffer.read_string();
-	role_name = buffer.read_string();
-	gender = buffer.read_int8();
+	role_info.deserialize(buffer);
 	return 0;
 }
 
 void MSG_120002::reset(void) {
-	account.clear();
-	role_name.clear();
-	gender = 0;
+	role_info.reset();
 }
 
 void MSG_120002::print(void) {
-	printf("account: %s, ", account.c_str());
-	printf("role_name: %s, ", role_name.c_str());
-	printf("gender: %d, ", gender);
+	role_info.print();
 	printf("\n");
 }
 

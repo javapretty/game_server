@@ -17,6 +17,8 @@ struct MSG_150002;
 struct MSG_550002;
 struct MSG_150003;
 struct MSG_550003;
+struct MSG_150100;
+struct MSG_550100;
 struct MSG_150101;
 struct MSG_150102;
 struct MSG_150103;
@@ -37,6 +39,7 @@ struct MSG_140200;
 
 struct MSG_150001 : public MSG {
 	std::string account;	
+	std::string client_ip;	
 
 	MSG_150001(void);
 	~MSG_150001();
@@ -57,7 +60,7 @@ struct MSG_550001 : public MSG {
 };
 
 struct MSG_150002 : public MSG {
-	Game_Player_Info player_info;	
+	Create_Role_Info role_info;	
 
 	MSG_150002(void);
 	~MSG_150002();
@@ -92,6 +95,28 @@ struct MSG_550003 : public MSG {
 
 	MSG_550003(void);
 	~MSG_550003();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_150100 : public MSG {
+	Create_Guild_Info guild_info;	
+
+	MSG_150100(void);
+	~MSG_150100();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_550100 : public MSG {
+	Create_Guild_Info guild_info;	
+
+	MSG_550100(void);
+	~MSG_550100();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

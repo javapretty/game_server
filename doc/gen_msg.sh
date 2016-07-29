@@ -15,13 +15,13 @@ function gen_msg(){
 }
 
 function gen_cpp(){
-	./struct_tool cpp $DEFINE_PATH 'game_struct.xml' 'Game_Struct'
+	./struct_tool cpp $DEFINE_PATH 'game_db_struct.xml' 'Game_Struct'
 	./struct_tool cpp $DEFINE_PATH 'outer_msg.xml' 'Client_Message'
 	./struct_tool cpp $DEFINE_PATH 'inner_msg.xml' 'Server_Message'
 }
 
 function gen_js(){
-	./struct_tool js $DEFINE_PATH 'game_struct.xml' 'struct'
+	./struct_tool js $DEFINE_PATH 'game_db_struct.xml' 'struct'
 	./struct_tool js $DEFINE_PATH 'inner_msg.xml' 'struct'
 	./struct_tool js $DEFINE_PATH 'outer_msg.xml' 'struct'
 }

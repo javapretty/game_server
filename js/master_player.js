@@ -22,7 +22,7 @@ Master_Player.prototype.load_player_data = function(buffer) {
 	this.player_info.deserialize(buffer);
 	
 	this.cid = gate_cid * 10000 + player_cid;
-	print('------master_player load_data, cid:', this.cid, ' role_id:', this.player_info.role_id, ' role_name:', this.player_info.role_name);
+	print('***************master_player load_data, cid:', this.cid, ' role_id:', this.player_info.role_id, ' role_name:', this.player_info.role_name);
 	this.cplayer = get_master_player_by_cid(gate_cid, player_cid);
 	if(this.cplayer == null){
 		print('master_player ', this.player_info.role_id, ' cid is ', this.cid, ' cplayer is null')
@@ -37,7 +37,7 @@ Master_Player.prototype.load_player_data = function(buffer) {
 	
 //玩家离线，保存数据
 Master_Player.prototype.save_player_data = function() {
-	print('------master_player save_data, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name);
+	print('***************master_player save_data, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name);
 	
 	this.sync_player_data();
 	master_player_cid_map.remove(this.cid);

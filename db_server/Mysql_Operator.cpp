@@ -79,12 +79,12 @@ int Mysql_Operator::load_db_cache(void) {
 	return 0;
 }
 
-int64_t Mysql_Operator::create_player(Game_Player_Info &player_info) {
+int64_t Mysql_Operator::create_player(Create_Role_Info &role_info) {
 	char str_sql[256] = {0};
-	sprintf(str_sql, "select * from role where role_name='%s' and account='%s'", player_info.role_name.c_str(), player_info.account.c_str());
+	sprintf(str_sql, "select * from role where account='%s' and role_name='%s'", role_info.account.c_str(), role_info.role_name.c_str());
 	sql::ResultSet *result = mysql_conn_->execute_query(str_sql);
 	if (result && result->rowsCount() > 0) {
-		LOG_ERROR("create_player role_name = %s existed", player_info.role_name.c_str());
+		LOG_ERROR("create_player account = %s role_name = %s existed", role_info.account.c_str(), role_info.role_name.c_str());
 		return -1;
 	}
 
@@ -106,25 +106,57 @@ int64_t Mysql_Operator::create_player(Game_Player_Info &player_info) {
 	sprintf(str_sql, "update global set value=%d where type='role_id'", order);
 	mysql_conn_->execute_update(str_sql);
 
-	player_info.role_id = role_id;
-	player_info.agent_num = agent_num_;
-	player_info.server_num = server_num_;
 	int now_sec = Time_Value::gettimeofday().sec();
-
-	sprintf(str_sql, "insert into role (role_id, role_name, account, agent_num, server_num, level, gender, career, login_time, logout_time) values (%ld, '%s', '%s', %d, %d, %d, %d, %d, %d, %d)",
-			player_info.role_id, player_info.role_name.c_str(), player_info.account.c_str(), player_info.agent_num,
-			player_info.server_num, 1, player_info.gender, player_info.career, now_sec, now_sec);
+	sprintf(str_sql, "insert into role (role_id, role_name, account, client_ip, agent_num, server_num, level, gender, career, create_time, login_time) values (%ld, '%s', '%s', '%s', %d, %d, %d, %d, %d, %d, %d)",
+			role_id, role_info.role_name.c_str(), role_info.account.c_str(), role_info.client_ip.c_str(), agent_num_,
+			server_num_, 1, role_info.gender, role_info.career, now_sec, now_sec);
 	mysql_conn_->execute(str_sql);
 
 	Player_DB_Cache db_cache;
 	db_cache.role_id = role_id;
-	db_cache.account = player_info.account;
-	db_cache.role_name = player_info.role_name;
-	db_cache.agent_num = player_info.agent_num;
-	db_cache.server_num = player_info.server_num;
+	db_cache.role_name = role_info.role_name;
+	db_cache.account = role_info.account;
+	db_cache.agent_num = agent_num_;
+	db_cache.server_num = server_num_;
 	db_cache.level = 1;
 	DB_MANAGER->db_cache_id_map().insert(std::make_pair(db_cache.role_id, db_cache));
 	DB_MANAGER->db_cache_account_map().insert(std::make_pair(db_cache.account, db_cache));
-	LOG_INFO("*************create player,db_cache count:%d***************", DB_MANAGER->db_cache_account_map().size());
-	return 0;
+	LOG_INFO("***************create role, role_id:%ld, db_cache count:%d***************", role_id, DB_MANAGER->db_cache_account_map().size());
+	return role_id;
+}
+
+int64_t Mysql_Operator::create_guild(Create_Guild_Info &guild_info) {
+	char str_sql[256] = {0};
+	sprintf(str_sql, "select * from guild where guild_name='%s'", guild_info.guild_name.c_str());
+	sql::ResultSet *result = mysql_conn_->execute_query(str_sql);
+	if (result && result->rowsCount() > 0) {
+		LOG_ERROR("create_guild guild_name = %s existed", guild_info.guild_name.c_str());
+		return -1;
+	}
+
+	//从global表查询当前role_id最大值
+	result = mysql_conn_->execute_query("select * from global where type='guild_id'");
+	if (result && result->rowsCount() <= 0) {
+		LOG_ERROR("find from global type='guild_id' not existed");
+		return -1;
+	}
+
+	int order = 1;
+	while(result->next()) {
+		order = result->getInt64("value") + 1;
+		break;
+	}
+	int64_t agent = agent_num_ * 10000000000000L;
+	int64_t server = server_num_ * 1000000000L;
+	int64_t guild_id = agent + server + order;
+	sprintf(str_sql, "update global set value=%d where type='guild_id'", order);
+	mysql_conn_->execute_update(str_sql);
+
+	int now_sec = Time_Value::gettimeofday().sec();
+	sprintf(str_sql, "insert into guild (guild_id, guild_name, chief_id, create_time) values (%ld, '%s', %ld, %d)",
+			guild_id, guild_info.guild_name.c_str(), guild_info.chief_id, now_sec);
+	mysql_conn_->execute(str_sql);
+
+	LOG_INFO("***************create guild,guild_id:%ld***************", guild_id);
+	return guild_id;
 }

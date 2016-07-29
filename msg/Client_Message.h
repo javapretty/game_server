@@ -159,12 +159,9 @@ struct MSG_300300 : public MSG {
 };
 
 struct MSG_120001 : public MSG {
-	std::string account;	
 	int64_t role_id;	
-	std::string timestamp;	
-	std::string ip;	
-	int32_t agent_num;	
-	int32_t server_num;	
+	std::string account;	
+	std::string client_ip;	
 
 	MSG_120001(void);
 	~MSG_120001();
@@ -186,9 +183,7 @@ struct MSG_520001 : public MSG {
 };
 
 struct MSG_120002 : public MSG {
-	std::string account;	
-	std::string role_name;	
-	int8_t gender;	
+	Create_Role_Info role_info;	
 
 	MSG_120002(void);
 	~MSG_120002();

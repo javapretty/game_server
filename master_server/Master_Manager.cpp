@@ -313,7 +313,7 @@ void Master_Manager::print_msg_count(void) {
 
 void Master_Manager::load_public_data(){
 	Block_Buffer buf;
-	buf.make_inner_message(SYNC_MASTER_DB_LOAD_PUBLIC_DATA);
+	buf.make_inner_message(SYNC_MASTER_DB_LOAD_DATA);
 	buf.finish_message();
 	send_to_db(buf);
 }
