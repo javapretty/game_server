@@ -31,21 +31,21 @@ void Mysql_Struct::create_data(int64_t key_index){
 
 	str_name = str_name.substr(0, str_name.length()-1);
 	str_value = str_value.substr(0, str_value.length()-1);
-	char str_sql[512] = {0};
-	sprintf(str_sql, "INSERT INTO %s (%s) VALUES (%s)", table_name_.c_str(), str_name.c_str(), str_value.c_str());
-	MYSQL_CONNECTION->execute(str_sql);
+	char sql[512] = {0};
+	sprintf(sql, "INSERT INTO %s (%s) VALUES (%s)", table_name_.c_str(), str_name.c_str(), str_value.c_str());
+	MYSQL_CONNECTION->execute(sql);
 }
 
 void Mysql_Struct::load_data(int64_t key_index, Block_Buffer &buffer){
-	char str_sql[256] = {0};
+	char sql[256] = {0};
 	if(key_index == 0) {
 		//加载master公共数据，返回消息是数据列表，需要写入长度
-		sprintf(str_sql, "select * from %s", table_name_.c_str());
+		sprintf(sql, "select * from %s", table_name_.c_str());
 	} else {
 		//加载玩家数据，不需要写长度
-		sprintf(str_sql, "select * from %s where %s=%ld", table_name_.c_str(), key_index_.c_str(), key_index);
+		sprintf(sql, "select * from %s where %s=%ld", table_name_.c_str(), key_index_.c_str(), key_index);
 	}
-	sql::ResultSet *result = MYSQL_CONNECTION->execute_query(str_sql);
+	sql::ResultSet *result = MYSQL_CONNECTION->execute_query(sql);
 	if (result) {
 		if (key_index == 0) {
 			buffer.write_uint16(result->rowsCount());
@@ -69,27 +69,25 @@ void Mysql_Struct::load_data(int64_t key_index, Block_Buffer &buffer){
 }
 
 void Mysql_Struct::save_data(Block_Buffer &buffer){
-	std::string str_name;
-	std::string str_value;
+	std::string str_sql;
 	int64_t key_index = buffer.peek_int64();
 	for(std::vector<Field_Info>::iterator iter = field_vec_.begin();
 			iter != field_vec_.end(); iter++){
 		if((*iter).field_label == "arg"){
-			build_sql_arg(*iter, buffer, str_name, str_value);
+			build_sql_arg(*iter, buffer, str_sql);
 		}
 		else if((*iter).field_label == "vector"){
-			build_sql_vector(*iter, buffer, str_name, str_value);
+			build_sql_vector(*iter, buffer, str_sql);
 		}
 		else if((*iter).field_label == "struct"){
-			build_sql_struct(*iter, buffer, str_name, str_value);
+			build_sql_struct(*iter, buffer, str_sql);
 		}
 	}
 
-	str_name = str_name.substr(0, str_name.length()-1);
-	str_value = str_value.substr(0, str_value.length()-1);
-	char str_sql[512] = {0};
-	sprintf(str_sql, "INSERT INTO %s (%s) VALUES (%s)", table_name_.c_str(), str_name.c_str(), str_value.c_str());
-	MYSQL_CONNECTION->execute(str_sql);
+	str_sql = str_sql.substr(0, str_sql.length()-1);
+	char sql[512] = {0};
+	sprintf(sql, "UPDATE %s SET %s where %s=%ld", table_name_.c_str(), str_sql.c_str(), key_index_.c_str(), key_index);
+	MYSQL_CONNECTION->execute(sql);
 
 	LOG_DEBUG("table %s save key_index:%ld", table_name_.c_str(), key_index);
 }
@@ -162,26 +160,14 @@ void Mysql_Struct::create_data_vector(Field_Info &field_info, std::string &str_n
 }
 
 void Mysql_Struct::create_data_struct(Field_Info &field_info, std::string &str_name, std::string &str_value){
-	DB_Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(field_info.field_type);
-	if(iter == DB_MANAGER->db_struct_name_map().end()){
-		LOG_ERROR("Can not find the module %s", field_info.field_type.c_str());
-		return;
-	}
+	std::stringstream stream;
+	stream.str("");
+	stream << field_info.field_name << "," ;
+	str_name += stream.str();
 
-	DB_Struct *db_struct  = iter->second;
-	std::vector<Field_Info> field_vec = db_struct->field_vec();
-	for(std::vector<Field_Info>::iterator iter = field_vec.begin();
-			iter != field_vec.end(); iter++){
-		if((*iter).field_label == "arg"){
-			create_data_arg(*iter, str_name, str_value, 0);
-		}
-		else if((*iter).field_label == "vector"){
-			create_data_vector(*iter, str_name, str_value);
-		}
-		else if((*iter).field_label == "struct"){
-			create_data_struct(*iter, str_name, str_value);
-		}
-	}
+	stream.str("");
+	stream << "\'\'" << "," ;
+	str_value += stream.str();
 }
 
 void Mysql_Struct::build_buffer_arg(Field_Info &field_info, Block_Buffer &buffer, sql::ResultSet *result) {
@@ -245,19 +231,17 @@ void Mysql_Struct::build_buffer_struct(Field_Info &field_info, Block_Buffer &buf
 	}
 }
 
-void Mysql_Struct::build_sql_arg(Field_Info &field_info, Block_Buffer &buffer, std::string &str_name, std::string &str_value){
+void Mysql_Struct::build_sql_arg(Field_Info &field_info, Block_Buffer &buffer, std::string &str_sql){
 	std::stringstream stream;
 	stream.str("");
-	stream << field_info.field_name << "," ;
-	str_name += stream.str();
+	stream << field_info.field_name << "=";
 
-	stream.str("");
 	if(field_info.field_type == "int8"){
-		int8_t value = buffer.read_int8();
+		int32_t value = buffer.read_int8();
 		stream << value << "," ;
 	}
 	else if(field_info.field_type == "int16"){
-		int16_t value = buffer.read_int16();
+		int32_t value = buffer.read_int16();
 		stream << value << "," ;
 	}
 	else if(field_info.field_type == "int32"){
@@ -283,39 +267,19 @@ void Mysql_Struct::build_sql_arg(Field_Info &field_info, Block_Buffer &buffer, s
 	else {
 		LOG_ERROR("Can not find the type %s", field_info.field_type.c_str());
 	}
-	str_value += stream.str();
+	str_sql += stream.str();
 }
 
-void Mysql_Struct::build_sql_vector(Field_Info &field_info, Block_Buffer &buffer, std::string &str_name, std::string &str_value){
+void Mysql_Struct::build_sql_vector(Field_Info &field_info, Block_Buffer &buffer, std::string &str_sql){
 	std::stringstream stream;
 	stream.str("");
-	stream << field_info.field_name << "," ;
-	str_name += stream.str();
-
-	stream.str("");
-	stream << "\'\'" << "," ;
-	str_value += stream.str();
+	stream << field_info.field_name << "=\'\'," ;
+	str_sql += stream.str();
 }
 
-void Mysql_Struct::build_sql_struct(Field_Info &field_info, Block_Buffer &buffer, std::string &str_name, std::string &str_value){
-	DB_Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(field_info.field_type);
-	if(iter == DB_MANAGER->db_struct_name_map().end()){
-		LOG_ERROR("Can not find the module %s", field_info.field_type.c_str());
-		return;
-	}
-
-	DB_Struct *db_struct  = iter->second;
-	std::vector<Field_Info> field_vec = db_struct->field_vec();
-	for(std::vector<Field_Info>::iterator iter = field_vec.begin();
-			iter != field_vec.end(); iter++){
-		if((*iter).field_label == "arg"){
-			build_sql_arg(*iter, buffer, str_name, str_value);
-		}
-		else if((*iter).field_label == "vector"){
-			build_sql_vector(*iter, buffer, str_name, str_value);
-		}
-		else if((*iter).field_label == "struct"){
-			build_sql_struct(*iter, buffer, str_name, str_value);
-		}
-	}
+void Mysql_Struct::build_sql_struct(Field_Info &field_info, Block_Buffer &buffer, std::string &str_sql){
+	std::stringstream stream;
+	stream.str("");
+	stream << field_info.field_name << "=\'\'," ;
+	str_sql += stream.str();
 }
