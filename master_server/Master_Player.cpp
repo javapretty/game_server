@@ -3,7 +3,6 @@
  *      Author: zhangyalei
  */
 
-#include "Msg_Define.h"
 #include "Master_Manager.h"
 
 Master_Player::Master_Player(void):gate_cid_(0), game_cid_(0), player_cid_(0), load_player_data_buffer_(0), save_player_data_buffer_(0) { }

@@ -11,7 +11,6 @@
 #include "Gate_Connector.h"
 #include "Gate_Manager.h"
 #include "Gate_Timer.h"
-#include "Msg_Define.h"
 
 Gate_Manager::Gate_Manager(void):
   player_cid_map_(get_hash_table_size(12000)),

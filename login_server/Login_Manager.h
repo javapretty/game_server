@@ -8,7 +8,6 @@
 #define LOGIN_MANAGER_H_
 
 #include "Log.h"
-#include "Block_Buffer.h"
 #include "Thread.h"
 #include "List.h"
 #include "Block_List.h"

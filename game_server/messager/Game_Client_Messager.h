@@ -7,8 +7,6 @@
 #ifndef GAME_CLIENT_MESSAGER_H_
 #define GAME_CLIENT_MESSAGER_H_
 
-#include "Msg_Define.h"
-#include "Block_Buffer.h"
 #include "Game_Player.h"
 
 class Game_Client_Messager {

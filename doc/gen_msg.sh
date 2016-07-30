@@ -16,14 +16,12 @@ function gen_msg(){
 
 function gen_cpp(){
 	./struct_tool cpp $DEFINE_PATH 'game_db_struct.xml' 'Game_Struct'
-	./struct_tool cpp $DEFINE_PATH 'outer_msg.xml' 'Client_Message'
-	./struct_tool cpp $DEFINE_PATH 'inner_msg.xml' 'Server_Message'
+	./struct_tool cpp $DEFINE_PATH 'msg_struct.xml' 'Msg_Struct'
 }
 
 function gen_js(){
 	./struct_tool js $DEFINE_PATH 'game_db_struct.xml' 'struct'
-	./struct_tool js $DEFINE_PATH 'inner_msg.xml' 'struct'
-	./struct_tool js $DEFINE_PATH 'outer_msg.xml' 'struct'
+	./struct_tool js $DEFINE_PATH 'msg_struct.xml' 'struct'
 }
 
 function gen_msgd(){
@@ -33,7 +31,7 @@ function gen_msgd(){
 function cp_file(){
 	wildcard='.*'
 	cp -rf CPP/* $CPP_TARGET
-	cp -rf CPP/'Client_Message'${wildcard} $ROBOT_PATH
+	cp -rf CPP/'Msg_Struct'${wildcard} $ROBOT_PATH
 	cp -rf CPP/'Game_Struct'${wildcard} $ROBOT_PATH
 	cp -rf CPP/Message.h $ROBOT_PATH
 	cp -rf JS/* $JS_TARGET

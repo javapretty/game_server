@@ -8,13 +8,11 @@
 #define MASTER_MANAGER_H_
 
 #include "Log.h"
-#include "Block_Buffer.h"
 #include "Thread.h"
 #include "List.h"
 #include "Block_List.h"
 #include "Object_Pool.h"
 #include "Master_Player.h"
-#include "Msg_Define.h"
 
 class Master_Manager: public Thread {
 public:

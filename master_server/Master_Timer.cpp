@@ -5,7 +5,6 @@
 
 #include "Master_Manager.h"
 #include "Master_Timer.h"
-#include "Msg_Define.h"
 
 Master_Timer_Handler::Master_Timer_Handler(void) {
 	init_tick_msg_buf();

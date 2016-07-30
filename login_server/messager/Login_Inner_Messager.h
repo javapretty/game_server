@@ -6,8 +6,7 @@
 #ifndef LOGIN_INNER_MESSAGER_H_
 #define LOGIN_INNER_MESSAGER_H_
 
-#include "Msg_Define.h"
-#include "Block_Buffer.h"
+#include "Public_Struct.h"
 
 class Login_Inner_Messager {
 public:

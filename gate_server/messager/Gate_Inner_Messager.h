@@ -6,7 +6,8 @@
 #ifndef GATE_INNER_MESSAGER_H_
 #define GATE_INNER_MESSAGER_H_
 
-class Block_Buffer;
+#include "Public_Struct.h"
+
 class Gate_Inner_Messager {
 public:
 	static Gate_Inner_Messager *instance(void);

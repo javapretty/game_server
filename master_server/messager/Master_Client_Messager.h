@@ -7,9 +7,8 @@
 #ifndef MASTER_CLIENT_MESSAGER_H_
 #define MASTER_CLIENT_MESSAGER_H_
 
-#include "Msg_Define.h"
+#include "Public_Struct.h"
 
-class Block_Buffer;
 class Master_Client_Messager {
 public:
 	static Master_Client_Messager *instance(void);

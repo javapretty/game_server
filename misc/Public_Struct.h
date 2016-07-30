@@ -7,10 +7,11 @@
 #ifndef PUBLIC_STURCT_H_
 #define PUBLIC_STURCT_H_
 
-#include "boost/unordered_map.hpp"
 #include "Time_Value.h"
 #include "Misc.h"
-#include "Server_Message.h"
+#include "Error.h"
+#include "Message.h"
+#include "Msg_Struct.h"
 
 enum	 {
 	SUCCESS_LOADED = 1,		//加载成功

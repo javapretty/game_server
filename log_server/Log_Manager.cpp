@@ -9,7 +9,6 @@
 #include "Log_Manager.h"
 #include "Log_Server.h"
 #include "Log_DB.h"
-#include "Msg_Define.h"
 
 Log_Manager::Log_Manager(void) { }
 
