@@ -19,6 +19,7 @@ struct MSG {
 	virtual void print(void) = 0; 
 };
 
+struct Cid_Info;
 struct Create_Role_Info;
 struct Create_Guild_Info;
 struct Role_Info;
@@ -39,6 +40,18 @@ struct Shop_Info;
 struct Guild_Info;
 struct Offline_Info;
 struct Rank_Info;
+
+struct Cid_Info : public MSG {
+	int32_t gate_cid;	
+	int32_t player_cid;	
+
+	Cid_Info(void);
+	~Cid_Info();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
 
 struct Create_Role_Info : public MSG {
 	std::string account;	

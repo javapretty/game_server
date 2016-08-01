@@ -286,8 +286,7 @@ void Daemon_Master::start_client(void) {
 		LOG_FATAL("master_db_connector fatal cid:%d,port:%d", cid, server_conf_.db_port);
 	}
 	MASTER_DB_CONNECTOR->thr_create();
-	//加载PUBLIC数据
-	MASTER_MANAGER->load_public_data();
+	MASTER_MANAGER->load_master_db_data();
 
 	MASTER_V8_MANAGER->thr_create();			//master server v8 engine
 	Daemon::loop();

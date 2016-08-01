@@ -23,7 +23,7 @@ function Timer() {
 			//注册每日刷新定时器,时间间隔24h
 			this.register_master_timer(util.whole_day_msec, util.get_next_day_tick(config.util_json['daily_refresh_time']), this.master_daily_refresh_handler);
 			//注册公共信息保存定时器
-			this.register_master_timer(15000, 0, this.master_public_data_save_handler);
+			this.register_master_timer(15000, 0, this.master_data_save_handler);
 		}
 	}
 	
@@ -80,7 +80,7 @@ function Timer() {
     	});
 	}
 
-	this.master_public_data_save_handler = function() {
+	this.master_data_save_handler = function() {
 		guild_manager.save_data_handler();
 		offline_manager.save_data_handler();
 		rank_manager.save_data();

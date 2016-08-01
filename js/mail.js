@@ -109,7 +109,7 @@ Mail.prototype.send_mail = function(buffer) {
 	
 	var msg_req = new MSG_120203();
 	msg_req.deserialize(buffer);	
-	var receiver = get_game_player_by_name(msg_req.receiver_name);
+	var receiver = game_player_role_name_map.get(msg_req.receiver_name);
 	if (receiver == null) {
 		return this.game_player.cplayer.respond_error_result(Msg_GC.RES_SEND_MAIL, Error_Code.ERROR_ROLE_NOT_EXIST);
 	}
@@ -142,8 +142,8 @@ Mail.prototype.pickup_item_money = function(mail_detail) {
 }
 
 Mail.prototype.send_mail_inner = function(receiver_id, mail_detail) {
-	if (receiver_id <= 0 || mail_detail.sender_type <= 0 || mail_detail.sender_id <= 0 || mail_detail.sender_name.empty()
-		|| mail_detail.mail_title.empty() || mail_detail.gold < 0 || mail_detail.copper < 0) {
+	if (receiver_id <= 0 || mail_detail.sender_type <= 0 || mail_detail.sender_id <= 0 || mail_detail.sender_name.length <= 0
+		|| mail_detail.mail_title.length <= 0 || mail_detail.gold < 0 || mail_detail.copper < 0) {
 		return Error_Code.ERROR_CLIENT_PARAM;
 	}
 

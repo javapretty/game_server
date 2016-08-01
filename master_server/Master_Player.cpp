@@ -5,7 +5,7 @@
 
 #include "Master_Manager.h"
 
-Master_Player::Master_Player(void):gate_cid_(0), game_cid_(0), player_cid_(0), load_player_data_buffer_(0), save_player_data_buffer_(0) { }
+Master_Player::Master_Player(void):gate_cid_(0), game_cid_(0), player_cid_(0), role_id_(0) { }
 
 Master_Player::~Master_Player(void) { }
 
@@ -46,74 +46,18 @@ int Master_Player::respond_error_result(int msg_id, int err, Block_Buffer *buf) 
 	}
 }
 
-int Master_Player::sync_data_to_game(int msg_id, Block_Buffer *buf) {
-	Block_Buffer buffer;
-	buffer.make_inner_message(msg_id);
-	buffer.write_int64(player_info_.role_id);
-	buffer.copy(buf);
-	buffer.finish_message();
-	MASTER_MANAGER->send_to_game(game_cid_, buffer);
-
-	return 0;
-}
-
-int Master_Player::load_player(Master_Player_Info &player_info) {
-	player_info_ = player_info;
-
-	LOG_DEBUG("***********load master_player*********** account=[%s], gate_cid=%d, player_cid=%d, role_id=%ld, name=%s",
-			player_info_.account.c_str(), gate_cid_, player_cid_, player_info_.role_id, player_info_.role_name.c_str());
-
-	MASTER_MANAGER->bind_gate_cid_master_player(gate_cid_ * 10000 + player_cid_, *this);
-	MASTER_MANAGER->bind_role_name_master_player(player_info_.role_name, *this);
-
-	load_player_data_buffer_ = MASTER_MANAGER->pop_block_buffer();
-	save_player_data_buffer_ = MASTER_MANAGER->pop_block_buffer();
-
-	load_player_data_buffer_->reset();
-	save_player_data_buffer_->reset();
-	load_player_data_buffer_->write_int32(gate_cid_);
-	load_player_data_buffer_->write_int32(player_cid_);
-	player_info_.serialize(*load_player_data_buffer_);
-	MASTER_MANAGER->push_player_load_data_buffer(load_player_data_buffer_);
-	return 0;
-}
-
-int Master_Player::save_player(bool is_logout) {
-	LOG_DEBUG("***********save master_player*********** account=[%s], gate_cid=%d, player_cid=%d, role_id=%ld, name=%s",
-			player_info_.account.c_str(), gate_cid_, player_cid_, player_info_.role_id, player_info_.role_name.c_str());
-
-	//js端写入值后，反序列化获取值
-	if (save_player_data_buffer_->readable_bytes() > 0) {
-		player_info_.deserialize(*save_player_data_buffer_);
-	}
-
-	return 0;
-}
-
-int Master_Player::sign_in(void) {
-	return 0;
-}
-
-int Master_Player::sign_out(void) {
-	save_player(true);
-	reset();
-	MASTER_MANAGER->push_block_buffer(load_player_data_buffer_);
-	MASTER_MANAGER->push_block_buffer(save_player_data_buffer_);
-	return 0;
-}
-
 void Master_Player::reset(void) {
 	gate_cid_ = 0;
 	game_cid_ = 0;
 	player_cid_ = 0;
+	role_id_ = 0;
 	recycle_tick_.reset();
-	player_info_.reset();
 }
 
 int Master_Player::tick(Time_Value &now) {
 	if (recycle_tick_.status == Recycle_Tick::RECYCLE && now > recycle_tick_.recycle_tick) {
 		MASTER_MANAGER->unbind_master_player(*this);
-		sign_out();
+		reset();
 		MASTER_MANAGER->push_master_player(this);
 	}
 

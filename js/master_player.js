@@ -5,32 +5,38 @@
 */
 
 function Master_Player() {
-	this.sync_player_data_tick = util.now_sec();
-	this.cid = 0;
+	this.gate_cid = 0;
+	this.game_cid = 0;
+	this.player_cid = 0;
 	this.cplayer = null;
 	this.player_info = new Master_Player_Info();
 }
 
+Master_Player.prototype.set_gate_cid = function(gate_cid, player_cid, role_id) {
+	print('***************gate sync master player login, gate_cid:', gate_cid, ' player_cid:', player_cid, ' role_id:', role_id);
+	this.gate_cid = gate_cid;
+	this.player_cid = player_cid;
+	this.cplayer = get_master_player_by_gate_cid(gate_cid, player_cid, role_id);
+	if(this.cplayer == null) {
+		print('get master_player null, role_id:', this.player_info.role_id);
+		master_close_client(gate_cid, player_cid, Error_Code.ERROR_CLIENT_PARAM);
+		return;
+	}
+	master_player_gate_cid_map.insert(this.gate_cid * 10000 + player_cid, this);
+	master_player_role_id_map.insert(role_id, this);
+}
+
 //玩家上线，加载数据
-Master_Player.prototype.load_player_data = function(buffer) {
-	if (buffer == null) {
-		return;
-	}
+Master_Player.prototype.load_player_data = function(game_cid, player_cid, player_info) {
+	this.game_cid = game_cid;
+	this.player_cid = player_cid;
+	this.player_info = player_info;
 	
-	var gate_cid = buffer.read_int32();
-	var player_cid = buffer.read_int32();
-	this.player_info.deserialize(buffer);
-	
-	this.cid = gate_cid * 10000 + player_cid;
-	print('***************master_player load_data, cid:', this.cid, ' role_id:', this.player_info.role_id, ' role_name:', this.player_info.role_name);
-	this.cplayer = get_master_player_by_cid(gate_cid, player_cid);
-	if(this.cplayer == null){
-		print('master_player ', this.player_info.role_id, ' cid is ', this.cid, ' cplayer is null')
-		return;
-	}
-	
-	master_player_cid_map.insert(this.cid, this);
+	print('***************master_player load_data, role_id:', this.player_info.role_id, ' role_name:', this.player_info.role_name);
+	this.cplayer = get_master_player_by_game_cid(game_cid, player_cid, this.player_info.role_id);
+	master_player_game_cid_map.insert(this.game_cid * 10000 + player_cid, this);
 	master_player_role_id_map.insert(this.player_info.role_id, this);
+	master_player_role_name_map.insert(this.player_info.role_name, this);
 
 	rank_manager.update_rank_level(this);
 }
@@ -38,27 +44,13 @@ Master_Player.prototype.load_player_data = function(buffer) {
 //玩家离线，保存数据
 Master_Player.prototype.save_player_data = function() {
 	print('***************master_player save_data, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name);
-	
-	this.sync_player_data();
-	master_player_cid_map.remove(this.cid);
+	master_player_gate_cid_map.remove(this.gate_cid * 10000 + this.player_cid);
+	master_player_game_cid_map.remove(this.game_cid * 10000 + this.player_cid);
 	master_player_role_id_map.remove(this.player_info.role_id);
-}
-
-Master_Player.prototype.sync_player_data = function() {
-	var buffer = this.cplayer.get_save_data_buffer();
-	if (buffer == null) {
-		return;
-	}
-	
-	this.player_info.serialize(buffer);
+	master_player_role_name_map.remove(this.player_info.role_name);
 }
 
 Master_Player.prototype.tick = function(now) {
-	//同步玩家数据到C++,15s一次
-	if (now - this.sync_player_data_tick >= 15) {
-		this.sync_player_data();
-		this.sync_player_data_tick = now;
-	}
 }
 
 Master_Player.prototype.daily_refresh = function() {
@@ -88,14 +80,14 @@ Master_Player.prototype.send_chat_info = function(buffer) {
 	switch(msg_req.chat_type) {
 	case 1: {
 		//世界聊天
-		master_player_cid_map.each(function(key,value,index) {
+		master_player_gate_cid_map.each(function(key,value,index) {
 			value.cplayer.respond_success_result(Msg_MC.RES_SEND_CHAT_INFO, buf);
    		});
 		break;
 	}
 	case 2: {
 		//私密聊天
-		var player = get_master_player_by_name(msg_req.role_name);
+		var player = master_player_role_name_map.get(msg_req.role_name);
 		if (!player) {
 			return this.cplayer.respond_error_result(Msg_MC.RES_SEND_CHAT_INFO, Error_Code.ERROR_ROLE_OFFLINE);
 		}
@@ -107,15 +99,4 @@ Master_Player.prototype.send_chat_info = function(buffer) {
 		break;
 	}
 	push_master_buffer(buf);
-}
-
-Master_Player.prototype.sync_game_player_data = function(buffer) {
-	print('sync game player data, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
-	
-	var msg = new MSG_165000();
-	msg.deserialize(buffer);
-
-	this.player_info.level = msg.level;
-
-	rank_manager.update_rank_level(this);
 }

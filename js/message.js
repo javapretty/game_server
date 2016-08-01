@@ -91,14 +91,23 @@ if (typeof Msg_GC == "undefined") {
 	Msg_GC.RES_REFRESH_SHOP = 520402; //刷新商店(返回)
 }
 
-if (typeof Msg_Db == "undefined") {
-	var Msg_Db = {};
-	Msg_Db.SYNC_GAME_DB_LOAD_PLAYER = 150001; //加载玩家信息
-	Msg_Db.SYNC_GAME_DB_CREATE_PLAYER = 150002; //创建玩家
-	Msg_Db.SYNC_GAME_DB_SAVE_PLAYER = 150003; //保存玩家信息
-	Msg_Db.SYNC_DB_GAME_LOAD_PLAYER = 550001; //加载玩家信息(返回)
-	Msg_Db.SYNC_DB_GAME_CREATE_PLAYER = 550002; //创建玩家(返回)
-	Msg_Db.SYNC_DB_GAME_SAVE_PLAYER = 550003; //保存玩家信息(返回)
+if (typeof Msg_Gate == "undefined") {
+	var Msg_Gate = {};
+	Msg_Gate.SYNC_GATE_LOGIN_PLAYER_ACCOUNT = 140000; //gate校验玩家账户、session
+	Msg_Gate.SYNC_LOGIN_GATE_PLAYER_ACCOUNT = 140001; //login返回session校验结果
+	Msg_Gate.SYNC_GATE_GAME_PLAYER_LOGOUT = 140100; //gate同步玩家下线到game
+	Msg_Gate.SYNC_GATE_MASTER_PLAYER_LOGOUT = 140200; //gate同步玩家下线到master
+	Msg_Gate.SYNC_GATE_MASTER_PLAYER_LOGIN = 140201; //gate同步玩家上线到master
+}
+
+if (typeof Msg_GD == "undefined") {
+	var Msg_GD = {};
+	Msg_GD.SYNC_GAME_DB_LOAD_PLAYER = 150001; //加载玩家信息
+	Msg_GD.SYNC_GAME_DB_CREATE_PLAYER = 150002; //创建玩家
+	Msg_GD.SYNC_GAME_DB_SAVE_PLAYER = 150003; //保存玩家信息
+	Msg_GD.SYNC_DB_GAME_LOAD_PLAYER = 550001; //加载玩家信息(返回)
+	Msg_GD.SYNC_DB_GAME_CREATE_PLAYER = 550002; //创建玩家(返回)
+	Msg_GD.SYNC_DB_GAME_SAVE_PLAYER = 550003; //保存玩家信息(返回)
 }
 
 if (typeof Msg_MD == "undefined") {
@@ -117,10 +126,13 @@ if (typeof Msg_MD == "undefined") {
 
 if (typeof Msg_GM == "undefined") {
 	var Msg_GM = {};
-	Msg_GM.SYNC_GAME_MASTER_PLYAER_SIGNIN = 160000; //game同步玩家上线到master
-	Msg_GM.SYNC_GAME_MASTER_PLAYER_SIGNOUT = 160001; //game同步玩家下线到master
-	Msg_GM.SYNC_GAME_MASTER_PLAYER_INFO = 165000; //gameplayer信息更新同步master
+	Msg_GM.SYNC_GAME_MASTER_PLYAER_LOGIN = 160000; //game同步玩家上线到master
 	Msg_GM.SYNC_MASTER_GAME_GUILD_INFO = 160100; //master通知game公会信息
+}
+
+if (typeof Msg_Log == "undefined") {
+	var Msg_Log = {};
+	Msg_Log.SYNC_LOG_LOGINOUT = 180001; //后台登录退出流水
 }
 
 if (typeof Msg_Active == "undefined") {

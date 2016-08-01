@@ -4,6 +4,21 @@
 * [Version 1.4]
 */
 
+function Cid_Info() {
+	this.gate_cid = 0;
+	this.player_cid = 0;
+}
+
+Cid_Info.prototype.serialize = function(buffer) {
+	buffer.write_int32(this.gate_cid);
+	buffer.write_int32(this.player_cid);
+}
+
+Cid_Info.prototype.deserialize = function(buffer) {
+	this.gate_cid = buffer.read_int32();
+	this.player_cid = buffer.read_int32();
+}
+
 function Create_Role_Info() {
 	this.account = ""
 	this.role_name = ""
@@ -1901,18 +1916,6 @@ MSG_160000.prototype.deserialize = function(buffer) {
 	this.player_info.deserialize(buffer);
 }
 
-function MSG_160001() {
-	this.role_id = 0;
-}
-
-MSG_160001.prototype.serialize = function(buffer) {
-	buffer.write_int64(this.role_id);
-}
-
-MSG_160001.prototype.deserialize = function(buffer) {
-	this.role_id = buffer.read_int64();
-}
-
 function MSG_160100() {
 	this.guild_id = 0;
 	this.guild_name = ""
@@ -1926,18 +1929,6 @@ MSG_160100.prototype.serialize = function(buffer) {
 MSG_160100.prototype.deserialize = function(buffer) {
 	this.guild_id = buffer.read_int64();
 	this.guild_name = buffer.read_string();
-}
-
-function MSG_165000() {
-	this.level = 0;
-}
-
-MSG_165000.prototype.serialize = function(buffer) {
-	buffer.write_int32(this.level);
-}
-
-MSG_165000.prototype.deserialize = function(buffer) {
-	this.level = buffer.read_int32();
 }
 
 function MSG_140000() {
@@ -1983,13 +1974,19 @@ MSG_140100.prototype.deserialize = function(buffer) {
 }
 
 function MSG_140200() {
-	this.player_info = new Master_Player_Info();
 }
 
 MSG_140200.prototype.serialize = function(buffer) {
-	this.player_info.serialize(buffer);
 }
 
 MSG_140200.prototype.deserialize = function(buffer) {
-	this.player_info.deserialize(buffer);
+}
+
+function MSG_140201() {
+}
+
+MSG_140201.prototype.serialize = function(buffer) {
+}
+
+MSG_140201.prototype.deserialize = function(buffer) {
 }

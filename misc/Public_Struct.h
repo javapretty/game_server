@@ -13,7 +13,7 @@
 #include "Message.h"
 #include "Msg_Struct.h"
 
-enum	 {
+enum	 Role_Status {
 	SUCCESS_LOADED = 1,		//加载成功
 	SUCCESS_CREATED,			//创建成功
 	ROLE_NOT_EXIST,				//角色不存在
@@ -78,28 +78,12 @@ public:
 	}
 };
 
-struct Cid_Info {
-	int gate_cid;
-	int player_cid;
-
-	Cid_Info(void) : gate_cid(0), player_cid(0) {}
-	Cid_Info(int gate_cid_, int player_cid_): gate_cid(gate_cid_), player_cid(player_cid_) {};
-};
-
 struct Ip_Info {
 	std::string ip;
 	int32_t port;
 
 	Ip_Info(void): ip("127.0.0.1"), port(0) {}
 	Ip_Info(std::string &ip_, int port_): ip(ip_), port(port_) {}
-};
-
-struct Saving_Info {
-	int64_t role_id;		// 角色
-	Time_Value timestamp;	// 保存时的时间错
-
-	Saving_Info(void) : role_id(0) {}
-	Saving_Info(int64_t role_id_, Time_Value timestamp_): role_id(role_id_), timestamp(timestamp_) {};
 };
 
 struct Close_Info {
@@ -138,9 +122,6 @@ struct Tick_Info {
 	const Time_Value player_interval_tick; /// Game_Player定时器间隔
 	Time_Value player_last_tick;
 
-	const Time_Value saving_scanner_interval_tick;	// 玩家下线保存表的扫描
-	Time_Value saving_scanner_last_tick;
-
 	const Time_Value object_pool_interval_tick;
 	Time_Value object_pool_last_tick;
 
@@ -149,8 +130,6 @@ struct Tick_Info {
 	  server_info_last_tick(Time_Value::zero),
 	  player_interval_tick(Time_Value(0, 500 * 1000)),
 	  player_last_tick(Time_Value::zero),
-	  saving_scanner_interval_tick(20, 0),
-	  saving_scanner_last_tick(Time_Value::zero),
 	  object_pool_interval_tick(300, 0),
 	  object_pool_last_tick(Time_Value::zero)
 	{ }
@@ -203,11 +182,14 @@ struct Login_Player_Info {
 	std::string session;
 	int64_t session_tick;
 
-	Login_Player_Info(void);
-	~Login_Player_Info();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
+	Login_Player_Info(void) { reset(); }
+	void reset(void) {
+		account.clear();
+		gate_ip.clear();
+		gate_port = 0;
+		session.clear();
+		session_tick = 0;
+	}
 };
 
 #endif /* PUBLIC_STURCT_H_ */

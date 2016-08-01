@@ -10,13 +10,13 @@ if (typeof Server_Type == "undefined") {
 	Server_Type.MASTER_SERVER = 2;
 }
 
-if (typeof Data_Change == "undefined") {
-	var Data_Change = {};
-	Data_Change.PLAYER_CHANGE = 0;
-	Data_Change.HERO_CHANGE = 1;
-	Data_Change.BAG_CHANGE = 2;
-	Data_Change.MAIL_CHANGE = 3;
-	Data_Change.SHOP_CHANGE = 4;
+if (typeof Role_Status == "undefined") {
+	var Role_Status = {};
+	Role_Status.SUCCESS_LOADED 		= 1;		//加载成功
+	Role_Status.SUCCESS_CREATED 		= 2;		//创建成功
+	Role_Status.ROLE_NOT_EXIST			= 3;		//角色不存在
+	Role_Status.ROLE_HAS_EXIST			= 4;		//	角色已经存在
+	Role_Status.ROLE_SAVE_OFFLINE	= 5;		//角色下线保存
 }
 
 if (typeof Property_Type == "undefined") {

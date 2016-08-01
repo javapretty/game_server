@@ -2505,31 +2505,6 @@ void MSG_160000::print(void) {
 	printf("\n");
 }
 
-MSG_160001::MSG_160001(void) {
-	reset();
-}
-
-MSG_160001::~MSG_160001() {
-}
-
-void MSG_160001::serialize(Block_Buffer &buffer) const {
-	buffer.write_int64(role_id);
-}
-
-int MSG_160001::deserialize(Block_Buffer &buffer) {
-	role_id = buffer.read_int64();
-	return 0;
-}
-
-void MSG_160001::reset(void) {
-	role_id = 0;
-}
-
-void MSG_160001::print(void) {
-	printf("role_id: %ld, ", role_id);
-	printf("\n");
-}
-
 MSG_160100::MSG_160100(void) {
 	reset();
 }
@@ -2556,31 +2531,6 @@ void MSG_160100::reset(void) {
 void MSG_160100::print(void) {
 	printf("guild_id: %ld, ", guild_id);
 	printf("guild_name: %s, ", guild_name.c_str());
-	printf("\n");
-}
-
-MSG_165000::MSG_165000(void) {
-	reset();
-}
-
-MSG_165000::~MSG_165000() {
-}
-
-void MSG_165000::serialize(Block_Buffer &buffer) const {
-	buffer.write_int32(level);
-}
-
-int MSG_165000::deserialize(Block_Buffer &buffer) {
-	level = buffer.read_int32();
-	return 0;
-}
-
-void MSG_165000::reset(void) {
-	level = 0;
-}
-
-void MSG_165000::print(void) {
-	printf("level: %d, ", level);
 	printf("\n");
 }
 
@@ -2675,19 +2625,36 @@ MSG_140200::~MSG_140200() {
 }
 
 void MSG_140200::serialize(Block_Buffer &buffer) const {
-	player_info.serialize(buffer);
 }
 
 int MSG_140200::deserialize(Block_Buffer &buffer) {
-	player_info.deserialize(buffer);
 	return 0;
 }
 
 void MSG_140200::reset(void) {
-	player_info.reset();
 }
 
 void MSG_140200::print(void) {
-	player_info.print();
+	printf("\n");
+}
+
+MSG_140201::MSG_140201(void) {
+	reset();
+}
+
+MSG_140201::~MSG_140201() {
+}
+
+void MSG_140201::serialize(Block_Buffer &buffer) const {
+}
+
+int MSG_140201::deserialize(Block_Buffer &buffer) {
+	return 0;
+}
+
+void MSG_140201::reset(void) {
+}
+
+void MSG_140201::print(void) {
 	printf("\n");
 }

@@ -103,7 +103,7 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 	int32_t cid = buf->read_int32();
 	/*int16_t len*/ buf->read_int16();
 	int32_t msg_id = buf->read_int32();
-	/*int32_t status*/ buf->read_int32();
+	int32_t status = buf->read_int32();
 
 	switch (msg_id) {
 	case SYNC_GAME_DB_LOAD_PLAYER: {
@@ -119,7 +119,7 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 		break;
 	}
 	case SYNC_GAME_DB_SAVE_PLAYER: {
-		process_save_player(cid, *buf);
+		process_save_player(cid, status, *buf);
 		break;
 	}
 	case SYNC_MASTER_DB_CREATE_GUILD:{
@@ -200,11 +200,10 @@ int DB_Worker::process_create_player(int cid, Create_Role_Info &role_info) {
 	return 0;
 }
 
-int DB_Worker::process_save_player(int cid, Block_Buffer &buffer) {
-	int32_t status = buffer.read_int32();
+int DB_Worker::process_save_player(int cid, int status, Block_Buffer &buffer) {
 	if (status == 1) {
+		//离线保存
 		int rdx = buffer.get_read_idx();
-		buffer.read_int32();
 		int64_t role_id = buffer.read_int64();
 		buffer.set_read_idx(rdx);
 
@@ -212,12 +211,11 @@ int DB_Worker::process_save_player(int cid, Block_Buffer &buffer) {
 
 		Block_Buffer buf;
 		buf.make_inner_message(SYNC_DB_GAME_SAVE_PLAYER);
-		MSG_550003 msg;
-		msg.role_id = role_id;
-		msg.serialize(buf);
+		buf.write_int64(role_id);
 		buf.finish_message();
 		DB_MANAGER->send_data_block(cid, buf);
 	} else {
+		//在线定时保存
 		save_player_data(buffer);
 	}
 	return 0;

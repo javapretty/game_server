@@ -14,8 +14,6 @@ enum Message_Bound {
 	CLIENT_MASTER_MESSAGE_END = 119999, 
 	CLIENT_GAME_MESSAGE_START = 120000, 
 	CLIENT_GAME_MESSAGE_END = 129999, 
-	GAME_MASTER_SYNC_DATA_START = 165000, 
-	GAME_MASTER_SYNC_DATA_END = 169999, 
 };
 
 enum Client_Login_Message {
@@ -102,8 +100,9 @@ enum Game_Client_Message {
 enum Gate_Message {
 	SYNC_GATE_LOGIN_PLAYER_ACCOUNT = 140000, //gate校验玩家账户、session
 	SYNC_LOGIN_GATE_PLAYER_ACCOUNT = 140001, //login返回session校验结果
-	SYNC_GATE_GAME_PLAYER_SIGNOUT = 140100, //gate同步玩家下线到game
-	SYNC_GATE_MASTER_PLAYER_SIGNIN = 140200, //gate同步玩家上线到master
+	SYNC_GATE_GAME_PLAYER_LOGOUT = 140100, //gate同步玩家下线到game
+	SYNC_GATE_MASTER_PLAYER_LOGOUT = 140200, //gate同步玩家下线到master
+	SYNC_GATE_MASTER_PLAYER_LOGIN = 140201, //gate同步玩家上线到master
 };
 
 enum Game_DB_Message {
@@ -129,9 +128,7 @@ enum Master_DB_Message {
 };
 
 enum Game_Master_Message {
-	SYNC_GAME_MASTER_PLYAER_SIGNIN = 160000, //game同步玩家上线到master
-	SYNC_GAME_MASTER_PLAYER_SIGNOUT = 160001, //game同步玩家下线到master
-	SYNC_GAME_MASTER_PLAYER_INFO = 165000, //gameplayer信息更新同步master
+	SYNC_GAME_MASTER_PLYAER_LOGIN = 160000, //game同步玩家上线到master
 	SYNC_MASTER_GAME_GUILD_INFO = 160100, //master通知game公会信息
 };
 

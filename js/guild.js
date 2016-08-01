@@ -57,8 +57,10 @@ Guild.prototype.sync_guild_info_to_game = function(player, guild_id, guild_name)
 	msg.guild_id = guild_id;
 	msg.guild_name = guild_name;
 	var buf = pop_master_buffer();
+	buf.make_inner_message(Msg_GM.SYNC_MASTER_GAME_GUILD_INFO);
 	msg.serialize(buf);
-	player.cplayer.sync_data_to_game(Msg_GM.SYNC_MASTER_GAME_GUILD_INFO, buf);
+	buf.finish_message();
+	send_master_buffer_to_game(player.cid, buf);
 	push_master_buffer(buf);
 }
 
@@ -241,4 +243,3 @@ Guild.prototype.kick_out_player = function(player, buffer) {
 	}
 	player.cplayer.respond_error_result(Msg_MC.RES_GUILD_KICK_OUT, Error_Code.ERROR_ROLE_ID_NOT_EXIST);
 }
-

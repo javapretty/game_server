@@ -56,35 +56,3 @@ void Server_Conf::init_server_conf(void) {
 	gate_client_network_protocol = server_conf["gate_server"]["client_network_protocol"].asInt();
 	gate_client_port = server_conf["gate_server"]["client_port"].asInt();
 }
-
-Login_Player_Info::Login_Player_Info(void) {
-	reset();
-}
-
-Login_Player_Info::~Login_Player_Info() {
-}
-
-void Login_Player_Info::serialize(Block_Buffer &buffer) const {
-	buffer.write_string(account);
-	buffer.write_string(gate_ip);
-	buffer.write_int32(gate_port);
-	buffer.write_string(session);
-	buffer.write_int64(session_tick);
-}
-
-int Login_Player_Info::deserialize(Block_Buffer &buffer) {
-	account = buffer.read_string();
-	gate_ip = buffer.read_string();
-	gate_port = buffer.read_int32();
-	session = buffer.read_string();
-	session_tick = buffer.read_int64();
-	return 0;
-}
-
-void Login_Player_Info::reset(void) {
-	account.clear();
-	gate_ip.clear();
-	gate_port = 0;
-	session.clear();
-	session_tick = 0;
-}

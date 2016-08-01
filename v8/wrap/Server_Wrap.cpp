@@ -10,9 +10,11 @@
 #include "Player_Wrap.h"
 #include "Server_Wrap.h"
 #include "Game_Server.h"
+#include "Game_Connector.h"
 #include "Game_Manager.h"
 #include "Game_Timer.h"
 #include "Master_Server.h"
+#include "Master_Connector.h"
 #include "Master_Manager.h"
 #include "Master_Timer.h"
 
@@ -57,6 +59,35 @@ void push_game_buffer(const FunctionCallbackInfo<Value>& args) {
 	}
 }
 
+void send_game_buffer_to_gate(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 2) {
+		LOG_ERROR("send_game_buffer_to_gate args error, length: %d\n", args.Length());
+		return;
+	}
+
+	int gate_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	Block_Buffer *buf = unwrap_buffer(args[1]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
+	if (!buf) {
+		return;
+	}
+
+	GAME_MANAGER->send_to_gate(gate_cid, *buf);
+}
+
+void send_game_buffer_to_master(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 1) {
+		LOG_ERROR("send_game_buffer_to_master args error, length: %d\n", args.Length());
+		return;
+	}
+
+	Block_Buffer *buf = unwrap_buffer(args[0]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
+	if (!buf) {
+		return;
+	}
+
+	GAME_MANAGER->send_to_master(*buf);
+}
+
 void send_game_buffer_to_db(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 1) {
 		LOG_ERROR("send_game_buffer_to_db args error, length: %d\n", args.Length());
@@ -71,9 +102,9 @@ void send_game_buffer_to_db(const FunctionCallbackInfo<Value>& args) {
 	GAME_MANAGER->send_to_db(*buf);
 }
 
-void send_game_buffer_to_master(const FunctionCallbackInfo<Value>& args) {
+void send_game_buffer_to_log(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 1) {
-		LOG_ERROR("send_game_buffer_to_db args error, length: %d\n", args.Length());
+		LOG_ERROR("send_game_buffer_to_log args error, length: %d\n", args.Length());
 		return;
 	}
 
@@ -82,25 +113,11 @@ void send_game_buffer_to_master(const FunctionCallbackInfo<Value>& args) {
 		return;
 	}
 
-	GAME_MANAGER->send_to_master(*buf);
+	GAME_MANAGER->send_to_log(*buf);
 }
 
-void send_master_buffer_to_db(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 1) {
-		LOG_ERROR("send_master_buffer_to_db args error, length: %d\n", args.Length());
-		return;
-	}
-
-	Block_Buffer *buf = unwrap_buffer(args[0]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
-	if (!buf) {
-		return;
-	}
-
-	MASTER_MANAGER->send_to_db(*buf);
-}
-
-void pop_game_client_buffer(const FunctionCallbackInfo<Value>& args) {
-	Block_Buffer *buf = GAME_MANAGER->pop_game_client_data();
+void pop_game_gate_buffer(const FunctionCallbackInfo<Value>& args) {
+	Block_Buffer *buf = GAME_MANAGER->pop_game_gate_data();
 	if (buf) {
 		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
 	} else {
@@ -109,26 +126,62 @@ void pop_game_client_buffer(const FunctionCallbackInfo<Value>& args) {
 	}
 }
 
-void push_game_client_buffer(const FunctionCallbackInfo<Value>& args) {
+void push_game_gate_buffer(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 2) {
-		LOG_ERROR("push_game_client_buffer args error, length: %d\n", args.Length());
+		LOG_ERROR("push_game_gate_buffer args error, length: %d\n", args.Length());
 		return;
 	}
 
-	int cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int gate_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	Block_Buffer *buf= unwrap_buffer(args[1]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
 	if (buf) {
-		GAME_GATE_SERVER->push_block(cid, buf);
+		GAME_GATE_SERVER->push_block(gate_cid, buf);
 	}
 }
 
-void get_game_player_load_data_buffer(const FunctionCallbackInfo<Value>& args) {
-	Block_Buffer *buf = GAME_MANAGER->pop_player_load_data_buffer();
+void pop_game_db_buffer(const FunctionCallbackInfo<Value>& args) {
+	Block_Buffer *buf = GAME_MANAGER->pop_game_db_data();
 	if (buf) {
 		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
 	} else {
 		//设置对象为空
 		args.GetReturnValue().SetNull();
+	}
+}
+
+void push_game_db_buffer(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 2) {
+		LOG_ERROR("push_game_db_buffer args error, length: %d\n", args.Length());
+		return;
+	}
+
+	int db_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	Block_Buffer *buf= unwrap_buffer(args[1]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
+	if (buf) {
+		GAME_DB_CONNECTOR->push_block(db_cid, buf);
+	}
+}
+
+void pop_game_master_buffer(const FunctionCallbackInfo<Value>& args) {
+	Block_Buffer *buf = GAME_MANAGER->pop_game_master_data();
+	if (buf) {
+		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
+	} else {
+		//设置对象为空
+		args.GetReturnValue().SetNull();
+	}
+}
+
+void push_game_master_buffer(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 2) {
+		LOG_ERROR("push_game_master_buffer args error, length: %d\n", args.Length());
+		return;
+	}
+
+	int master_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	Block_Buffer *buf= unwrap_buffer(args[1]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
+	if (buf) {
+		GAME_MASTER_CONNECTOR->push_block(master_cid, buf);
 	}
 }
 
@@ -137,51 +190,37 @@ void get_drop_game_player_cid(const FunctionCallbackInfo<Value>& args) {
 	args.GetReturnValue().Set(cid);
 }
 
-void get_game_player_by_cid(const FunctionCallbackInfo<Value>& args) {
+void get_game_player_by_gate_cid(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 2) {
-		LOG_ERROR("get_game_player_by_cid args error, length: %d\n", args.Length());
+		LOG_ERROR("get_game_player_by_gate_cid args error, length: %d\n", args.Length());
 		args.GetReturnValue().SetNull();
 		return;
 	}
 
 	int gate_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int player_cid = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	Game_Player *player = GAME_MANAGER->find_cid_game_player(gate_cid * 10000 + player_cid);
-	if (player) {
-		args.GetReturnValue().Set(wrap_game_player(args.GetIsolate(), player));
-	} else {
-		//设置对象为空
-		args.GetReturnValue().SetNull();
-		GAME_MANAGER->close_client(gate_cid, player_cid, ERROR_CLIENT_PARAM);
+	int cid = gate_cid * 10000 + player_cid;
+	Game_Player *player = GAME_MANAGER->find_cid_game_player(cid);
+	if (!player) {
+		player = GAME_MANAGER->pop_game_player();
+		GAME_MANAGER->bind_cid_game_player(gate_cid * 10000 + player_cid, *player);
 	}
+
+	player->set_gate_cid(gate_cid, player_cid);
+	args.GetReturnValue().Set(wrap_game_player(args.GetIsolate(), player));
 }
 
-void get_game_player_by_name(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 1) {
-		LOG_ERROR("get_game_player_by_name args error, length: %d\n", args.Length());
+void game_close_client(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 3) {
+		LOG_ERROR("game_close_client args error, length: %d\n", args.Length());
 		args.GetReturnValue().SetNull();
 		return;
 	}
 
-	String::Utf8Value str(args[0]);
-	std::string role_name(ToCString(str));
-	Game_Player *player = GAME_MANAGER->find_role_name_game_player(role_name);
-	if (player) {
-		args.GetReturnValue().Set(wrap_game_player(args.GetIsolate(), player));
-	} else {
-		//设置对象为空
-		args.GetReturnValue().SetNull();
-	}
-}
-
-void pop_sync_master_data_buffer(const FunctionCallbackInfo<Value>& args) {
-	Block_Buffer *buf = GAME_MANAGER->pop_sync_master_data_buffer();
-	if (buf) {
-		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
-	} else {
-		//设置对象为空
-		args.GetReturnValue().SetNull();
-	}
+	int gate_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int player_cid = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int error_code = args[2]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	GAME_MANAGER->close_client(gate_cid, player_cid, error_code);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -226,31 +265,89 @@ void push_master_buffer(const FunctionCallbackInfo<Value>& args) {
 	}
 }
 
-void pop_master_client_buffer(const FunctionCallbackInfo<Value>& args) {
-	Block_Buffer *buf = MASTER_MANAGER->pop_master_client_data();
-	if (buf) {
-		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
-	} else {
-		//设置对象为空
-		args.GetReturnValue().SetNull();
-	}
-}
-
-void push_master_client_buffer(const FunctionCallbackInfo<Value>& args) {
+void send_master_buffer_to_gate(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 2) {
-		LOG_ERROR("push_master_client_buffer args error, length: %d\n", args.Length());
+		LOG_ERROR("send_master_buffer_to_gate args error, length: %d\n", args.Length());
 		return;
 	}
 
-	int cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int gate_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	Block_Buffer *buf = unwrap_buffer(args[0]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
+	if (!buf) {
+		return;
+	}
+
+	MASTER_MANAGER->send_to_gate(gate_cid, *buf);
+}
+
+void send_master_buffer_to_game(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 2) {
+		LOG_ERROR("send_master_buffer_to_game args error, length: %d\n", args.Length());
+		return;
+	}
+
+	int game_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	Block_Buffer *buf = unwrap_buffer(args[0]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
+	if (!buf) {
+		return;
+	}
+
+	MASTER_MANAGER->send_to_game(game_cid, *buf);
+}
+
+void send_master_buffer_to_db(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 1) {
+		LOG_ERROR("send_master_buffer_to_db args error, length: %d\n", args.Length());
+		return;
+	}
+
+	Block_Buffer *buf = unwrap_buffer(args[0]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
+	if (!buf) {
+		return;
+	}
+
+	MASTER_MANAGER->send_to_db(*buf);
+}
+
+void send_master_buffer_to_log(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 1) {
+		LOG_ERROR("send_master_buffer_to_log args error, length: %d\n", args.Length());
+		return;
+	}
+
+	Block_Buffer *buf = unwrap_buffer(args[0]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
+	if (!buf) {
+		return;
+	}
+
+	MASTER_MANAGER->send_to_log(*buf);
+}
+
+void pop_master_gate_buffer(const FunctionCallbackInfo<Value>& args) {
+	Block_Buffer *buf = MASTER_MANAGER->pop_master_gate_data();
+	if (buf) {
+		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
+	} else {
+		//设置对象为空
+		args.GetReturnValue().SetNull();
+	}
+}
+
+void push_master_gate_buffer(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 2) {
+		LOG_ERROR("push_master_gate_buffer args error, length: %d\n", args.Length());
+		return;
+	}
+
+	int gate_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	Block_Buffer *buf= unwrap_buffer(args[1]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
 	if (buf) {
-		MASTER_GATE_SERVER->push_block(cid, buf);
+		MASTER_GATE_SERVER->push_block(gate_cid, buf);
 	}
 }
 
-void get_master_player_load_data_buffer(const FunctionCallbackInfo<Value>& args) {
-	Block_Buffer *buf = MASTER_MANAGER->pop_player_load_data_buffer();
+void pop_master_db_buffer(const FunctionCallbackInfo<Value>& args) {
+	Block_Buffer *buf = MASTER_MANAGER->pop_master_db_data();
 	if (buf) {
 		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
 	} else {
@@ -259,13 +356,39 @@ void get_master_player_load_data_buffer(const FunctionCallbackInfo<Value>& args)
 	}
 }
 
-void get_master_db_data_buffer(const FunctionCallbackInfo<Value>& args) {
-	Block_Buffer *buf = MASTER_MANAGER->pop_master_public_data_buffer();
+void push_master_db_buffer(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 2) {
+		LOG_ERROR("push_master_db_buffer args error, length: %d\n", args.Length());
+		return;
+	}
+
+	int db_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	Block_Buffer *buf= unwrap_buffer(args[1]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
+	if (buf) {
+		MASTER_DB_CONNECTOR->push_block(db_cid, buf);
+	}
+}
+
+void pop_master_game_buffer(const FunctionCallbackInfo<Value>& args) {
+	Block_Buffer *buf = MASTER_MANAGER->pop_master_game_data();
 	if (buf) {
 		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
 	} else {
 		//设置对象为空
 		args.GetReturnValue().SetNull();
+	}
+}
+
+void push_master_game_buffer(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 2) {
+		LOG_ERROR("push_master_game_buffer args error, length: %d\n", args.Length());
+		return;
+	}
+
+	int game_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	Block_Buffer *buf= unwrap_buffer(args[1]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
+	if (buf) {
+		MASTER_GAME_SERVER->push_block(game_cid, buf);
 	}
 }
 
@@ -274,53 +397,59 @@ void get_drop_master_player_cid(const FunctionCallbackInfo<Value>& args) {
 	args.GetReturnValue().Set(cid);
 }
 
-void get_master_player_by_cid(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 2) {
-		LOG_ERROR("get_master_player_by_cid args error, length: %d\n", args.Length());
+void get_master_player_by_gate_cid(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 3) {
+		LOG_ERROR("get_master_player_by_gate_cid args error, length: %d\n", args.Length());
 		args.GetReturnValue().SetNull();
 		return;
 	}
 
 	int gate_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int player_cid = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	Master_Player *player = MASTER_MANAGER->find_gate_cid_master_player(gate_cid * 10000 + player_cid);
-	if (player) {
-		args.GetReturnValue().Set(wrap_master_player(args.GetIsolate(), player));
-	} else {
-		//设置对象为空
-		args.GetReturnValue().SetNull();
-		MASTER_MANAGER->close_client(gate_cid, player_cid, ERROR_CLIENT_PARAM);
+	int64_t role_id = args[2]->IntegerValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	Master_Player *player = MASTER_MANAGER->find_role_id_master_player(role_id);
+	if (!player) {
+		player = MASTER_MANAGER->pop_master_player();
+		MASTER_MANAGER->bind_role_id_master_player(role_id, *player);
 	}
+
+	player->set_gate_cid(gate_cid, player_cid);
+	player->set_role_id(role_id);
+	MASTER_MANAGER->bind_gate_cid_master_player(gate_cid * 10000 + player_cid, *player);
+	args.GetReturnValue().Set(wrap_master_player(args.GetIsolate(), player));
 }
 
-void get_master_player_by_name(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 1) {
-		LOG_ERROR("get_master_player_by_name args error, length: %d\n", args.Length());
+void get_master_player_by_game_cid(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 3) {
+		LOG_ERROR("get_master_player_by_game_cid args error, length: %d\n", args.Length());
 		args.GetReturnValue().SetNull();
 		return;
 	}
 
-	String::Utf8Value str(args[0]);
-	std::string role_name(ToCString(str));
-	Master_Player *player = MASTER_MANAGER->find_role_name_master_player(role_name);
-	if (player) {
-		args.GetReturnValue().Set(wrap_master_player(args.GetIsolate(), player));
-	} else {
-		//设置对象为空
-		args.GetReturnValue().SetNull();
+	int game_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int player_cid = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int64_t role_id = args[2]->IntegerValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	Master_Player *player = MASTER_MANAGER->find_role_id_master_player(role_id);
+	if (!player) {
+		player = MASTER_MANAGER->pop_master_player();
+		MASTER_MANAGER->bind_role_id_master_player(role_id, *player);
 	}
+
+	player->set_game_cid(game_cid, player_cid);
+	player->set_role_id(role_id);
+	MASTER_MANAGER->bind_game_cid_master_player(game_cid * 10000 + player_cid, *player);
+	args.GetReturnValue().Set(wrap_master_player(args.GetIsolate(), player));
 }
 
-void get_game_player_sync_buffer(const FunctionCallbackInfo<Value>& args){
-	Block_Buffer *buf = MASTER_MANAGER->pop_master_player_sync_data();
-	if (buf) {
-		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
-	} else {
-		//设置对象为空
+void master_close_client(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 3) {
+		LOG_ERROR("master_close_client args error, length: %d\n", args.Length());
 		args.GetReturnValue().SetNull();
+		return;
 	}
-}
 
-void buffer_test(const FunctionCallbackInfo<Value>& args){
-	LOG_DEBUG("THIS IS BUFFER_TEST METHOD");
+	int gate_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int player_cid = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int error_code = args[2]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	MASTER_MANAGER->close_client(gate_cid, player_cid, error_code);
 }

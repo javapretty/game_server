@@ -17,10 +17,14 @@ require('guild.js');
 require('offline.js');
 require('rank.js');
 
-//cid----master_player  全局玩家对象
-var master_player_cid_map = new Map();
-//role_id---master_player 全局玩家对象
+//cid----master_player  cid = gate_cid * 10000 + player_cid
+var master_player_gate_cid_map = new Map();
+//cid----master_player  cid = game_cid * 10000 + player_cid
+var master_player_game_cid_map = new Map();
+//role_id---master_player
 var master_player_role_id_map = new Map();
+//role_name---master_player
+var master_player_role_name_map = new Map();
 
 //加载配置文件
 var config = new Config();
@@ -44,43 +48,35 @@ function main() {
 	while (true) {
 		var all_empty = true;
 		
-		//获得客户端消息
-		var buffer = pop_master_client_buffer();
-		if (buffer != null) {
+		//获得game服务器消息
+		var buffer = pop_master_game_buffer();
+		if(buffer != null) {
 			all_empty = false;
-			process_master_client_buffer(buffer);
+			process_master_game_buffer(buffer);
 		}
-	
-		//获得上线玩家的信息
-		buffer = get_master_player_load_data_buffer();
+		
+		//获得gate客户端消息
+		var buffer = pop_master_gate_buffer();
 		if (buffer != null) {
 			all_empty = false;
-			var master_player = new Master_Player();
-			master_player.load_player_data(buffer);
+			process_master_gate_buffer(buffer);
+		}
+		
+		//获得db服务器消息
+		var buffer = pop_master_db_buffer();
+		if(buffer != null) {
+			all_empty = false;
+			process_master_db_buffer(buffer);
 		}
 	
 		//获得下线玩家的cid
 		var cid = get_drop_master_player_cid();
 		if (cid > 0) {
 			all_empty = false;
-			var master_player = master_player_cid_map.get(cid);
+			var master_player = master_player_gate_cid_map.get(cid);
 			if (master_player) {
 				master_player.save_player_data();
 			}
-		}
-		
-		//获得db过来的信息
-		var buffer = get_master_db_data_buffer();
-		if(buffer != null) {
-			all_empty = false;
-			process_master_db_buffer(buffer);
-		}
-		
-		//获得game同步过来的信息
-		var buffer = get_game_player_sync_buffer();
-		if(buffer != null) {
-			all_empty = false;
-			process_game_player_sync_buffer(buffer);
 		}
 
 		//处理定时器消息
@@ -103,21 +99,35 @@ function main() {
 	}	
 }
 
-function process_master_client_buffer(buffer) {
+function process_master_gate_buffer(buffer) {
 	var gate_cid = buffer.read_int32();
 	var len = buffer.read_int16();
 	var msg_id = buffer.read_int32();
 	var status = buffer.read_int32();
 	var player_cid = buffer.read_int32();
 	
+	//gate通知master玩家登录，加载信息
+	if (msg_id == Msg_Gate.SYNC_GATE_MASTER_PLAYER_LOGIN) {
+		var role_id = buffer.read_int64();
+		var master_player = master_player_role_id_map.get(role_id);
+		if (master_player == null) {
+			master_player = new Master_Player();
+		}
+		master_player.set_gate_cid(gate_cid, player_cid, role_id);
+		return;
+	}
+	
 	var cid = gate_cid * 10000 + player_cid;
-	var master_player = master_player_cid_map.get(cid);
+	var master_player = master_player_gate_cid_map.get(cid);
 	if (!master_player) {
 		print('master_player not exist, gate_cid:', gate_cid, " player_cid:", player_cid, " msg_id:", msg_id);
-		return push_master_client_buffer(gate_cid, buffer);
+		return push_master_gate_buffer(gate_cid, buffer);
 	}
 	
 	switch(msg_id) {
+	case Msg_Gate.SYNC_GATE_MASTER_PLAYER_LOGOUT:
+		master_player.cplayer.link_close();
+		break;
 	case Msg_CM.REQ_SEND_CHAT_INFO:
 		master_player.send_chat_info(buffer);
 		break;
@@ -140,14 +150,14 @@ function process_master_client_buffer(buffer) {
 		guild_manager.kick_out_player(master_player, buffer);
 		break;
 	default:
-		print('msg_id not exist, gate_cid:', gate_cid, " player_cid:", player_cid, " msg_id:", msg_id);
+		print('process_master_gate_buffer msg_id not exist, gate_cid:', gate_cid, " player_cid:", player_cid, " msg_id:", msg_id);
 		break;
 	}
-	push_master_client_buffer(gate_cid, buffer);
+	push_master_gate_buffer(gate_cid, buffer);
 }
 
 function process_master_db_buffer(buffer) {
-	var cid = buffer.read_int32();
+	var db_cid = buffer.read_int32();
 	var len = buffer.read_int16();
 	var msg_id = buffer.read_int32();
 	var status = buffer.read_int32();
@@ -166,30 +176,26 @@ function process_master_db_buffer(buffer) {
 		rank_manager.load_data(buffer);
 		break;
 	default:
-		print('msg_id ', msg_id, ' not exist');
+		print('process_master_db_buffer msg_id not exist:', msg_id);
 		break;
 	}
+	push_master_db_buffer(db_cid, buffer);
 }
 
-function process_game_player_sync_buffer(buffer) {
-	var cid = buffer.read_int32();
+function process_master_game_buffer(buffer) {
+	var game_cid = buffer.read_int32();
 	var len = buffer.read_int16();
 	var msg_id = buffer.read_int32();
-	var status = buffer.read_int32();
-	var role_id = buffer.read_int64();
-	var master_player = master_player_role_id_map.get(role_id);
-	if(!master_player){
-		print('role_id: ', role_id, ' do not exist!');
-		return;
-	}
-
-	switch(msg_id) {
-	case Msg_GM.SYNC_GAME_MASTER_PLAYER_INFO:
-		master_player.sync_game_player_data(buffer);
-		break;
-	default:
-		print('msg_id ', msg_id, ' not exist');
-		break;
+	var status =  buffer.read_int32();
+	var player_cid = buffer.read_int32();
+	
+	if (msg_id == Msg_GM.SYNC_GAME_MASTER_PLYAER_LOGIN) {
+		var msg = new MSG_160000();
+		msg.deserialize(buffer);
+		var master_player = master_player_role_id_map.get(msg.player_info.role_id);
+		if (master_player == null) {
+			master_player = new Master_Player();
+		}
+		master_player.load_player_data(game_cid, player_cid, msg.player_info);
 	}
 }
-

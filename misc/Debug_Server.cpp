@@ -156,8 +156,7 @@ int Debug_Server::start(int argc, char *argv[]) {
 		LOG_FATAL("master_db_connector fatal cid:%d,port:%d", cid, server_conf_.db_port);
 	}
 	MASTER_DB_CONNECTOR->thr_create();
-	//加载PUBLIC数据
-	MASTER_MANAGER->load_public_data();
+	MASTER_MANAGER->load_master_db_data();
 
 	/// Game DB Connector
 	GAME_DB_CONNECTOR->set(server_conf_.server_ip, server_conf_.db_port, server_conf_.connector_send_interval);

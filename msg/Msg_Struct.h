@@ -94,13 +94,12 @@ struct MSG_150105;
 struct MSG_550105;
 struct MSG_180001;
 struct MSG_160000;
-struct MSG_160001;
 struct MSG_160100;
-struct MSG_165000;
 struct MSG_140000;
 struct MSG_140001;
 struct MSG_140100;
 struct MSG_140200;
+struct MSG_140201;
 
 struct MSG_300000 : public MSG {
 
@@ -1071,34 +1070,12 @@ struct MSG_160000 : public MSG {
 	void print(void);
 };
 
-struct MSG_160001 : public MSG {
-	int64_t role_id;	
-
-	MSG_160001(void);
-	~MSG_160001();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
 struct MSG_160100 : public MSG {
 	int64_t guild_id;	
 	std::string guild_name;	
 
 	MSG_160100(void);
 	~MSG_160100();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct MSG_165000 : public MSG {
-	int32_t level;	
-
-	MSG_165000(void);
-	~MSG_165000();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
@@ -1141,10 +1118,19 @@ struct MSG_140100 : public MSG {
 };
 
 struct MSG_140200 : public MSG {
-	Master_Player_Info player_info;	
 
 	MSG_140200(void);
 	~MSG_140200();
+	void serialize(Block_Buffer &buffer) const;
+	int deserialize(Block_Buffer &buffer);
+	void reset(void);
+	void print(void);
+};
+
+struct MSG_140201 : public MSG {
+
+	MSG_140201(void);
+	~MSG_140201();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

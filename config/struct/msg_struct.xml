@@ -429,19 +429,11 @@
     	<struct type="Master_Player_Info" name="player_info"/>
 	</MSG_160000>
 
-	<MSG_160001>
-    	<arg type="int64" name="role_id"/>
-	</MSG_160001>
-
 	<MSG_160100> 		
 		<!--master通知game设置公会信息-->
     	<arg type="int64" name="guild_id"/>
     	<arg type="string" name="guild_name"/>
 	</MSG_160100>
-
-	<MSG_165000>
-    	<arg type="int32" name="level"/>
-	</MSG_165000>
 	
 <!--Gate_Message-->
 
@@ -463,8 +455,11 @@
 	</MSG_140100>
 
 	<MSG_140200>
-		<!--gate同步玩家上线到master-->
-    	<struct type="Master_Player_Info" name="player_info"/>
+		<!--gate同步玩家下线到master-->
 	</MSG_140200>
+	
+	<MSG_140201>
+		<!--gate同步玩家上线到master-->
+	</MSG_140201>
 
 </root>

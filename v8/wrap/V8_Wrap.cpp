@@ -43,35 +43,47 @@ Local<Context> Create_Context(Isolate* isolate) {
 	global->Set(String::NewFromUtf8(isolate, "pop_game_buffer", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, pop_game_buffer));
 
-	global->Set(String::NewFromUtf8(isolate, "pop_sync_master_data_buffer", NewStringType::kNormal).ToLocalChecked(),
-				FunctionTemplate::New(isolate, pop_sync_master_data_buffer));
-
 	global->Set(String::NewFromUtf8(isolate, "push_game_buffer", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, push_game_buffer));
 
-	global->Set(String::NewFromUtf8(isolate, "send_game_buffer_to_db", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, send_game_buffer_to_db));
+	global->Set(String::NewFromUtf8(isolate, "send_game_buffer_to_gate", NewStringType::kNormal).ToLocalChecked(),
+				FunctionTemplate::New(isolate, send_game_buffer_to_gate));
 
 	global->Set(String::NewFromUtf8(isolate, "send_game_buffer_to_master", NewStringType::kNormal).ToLocalChecked(),
 				FunctionTemplate::New(isolate, send_game_buffer_to_master));
 
-	global->Set(String::NewFromUtf8(isolate, "pop_game_client_buffer", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, pop_game_client_buffer));
+	global->Set(String::NewFromUtf8(isolate, "send_game_buffer_to_db", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, send_game_buffer_to_db));
 
-	global->Set(String::NewFromUtf8(isolate, "push_game_client_buffer", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, push_game_client_buffer));
+	global->Set(String::NewFromUtf8(isolate, "send_game_buffer_to_log", NewStringType::kNormal).ToLocalChecked(),
+				FunctionTemplate::New(isolate, send_game_buffer_to_log));
 
-	global->Set(String::NewFromUtf8(isolate, "get_game_player_load_data_buffer", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, get_game_player_load_data_buffer));
+	global->Set(String::NewFromUtf8(isolate, "pop_game_gate_buffer", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, pop_game_gate_buffer));
+
+	global->Set(String::NewFromUtf8(isolate, "push_game_gate_buffer", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, push_game_gate_buffer));
+
+	global->Set(String::NewFromUtf8(isolate, "pop_game_db_buffer", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, pop_game_db_buffer));
+
+	global->Set(String::NewFromUtf8(isolate, "push_game_db_buffer", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, push_game_db_buffer));
+
+	global->Set(String::NewFromUtf8(isolate, "pop_game_master_buffer", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, pop_game_master_buffer));
+
+	global->Set(String::NewFromUtf8(isolate, "push_game_master_buffer", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, push_game_master_buffer));
 
 	global->Set(String::NewFromUtf8(isolate, "get_drop_game_player_cid", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, get_drop_game_player_cid));
 
-	global->Set(String::NewFromUtf8(isolate, "get_game_player_by_cid", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, get_game_player_by_cid));
+	global->Set(String::NewFromUtf8(isolate, "get_game_player_by_gate_cid", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, get_game_player_by_gate_cid));
 
-	global->Set(String::NewFromUtf8(isolate, "get_game_player_by_name", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, get_game_player_by_name));
+	global->Set(String::NewFromUtf8(isolate, "game_close_client", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, game_close_client));
 
 	//////////////////////////////////MasterServer相关函数////////////////////////////////
 	global->Set(String::NewFromUtf8(isolate, "register_master_timer", NewStringType::kNormal).ToLocalChecked(),
@@ -86,32 +98,47 @@ Local<Context> Create_Context(Isolate* isolate) {
 	global->Set(String::NewFromUtf8(isolate, "push_master_buffer", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, push_master_buffer));
 
+	global->Set(String::NewFromUtf8(isolate, "send_master_buffer_to_gate", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, send_master_buffer_to_gate));
+
+	global->Set(String::NewFromUtf8(isolate, "send_master_buffer_to_game", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, send_master_buffer_to_game));
+
 	global->Set(String::NewFromUtf8(isolate, "send_master_buffer_to_db", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, send_master_buffer_to_db));
 
-	global->Set(String::NewFromUtf8(isolate, "pop_master_client_buffer", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, pop_master_client_buffer));
+	global->Set(String::NewFromUtf8(isolate, "send_master_buffer_to_log", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, send_master_buffer_to_log));
 
-	global->Set(String::NewFromUtf8(isolate, "push_master_client_buffer", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, push_master_client_buffer));
+	global->Set(String::NewFromUtf8(isolate, "pop_master_gate_buffer", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, pop_master_gate_buffer));
 
-	global->Set(String::NewFromUtf8(isolate, "get_master_player_load_data_buffer", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, get_master_player_load_data_buffer));
+	global->Set(String::NewFromUtf8(isolate, "push_master_gate_buffer", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, push_master_gate_buffer));
 
-	global->Set(String::NewFromUtf8(isolate, "get_master_db_data_buffer", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, get_master_db_data_buffer));
+	global->Set(String::NewFromUtf8(isolate, "pop_master_db_buffer", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, pop_master_db_buffer));
+
+	global->Set(String::NewFromUtf8(isolate, "push_master_db_buffer", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, push_master_db_buffer));
+
+	global->Set(String::NewFromUtf8(isolate, "pop_master_game_buffer", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, pop_master_game_buffer));
+
+	global->Set(String::NewFromUtf8(isolate, "push_master_game_buffer", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, push_master_game_buffer));
 	
 	global->Set(String::NewFromUtf8(isolate, "get_drop_master_player_cid", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, get_drop_master_player_cid));
 
-	global->Set(String::NewFromUtf8(isolate, "get_master_player_by_cid", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, get_master_player_by_cid));
+	global->Set(String::NewFromUtf8(isolate, "get_master_player_by_gate_cid", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, get_master_player_by_gate_cid));
 
-	global->Set(String::NewFromUtf8(isolate, "get_master_player_by_name", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, get_master_player_by_name));
+	global->Set(String::NewFromUtf8(isolate, "get_master_player_by_game_cid", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, get_master_player_by_game_cid));
 
-	global->Set(String::NewFromUtf8(isolate, "get_game_player_sync_buffer", NewStringType::kNormal).ToLocalChecked(),
-				FunctionTemplate::New(isolate, get_game_player_sync_buffer));
+	global->Set(String::NewFromUtf8(isolate, "master_close_client", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, master_close_client));
 
 	//////////////////////////////////buffer相关函数////////////////////////////////
 	Local<ObjectTemplate> buffer_template = ObjectTemplate::New(isolate);
@@ -201,8 +228,8 @@ Local<Context> Create_Context(Isolate* isolate) {
 	Local<ObjectTemplate> game_player_template = ObjectTemplate::New(isolate);
 	game_player_template->SetInternalFieldCount(1);
 
-	game_player_template->Set(String::NewFromUtf8(isolate, "get_save_data_buffer", NewStringType::kNormal).ToLocalChecked(),
-			                  FunctionTemplate::New(isolate, get_game_player_save_data_buffer)) ;
+	game_player_template->Set(String::NewFromUtf8(isolate, "link_close", NewStringType::kNormal).ToLocalChecked(),
+			                  FunctionTemplate::New(isolate, game_player_link_close)) ;
 
 	game_player_template->Set(String::NewFromUtf8(isolate, "respond_success_result", NewStringType::kNormal).ToLocalChecked(),
 		                    FunctionTemplate::New(isolate, game_player_respond_success_result)) ;
@@ -210,28 +237,20 @@ Local<Context> Create_Context(Isolate* isolate) {
 	game_player_template->Set(String::NewFromUtf8(isolate, "respond_error_result", NewStringType::kNormal).ToLocalChecked(),
 		                    FunctionTemplate::New(isolate, game_player_respond_error_result)) ;
 
-	game_player_template->Set(String::NewFromUtf8(isolate, "sync_data_to_master", NewStringType::kNormal).ToLocalChecked(),
-					              FunctionTemplate::New(isolate, sync_data_to_master)) ;
-
 	_g_game_player_template.Reset(isolate, game_player_template);
 
 	//////////////////////////////////master_player相关函数////////////////////////////////
 	Local<ObjectTemplate> master_player_template = ObjectTemplate::New(isolate);
 	master_player_template->SetInternalFieldCount(1);
 
-	// 为当前对象设置其对外函数接口
-	master_player_template->Set(String::NewFromUtf8(isolate, "get_save_data_buffer", NewStringType::kNormal).ToLocalChecked(),
-		                    FunctionTemplate::New(isolate, get_master_player_save_data_buffer)) ;
+	master_player_template->Set(String::NewFromUtf8(isolate, "link_close", NewStringType::kNormal).ToLocalChecked(),
+			                  FunctionTemplate::New(isolate, master_player_link_close)) ;
 
 	master_player_template->Set(String::NewFromUtf8(isolate, "respond_success_result", NewStringType::kNormal).ToLocalChecked(),
 		                    FunctionTemplate::New(isolate, master_player_respond_success_result)) ;
 
 	master_player_template->Set(String::NewFromUtf8(isolate, "respond_error_result", NewStringType::kNormal).ToLocalChecked(),
 		                    FunctionTemplate::New(isolate, master_player_respond_error_result)) ;
-
-	master_player_template->Set(String::NewFromUtf8(isolate, "sync_data_to_game", NewStringType::kNormal).ToLocalChecked(),
-		                    FunctionTemplate::New(isolate, sync_data_to_game)) ;
-
 
 	_g_master_player_template.Reset(isolate, master_player_template);
 

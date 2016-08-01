@@ -1,6 +1,11 @@
 <root>
 
 <!--自定义类型在此定义-->
+	<Cid_Info>
+		<arg type="int32" name="gate_cid"/>
+		<arg type="int32" name="player_cid"/>
+	</Cid_Info>
+	
 	<Create_Role_Info>
     	<arg type="string" name="account"/>
     	<arg type="string" name="role_name"/>

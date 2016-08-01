@@ -42,7 +42,7 @@ public:
 	// 创建新角色
 	int process_create_player(int cid, Create_Role_Info &role_info);
 	// 保存玩家数据
-	int process_save_player(int cid, Block_Buffer &buffer);
+	int process_save_player(int cid, int status, Block_Buffer &buffer);
 	// 创建公会
 	int process_create_guild(int cid, Create_Guild_Info &guild_info);
 	// 加载master各个表数据

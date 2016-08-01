@@ -38,14 +38,19 @@ void buffer_reset(const FunctionCallbackInfo<Value>& args) {
 }
 
 void make_inner_message(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 1) {
-		LOG_ERROR("make_inner_message args error, length: %d\n", args.Length());
+	int args_len = args.Length();
+	if (args_len > 2 || args_len < 1) {
+		LOG_ERROR("make_inner_message args error, length: %d\n", args_len);
 		return;
 	}
 	Block_Buffer *buf= unwrap_buffer(args.Holder());
 	if (buf) {
 		int msg_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-		buf->make_inner_message(msg_id);
+		int status = 0;
+		if (args_len == 2) {
+			status = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+		}
+		buf->make_inner_message(msg_id, status);
 	}
 }
 

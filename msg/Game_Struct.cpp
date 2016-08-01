@@ -6,6 +6,35 @@
 
 #include "Game_Struct.h"
 
+Cid_Info::Cid_Info(void) {
+	reset();
+}
+
+Cid_Info::~Cid_Info() {
+}
+
+void Cid_Info::serialize(Block_Buffer &buffer) const {
+	buffer.write_int32(gate_cid);
+	buffer.write_int32(player_cid);
+}
+
+int Cid_Info::deserialize(Block_Buffer &buffer) {
+	gate_cid = buffer.read_int32();
+	player_cid = buffer.read_int32();
+	return 0;
+}
+
+void Cid_Info::reset(void) {
+	gate_cid = 0;
+	player_cid = 0;
+}
+
+void Cid_Info::print(void) {
+	printf("gate_cid: %d, ", gate_cid);
+	printf("player_cid: %d, ", player_cid);
+	printf("\n");
+}
+
 Create_Role_Info::Create_Role_Info(void) {
 	reset();
 }
