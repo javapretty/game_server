@@ -58,6 +58,7 @@ Game_Player.prototype.save_player_data = function() {
 }
 
 Game_Player.prototype.sync_player_data_to_db = function(status) {
+	print('***************game_player sync_player_data_to_db,role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name);
 	var buf = pop_game_buffer();
 	buf.make_inner_message(Msg_GD.SYNC_GAME_DB_SAVE_PLAYER, status);
 	this.player_info.serialize(buf);
@@ -78,8 +79,8 @@ Game_Player.prototype.set_data_change = function() {
 
 Game_Player.prototype.tick = function(now) {
 	//同步玩家数据到数据库
-	if(this.is_change == true){
-		if (now - this.sync_player_data_tick >= 20) {
+	if(this.is_change){
+		if (now - this.sync_player_data_tick >= 15) {
 			this.sync_player_data_to_db(0);
 			this.sync_player_data_tick = now;
 		}

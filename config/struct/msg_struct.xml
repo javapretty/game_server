@@ -195,16 +195,16 @@
 
 	<MSG_120400>
 		<!--获取商店列表-->
-	    <arg type="int32" name="shopype" desc="商店类型"/>
+	    <arg type="int32" name="shop_type" desc="商店类型"/>
 	</MSG_120400>
 
 	<MSG_520400>
-	    <struct type="Shop_Detail" name="shop"/>
+	    <struct type="Shop_Detail" name="shop_detail"/>
 	</MSG_520400>
 
 	<MSG_120401>
 		<!--购买商店物品-->
-	    <arg type="int32" name="shopype" desc="商店类型"/>
+	    <arg type="int32" name="shop_type" desc="商店类型"/>
 	    <arg type="int32" name="product_id"/>
 	    <arg type="int32" name="amount"/>
 	</MSG_120401>
@@ -213,7 +213,7 @@
 	</MSG_520401>
 
 	<MSG_120402>
-	    <arg type="int32" name="shopype" desc="商店类型"/>
+	    <arg type="int32" name="shop_type" desc="商店类型"/>
 	</MSG_120402>
 
 	<MSG_520402>

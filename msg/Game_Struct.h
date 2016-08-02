@@ -172,7 +172,7 @@ struct Mail_Detail : public MSG {
 struct Shop_Detail : public MSG {
 	int32_t shop_type;	
 	int32_t refresh_count;	
-	std::vector<Product_Info> products;	
+	std::vector<Product_Info> product_info;	
 
 	Shop_Detail(void);
 	~Shop_Detail();

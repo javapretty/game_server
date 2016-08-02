@@ -36,10 +36,10 @@ Shop.prototype.fetch_shop_info = function(buffer){
 	
 	var msg_req = new MSG_120400();
 	msg_req.deserialize(buffer);
-	var msg_res = new MSG_520400();
-	msg_res.shop = this.shop_info.shop_map.get(msg_req.shop_type);
 	
 	var buf = pop_game_buffer();
+	var msg_res = new MSG_520400();
+	msg_res.shop_detail = this.shop_info.shop_map.get(msg_req.shop_type);
 	msg_res.serialize(buf);
 	this.game_player.cplayer.respond_success_result(Msg_GC.RES_FETCH_SHOP_INFO, buf);
 	push_game_buffer(buf);
@@ -111,9 +111,9 @@ Shop.prototype.buy_product = function(buffer){
 	
 Shop.prototype.get_product = function(shop_type, product_id){
 	var shop = this.shop_info.shop_map.get(shop_type);
-	for(var i = 0; i < shop.products.length; i++){
-		if(product_id == shop.products[i].product_id){
-			return shop.products[i];
+	for(var i = 0; i < shop.product_info.length; i++){
+		if(product_id == shop.product_info[i].product_id){
+			return shop.product_info[i];
 		}
 	}
 	return null;
@@ -136,7 +136,7 @@ Shop.prototype.get_rand_product = function(base, num){
 		product.price = temp[idx].price;
 		product.item_id = temp[idx].item_id;
 		product.count = temp[idx].count;
-		shop.products.push(product);
+		shop.product_info.push(product);
 		temp.splice(idx, 1);
 	}
 	return shop;

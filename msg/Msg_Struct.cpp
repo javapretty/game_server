@@ -1167,20 +1167,20 @@ MSG_120400::~MSG_120400() {
 }
 
 void MSG_120400::serialize(Block_Buffer &buffer) const {
-	buffer.write_int32(shopype);
+	buffer.write_int32(shop_type);
 }
 
 int MSG_120400::deserialize(Block_Buffer &buffer) {
-	shopype = buffer.read_int32();
+	shop_type = buffer.read_int32();
 	return 0;
 }
 
 void MSG_120400::reset(void) {
-	shopype = 0;
+	shop_type = 0;
 }
 
 void MSG_120400::print(void) {
-	printf("shopype: %d, ", shopype);
+	printf("shop_type: %d, ", shop_type);
 	printf("\n");
 }
 
@@ -1192,20 +1192,20 @@ MSG_520400::~MSG_520400() {
 }
 
 void MSG_520400::serialize(Block_Buffer &buffer) const {
-	shop.serialize(buffer);
+	shop_detail.serialize(buffer);
 }
 
 int MSG_520400::deserialize(Block_Buffer &buffer) {
-	shop.deserialize(buffer);
+	shop_detail.deserialize(buffer);
 	return 0;
 }
 
 void MSG_520400::reset(void) {
-	shop.reset();
+	shop_detail.reset();
 }
 
 void MSG_520400::print(void) {
-	shop.print();
+	shop_detail.print();
 	printf("\n");
 }
 
@@ -1217,26 +1217,26 @@ MSG_120401::~MSG_120401() {
 }
 
 void MSG_120401::serialize(Block_Buffer &buffer) const {
-	buffer.write_int32(shopype);
+	buffer.write_int32(shop_type);
 	buffer.write_int32(product_id);
 	buffer.write_int32(amount);
 }
 
 int MSG_120401::deserialize(Block_Buffer &buffer) {
-	shopype = buffer.read_int32();
+	shop_type = buffer.read_int32();
 	product_id = buffer.read_int32();
 	amount = buffer.read_int32();
 	return 0;
 }
 
 void MSG_120401::reset(void) {
-	shopype = 0;
+	shop_type = 0;
 	product_id = 0;
 	amount = 0;
 }
 
 void MSG_120401::print(void) {
-	printf("shopype: %d, ", shopype);
+	printf("shop_type: %d, ", shop_type);
 	printf("product_id: %d, ", product_id);
 	printf("amount: %d, ", amount);
 	printf("\n");
@@ -1271,20 +1271,20 @@ MSG_120402::~MSG_120402() {
 }
 
 void MSG_120402::serialize(Block_Buffer &buffer) const {
-	buffer.write_int32(shopype);
+	buffer.write_int32(shop_type);
 }
 
 int MSG_120402::deserialize(Block_Buffer &buffer) {
-	shopype = buffer.read_int32();
+	shop_type = buffer.read_int32();
 	return 0;
 }
 
 void MSG_120402::reset(void) {
-	shopype = 0;
+	shop_type = 0;
 }
 
 void MSG_120402::print(void) {
-	printf("shopype: %d, ", shopype);
+	printf("shop_type: %d, ", shop_type);
 	printf("\n");
 }
 

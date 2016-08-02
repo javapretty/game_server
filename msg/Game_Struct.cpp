@@ -432,21 +432,21 @@ Shop_Detail::~Shop_Detail() {
 void Shop_Detail::serialize(Block_Buffer &buffer) const {
 	buffer.write_int32(shop_type);
 	buffer.write_int32(refresh_count);
-	uint16_t products_size = products.size();
-	buffer.write_uint16(products_size);
-	for(uint16_t i = 0; i < products_size; ++i) {
-		products[i].serialize(buffer);
+	uint16_t product_info_size = product_info.size();
+	buffer.write_uint16(product_info_size);
+	for(uint16_t i = 0; i < product_info_size; ++i) {
+		product_info[i].serialize(buffer);
 	}
 }
 
 int Shop_Detail::deserialize(Block_Buffer &buffer) {
 	shop_type = buffer.read_int32();
 	refresh_count = buffer.read_int32();
-	uint16_t products_size = buffer.read_uint16();
-	Product_Info products_v;
-	for(uint16_t i = 0; i < products_size; ++i) {
-		products_v.deserialize(buffer);
-		products.push_back(products_v);
+	uint16_t product_info_size = buffer.read_uint16();
+	Product_Info product_info_v;
+	for(uint16_t i = 0; i < product_info_size; ++i) {
+		product_info_v.deserialize(buffer);
+		product_info.push_back(product_info_v);
 	}
 	return 0;
 }
@@ -454,16 +454,16 @@ int Shop_Detail::deserialize(Block_Buffer &buffer) {
 void Shop_Detail::reset(void) {
 	shop_type = 0;
 	refresh_count = 0;
-	products.clear();
+	product_info.clear();
 }
 
 void Shop_Detail::print(void) {
 	printf("shop_type: %d, ", shop_type);
 	printf("refresh_count: %d, ", refresh_count);
-	uint16_t products_size = (products.size() > 5 ? 5 : products.size());
-	printf("products.size: %ld [", products.size());
-	for(uint16_t i = 0; i < products_size; ++i) {
-		products[i].print();
+	uint16_t product_info_size = (product_info.size() > 5 ? 5 : product_info.size());
+	printf("product_info.size: %ld [", product_info.size());
+	for(uint16_t i = 0; i < product_info_size; ++i) {
+		product_info[i].print();
 	}
 	printf("], ");
 	printf("\n");

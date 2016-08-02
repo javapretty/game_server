@@ -76,7 +76,7 @@
 	<Shop_Detail>
 		<arg type="int32" name="shop_type"/>
 		<arg type="int32" name="refresh_count"/>
-		<vector type="Product_Info" name="products"/>
+		<vector type="Product_Info" name="product_info"/>
 	</Shop_Detail>
 
 	<Product_Info>

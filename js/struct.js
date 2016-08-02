@@ -259,16 +259,16 @@ Mail_Detail.prototype.deserialize = function(buffer) {
 function Shop_Detail() {
 	this.shop_type = 0;
 	this.refresh_count = 0;
-	this.products = new Array();
+	this.product_info = new Array();
 }
 
 Shop_Detail.prototype.serialize = function(buffer) {
 	buffer.write_int32(this.shop_type);
 	buffer.write_int32(this.refresh_count);
-	var len = this.products.length;
+	var len = this.product_info.length;
 	buffer.write_uint16(len);
 	for(var i = 0; i < len; ++i) {
-		this.products[i].serialize(buffer);
+		this.product_info[i].serialize(buffer);
 	}
 }
 
@@ -277,9 +277,9 @@ Shop_Detail.prototype.deserialize = function(buffer) {
 	this.refresh_count = buffer.read_int32();
 	var len = buffer.read_uint16();
 	for(var i = 0; i < len; ++i) {
-		var products_v = new Product_Info();
-		products_v.deserialize(buffer);
-		this.products.push(products_v);
+		var product_info_v = new Product_Info();
+		product_info_v.deserialize(buffer);
+		this.product_info.push(product_info_v);
 	}
 }
 
@@ -1230,43 +1230,43 @@ MSG_520305.prototype.deserialize = function(buffer) {
 }
 
 function MSG_120400() {
-	this.shopype = 0;
+	this.shop_type = 0;
 }
 
 MSG_120400.prototype.serialize = function(buffer) {
-	buffer.write_int32(this.shopype);
+	buffer.write_int32(this.shop_type);
 }
 
 MSG_120400.prototype.deserialize = function(buffer) {
-	this.shopype = buffer.read_int32();
+	this.shop_type = buffer.read_int32();
 }
 
 function MSG_520400() {
-	this.shop = new Shop_Detail();
+	this.shop_detail = new Shop_Detail();
 }
 
 MSG_520400.prototype.serialize = function(buffer) {
-	this.shop.serialize(buffer);
+	this.shop_detail.serialize(buffer);
 }
 
 MSG_520400.prototype.deserialize = function(buffer) {
-	this.shop.deserialize(buffer);
+	this.shop_detail.deserialize(buffer);
 }
 
 function MSG_120401() {
-	this.shopype = 0;
+	this.shop_type = 0;
 	this.product_id = 0;
 	this.amount = 0;
 }
 
 MSG_120401.prototype.serialize = function(buffer) {
-	buffer.write_int32(this.shopype);
+	buffer.write_int32(this.shop_type);
 	buffer.write_int32(this.product_id);
 	buffer.write_int32(this.amount);
 }
 
 MSG_120401.prototype.deserialize = function(buffer) {
-	this.shopype = buffer.read_int32();
+	this.shop_type = buffer.read_int32();
 	this.product_id = buffer.read_int32();
 	this.amount = buffer.read_int32();
 }
@@ -1281,15 +1281,15 @@ MSG_520401.prototype.deserialize = function(buffer) {
 }
 
 function MSG_120402() {
-	this.shopype = 0;
+	this.shop_type = 0;
 }
 
 MSG_120402.prototype.serialize = function(buffer) {
-	buffer.write_int32(this.shopype);
+	buffer.write_int32(this.shop_type);
 }
 
 MSG_120402.prototype.deserialize = function(buffer) {
-	this.shopype = buffer.read_int32();
+	this.shop_type = buffer.read_int32();
 }
 
 function MSG_520402() {

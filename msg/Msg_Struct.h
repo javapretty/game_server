@@ -544,7 +544,7 @@ struct MSG_520305 : public MSG {
 };
 
 struct MSG_120400 : public MSG {
-	int32_t shopype;	//商店类型
+	int32_t shop_type;	//商店类型
 
 	MSG_120400(void);
 	~MSG_120400();
@@ -555,7 +555,7 @@ struct MSG_120400 : public MSG {
 };
 
 struct MSG_520400 : public MSG {
-	Shop_Detail shop;	
+	Shop_Detail shop_detail;	
 
 	MSG_520400(void);
 	~MSG_520400();
@@ -566,7 +566,7 @@ struct MSG_520400 : public MSG {
 };
 
 struct MSG_120401 : public MSG {
-	int32_t shopype;	//商店类型
+	int32_t shop_type;	//商店类型
 	int32_t product_id;	
 	int32_t amount;	
 
@@ -589,7 +589,7 @@ struct MSG_520401 : public MSG {
 };
 
 struct MSG_120402 : public MSG {
-	int32_t shopype;	//商店类型
+	int32_t shop_type;	//商店类型
 
 	MSG_120402(void);
 	~MSG_120402();
