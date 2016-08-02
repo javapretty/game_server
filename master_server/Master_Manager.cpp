@@ -10,7 +10,6 @@
 #include "Master_Server.h"
 #include "Master_Connector.h"
 #include "Log_Connector.h"
-#include "Master_Inner_Messager.h"
 
 Master_Manager::Master_Manager(void):
 	player_gate_cid_map_(get_hash_table_size(12000)),
@@ -30,14 +29,9 @@ Master_Manager *Master_Manager::instance(void) {
 }
 
 int Master_Manager::init(void) {
-	tick_time_ = Time_Value::gettimeofday();
-
-	SERVER_CONFIG;
-	MASTER_INNER_MESSAGER;					/// 内部消息处理
 	MASTER_TIMER->thr_create();			///	定时器
 
 	set_msg_count_onoff(1);
-
 	return 0;
 }
 
@@ -106,18 +100,14 @@ int Master_Manager::self_close_process(void) {
 }
 
 int Master_Manager::process_list(void) {
-	Block_Buffer *buf = 0;
-
 	while (1) {
 		bool all_empty = true;
 
-		/// 游戏服内部循环消息队列
-		if (! self_loop_block_list_.empty()) {
+		//定时器列表
+		if (! tick_list_.empty()) {
 			all_empty = false;
-			buf = self_loop_block_list_.front();
-			self_loop_block_list_.pop_front();
-			MASTER_INNER_MESSAGER->process_self_loop_block(*buf);
-			block_pool_.push(buf);
+			tick_list_.pop_front();
+			tick();
 		}
 
 		if (all_empty)
@@ -189,8 +179,6 @@ int Master_Manager::unbind_master_player(Master_Player &player) {
 
 int Master_Manager::tick(void) {
 	Time_Value now(Time_Value::gettimeofday());
-	tick_time_ = now;
-
 	player_tick(now);
 	server_info_tick(now);
 	object_pool_tick(now);

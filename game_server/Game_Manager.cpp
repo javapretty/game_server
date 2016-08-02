@@ -10,7 +10,6 @@
 #include "Game_Server.h"
 #include "Game_Connector.h"
 #include "Log_Connector.h"
-#include "Game_Inner_Messager.h"
 
 Game_Manager::Game_Manager(void):
   player_cid_map_(get_hash_table_size(12000)),
@@ -27,12 +26,7 @@ Game_Manager *Game_Manager::instance(void) {
 	return instance_;
 }
 
-const int32_t Game_Manager::saving_player_time = 20;
-
 int Game_Manager::init(void) {
-	tick_time_ = Time_Value::gettimeofday();
-
-	GAME_INNER_MESSAGER;					///内部消息处理
 	GAME_TIMER->thr_create();			///定时器
 
 	set_msg_count_onoff(1);
@@ -106,24 +100,21 @@ int Game_Manager::self_close_process(void) {
 
 int Game_Manager::process_list(void) {
 	int32_t cid = 0;
-	Block_Buffer *buf = 0;
 
 	while (1) {
 		bool all_empty = true;
 
-		/// 掉线玩家列表
+		//掉线玩家列表
 		if (! drop_gate_cid_list_.empty()) {
 			all_empty = false;
 			cid = drop_gate_cid_list_.pop_front();
 			process_drop_gate_cid(cid);
 		}
-		/// 游戏服内部循环消息队列
-		if (! self_loop_block_list_.empty()) {
+		//定时器列表
+		if (! tick_list_.empty()) {
 			all_empty = false;
-			buf = self_loop_block_list_.front();
-			self_loop_block_list_.pop_front();
-			GAME_INNER_MESSAGER->process_self_loop_block(*buf);
-			push_block_buffer(buf);
+			tick_list_.pop_front();
+			tick();
 		}
 
 		if (all_empty)
@@ -166,8 +157,6 @@ int Game_Manager::unbind_game_player(Game_Player &player) {
 
 int Game_Manager::tick(void) {
 	Time_Value now(Time_Value::gettimeofday());
-	tick_time_ = now;
-
 	player_tick(now);
 	server_info_tick(now);
 	object_pool_tick(now);

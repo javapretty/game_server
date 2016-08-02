@@ -20,24 +20,20 @@ public:
 	typedef List<int, Thread_Mutex> Tick_List;
 
 	static Log_Manager *instance(void);
-
 	int init(void);
-
-	int push_data_block(Block_Buffer *buf);
-
-	int push_tick(int x);
-
 	void run_handler(void);
 
-	int process_list(void);
+	int push_data_block(Block_Buffer *buf);
+	int push_tick(int x);
 
+	int process_list(void);
 	int process_block(Block_Buffer &buf);
+
+	int tick(void);
 
 private:
 	Log_Manager(void);
 	virtual ~Log_Manager(void);
-
-	int tick(void);
 
 private:
 	static Log_Manager *instance_;

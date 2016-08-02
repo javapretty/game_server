@@ -5,12 +5,12 @@
 
 #include "Common_Func.h"
 #include "Server_Config.h"
-#include "Gate_Client_Messager.h"
-#include "Gate_Inner_Messager.h"
 #include "Gate_Server.h"
 #include "Gate_Connector.h"
-#include "Gate_Manager.h"
+#include "Gate_Client_Messager.h"
+#include "Gate_Inner_Messager.h"
 #include "Gate_Timer.h"
+#include "Gate_Manager.h"
 
 Gate_Manager::Gate_Manager(void):
   player_cid_map_(get_hash_table_size(12000)),
@@ -102,13 +102,13 @@ int Gate_Manager::process_list(void) {
 	while (1) {
 		bool all_empty = true;
 
-		/// 掉线玩家列表
+		//掉线玩家列表
 		if (! drop_cid_list_.empty()) {
 			all_empty = false;
 			cid = drop_cid_list_.pop_front();
 			process_drop_cid(cid);
 		}
-		/// client-->gate  消息队列
+		//client-->gate  消息队列
 		if ((buf = gate_client_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
@@ -120,15 +120,7 @@ int Gate_Manager::process_list(void) {
 			}
 			GATE_CLIENT_SERVER->push_block(cid, buf);
 		}
-		/// 游戏服内部循环消息队列
-		if (! self_loop_block_list_.empty()) {
-			all_empty = false;
-			buf = self_loop_block_list_.front();
-			self_loop_block_list_.pop_front();
-			GATE_INNER_MESSAGER->process_self_loop_block(*buf);
-			block_pool_.push(buf);
-		}
-		/// login-->gate  消息队列
+		//login-->gate  消息队列
 		if ((buf = gate_login_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
@@ -140,7 +132,7 @@ int Gate_Manager::process_list(void) {
 			}
 			GATE_LOGIN_CONNECTOR->push_block(cid, buf);
 		}
-		/// game-->gate  消息队列
+		//game-->gate  消息队列
 		if ((buf = gate_game_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
@@ -152,7 +144,7 @@ int Gate_Manager::process_list(void) {
 			}
 			GATE_GAME_CONNECTOR->push_block(cid, buf);
 		}
-		/// master-->gate  消息队列
+		//master-->gate  消息队列
 		if ((buf = gate_master_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
@@ -163,6 +155,12 @@ int Gate_Manager::process_list(void) {
 				buf->reset();
 			}
 			GATE_MASTER_CONNECTOR->push_block(cid, buf);
+		}
+		//定时器列表
+		if (! tick_list_.empty()) {
+			all_empty = false;
+			tick_list_.pop_front();
+			tick();
 		}
 
 		if (all_empty)
@@ -255,7 +253,6 @@ int Gate_Manager::unbind_gate_player(Gate_Player &player) {
 int Gate_Manager::tick(void) {
 	Time_Value now(Time_Value::gettimeofday());
 	tick_time_ = now;
-
 	close_list_tick(now);
 	player_tick(now);
 	server_info_tick(now);

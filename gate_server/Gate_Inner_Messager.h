@@ -12,18 +12,16 @@ class Gate_Inner_Messager {
 public:
 	static Gate_Inner_Messager *instance(void);
 
-	/// login消息处理
+	//login消息处理
 	int process_login_block(Block_Buffer &buf);
 
-	/// game消息处理
+	//game消息处理
 	int process_game_block(Block_Buffer &buf);
 
-	/// master消息处理
+	//master消息处理
 	int process_master_block(Block_Buffer &buf);
 
-	/// 自身回环消息处理
-	int process_self_loop_block(Block_Buffer &buf);
-
+	//玩家成功登录
 	int process_success_login(int player_cid, std::string &account);
 
 private:

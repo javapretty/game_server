@@ -171,7 +171,3 @@ enum Active_Message{
 
 	ACTIVE_PROPERTY_INFO 							= 300300,	//英雄属性信息更新
 };
-
-enum Inner_Message{
-	SYNC_INNER_TIMER_TICK 						= 	400000,	//定时器tick
-};

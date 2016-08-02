@@ -6,20 +6,12 @@
 #include "Master_Manager.h"
 #include "Master_Timer.h"
 
-Master_Timer_Handler::Master_Timer_Handler(void) {
-	init_tick_msg_buf();
-}
+Master_Timer_Handler::Master_Timer_Handler(void) { }
 
 Master_Timer_Handler::~Master_Timer_Handler(void) { }
 
-void Master_Timer_Handler::init_tick_msg_buf(void) {
-	tick_msg_buf_.reset();
-	tick_msg_buf_.make_inner_message(SYNC_INNER_TIMER_TICK);
-	tick_msg_buf_.finish_message();
-}
-
 int Master_Timer_Handler::handle_timeout(const Time_Value &tv) {
-	MASTER_MANAGER->push_self_loop_message(tick_msg_buf_);
+	MASTER_MANAGER->push_tick(tv.sec());
 	MASTER_TIMER->v8_tick(tv);
 	return 0;
 }

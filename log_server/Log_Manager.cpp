@@ -29,6 +29,11 @@ int Log_Manager::init(void) {
 	return 0;
 }
 
+void Log_Manager::run_handler(void) {
+	process_list();
+	return ;
+}
+
 int Log_Manager::push_data_block(Block_Buffer *buf) {
 	if (! buf)
 		return -1;
@@ -40,11 +45,6 @@ int Log_Manager::push_data_block(Block_Buffer *buf) {
 int Log_Manager::push_tick(int x) {
 	tick_list_.push_back(x);
 	return 0;
-}
-
-void Log_Manager::run_handler(void) {
-	process_list();
-	return ;
 }
 
 int Log_Manager::process_list(void) {

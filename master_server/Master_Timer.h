@@ -19,11 +19,7 @@ public:
 	Master_Timer_Handler(void);
 	virtual ~Master_Timer_Handler(void);
 
-	void init_tick_msg_buf(void);
 	virtual int handle_timeout(const Time_Value &tv);
-
-private:
-	Block_Buffer tick_msg_buf_;
 };
 
 class Master_Timer: public Thread {

@@ -15,10 +15,7 @@ public:
 	/// gate消息处理
 	int process_gate_block(Block_Buffer &buf);
 
-	/// login自身回环消息处理
-	int process_self_loop_block(Block_Buffer &buf);
-
-	int process_140000(int gate_cid, int32_t player_cid, MSG_140000& msg);
+	int gate_login_player_account(int gate_cid, int32_t player_cid, MSG_140000& msg);
 
 private:
 	Login_Inner_Messager(void);

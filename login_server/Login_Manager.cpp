@@ -179,7 +179,13 @@ int Login_Manager::process_list(void) {
 	while (1) {
 		bool all_empty = true;
 
-		/// client-->login
+		//掉线玩家列表
+		if (! drop_cid_list_.empty()) {
+			all_empty = false;
+			cid = drop_cid_list_.pop_front();
+			process_drop_cid(cid);
+		}
+		//client-->login
 		if ((buf = login_client_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
@@ -191,7 +197,7 @@ int Login_Manager::process_list(void) {
 			}
 			LOGIN_CLIENT_SERVER->push_block(cid, buf);
 		}
-		/// gate-->login
+		//gate-->login
 		if ((buf = login_gate_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
@@ -203,19 +209,11 @@ int Login_Manager::process_list(void) {
 			}
 			LOGIN_GATE_SERVER->push_block(cid, buf);
 		}
-		/// 掉线玩家列表
-		if (! drop_cid_list_.empty()) {
+		//定时器列表
+		if (! tick_list_.empty()) {
 			all_empty = false;
-			cid = drop_cid_list_.pop_front();
-			process_drop_cid(cid);
-		}
-		/// 游戏服内部循环消息队列
-		if (! self_loop_block_list_.empty()) {
-			all_empty = false;
-			buf = self_loop_block_list_.front();
-			self_loop_block_list_.pop_front();
-			LOGIN_INNER_MESSAGER->process_self_loop_block(*buf);
-			block_pool_.push(buf);
+			tick_list_.pop_front();
+			tick();
 		}
 
 		if (all_empty)

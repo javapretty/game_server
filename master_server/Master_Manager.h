@@ -18,6 +18,7 @@ class Master_Manager: public Thread {
 public:
 	typedef Object_Pool<Block_Buffer, Thread_Mutex> Block_Pool;
 	typedef Object_Pool<Master_Player, Spin_Lock> Master_Player_Pool;
+
 	typedef Block_List<Thread_Mutex> Data_List;
 	typedef List<int, Thread_Mutex> Int_List;
 
@@ -59,8 +60,9 @@ public:
 
 	/// 消息处理
 	int process_list();
+
 	/// 通信层投递消息到Master_Manager
-	int push_self_loop_message(Block_Buffer &msg_buf);
+	int push_tick(int x);
 	int push_master_gate_data(Block_Buffer *buf);
 	Block_Buffer* pop_master_gate_data();
 	int push_master_game_data(Block_Buffer *buf);
@@ -88,8 +90,6 @@ public:
 
 	/// 定时器处理
 	int tick(void);
-	/// 返回上次tick的绝对时间, 最大误差有100毫秒,主要为减少系统调用gettimeofday()调用次数
-	inline const Time_Value &tick_time(void) { return tick_time_; }
 	int server_info_tick(Time_Value &now);
 	int player_tick(Time_Value &now);
 	void object_pool_tick(Time_Value &now);
@@ -118,21 +118,19 @@ private:
 	Block_Pool block_pool_;
 	Master_Player_Pool master_player_pool_;
 
-	Data_List self_loop_block_list_; 		//master_manger内部消息，如定时器消息
+	Int_List tick_list_;								//定时器列表
 	Data_List master_gate_data_list_;		//gate-->master
 	Data_List master_game_data_list_;		//game-->master
 	Data_List master_db_data_list_;			//db-->master
 	Int_List drop_player_cid_list_;			//掉线的玩家cid列表
 
-	Server_Info master_gate_server_info_;
-	Server_Info master_game_server_info_;
-
 	Master_Player_Gate_Cid_Map player_gate_cid_map_;
 	Master_Player_Game_Cid_Map player_game_cid_map_;
 	Master_Player_Role_Id_Map player_role_id_map_;
 
+	Server_Info master_gate_server_info_;
+	Server_Info master_game_server_info_;
 	Tick_Info tick_info_;
-	Time_Value tick_time_;
 
 	int server_status_;
 
@@ -160,15 +158,8 @@ inline int Master_Manager::push_block_buffer(Block_Buffer *buf) {
 	return block_pool_.push(buf);
 }
 
-inline int Master_Manager::push_self_loop_message(Block_Buffer &msg_buf) {
-	Block_Buffer *buf = block_pool_.pop();
-	if (! buf) {
-		LOG_ERROR("block_pool_ pop error");
-		return -1;
-	}
-	buf->reset();
-	buf->copy(&msg_buf);
-	self_loop_block_list_.push_back(buf);
+inline int Master_Manager::push_tick(int x) {
+	tick_list_.push_back(x);
 	return 0;
 }
 

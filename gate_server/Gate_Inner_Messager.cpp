@@ -104,24 +104,6 @@ int Gate_Inner_Messager::process_master_block(Block_Buffer &buf) {
 	return 0;
 }
 
-int Gate_Inner_Messager::process_self_loop_block(Block_Buffer &buf) {
-	/*int16_t len*/ buf.read_int16();
-	int32_t msg_id = buf.read_int32();
-	/*int32_t status*/ buf.read_int32();
-
-	Perf_Mon perf_mon(msg_id);
-	switch (msg_id) {
-	case SYNC_INNER_TIMER_TICK: {
-		GATE_MANAGER->tick();
-		break;
-	}
-	default:
-		break;
-	}
-
-	return 0;
-}
-
 int Gate_Inner_Messager::process_success_login(int player_cid, std::string &account) {
 	Gate_Player *player = GATE_MANAGER->pop_gate_player();
 	if (! player) {

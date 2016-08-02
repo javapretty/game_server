@@ -26,8 +26,6 @@ public:
 	typedef boost::unordered_map<int, int> Msg_Count_Map;
 
 public:
-	const static int32_t saving_player_time;
-
 	enum {
 		STATUS_NORMAL = 1,
 		STATUS_CLOSING = 2,
@@ -58,10 +56,11 @@ public:
 
 	/// 消息处理
 	int process_list();
+	void process_drop_gate_cid(int gate_cid);
+
 	/// 通信层投递消息到Game_Manager
 	void push_drop_gate_cid(int cid);
-	void process_drop_gate_cid(int gate_cid);
-	int push_self_loop_message(Block_Buffer &msg_buf);
+	int push_tick(int x);
 	int push_game_gate_data(Block_Buffer *buf);
 	Block_Buffer* pop_game_gate_data();
 	int push_game_db_data(Block_Buffer *buf);
@@ -79,8 +78,6 @@ public:
 
 	/// 定时器处理
 	int tick(void);
-	/// 返回上次tick的绝对时间, 最大误差有100毫秒,主要为减少系统调用gettimeofday()调用次数
-	inline const Time_Value &tick_time(void) { return tick_time_; }
 	int player_tick(Time_Value &now);
 	int server_info_tick(Time_Value &now);
 	int saving_scanner_tick(Time_Value &now);
@@ -108,19 +105,17 @@ private:
 	Block_Pool block_pool_;
 	Game_Player_Pool game_player_pool_;
 
-	Int_List drop_gate_cid_list_;						//掉线gate_cid列表,让通过该gate连接到game的所有玩家掉线
-	Data_List self_loop_block_list_; 				//game_manger内部消息，如定时器消息
-	Data_List game_gate_data_list_;					//gate--game
-	Data_List game_db_data_list_;						//db-->game
-	Data_List game_master_data_list_;				//master-->game
-	Int_List drop_player_cid_list_;					//掉线的玩家cid列表
+	Int_List drop_gate_cid_list_;				//掉线gate_cid列表,让通过该gate连接到game的所有玩家掉线
+	Int_List tick_list_;								//定时器列表
+	Data_List game_gate_data_list_;			//gate--game
+	Data_List game_db_data_list_;				//db-->game
+	Data_List game_master_data_list_;		//master-->game
+	Int_List drop_player_cid_list_;			//掉线的玩家cid列表
+
+	Game_Player_Cid_Map player_cid_map_; 	//cid_info--Game_Player
 
 	Server_Info game_gate_server_info_;
-
-	Game_Player_Cid_Map player_cid_map_; 							/// cid_info 	- Game_Player
-
 	Tick_Info tick_info_;
-	Time_Value tick_time_;
 
 	int server_status_;
 
@@ -152,14 +147,8 @@ inline void Game_Manager::push_drop_gate_cid(int cid) {
 	drop_gate_cid_list_.push_back(cid);
 }
 
-inline int Game_Manager::push_self_loop_message(Block_Buffer &msg_buf) {
-	Block_Buffer *buf = pop_block_buffer();
-	if (!buf) {
-		return -1;
-	}
-	buf->reset();
-	buf->copy(&msg_buf);
-	self_loop_block_list_.push_back(buf);
+inline int Game_Manager::push_tick(int x) {
+	tick_list_.push_back(x);
 	return 0;
 }
 

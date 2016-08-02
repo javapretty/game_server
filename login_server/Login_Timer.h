@@ -16,22 +16,15 @@ public:
 	Login_Timer_Handler(void);
 	virtual ~Login_Timer_Handler(void);
 
-	void init_tick_msg_buf(void);
-
 	virtual int handle_timeout(const Time_Value &tv);
-
-private:
-	Block_Buffer tick_msg_buf_;
 };
 
 class Login_Timer: public Thread {
 public:
 	static Login_Timer *instance(void);
-
 	virtual void run_handler(void);
 
 	Epoll_Watcher &watcher(void);
-
 	void register_handler(void);
 
 private:
