@@ -62,7 +62,7 @@ int Gate_Inner_Messager::process_game_block(Block_Buffer &buf) {
 	GATE_MANAGER->inner_msg_count(msg_id);
 
 	//玩家登录game成功，更新gate玩家信息，同步消息到master
-	if (msg_id == RES_FETCH_ROLE_INFO && status == 0) {
+	if (msg_id == 520001 && status == 0) {
 		//RES_FETCH_ROLE_INFO消息第一个字段是64位role_id
 		int read_idx = buf.get_read_idx();
 		int64_t role_id = buf.read_int64();

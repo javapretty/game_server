@@ -1,43 +1,124 @@
 <root>
 <!--客户端与服务端通信消息类型在此定义-->
+
+	<MSG_100000>
+		<!--注册-->
+	    <arg type="string" name="account"/>
+	    <arg type="string" name="password"/>
+	</MSG_100000>
+
+	<MSG_500000>
+	    <arg type="string" name="ip" desc="gate_ip"/>
+	    <arg type="int32" name="port" desc="gate_port"/>
+	    <arg type="string" name="session"/>
+	</MSG_500000>
+
+	<MSG_100001>
+		<!--登录-->
+	    <arg type="string" name="account"/>
+	    <arg type="string" name="password"/>
+	</MSG_100001>
+
+	<MSG_500001>
+   		<arg type="string" name="ip" desc="gate_ip"/>
+    	<arg type="int32" name="port" desc="gate_port"/>
+    	<arg type="string" name="session"/>
+	</MSG_500001>
+
+	<MSG_100002>
+		<!--客户端登录gate-->
+    	<arg type="string" name="account"/>
+    	<arg type="string" name="session" desc="登录验证的seesion"/>
+	</MSG_100002>
+
+	<MSG_500002>
+    	<arg type="string" name="account"/>
+	</MSG_500002>
+
+	<MSG_100003>
+		<!--心跳-->
+    	<arg type="int32" name="client_time"/>
+	</MSG_100003>
+
+	<MSG_500003>
+	    <arg type="int32" name="client_time"/>
+	    <arg type="int32" name="server_time"/>
+	</MSG_500003>
 	
-	<MSG_300000>
-		<!--服务器主动断开连接-->
-	</MSG_300000>
+	<!--MASTER_SERVER通信-->
 
-	<MSG_300001>
-		<!--更新玩家信息-->
-    	<arg type="int32" name="player_level"/>
-    	<arg type="int32" name="player_exp"/>
-	</MSG_300001>
+	<MSG_110001>
+		<!--发送世界聊天-->
+	    <arg type="int8" name="chatype" desc="1世界聊天2私聊3帮派聊天4队伍聊天"/>
+	    <arg type="string" name="chat_content"/>
+    	<arg type="string" name="role_name" desc="私聊时候发送对方名字"/>
+	</MSG_110001>
 
-	<MSG_300002>
-		<!--更新vip信息-->
-    	<arg type="int32" name="vip_level"/>
-    	<arg type="int32" name="vip_exp"/>
-	</MSG_300002>
+	<MSG_510001>
+	    <arg type="int8" name="chatype"/>
+	    <arg type="string" name="chat_content"/>
+	    <arg type="string" name="role_name"/>
+	    <arg type="int32" name="gender"/>
+	    <arg type="int32" name="career"/>
+	    <arg type="int32" name="vip_level"/>
+	</MSG_510001>
 
-	<MSG_300100>
-		<!--金钱更新-->
-    	<arg type="int32" name="copper"/>
-    	<arg type="int32" name="gold"/>
-	</MSG_300100>
+	<MSG_110101>
+		<!--申请创建公会-->
+	    <arg type="string" name="guild_name"/>
+	</MSG_110101>
 
-	<MSG_300101>
-		<!--物品信息更新-->
-    	<vector type="Item_Info" name="item_info"/>
-	</MSG_300101>
+	<MSG_510101>
+	    <arg type="int64" name="guild_id"/>
+	</MSG_510101>
 
-	<MSG_300200>
-		<!--邮件信息更新-->
-    	<vector type="Mail_Detail" name="mail_info"/>
-	</MSG_300200>
+	<MSG_110102>
+		<!--申请解散工会-->
+	    <arg type="int64" name="guild_id"/>
+	</MSG_110102>
 
-	<MSG_300300>
-		<!--英雄属性信息更新-->
-    	<vector type="Property_Detail" name="property_info"/>
-	</MSG_300300>
+	<MSG_510102>
+	    <arg type="int64" name="guild_id"/>
+	</MSG_510102>
 
+	<MSG_110103>
+		<!--申请加入公会-->
+   		<arg type="int64" name="guild_id"/>
+	</MSG_110103>
+
+	<MSG_510103>
+	</MSG_510103>
+
+	<MSG_110104>
+		<!--允许加入公会-->
+    	<arg type="int64" name="guild_id"/>
+    	<arg type="int64" name="role_id"/>
+    	<arg type="bool" name="allow" desc="允许加入(true)或拒绝加入(false)"/>
+	</MSG_110104>
+
+	<MSG_510104>
+	</MSG_510104>
+
+	<MSG_110105>
+		<!--踢出帮会-->
+    	<arg type="int64" name="guild_id"/>
+    	<arg type="int64" name="role_id"/>
+	</MSG_110105>
+
+	<MSG_510105>
+	</MSG_510105>
+
+	<MSG_110201>
+		<!--拉取排行榜信息-->
+	    <arg type="int32" name="type"/>
+	</MSG_110201>
+
+	<MSG_510201>
+		<arg type="int32" name="rank_type"/>
+		<arg type="int32" name="self_rank"/>
+	  <vector type="Rank_Member" name="rank_list"/>
+	</MSG_510201>
+	
 	<MSG_120001>
 		<!--获取角色信息-->
 		<arg type="int64" name="role_id"/>
@@ -218,124 +299,6 @@
 
 	<MSG_520402>
 	</MSG_520402>
-
-	<MSG_100000>
-		<!--注册-->
-	    <arg type="string" name="account"/>
-	    <arg type="string" name="password"/>
-	</MSG_100000>
-
-	<MSG_500000>
-	    <arg type="string" name="ip" desc="gate_ip"/>
-	    <arg type="int32" name="port" desc="gate_port"/>
-	    <arg type="string" name="session"/>
-	</MSG_500000>
-
-	<MSG_100001>
-		<!--登录-->
-	    <arg type="string" name="account"/>
-	    <arg type="string" name="password"/>
-	</MSG_100001>
-
-	<MSG_500001>
-   		<arg type="string" name="ip" desc="gate_ip"/>
-    	<arg type="int32" name="port" desc="gate_port"/>
-    	<arg type="string" name="session"/>
-	</MSG_500001>
-
-	<MSG_100002>
-		<!--客户端登录gate-->
-    	<arg type="string" name="account"/>
-    	<arg type="string" name="session" desc="登录验证的seesion"/>
-	</MSG_100002>
-
-	<MSG_500002>
-    	<arg type="string" name="account"/>
-	</MSG_500002>
-
-	<MSG_100003>
-		<!--心跳-->
-    	<arg type="int32" name="client_time"/>
-	</MSG_100003>
-
-	<MSG_500003>
-	    <arg type="int32" name="client_time"/>
-	    <arg type="int32" name="server_time"/>
-	</MSG_500003>
-
-	<!--MASTER_SERVER通信-->
-
-	<MSG_110001>
-		<!--发送世界聊天-->
-	    <arg type="int8" name="chatype" desc="1世界聊天2私聊3帮派聊天4队伍聊天"/>
-	    <arg type="string" name="chat_content"/>
-    	<arg type="string" name="role_name" desc="私聊时候发送对方名字"/>
-	</MSG_110001>
-
-	<MSG_510001>
-	    <arg type="int8" name="chatype"/>
-	    <arg type="string" name="chat_content"/>
-	    <arg type="string" name="role_name"/>
-	    <arg type="int32" name="gender"/>
-	    <arg type="int32" name="career"/>
-	    <arg type="int32" name="vip_level"/>
-	</MSG_510001>
-
-	<MSG_110101>
-		<!--申请创建公会-->
-	    <arg type="string" name="guild_name"/>
-	</MSG_110101>
-
-	<MSG_510101>
-	    <arg type="int64" name="guild_id"/>
-	</MSG_510101>
-
-	<MSG_110102>
-		<!--申请解散工会-->
-	    <arg type="int64" name="guild_id"/>
-	</MSG_110102>
-
-	<MSG_510102>
-	    <arg type="int64" name="guild_id"/>
-	</MSG_510102>
-
-	<MSG_110103>
-		<!--申请加入公会-->
-   		<arg type="int64" name="guild_id"/>
-	</MSG_110103>
-
-	<MSG_510103>
-	</MSG_510103>
-
-	<MSG_110104>
-		<!--允许加入公会-->
-    	<arg type="int64" name="guild_id"/>
-    	<arg type="int64" name="role_id"/>
-    	<arg type="bool" name="allow" desc="允许加入(true)或拒绝加入(false)"/>
-	</MSG_110104>
-
-	<MSG_510104>
-	</MSG_510104>
-
-	<MSG_110105>
-		<!--踢出帮会-->
-    	<arg type="int64" name="guild_id"/>
-    	<arg type="int64" name="role_id"/>
-	</MSG_110105>
-
-	<MSG_510105>
-	</MSG_510105>
-
-	<MSG_110201>
-		<!--拉取排行榜信息-->
-	    <arg type="int32" name="type"/>
-	</MSG_110201>
-
-	<MSG_510201>
-		<arg type="int32" name="rank_type"/>
-		<arg type="int32" name="self_rank"/>
-	  <vector type="Rank_Member" name="rank_list"/>
-	</MSG_510201>
 	
 	<!--服务器内部消息在此定义-->
 	<MSG_150001>
@@ -411,18 +374,6 @@
     	<vector type="Rank_Info" name="rank_list"/>
 	</MSG_550105>
 
-<!--Log_Message--> 
-	<MSG_180001>
-		<!--后台登录退出流水-->
-    	<arg type="int64" name="role_id"/>
-    	<arg type="string" name="role_name"/>
-    	<arg type="string" name="account"/>
-    	<arg type="int32" name="level"/>
-    	<arg type="string" name="client_ip"/>
-    	<arg type="int32" name="login_time"/>
-    	<arg type="int32" name="logout_time"/>
-	</MSG_180001>
-	
 <!--Game_Master_Message-->
 
 	<MSG_160000>
@@ -435,31 +386,49 @@
     	<arg type="string" name="guild_name"/>
 	</MSG_160100>
 	
-<!--Gate_Message-->
-
-	<MSG_140000>
-		<!--gate->login校验玩家-->
+<!--Log_Message--> 
+	<MSG_180001>
+		<!--后台登录退出流水-->
+    	<arg type="int64" name="role_id"/>
+    	<arg type="string" name="role_name"/>
     	<arg type="string" name="account"/>
-    	<arg type="string" name="session"/>
-    	<arg type="string" name="gate_ip"/>
-    	<arg type="int32" name="gate_port"/>
-	</MSG_140000>
+    	<arg type="int32" name="level"/>
+    	<arg type="string" name="client_ip"/>
+    	<arg type="int32" name="login_time"/>
+    	<arg type="int32" name="logout_time"/>
+	</MSG_180001>
 
-	<MSG_140001>
-		<!--login->gate校验玩家结果-->
-    	<arg type="string" name="account"/>
-	</MSG_140001>
+	<MSG_300001>
+		<!--更新玩家信息-->
+    	<arg type="int32" name="player_level"/>
+    	<arg type="int32" name="player_exp"/>
+	</MSG_300001>
 
-	<MSG_140100>
-		<!--gate同步玩家下线到game-->
-	</MSG_140100>
+	<MSG_300002>
+		<!--更新vip信息-->
+    	<arg type="int32" name="vip_level"/>
+    	<arg type="int32" name="vip_exp"/>
+	</MSG_300002>
 
-	<MSG_140200>
-		<!--gate同步玩家下线到master-->
-	</MSG_140200>
+	<MSG_300100>
+		<!--金钱更新-->
+    	<arg type="int32" name="copper"/>
+    	<arg type="int32" name="gold"/>
+	</MSG_300100>
+
+	<MSG_300101>
+		<!--物品信息更新-->
+    	<vector type="Item_Info" name="item_info"/>
+	</MSG_300101>
+
+	<MSG_300200>
+		<!--邮件信息更新-->
+    	<vector type="Mail_Detail" name="mail_info"/>
+	</MSG_300200>
+
+	<MSG_300300>
+		<!--英雄属性信息更新-->
+    	<vector type="Property_Detail" name="property_info"/>
+	</MSG_300300>
 	
-	<MSG_140201>
-		<!--gate同步玩家上线到master-->
-	</MSG_140201>
-
 </root>

@@ -15,11 +15,8 @@ if (typeof Error_Code == "undefined") {
 	Error_Code.ERROR_MSG_TIME 									= 10005,				//消息时间错误
 	Error_Code.ERROR_REGISTER_VERIFY_FAIL				= 10006,				//注册验证失败
 	Error_Code.ERROR_LOGIN_VERIFY_FAIL					= 10007,				//登录验证失败
-	Error_Code.ERROR_DISCONNECT_RELOGIN				= 10008,				//账号在其它地方登陆
-	Error_Code.ERROR_DISCONNECT_RECOVERING 			= 10009,				//角色回收中,刷新再试
-	Error_Code.ERROR_DISCONNECT_ACCOUNT 				= 10010,				//账号已被封禁
-	Error_Code.ERROR_DISCONNECT_SELF 					= 10011,				//服务重启中,稍候再试
-	Error_Code.ERROR_DISCONNECT_MASTER 				= 10012,				//玩家未登陆到master服务器
+	Error_Code.ERROR_DISCONNECT_SELF 					= 10008,				//服务重启中,稍候再试
+	Error_Code.ERROR_DISCONNECT_RELOGIN				= 10009,				//账号在其它地方登陆
 	
 	Error_Code.ERROR_CLIENT_OPERATE 						= 10050;				//客户端非法操作
 	Error_Code.ERROR_CLIENT_PARAM 							= 10051;				//客户端参数错误

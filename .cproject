@@ -25,20 +25,14 @@
 								<option id="gnu.cpp.compiler.exe.debug.option.debugging.level.890269065" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.4820018" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/misc}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/v8}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/db_server}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/game_server}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/gate_server}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/log_server}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/login_server}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/master_server}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/msg}&quot;"/>
-									<listOptionValue builtIn="false" value=""/>
-									<listOptionValue builtIn="false" value=""/>
-									<listOptionValue builtIn="false" value=""/>
-									<listOptionValue builtIn="false" value=""/>
-									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/misc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/v8}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.956831052" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="LOCAL_DEBUG"/>
@@ -113,8 +107,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/login_server}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/master_server}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/misc}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/msg}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/v8}&quot;"/>
+									<listOptionValue builtIn="false" value=""/>
 								</option>
 								<option id="gnu.cpp.compiler.option.other.other.1509838901" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 -std=c++11" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1142130063" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>

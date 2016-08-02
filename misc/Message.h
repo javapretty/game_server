@@ -1,0 +1,67 @@
+/** 
+* This file was auto-generated. Please Do not edit
+*
+* [Version 1.4]
+*/
+
+#ifndef __Message__H
+#define __Message__H
+
+enum Message_Bound {
+	CLIENT_GATE_MESSAGE_START = 100000, 
+	CLIENT_GATE_MESSAGE_END = 109999, 
+	CLIENT_MASTER_MESSAGE_START = 110000, 
+	CLIENT_MASTER_MESSAGE_END = 119999, 
+	CLIENT_GAME_MESSAGE_START = 120000, 
+	CLIENT_GAME_MESSAGE_END = 129999, 
+};
+
+enum Client_Login_Message {
+	REQ_CLIENT_REGISTER = 100000, //注册
+	REQ_CLIENT_LOGIN = 100001, //登录
+	REQ_CONNECT_GATE = 100002, //客户端登录gate
+	REQ_HEARTBEAT = 100003, //心跳
+};
+
+enum Login_Client_Message {
+	RES_CLIENT_REGISTER = 500000, //注册(返回)
+	RES_CLIENT_LOGIN = 500001, //登录(返回)
+	RES_CONNECT_GATE = 500002, //客户端登录gate(返回)
+	RES_HEARTBEAT = 500003, //心跳(返回)
+};
+
+enum Gate_Message {
+	SYNC_GATE_LOGIN_PLAYER_ACCOUNT = 140000, //gate校验玩家账户、session
+	SYNC_LOGIN_GATE_PLAYER_ACCOUNT = 140001, //login返回session校验结果
+	SYNC_GATE_GAME_PLAYER_LOGOUT = 140100, //gate同步玩家下线到game
+	SYNC_GATE_MASTER_PLAYER_LOGOUT = 140200, //gate同步玩家下线到master
+	SYNC_GATE_MASTER_PLAYER_LOGIN = 140201, //gate同步玩家上线到master
+};
+
+enum Game_DB_Message {
+	SYNC_GAME_DB_LOAD_PLAYER = 150001, //加载玩家信息
+	SYNC_GAME_DB_CREATE_PLAYER = 150002, //创建玩家
+	SYNC_GAME_DB_SAVE_PLAYER = 150003, //保存玩家信息
+	SYNC_DB_GAME_LOAD_PLAYER = 550001, //加载玩家信息(返回)
+	SYNC_DB_GAME_CREATE_PLAYER = 550002, //创建玩家(返回)
+	SYNC_DB_GAME_SAVE_PLAYER = 550003, //保存玩家信息(返回)
+};
+
+enum Master_DB_Message {
+	SYNC_MASTER_DB_CREATE_GUILD = 150100, //创建公会
+	SYNC_MASTER_DB_LOAD_DATA = 150101, //加载数据库信息
+	SYNC_MASTER_DB_DELETE_DATA = 150102, //删除数据库信息
+	SYNC_MASTER_DB_SAVE_GUILD = 150103, //保存公会信息
+	SYNC_MASTER_DB_SAVE_OFFLINE = 150104, //保存离线信息
+	SYNC_MASTER_DB_SAVE_RANK = 150105, //保存排行榜信息
+	SYNC_DB_MASTER_CREATE_GUILD = 550100, //创建公会(返回)
+	SYNC_DB_MASTER_LOAD_GUILD = 550103, //加载公会信息
+	SYNC_DB_MASTER_LOAD_OFFLINE = 550104, //加载离线信息
+	SYNC_DB_MASTER_LOAD_RANK = 550105, //加载排行榜信息
+};
+
+enum Active_Message {
+	ACTIVE_DISCONNECT = 300000, //服务器主动断开连接
+};
+
+#endif

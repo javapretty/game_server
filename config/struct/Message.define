@@ -18,15 +18,6 @@
 550000-559999		DB-->Game
 */
 
-enum Message_Bound {
-	CLIENT_GATE_MESSAGE_START 					= 100000,
-	CLIENT_GATE_MESSAGE_END 					= 109999,
-	CLIENT_MASTER_MESSAGE_START 				= 110000,
-	CLIENT_MASTER_MESSAGE_END 					= 119999,
-	CLIENT_GAME_MESSAGE_START 					= 120000,
-	CLIENT_GAME_MESSAGE_END 					= 129999,
-};
-
 enum Client_Login_Message {
 	REQ_CLIENT_REGISTER 							= 100000,  //注册
 	REQ_CLIENT_LOGIN 									= 100001,  //登录
@@ -151,7 +142,6 @@ enum Master_DB_Message {
 
 enum Game_Master_Message {
 	SYNC_GAME_MASTER_PLYAER_LOGIN			=	160000,	//game同步玩家上线到master
-	
 	SYNC_MASTER_GAME_GUILD_INFO        = 160100,  //master通知game公会信息
 };
 
@@ -168,6 +158,5 @@ enum Active_Message{
 	ACTIVE_ITEM_INFO 									= 300101,	//物品信息更新
 
 	ACTIVE_MAIL_INFO 									= 300200,	//邮件信息更新
-
 	ACTIVE_PROPERTY_INFO 							= 300300,	//英雄属性信息更新
 };

@@ -2,16 +2,15 @@
 
 DEFINE_PATH='../config/struct/'
 SERVER_PATH='../misc/'
-CPP_TARGET='../msg'
 JS_TARGET='../js'
-ROBOT_PATH='../../robot/msg'
+ROBOT_PATH='../../robot'
 
 function gen_msg(){
 	gen_cpp
 	gen_js
 	gen_msgd
 	cp_file
-	do_some_others
+	rm_file
 }
 
 function gen_cpp(){
@@ -30,17 +29,13 @@ function gen_msgd(){
 
 function cp_file(){
 	wildcard='.*'
-	cp -rf CPP/* $CPP_TARGET
-	cp -rf CPP/'Msg_Struct'${wildcard} $ROBOT_PATH
-	cp -rf CPP/'Game_Struct'${wildcard} $ROBOT_PATH
-	cp -rf CPP/Message.h $ROBOT_PATH
+	cp -rf CPP/* $ROBOT_PATH
 	cp -rf JS/* $JS_TARGET
 }
 
-function do_some_others(){
+function rm_file(){
 	rm -rf CPP
 	rm -rf JS
 }
 
 gen_msg
-
