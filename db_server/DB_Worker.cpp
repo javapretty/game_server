@@ -133,10 +133,10 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 		break;
 	}
 	case SYNC_MASTER_DB_DELETE_DATA: {
-		std::string msg_type = buf->read_string();
-		DB_Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(msg_type);
+		std::string struct_name = buf->read_string();
+		DB_Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(struct_name);
 		if(iter == DB_MANAGER->db_struct_name_map().end()){
-			LOG_ERROR("Can not find the module %s", msg_type.c_str());
+			LOG_ERROR("Can not find the struct_name: %s", struct_name.c_str());
 			break;
 		}
 		DB_Struct *def = iter->second;

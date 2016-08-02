@@ -41,8 +41,8 @@ Guild.prototype.drop_guild = function(){
 	if (this.drop_list.length <= 0) return;
 		
 	var msg = new MSG_150102();
-	msg.table_name = "Guild_Info";
-	msg.delete_list = this.drop_list;
+	msg.struct_name = "Guild_Info";
+	msg.index_list = this.drop_list;
 	var buf = pop_master_buffer();
 	buf.make_inner_message(Msg_MD.SYNC_MASTER_DB_DELETE_DATA);
 	msg.serialize(buf);

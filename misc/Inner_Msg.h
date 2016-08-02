@@ -255,26 +255,4 @@ struct MSG_550100 : public MSG {
 	void print(void);
 };
 
-struct MSG_150101 : public MSG {
-
-	MSG_150101(void);
-	~MSG_150101();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct MSG_150102 : public MSG {
-	std::string table_name;	//删除数据表名称
-	std::vector<int64_t> delete_list;
-
-	MSG_150102(void);
-	~MSG_150102();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
 #endif /* INNER_MSG_H_ */

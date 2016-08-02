@@ -4,22 +4,6 @@
 * [Version 1.4]
 */
 
-if (typeof Msg_CL == "undefined") {
-	var Msg_CL = {};
-	Msg_CL.REQ_CLIENT_REGISTER = 100000; //注册
-	Msg_CL.REQ_CLIENT_LOGIN = 100001; //登录
-	Msg_CL.REQ_CONNECT_GATE = 100002; //客户端登录gate
-	Msg_CL.REQ_HEARTBEAT = 100003; //心跳
-}
-
-if (typeof Msg_LC == "undefined") {
-	var Msg_LC = {};
-	Msg_LC.RES_CLIENT_REGISTER = 500000; //注册(返回)
-	Msg_LC.RES_CLIENT_LOGIN = 500001; //登录(返回)
-	Msg_LC.RES_CONNECT_GATE = 500002; //客户端登录gate(返回)
-	Msg_LC.RES_HEARTBEAT = 500003; //心跳(返回)
-}
-
 if (typeof Msg_CM == "undefined") {
 	var Msg_CM = {};
 	Msg_CM.REQ_SEND_CHAT_INFO = 110001; //发送世界聊天消息

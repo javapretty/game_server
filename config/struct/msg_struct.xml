@@ -1,6 +1,6 @@
 <root>
-<!--客户端与服务端通信消息类型在此定义-->
 
+<!--Client与Login通信消息-->
 	<MSG_100000>
 		<!--注册-->
 	    <arg type="string" name="account"/>
@@ -45,8 +45,7 @@
 	    <arg type="int32" name="server_time"/>
 	</MSG_500003>
 	
-	<!--MASTER_SERVER通信-->
-
+<!--Client与Master通信消息-->
 	<MSG_110001>
 		<!--发送世界聊天-->
 	    <arg type="int8" name="chatype" desc="1世界聊天2私聊3帮派聊天4队伍聊天"/>
@@ -119,6 +118,7 @@
 	  <vector type="Rank_Member" name="rank_list"/>
 	</MSG_510201>
 	
+<!--Client与Game通信消息-->
 	<MSG_120001>
 		<!--获取角色信息-->
 		<arg type="int64" name="role_id"/>
@@ -300,7 +300,7 @@
 	<MSG_520402>
 	</MSG_520402>
 	
-	<!--服务器内部消息在此定义-->
+<!--Game与DB通信消息-->
 	<MSG_150001>
 		<!--加载玩家信息-->
 		<arg type="string" name="account"/>
@@ -326,7 +326,7 @@
     	<arg type="int64" name="role_id"/>
 	</MSG_550003>
 
-<!--MASTER到DB的消息-->
+<!--Master与DB通信消息-->
 	<MSG_150100>
 		<!--创建公会-->
 		<struct type="Create_Guild_Info" name="guild_info"/>
@@ -343,8 +343,8 @@
 
 	<MSG_150102>
 		<!--删除数据库信息-->
-    	<arg type="string" name="table_name" desc="删除数据表名称"/>
-    	<vector type="int64" name="delete_list"/>
+    	<arg type="string" name="struct_name" desc="删除数据表对应的结构体名"/>
+    	<vector type="int64" name="index_list"/>
 	</MSG_150102>
 
 	<MSG_150103>
@@ -374,8 +374,7 @@
     	<vector type="Rank_Info" name="rank_list"/>
 	</MSG_550105>
 
-<!--Game_Master_Message-->
-
+<!--Game与Master通信消息-->
 	<MSG_160000>
     	<struct type="Master_Player_Info" name="player_info"/>
 	</MSG_160000>
@@ -398,6 +397,7 @@
     	<arg type="int32" name="logout_time"/>
 	</MSG_180001>
 
+<!--服务器主动发送到客户端的消息-->
 	<MSG_300001>
 		<!--更新玩家信息-->
     	<arg type="int32" name="player_level"/>

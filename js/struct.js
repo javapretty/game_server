@@ -1608,26 +1608,26 @@ MSG_150101.prototype.deserialize = function(buffer) {
 }
 
 function MSG_150102() {
-	this.table_name = ""
-	this.delete_list = new Array();
+	this.struct_name = ""
+	this.index_list = new Array();
 }
 
 MSG_150102.prototype.serialize = function(buffer) {
-	buffer.write_string(this.table_name);
-	var len = this.delete_list.length;
+	buffer.write_string(this.struct_name);
+	var len = this.index_list.length;
 	buffer.write_uint16(len);
 	for(var i = 0; i < len; ++i) {
-		buffer.write_int64(this.delete_list[i]);
+		buffer.write_int64(this.index_list[i]);
 	}
 }
 
 MSG_150102.prototype.deserialize = function(buffer) {
-	this.table_name = buffer.read_string();
+	this.struct_name = buffer.read_string();
 	var len = buffer.read_uint16();
 	for(var i = 0; i < len; ++i) {
-		var delete_list_v;
-		delete_list_v = buffer.read_int64();
-		this.delete_list.push(delete_list_v);
+		var index_list_v;
+		index_list_v = buffer.read_int64();
+		this.index_list.push(index_list_v);
 	}
 }
 
