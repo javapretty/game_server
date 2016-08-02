@@ -8,10 +8,10 @@
 #ifndef MYSQL_STRUCT_H_
 #define MYSQL_STRUCT_H_
 
+#include "Base_Struct.h"
 #include "Mysql_Conn.h"
-#include "DB_Struct.h"
 
-class Mysql_Struct: public DB_Struct {
+class Mysql_Struct: public Base_Struct {
 public:
 	Mysql_Struct(Xml &xml, TiXmlNode *node);
 	virtual ~Mysql_Struct();

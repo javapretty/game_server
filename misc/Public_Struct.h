@@ -38,17 +38,18 @@ enum Server_Type {
 	MULTI_THREAD = 2,			//多线程
 };
 
-enum DB_Type {
+enum Struct_Type {
 	MONGODB = 1,
 	MYSQL = 2,
 	LOGDB = 3,
+	MSG = 4,
 };
 
-class DB_Struct;
-typedef boost::unordered_map<int32_t, DB_Struct *> DB_Struct_Id_Map;
-typedef boost::unordered_map<std::string, DB_Struct *> DB_Struct_Name_Map;
+class Base_Struct;
+typedef boost::unordered_map<int32_t, Base_Struct *> Struct_Id_Map;
+typedef boost::unordered_map<std::string, Base_Struct *> Struct_Name_Map;
 
-int load_struct(const char *path, DB_Type db_type, DB_Struct_Id_Map &db_struct_id_map, DB_Struct_Name_Map &db_struct_name_map);
+int load_struct(const char *path, Struct_Type struct_type, Struct_Id_Map &struct_id_map, Struct_Name_Map &struct_name_map);
 
 struct Field_Info {
 	std::string field_label;

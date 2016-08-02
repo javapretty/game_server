@@ -8,9 +8,9 @@
 #ifndef LOG_STRUCT_H_
 #define LOG_STRUCT_H_
 
-#include "DB_Struct.h"
+#include "Base_Struct.h"
 
-class Log_Struct: public DB_Struct {
+class Log_Struct: public Base_Struct {
 public:
 	Log_Struct(Xml &xml, TiXmlNode *node);
 	virtual ~Log_Struct();

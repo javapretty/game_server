@@ -1,20 +1,20 @@
 /*
- * DB_Struct.h
+ * Base_Struct.h
  *
  *  Created on: May 30, 2016
- *      Author: lijunliang
+ *      Author: zhangyalei
  */
  
-#ifndef DB_STRUCT_H_
-#define DB_STRUCT_H_
+#ifndef BASE_STRUCT_H_
+#define BASE_STRUCT_H_
 
 #include "Xml.h"
 #include "Public_Struct.h"
 
-class DB_Struct {
+class Base_Struct {
 public:
-	DB_Struct(Xml &xml, TiXmlNode *node);
-	virtual ~DB_Struct();
+	Base_Struct(Xml &xml, TiXmlNode *node);
+	virtual ~Base_Struct();
 
 	virtual void create_data(int64_t key_index) {}
 	virtual void load_data(int64_t key_index, Block_Buffer &buffer) {}
@@ -40,14 +40,14 @@ protected:
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
-inline bool DB_Struct::is_struct(const std::string &field_type){
+inline bool Base_Struct::is_struct(const std::string &field_type){
 	if(field_type == "int8" || field_type == "int16" || field_type == "int32" || field_type == "int64" ||field_type == "uint8" ||
 			field_type == "uint16" || field_type == "uint32" || field_type == "uint64" || field_type == "double" || field_type == "bool" ||
 			field_type == "string") return false;
 	return true;
 }
 
-inline bool DB_Struct::set_label(const std::string &src_label, std::string &dst_label){
+inline bool Base_Struct::set_label(const std::string &src_label, std::string &dst_label){
 	if(src_label == "arg" || src_label == "struct"){
 		dst_label = src_label;
 		return true;
@@ -58,4 +58,4 @@ inline bool DB_Struct::set_label(const std::string &src_label, std::string &dst_
 	return false;
 }
 
-#endif
+#endif /* BASE_STRUCT_H_ */

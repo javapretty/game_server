@@ -9,27 +9,30 @@
 #include "Mongo_Struct.h"
 #include "Mysql_Struct.h"
 #include "Log_Struct.h"
+#include "Msg_Struct.h"
 
-int load_struct(const char *path, DB_Type db_type, DB_Struct_Id_Map &db_struct_id_map, DB_Struct_Name_Map &db_struct_name_map){
+int load_struct(const char *path, Struct_Type struct_type, Struct_Id_Map &struct_id_map, Struct_Name_Map &struct_name_map){
 	Xml xml;
 	xml.load_xml(path);
 	TiXmlNode *node = xml.get_root_node();
 	XML_LOOP_BEGIN(node)
-		DB_Struct *db_struct = nullptr;
-		if (db_type == MONGODB)	{
-			db_struct = new Mongo_Struct(xml, node);
-		} else if (db_type == MYSQL) {
-			db_struct = new Mysql_Struct(xml, node);
-		} else if (db_type == LOGDB) {
-			db_struct = new Log_Struct(xml, node);
+		Base_Struct *base_struct = nullptr;
+		if (struct_type == MONGODB)	{
+			base_struct = new Mongo_Struct(xml, node);
+		} else if (struct_type == MYSQL) {
+			base_struct = new Mysql_Struct(xml, node);
+		} else if (struct_type == LOGDB) {
+			base_struct = new Log_Struct(xml, node);
+		} else if (struct_type == MSG) {
+			base_struct = new Msg_Struct(xml, node);
 		} else {
-			LOG_FATAL("load_struct db_type = %d error abort", db_type);
+			LOG_FATAL("load_struct struct_type = %d error abort", struct_type);
 		}
 
-		if(db_struct->msg_id() != 0) {
-			db_struct_id_map.insert(std::pair<int32_t, DB_Struct*>(db_struct->msg_id(), db_struct));
+		if(base_struct->msg_id() != 0) {
+			struct_id_map.insert(std::pair<int32_t, Base_Struct*>(base_struct->msg_id(), base_struct));
 		}
-		db_struct_name_map.insert(std::pair<std::string, DB_Struct*>(db_struct->struct_name(), db_struct));
+		struct_name_map.insert(std::pair<std::string, Base_Struct*>(base_struct->struct_name(), base_struct));
 	XML_LOOP_END(node)
 	return 0;
 }

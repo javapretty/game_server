@@ -9,7 +9,7 @@
 #include "Mysql_Struct.h"
 #include "DB_Manager.h"
 
-Mysql_Struct::Mysql_Struct(Xml &xml, TiXmlNode *node) : DB_Struct(xml, node){}
+Mysql_Struct::Mysql_Struct(Xml &xml, TiXmlNode *node) : Base_Struct(xml, node){}
 
 Mysql_Struct::~Mysql_Struct(){}
 
@@ -209,13 +209,13 @@ void Mysql_Struct::build_buffer_vector(Field_Info &field_info, Block_Buffer &buf
 }
 
 void Mysql_Struct::build_buffer_struct(Field_Info &field_info, Block_Buffer &buffer, sql::ResultSet *result) {
-	DB_Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(field_info.field_type);
+	Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(field_info.field_type);
 	if(iter == DB_MANAGER->db_struct_name_map().end()){
 		LOG_ERROR("Can not find the module %s", field_info.field_type.c_str());
 		return;
 	}
 
-	DB_Struct *db_struct  = iter->second;
+	Base_Struct *db_struct  = iter->second;
 	std::vector<Field_Info> field_vec = db_struct->field_vec();
 	for(std::vector<Field_Info>::iterator iter = field_vec.begin();
 			iter != field_vec.end(); iter++){

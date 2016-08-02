@@ -48,7 +48,7 @@ int DB_Manager::init(void) {
 		return -1;
 	}
 	db_type_ = server_misc["db_type"].asInt();
-	load_struct(server_misc["game_db_struct_path"].asString().c_str(), (DB_Type)db_type_, db_struct_id_map_, db_struct_name_map_);
+	load_struct(server_misc["game_db_struct_path"].asString().c_str(), (Struct_Type)db_type_, db_struct_id_map_, db_struct_name_map_);
 
 	DB_Worker *worker = 0;
 	for (int i = 0; i < 10; ++i) {

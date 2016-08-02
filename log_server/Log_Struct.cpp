@@ -9,7 +9,7 @@
 #include "Log_DB.h"
 #include "Log_Struct.h"
 
-Log_Struct::Log_Struct(Xml &xml, TiXmlNode *node) : DB_Struct(xml, node){}
+Log_Struct::Log_Struct(Xml &xml, TiXmlNode *node) : Base_Struct(xml, node){}
 
 Log_Struct::~Log_Struct(){}
 
@@ -32,7 +32,7 @@ void Log_Struct::save_data(Block_Buffer &buffer){
 	str_value = str_value.substr(0, str_value.length()-1);
 	char str_sql[512] = {0};
 	sprintf(str_sql, "INSERT INTO %s (%s) VALUES (%s)", table_name_.c_str(), str_name.c_str(), str_value.c_str());
-	LOG_DB_CONNECTION->execute(str_sql);
+	LOG_DB->connection()->execute(str_sql);
 
 	LOG_DEBUG("table %s save key_index:%ld", table_name_.c_str(), key_index);
 }

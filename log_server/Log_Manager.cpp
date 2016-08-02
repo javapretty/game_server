@@ -86,7 +86,7 @@ int Log_Manager::process_block(Block_Buffer &buf) {
 		break;
 	}
 	default: {
-		DB_Struct_Id_Map::iterator iter = LOG_DB->db_struct_id_map().find(msg_id);
+		Struct_Id_Map::iterator iter = LOG_DB->db_struct_id_map().find(msg_id);
 		if(iter != LOG_DB->db_struct_id_map().end()){
 			iter->second->save_data(buf);
 		}

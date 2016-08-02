@@ -14,48 +14,48 @@ DB_Worker::DB_Worker(void) { }
 DB_Worker::~DB_Worker(void) { }
 
 int DB_Worker::load_player_data(int64_t role_id, Block_Buffer &buffer) {
-	DB_Struct *player_def = DB_MANAGER->get_player_data_struct();
+	Base_Struct *player_def = DB_MANAGER->get_player_data_struct();
 	for(std::vector<Field_Info>::iterator iter = player_def->field_vec().begin();
 			iter != player_def->field_vec().end(); iter++){
-		DB_Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find((*iter).field_type);
+		Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find((*iter).field_type);
 		if(it == DB_MANAGER->db_struct_name_map().end()){
 			LOG_ERROR("Can not find the module %s", (*iter).field_type.c_str());
 			return -1;
 		}
-		DB_Struct *def = it->second;
+		Base_Struct *def = it->second;
 		def->load_data(role_id, buffer);
 	}
 	return 0;
 }
 
 int DB_Worker::create_player_data(int64_t role_id) {
-	DB_Struct *role_def = DB_MANAGER->get_player_data_struct();
+	Base_Struct *role_def = DB_MANAGER->get_player_data_struct();
 	for(std::vector<Field_Info>::iterator iter = role_def->field_vec().begin();
 			iter != role_def->field_vec().end(); iter++){
-		DB_Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find((*iter).field_type);
+		Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find((*iter).field_type);
 		if((*iter).field_type == "Game_Player_Info")
 			continue;
 		if(it == DB_MANAGER->db_struct_name_map().end()){
 			LOG_ERROR("Can not find the module %s", (*iter).field_type.c_str());
 			return -1;
 		}
-		DB_Struct *def = it->second;
+		Base_Struct *def = it->second;
 		def->create_data(role_id);
 	}
 	return 0;
 }
 
 int DB_Worker::save_player_data(Block_Buffer &buffer) {
-	DB_Struct *role_def = DB_MANAGER->get_player_data_struct();
+	Base_Struct *role_def = DB_MANAGER->get_player_data_struct();
 	for(std::vector<Field_Info>::iterator iter = role_def->field_vec().begin();
 			iter != role_def->field_vec().end(); iter++){
 		std::string type_name = (*iter).field_type;
-		DB_Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find(type_name);
+		Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find(type_name);
 		if(it == DB_MANAGER->db_struct_name_map().end()){
 			LOG_ERROR("Can not find the module %s", type_name.c_str());
 			return -1;
 		}
-		DB_Struct *def = it->second;
+		Base_Struct *def = it->second;
 		def->save_data(buffer);
 	}
 	return 0;
@@ -134,22 +134,22 @@ int DB_Worker::process_data_block(Block_Buffer *buf) {
 	}
 	case SYNC_MASTER_DB_DELETE_DATA: {
 		std::string struct_name = buf->read_string();
-		DB_Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(struct_name);
+		Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(struct_name);
 		if(iter == DB_MANAGER->db_struct_name_map().end()){
 			LOG_ERROR("Can not find the struct_name: %s", struct_name.c_str());
 			break;
 		}
-		DB_Struct *def = iter->second;
+		Base_Struct *def = iter->second;
 		def->delete_data(*buf);
 		break;
 	}
 	default: {
-		DB_Struct_Id_Map::iterator iter = DB_MANAGER->db_struct_id_map().find(msg_id);
+		Struct_Id_Map::iterator iter = DB_MANAGER->db_struct_id_map().find(msg_id);
 		if(iter == DB_MANAGER->db_struct_id_map().end()){
 			LOG_ERROR("Can not find the msg_id %d", msg_id);
 			break;
 		}
-		DB_Struct *def = iter->second;
+		Base_Struct *def = iter->second;
 		def->save_data_vector(*buf);
 		break;
 	}
@@ -232,17 +232,17 @@ int DB_Worker::process_create_guild(int cid, Create_Guild_Info &guild_info) {
 }
 
 int DB_Worker::process_master_load_data(int cid) {
-	DB_Struct *master_data = DB_MANAGER->get_master_data_struct();
+	Base_Struct *master_data = DB_MANAGER->get_master_data_struct();
 	for(std::vector<Field_Info>::iterator iter = master_data->field_vec().begin();
 				iter != master_data->field_vec().end(); iter++){
 		std::string type_name = (*iter).field_type;
-		DB_Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find(type_name);
+		Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find(type_name);
 		if(it == DB_MANAGER->db_struct_name_map().end()){
 			LOG_ERROR("Can not find the module %s", type_name.c_str());
 			return -1;
 		}
 
-		DB_Struct *def = it->second;
+		Base_Struct *def = it->second;
 		Block_Buffer buf;
 		buf.make_inner_message(def->msg_id() + 400000);
 		def->load_data(0, buf);

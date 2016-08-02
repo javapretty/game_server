@@ -8,11 +8,11 @@
 #ifndef MONGO_STRUCT_H_
 #define MONGO_STRUCT_H_
 
+#include "Base_Struct.h"
 #include "mongo/client/dbclient.h"
-#include "DB_Struct.h"
 
 using namespace mongo;
-class Mongo_Struct: public DB_Struct {
+class Mongo_Struct: public Base_Struct {
 public:
 	Mongo_Struct(Xml &xml, TiXmlNode *node);
 	virtual ~Mongo_Struct();

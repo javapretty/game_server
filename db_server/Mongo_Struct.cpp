@@ -9,7 +9,7 @@
 #include "Mongo_Struct.h"
 #include "DB_Manager.h"
 
-Mongo_Struct::Mongo_Struct(Xml &xml, TiXmlNode *node) : DB_Struct(xml, node) {
+Mongo_Struct::Mongo_Struct(Xml &xml, TiXmlNode *node) : Base_Struct(xml, node) {
 	std::stringstream stream;
 	stream.str("game.");
 	table_name_ = stream.str() + table_name_;
@@ -147,13 +147,13 @@ void Mongo_Struct::create_data_vector(Field_Info &field_info, BSONObjBuilder &bu
 }
 
 void Mongo_Struct::create_data_struct(Field_Info &field_info, BSONObjBuilder &builder){
-	DB_Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(field_info.field_type);
+	Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(field_info.field_type);
 	if(iter == DB_MANAGER->db_struct_name_map().end()){
 		LOG_ERROR("Can not find the module %s", field_info.field_type.c_str());
 		return;
 	}
 
-	DB_Struct *db_struct  = iter->second;
+	Base_Struct *db_struct  = iter->second;
 	std::vector<Field_Info> field_vec = db_struct->field_vec();
 	BSONObjBuilder obj_builder;
 	for(std::vector<Field_Info>::iterator iter = field_vec.begin();
@@ -227,13 +227,13 @@ void Mongo_Struct::build_buffer_vector(Field_Info &field_info, Block_Buffer &buf
 }
 
 void Mongo_Struct::build_buffer_struct(Field_Info &field_info, Block_Buffer &buffer, BSONObj &bsonobj) {
-	DB_Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(field_info.field_type);
+	Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(field_info.field_type);
 	if(iter == DB_MANAGER->db_struct_name_map().end()){
 		LOG_ERROR("Can not find the module %s", field_info.field_type.c_str());
 		return;
 	}
 
-	DB_Struct *db_struct  = iter->second;
+	Base_Struct *db_struct  = iter->second;
 	BSONObj fieldobj = bsonobj.getObjectField(field_info.field_type);
 	std::vector<Field_Info> field_vec = db_struct->field_vec();
 	for(std::vector<Field_Info>::iterator iter = field_vec.begin();
@@ -307,13 +307,13 @@ void Mongo_Struct::build_bson_vector(Field_Info &field_info, Block_Buffer &buffe
 }
 
 void Mongo_Struct::build_bson_struct(Field_Info &field_info, Block_Buffer &buffer, BSONObjBuilder &builder){
-	DB_Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(field_info.field_type);
+	Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(field_info.field_type);
 	if(iter == DB_MANAGER->db_struct_name_map().end()){
 		LOG_ERROR("Can not find the module %s", field_info.field_type.c_str());
 		return;
 	}
 
-	DB_Struct *db_struct  = iter->second;
+	Base_Struct *db_struct  = iter->second;
 	std::vector<Field_Info> field_vec = db_struct->field_vec();
 	BSONObjBuilder obj_builder;
 	for(std::vector<Field_Info>::iterator iter = field_vec.begin();

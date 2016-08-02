@@ -1,13 +1,13 @@
 /*
- * DB_Struct.cpp
+ * Base_Struct.cpp
  *
  *  Created on: May 30, 2016
- *      Author: lijunliang
+ *      Author: zhangyalei
  */
 
-#include "DB_Struct.h"
+#include "Base_Struct.h"
 
-DB_Struct::DB_Struct(Xml &xml, TiXmlNode *node):
+Base_Struct::Base_Struct(Xml &xml, TiXmlNode *node):
 	struct_name_(),
 	table_name_(),
 	key_index_(),
@@ -36,7 +36,7 @@ DB_Struct::DB_Struct(Xml &xml, TiXmlNode *node):
 	}
 }
 
-DB_Struct::~DB_Struct(){
+Base_Struct::~Base_Struct(){
 	struct_name_.clear();
 	table_name_.clear();
 	msg_id_ = 0;

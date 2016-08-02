@@ -8,7 +8,7 @@
 #ifndef DB_MANAGER_H_
 #define DB_MANAGER_H_
 
-#include "DB_Struct.h"
+#include "Base_Struct.h"
 #include "DB_Worker.h"
 #include "Log.h"
 #include "Object_Pool.h"
@@ -34,15 +34,15 @@ public:
 	void object_pool_size(void);
 	void free_pool_cache(void);
 
-	inline DB_Struct_Id_Map& db_struct_id_map() { return db_struct_id_map_; }
-	inline DB_Struct_Name_Map& db_struct_name_map() { return db_struct_name_map_; }
+	inline Struct_Id_Map& db_struct_id_map() { return db_struct_id_map_; }
+	inline Struct_Name_Map& db_struct_name_map() { return db_struct_name_map_; }
 	inline DB_Cache_Id_Map& db_cache_id_map() { return db_cache_id_map_; }
 	inline DB_Cache_Account_Map& db_cache_account_map() { return db_cache_account_map_; }
 
-	inline DB_Struct *get_player_data_struct() {
+	inline Base_Struct *get_player_data_struct() {
 		return db_struct_name_map_.find("Player_Data")->second;
 	}
-	inline DB_Struct *get_master_data_struct() {
+	inline Base_Struct *get_master_data_struct() {
 		return db_struct_name_map_.find("Master_Data")->second;
 	}
 
@@ -61,8 +61,8 @@ private:
 	DB_Worker_Pool db_worker_pool_;
 	DB_Worker_Vector db_worker_vec_;
 
-	DB_Struct_Id_Map db_struct_id_map_;
-	DB_Struct_Name_Map db_struct_name_map_;
+	Struct_Id_Map db_struct_id_map_;
+	Struct_Name_Map db_struct_name_map_;
 	DB_Cache_Id_Map db_cache_id_map_;
 	DB_Cache_Account_Map db_cache_account_map_;
 
