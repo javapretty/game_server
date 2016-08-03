@@ -167,7 +167,7 @@ int DB_Worker::process_load_player(int cid, std::string &account, std::string &c
 	DB_Manager::DB_Cache_Account_Map::iterator iter = DB_MANAGER->db_cache_account_map().find(account);
 	if (iter != DB_MANAGER->db_cache_account_map().end())	{
 		//角色存在，开始加载数据
-		buf.write_int8(SUCCESS_LOADED);
+		buf.write_int8(ROLE_SUCCESS_LOAD);
 		int64_t role_id = iter->second.role_id;
 		load_player_data(role_id, buf);
 	} else {
@@ -187,7 +187,7 @@ int DB_Worker::process_create_player(int cid, Create_Role_Info &role_info) {
 	if ((role_id = DB_MANAGER->create_player(role_info)) < 0) {
 		status = ROLE_HAS_EXIST;
 	} else {
-		status = SUCCESS_CREATED;
+		status = ROLE_SUCCESS_CREATE;
 		//创建所有玩家表
 		create_player_data(role_id);
 	}

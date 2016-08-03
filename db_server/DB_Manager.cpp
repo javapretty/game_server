@@ -59,9 +59,9 @@ int DB_Manager::init(void) {
 		db_worker_vec_.push_back(worker);
 	}
 
-	if (db_type_ == MONGODB)	{
+	if (db_type_ == MONGO_STRUCT)	{
 		MONGO_INSTANCE->init();
-	} else if (db_type_ == MYSQL) {
+	} else if (db_type_ == MYSQL_STRUCT) {
 		MYSQL_INSTANCE->init();
 	} else {
 		LOG_FATAL("db init type = %d error abort", db_type_);
@@ -116,9 +116,9 @@ int DB_Manager::send_data_block(int cid, Block_Buffer &buf) {
 }
 
 int64_t DB_Manager::create_player(Create_Role_Info &role_info) {
-	if (db_type_ == MONGODB)	{
+	if (db_type_ == MONGO_STRUCT)	{
 		return MONGO_INSTANCE->create_player(role_info);
-	} else if (db_type_ == MYSQL) {
+	} else if (db_type_ == MYSQL_STRUCT) {
 		return MYSQL_INSTANCE->create_player(role_info);
 	} else {
 		return -1;
@@ -126,9 +126,9 @@ int64_t DB_Manager::create_player(Create_Role_Info &role_info) {
 }
 
 int64_t DB_Manager::create_guild(Create_Guild_Info &guild_info) {
-	if (db_type_ == MONGODB)	{
+	if (db_type_ == MONGO_STRUCT)	{
 		return MONGO_INSTANCE->create_guild(guild_info);
-	} else if (db_type_ == MYSQL) {
+	} else if (db_type_ == MYSQL_STRUCT) {
 		return MYSQL_INSTANCE->create_guild(guild_info);
 	} else {
 		return -1;

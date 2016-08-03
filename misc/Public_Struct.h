@@ -26,23 +26,28 @@ enum Error_Code {
 };
 
 enum	 Role_Status {
-	SUCCESS_LOADED = 1,		//加载成功
-	SUCCESS_CREATED,			//创建成功
-	ROLE_NOT_EXIST,				//角色不存在
-	ROLE_HAS_EXIST,				//	角色已经存在
-	ROLE_SAVE_OFFLINE,		//角色下线保存
+	ROLE_SUCCESS_LOAD = 1,		//加载成功
+	ROLE_SUCCESS_CREATE = 2,	//创建成功
+	ROLE_NOT_EXIST = 3,				//角色不存在
+	ROLE_HAS_EXIST = 4,				//	角色已经存在
+	ROLE_SAVE_OFFLINE = 5,		//角色下线保存
+};
+
+enum Server_Status {
+	STATUS_NORMAL = 1,				//正常状态
+	STATUS_CLOSING = 2,				//关闭中状态
 };
 
 enum Server_Type {
-	MULTI_PROCESS = 1,		//多进程
-	MULTI_THREAD = 2,			//多线程
+	MULTI_PROCESS = 1,				//多进程
+	MULTI_THREAD = 2,					//多线程
 };
 
 enum Struct_Type {
-	MONGODB = 1,
-	MYSQL = 2,
-	LOGDB = 3,
-	MSG = 4,
+	MONGO_STRUCT = 1,					//mongo数据库结构体
+	MYSQL_STRUCT = 2,					//mysql数据库结构体
+	LOG_STRUCT = 3,						//日志数据库结构体
+	MSG_STRUCT = 4,						//消息结构体
 };
 
 class Base_Struct;

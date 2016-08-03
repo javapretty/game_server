@@ -4,12 +4,12 @@
  */
 
 #include "Common_Func.h"
-#include "Server_Config.h"
 #include "Game_Timer.h"
 #include "Game_Manager.h"
 #include "Game_Server.h"
 #include "Game_Connector.h"
 #include "Log_Connector.h"
+#include "Msg_Struct.h"
 
 Game_Manager::Game_Manager(void):
   player_cid_map_(get_hash_table_size(12000)),
@@ -28,8 +28,7 @@ Game_Manager *Game_Manager::instance(void) {
 
 int Game_Manager::init(void) {
 	GAME_TIMER->thr_create();			///定时器
-
-	set_msg_count_onoff(1);
+	MSG_MANAGER->init();
 	return 0;
 }
 

@@ -10,6 +10,7 @@
 #include "Master_Server.h"
 #include "Master_Connector.h"
 #include "Log_Connector.h"
+#include "Msg_Struct.h"
 
 Master_Manager::Master_Manager(void):
 	player_gate_cid_map_(get_hash_table_size(12000)),
@@ -30,8 +31,7 @@ Master_Manager *Master_Manager::instance(void) {
 
 int Master_Manager::init(void) {
 	MASTER_TIMER->thr_create();			///	定时器
-
-	set_msg_count_onoff(1);
+	MSG_MANAGER->init();
 	return 0;
 }
 

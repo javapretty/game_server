@@ -28,16 +28,10 @@ public:
 	typedef boost::unordered_map<int, int> Msg_Count_Map;
 
 public:
-	enum {
-		STATUS_NORMAL = 1,
-		STATUS_CLOSING = 2,
-	};
-
 	static Gate_Manager *instance(void);
 	int init(void);
 	void run_handler(void);
 
-	/// 服务器状态
 	inline int server_status(void) { return server_status_; }
 
 	Gate_Player *pop_gate_player(void);
@@ -93,7 +87,6 @@ public:
 	bool verify_pack(void) { return verify_pack_onoff_; }
 
 	/// 统计内部消息量
-	void set_msg_count_onoff(int v);
 	void print_msg_count(void);
 	void inner_msg_count(Block_Buffer &buf);
 	void inner_msg_count(int msg_id);
@@ -170,12 +163,6 @@ inline int Gate_Manager::push_gate_game_data(Block_Buffer *buf) {
 inline int Gate_Manager::push_gate_master_data(Block_Buffer *buf) {
 	gate_master_data_list_.push_back(buf);
 	return 0;
-}
-
-inline void Gate_Manager::set_msg_count_onoff(int v) {
-	if (v == 0 || v == 1) {
-		msg_count_onoff_ = v;
-	}
 }
 
 inline void Gate_Manager::inner_msg_count(Block_Buffer &buf) {

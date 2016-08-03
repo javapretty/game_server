@@ -17,22 +17,24 @@ Base_Struct::Base_Struct(Xml &xml, TiXmlNode *node):
 
 	if(node){
 		struct_name_ = xml.get_key(node);
-		TiXmlNode* sub = xml.enter_node(node, struct_name_.c_str());
-		std::string label_name;
-		XML_LOOP_BEGIN(sub)
-			if((label_name = xml.get_key(sub)) == "db"){
-				table_name_ = xml.get_attr_str(sub, "table_name");
-				key_index_ = xml.get_attr_str(sub, "key_index");
-				msg_id_ = xml.get_attr_int(sub, "msg_id");
-			}
-			else if(set_label(xml.get_key(sub), label_name)){
-				Field_Info field_info;
-				field_info.field_label = label_name;
-				field_info.field_type = xml.get_attr_str(sub, "type");
-				field_info.field_name = xml.get_attr_str(sub, "name");
-				field_vec_.push_back(field_info);
-			}
-		XML_LOOP_END(sub)
+		TiXmlNode* sub_node = xml.enter_node(node, struct_name_.c_str());
+		if (sub_node) {
+			std::string label_name;
+			XML_LOOP_BEGIN(sub_node)
+				if((label_name = xml.get_key(sub_node)) == "db"){
+					table_name_ = xml.get_attr_str(sub_node, "table_name");
+					key_index_ = xml.get_attr_str(sub_node, "key_index");
+					msg_id_ = xml.get_attr_int(sub_node, "msg_id");
+				}
+				else if(set_label(xml.get_key(sub_node), label_name)){
+					Field_Info field_info;
+					field_info.field_label = label_name;
+					field_info.field_type = xml.get_attr_str(sub_node, "type");
+					field_info.field_name = xml.get_attr_str(sub_node, "name");
+					field_vec_.push_back(field_info);
+				}
+			XML_LOOP_END(sub_node)
+		}
 	}
 }
 

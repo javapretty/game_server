@@ -30,16 +30,10 @@ public:
 	typedef boost::unordered_map<int, int> Msg_Count_Map;
 
 public:
-	enum {
-		STATUS_NORMAL = 1,
-		STATUS_CLOSING = 2,
-	};
-
 	static Master_Manager *instance(void);
 	int init(void);
 	void run_handler(void);
 
-	/// 服务器状态
 	inline int server_status(void) { return server_status_; }
 
 	Master_Player *pop_master_player(void);
@@ -99,7 +93,6 @@ public:
 	void free_cache(void);
 
 	/// 统计内部消息量
-	void set_msg_count_onoff(int v);
 	void print_msg_count(void);
 	void inner_msg_count(Block_Buffer &buf);
 	void inner_msg_count(int msg_id);
@@ -197,14 +190,6 @@ inline int Master_Manager::pop_drop_player_cid(void) {
 		return 0;
 	}
 	return drop_player_cid_list_.pop_front();
-}
-
-inline void Master_Manager::set_msg_count_onoff(int v) {
-	if (v == 0 || v == 1) {
-		msg_count_onoff_ = v;
-	} else {
-		LOG_ERROR("error value v = %d", v);
-	}
 }
 
 inline void Master_Manager::inner_msg_count(Block_Buffer &buf) {

@@ -315,9 +315,9 @@ function process_loaded_player_data(buffer) {
 		break;
 	}
 	//[创建角色]创建角色成功
-	case Role_Status.SUCCESS_CREATED:
+	case Role_Status.ROLE_SUCCESS_CREATE:
 	//[角色登录]数据加载成功
-	case Role_Status.SUCCESS_LOADED: {
+	case Role_Status.ROLE_SUCCESS_LOAD: {
 		var game_player = new Game_Player();
 		game_player.load_player_data(gate_cid, player_cid, client_ip, buffer);
 		break;

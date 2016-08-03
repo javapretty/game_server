@@ -32,7 +32,6 @@ Gate_Manager *Gate_Manager::instance(void) {
 int Gate_Manager::init(void) {
 	tick_time_ = Time_Value::gettimeofday();
 
-	SERVER_CONFIG;
 	GATE_INNER_MESSAGER;					/// 内部消息处理
 	GATE_CLIENT_MESSAGER;					/// 外部消息处理
 	GATE_TIMER->thr_create();

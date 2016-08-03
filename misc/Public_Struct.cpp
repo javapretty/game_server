@@ -17,13 +17,13 @@ int load_struct(const char *path, Struct_Type struct_type, Struct_Id_Map &struct
 	TiXmlNode *node = xml.get_root_node();
 	XML_LOOP_BEGIN(node)
 		Base_Struct *base_struct = nullptr;
-		if (struct_type == MONGODB)	{
+		if (struct_type == MONGO_STRUCT)	{
 			base_struct = new Mongo_Struct(xml, node);
-		} else if (struct_type == MYSQL) {
+		} else if (struct_type == MYSQL_STRUCT) {
 			base_struct = new Mysql_Struct(xml, node);
-		} else if (struct_type == LOGDB) {
+		} else if (struct_type == LOG_STRUCT) {
 			base_struct = new Log_Struct(xml, node);
-		} else if (struct_type == MSG) {
+		} else if (struct_type == MSG_STRUCT) {
 			base_struct = new Msg_Struct(xml, node);
 		} else {
 			LOG_FATAL("load_struct struct_type = %d error abort", struct_type);

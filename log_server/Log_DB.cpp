@@ -44,6 +44,6 @@ int Log_DB::init(void) {
 	MYSQL_MANAGER->init(ip, port, user, password, dbname, dbpoolname, 16);
 	mysql_conn_ = MYSQL_MANAGER->get_mysql_conn(dbpoolname);
 
-	load_struct(server_misc["log_db_struct_path"].asString().c_str(), LOGDB, db_struct_id_map_, db_struct_name_map_);
+	load_struct(server_misc["log_db_struct_path"].asString().c_str(), LOG_STRUCT, db_struct_id_map_, db_struct_name_map_);
 	return 0;
 }

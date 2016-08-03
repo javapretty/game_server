@@ -33,7 +33,6 @@ Login_Manager *Login_Manager::instance(void) {
 int Login_Manager::init(void) {
 	tick_time_ = Time_Value::gettimeofday();
 
-	SERVER_CONFIG;
 	LOGIN_INNER_MESSAGER;					/// 内部消息处理
 	LOGIN_CLIENT_MESSAGER;					/// 外部消息处理
 	LOGIN_TIMER->thr_create();

@@ -24,7 +24,7 @@ function gen_js(){
 }
 
 function gen_msgd(){
-	./struct_tool msg $DEFINE_PATH 'Message.define' 'msg'
+	./struct_tool msg $DEFINE_PATH 'message.define' 'msg'
 }
 
 function cp_file(){
