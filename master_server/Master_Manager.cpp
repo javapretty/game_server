@@ -10,7 +10,7 @@
 #include "Master_Server.h"
 #include "Master_Connector.h"
 #include "Log_Connector.h"
-#include "Msg_Struct.h"
+#include "Msg_Manager.h"
 
 Master_Manager::Master_Manager(void):
 	player_gate_cid_map_(get_hash_table_size(12000)),

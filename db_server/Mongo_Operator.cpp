@@ -134,7 +134,6 @@ int64_t Mongo_Operator::create_player(Create_Role_Info &role_info) {
 			BSON("role_id" << (long long int)role_id
 					<< "role_name" << role_info.role_name
 					<< "account" << role_info.account
-					<< "client_ip" << role_info.client_ip
 					<< "agent_num" << agent_num_
 					<< "server_num" << server_num_
 					<< "level" << 1

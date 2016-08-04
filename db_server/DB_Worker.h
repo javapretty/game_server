@@ -38,7 +38,7 @@ public:
 	void process_list(void);
 	int process_data_block(Block_Buffer *buf);
 	// 加载玩家数据
-	int process_load_player(int cid, std::string &account, std::string &client_ip);
+	int process_load_player(int cid, std::string &account);
 	// 创建新角色
 	int process_create_player(int cid, Create_Role_Info &role_info);
 	// 保存玩家数据

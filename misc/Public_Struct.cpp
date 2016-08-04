@@ -29,7 +29,7 @@ int load_struct(const char *path, Struct_Type struct_type, Struct_Id_Map &struct
 			LOG_FATAL("load_struct struct_type = %d error abort", struct_type);
 		}
 
-		if(base_struct->msg_id() != 0) {
+		if(base_struct->msg_id() > 0) {
 			struct_id_map.insert(std::pair<int32_t, Base_Struct*>(base_struct->msg_id(), base_struct));
 		}
 		struct_name_map.insert(std::pair<std::string, Base_Struct*>(base_struct->struct_name(), base_struct));

@@ -9,18 +9,23 @@ function Bag() {
 	this.bag_info = new Bag_Info();
 }
 	
-Bag.prototype.load_data = function(game_player, buffer) {
-	this.game_player = game_player;
-	this.bag_info.deserialize(buffer);
+Bag.prototype.load_data = function(game_player, obj) {
+	this.game_player = game_player;	
+	this.bag_info.role_id = obj.player_data.bag_info.role_id;
+	this.bag_info.copper = obj.player_data.bag_info.copper;
+	this.bag_info.gold = obj.player_data.bag_info.gold;
+	for (var i = 0; i < obj.player_data.bag_info.item_map.length; ++i) {
+		var item_detail = obj.player_data.bag_info.item_map[i];
+		this.bag_info.item_map.insert(item_detail.item_id, item_detail);
+	}
 }
 
-Bag.prototype.save_data = function(buffer) {
-	this.bag_info.serialize(buffer);
+Bag.prototype.save_data = function(obj) {
+	this.bag_info.serialize(obj);
 }
 
 Bag.prototype.fetch_bag_info = function() {
 	print('fetch_bag_info, role_id:', this.game_player.player_info.role_id, " role_name:", this.game_player.player_info.role_name, " util.now_msec:", util.now_msec());
-	
 	var msg_res = new MSG_520100();
 	this.bag_info.item_map.each(function(key,value,index) {
 		msg_res.item_info.push(value);
@@ -32,24 +37,18 @@ Bag.prototype.fetch_bag_info = function() {
 	push_game_buffer(buf);
 }
 	
-Bag.prototype.use_item = function(buffer) {
+Bag.prototype.use_item = function(obj) {
 	print('use_item, role_id:', this.game_player.player_info.role_id, " role_name:", this.game_player.player_info.role_name, " util.now_msec:", util.now_msec());
-	
-	var msg_req = new MSG_120101();
-	msg_req.deserialize(buffer);
 	var item_array = new Array();
-	item_array.push(msg_req.item);
+	item_array.push(obj.item);
 	var result = this.bag_erase_item(item_array);
 	this.game_player.cplayer.respond_error_result(Msg_GC.RES_USE_ITEM, result);
 }
 	
-Bag.prototype.sell_item = function(buffer) {
+Bag.prototype.sell_item = function(obj) {
 	print('sell_item, role_id:', this.game_player.player_info.role_id, " role_name:", this.game_player.player_info.role_name, " util.now_msec:", util.now_msec());
-	
-	var msg_req = new MSG_120102();
-	msg_req.deserialize(buffer);
 	var item_array = new Array();
-	item_array.push(msg_req.item);
+	item_array.push(obj.item);
 	var result = this.bag_erase_item(item_array);
 	this.game_player.cplayer.respond_error_result(Msg_GC.RES_SELL_ITEM, result);
 }

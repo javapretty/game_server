@@ -17,6 +17,7 @@
 #include "Master_Connector.h"
 #include "Master_Manager.h"
 #include "Master_Timer.h"
+#include "Msg_Manager.h"
 
 void register_game_timer(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 3) {
@@ -116,72 +117,67 @@ void send_game_buffer_to_log(const FunctionCallbackInfo<Value>& args) {
 	GAME_MANAGER->send_to_log(*buf);
 }
 
-void pop_game_gate_buffer(const FunctionCallbackInfo<Value>& args) {
+void pop_game_gate_msg_object(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = GAME_MANAGER->pop_game_gate_data();
 	if (buf) {
-		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
+		int32_t gate_cid = buf->read_int32();
+		/*int16_t len =*/ buf->read_int16();
+		int32_t msg_id = buf->read_int32();
+		int32_t status = buf->read_int32();
+		int32_t player_cid = buf->read_int32();
+
+		Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
+		if(iter != MSG_MANAGER->msg_struct_id_map().end()){
+			Msg_Struct *msg_struct  = dynamic_cast<Msg_Struct*>(iter->second);
+			args.GetReturnValue().Set(msg_struct->build_msg_object(args.GetIsolate(), gate_cid, player_cid, msg_id, status, *buf));
+			GAME_GATE_SERVER->push_block(gate_cid, buf);
+		} else {
+			args.GetReturnValue().SetNull();
+		}
 	} else {
-		//设置对象为空
 		args.GetReturnValue().SetNull();
 	}
 }
 
-void push_game_gate_buffer(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 2) {
-		LOG_ERROR("push_game_gate_buffer args error, length: %d\n", args.Length());
-		return;
-	}
-
-	int gate_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	Block_Buffer *buf= unwrap_buffer(args[1]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
-	if (buf) {
-		GAME_GATE_SERVER->push_block(gate_cid, buf);
-	}
-}
-
-void pop_game_db_buffer(const FunctionCallbackInfo<Value>& args) {
+void pop_game_db_msg_object(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = GAME_MANAGER->pop_game_db_data();
 	if (buf) {
-		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
+		int32_t db_cid = buf->read_int32();
+		/*int16_t len =*/ buf->read_int16();
+		int32_t msg_id = buf->read_int32();
+		int32_t status = buf->read_int32();
+
+		Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
+		if(iter != MSG_MANAGER->msg_struct_id_map().end()){
+			Msg_Struct *msg_struct  = dynamic_cast<Msg_Struct*>(iter->second);
+			args.GetReturnValue().Set(msg_struct->build_msg_object(args.GetIsolate(), db_cid, 0, msg_id, status, *buf));
+			GAME_DB_CONNECTOR->push_block(db_cid, buf);
+		} else {
+			args.GetReturnValue().SetNull();
+		}
 	} else {
-		//设置对象为空
 		args.GetReturnValue().SetNull();
 	}
 }
 
-void push_game_db_buffer(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 2) {
-		LOG_ERROR("push_game_db_buffer args error, length: %d\n", args.Length());
-		return;
-	}
-
-	int db_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	Block_Buffer *buf= unwrap_buffer(args[1]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
-	if (buf) {
-		GAME_DB_CONNECTOR->push_block(db_cid, buf);
-	}
-}
-
-void pop_game_master_buffer(const FunctionCallbackInfo<Value>& args) {
+void pop_game_master_msg_object(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = GAME_MANAGER->pop_game_master_data();
 	if (buf) {
-		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
+		int32_t master_cid = buf->read_int32();
+		/*int16_t len =*/ buf->read_int16();
+		int32_t msg_id = buf->read_int32();
+		int32_t status = buf->read_int32();
+
+		Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
+		if(iter != MSG_MANAGER->msg_struct_id_map().end()){
+			Msg_Struct *msg_struct  = dynamic_cast<Msg_Struct*>(iter->second);
+			args.GetReturnValue().Set(msg_struct->build_msg_object(args.GetIsolate(), master_cid, 0, msg_id, status, *buf));
+			GAME_MASTER_CONNECTOR->push_block(master_cid, buf);
+		} else {
+			args.GetReturnValue().SetNull();
+		}
 	} else {
-		//设置对象为空
 		args.GetReturnValue().SetNull();
-	}
-}
-
-void push_game_master_buffer(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 2) {
-		LOG_ERROR("push_game_master_buffer args error, length: %d\n", args.Length());
-		return;
-	}
-
-	int master_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	Block_Buffer *buf= unwrap_buffer(args[1]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
-	if (buf) {
-		GAME_MASTER_CONNECTOR->push_block(master_cid, buf);
 	}
 }
 
@@ -323,72 +319,68 @@ void send_master_buffer_to_log(const FunctionCallbackInfo<Value>& args) {
 	MASTER_MANAGER->send_to_log(*buf);
 }
 
-void pop_master_gate_buffer(const FunctionCallbackInfo<Value>& args) {
+void pop_master_gate_msg_object(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = MASTER_MANAGER->pop_master_gate_data();
 	if (buf) {
-		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
+		int32_t gate_cid = buf->read_int32();
+		/*int16_t len =*/ buf->read_int16();
+		int32_t msg_id = buf->read_int32();
+		int32_t status = buf->read_int32();
+		int32_t player_cid = buf->read_int32();
+
+		Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
+		if(iter != MSG_MANAGER->msg_struct_id_map().end()){
+			Msg_Struct *msg_struct  = dynamic_cast<Msg_Struct*>(iter->second);
+			args.GetReturnValue().Set(msg_struct->build_msg_object(args.GetIsolate(), gate_cid, player_cid, msg_id, status, *buf));
+			MASTER_GATE_SERVER->push_block(gate_cid, buf);
+		} else {
+			args.GetReturnValue().SetNull();
+		}
 	} else {
-		//设置对象为空
 		args.GetReturnValue().SetNull();
 	}
 }
 
-void push_master_gate_buffer(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 2) {
-		LOG_ERROR("push_master_gate_buffer args error, length: %d\n", args.Length());
-		return;
-	}
-
-	int gate_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	Block_Buffer *buf= unwrap_buffer(args[1]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
-	if (buf) {
-		MASTER_GATE_SERVER->push_block(gate_cid, buf);
-	}
-}
-
-void pop_master_db_buffer(const FunctionCallbackInfo<Value>& args) {
+void pop_master_db_msg_object(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = MASTER_MANAGER->pop_master_db_data();
 	if (buf) {
-		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
+		int32_t db_cid = buf->read_int32();
+		/*int16_t len =*/ buf->read_int16();
+		int32_t msg_id = buf->read_int32();
+		int32_t status = buf->read_int32();
+
+		Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
+		if(iter != MSG_MANAGER->msg_struct_id_map().end()){
+			Msg_Struct *msg_struct  = dynamic_cast<Msg_Struct*>(iter->second);
+			args.GetReturnValue().Set(msg_struct->build_msg_object(args.GetIsolate(), db_cid, 0, msg_id, status, *buf));
+			MASTER_DB_CONNECTOR->push_block(db_cid, buf);
+		} else {
+			args.GetReturnValue().SetNull();
+		}
 	} else {
-		//设置对象为空
 		args.GetReturnValue().SetNull();
 	}
 }
 
-void push_master_db_buffer(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 2) {
-		LOG_ERROR("push_master_db_buffer args error, length: %d\n", args.Length());
-		return;
-	}
-
-	int db_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	Block_Buffer *buf= unwrap_buffer(args[1]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
-	if (buf) {
-		MASTER_DB_CONNECTOR->push_block(db_cid, buf);
-	}
-}
-
-void pop_master_game_buffer(const FunctionCallbackInfo<Value>& args) {
+void pop_master_game_msg_object(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = MASTER_MANAGER->pop_master_game_data();
 	if (buf) {
-		args.GetReturnValue().Set(wrap_buffer(args.GetIsolate(), buf));
+		int32_t game_cid = buf->read_int32();
+		/*int16_t len =*/ buf->read_int16();
+		int32_t msg_id = buf->read_int32();
+		int32_t status = buf->read_int32();
+		int32_t player_cid = buf->read_int32();
+
+		Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
+		if(iter != MSG_MANAGER->msg_struct_id_map().end()){
+			Msg_Struct *msg_struct  = dynamic_cast<Msg_Struct*>(iter->second);
+			args.GetReturnValue().Set(msg_struct->build_msg_object(args.GetIsolate(), game_cid, player_cid, msg_id, status, *buf));
+			MASTER_GAME_SERVER->push_block(game_cid, buf);
+		} else {
+			args.GetReturnValue().SetNull();
+		}
 	} else {
-		//设置对象为空
 		args.GetReturnValue().SetNull();
-	}
-}
-
-void push_master_game_buffer(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 2) {
-		LOG_ERROR("push_master_game_buffer args error, length: %d\n", args.Length());
-		return;
-	}
-
-	int game_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	Block_Buffer *buf= unwrap_buffer(args[1]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
-	if (buf) {
-		MASTER_GAME_SERVER->push_block(game_cid, buf);
 	}
 }
 

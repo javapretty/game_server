@@ -143,7 +143,7 @@ void Mysql_Struct::create_data_arg(Field_Info &field_info, std::string &str_name
 		stream << 0 << ",";
 	}
 	else {
-		LOG_ERROR("Can not find the type %s", field_info.field_type.c_str());
+		LOG_ERROR("Can not find the field_type:%s", field_info.field_type.c_str());
 	}
 	str_value += stream.str();
 }
@@ -200,7 +200,7 @@ void Mysql_Struct::build_buffer_arg(Field_Info &field_info, Block_Buffer &buffer
 		buffer.write_double(value);
 	}
 	else {
-		LOG_ERROR("Can not find the type %s", field_info.field_type.c_str());
+		LOG_ERROR("Can not find the field_type:%s", field_info.field_type.c_str());
 	}
 }
 
@@ -211,7 +211,7 @@ void Mysql_Struct::build_buffer_vector(Field_Info &field_info, Block_Buffer &buf
 void Mysql_Struct::build_buffer_struct(Field_Info &field_info, Block_Buffer &buffer, sql::ResultSet *result) {
 	Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(field_info.field_type);
 	if(iter == DB_MANAGER->db_struct_name_map().end()){
-		LOG_ERROR("Can not find the module %s", field_info.field_type.c_str());
+		LOG_ERROR("Can not find the struct_name:%s", field_info.field_type.c_str());
 		return;
 	}
 
@@ -265,7 +265,7 @@ void Mysql_Struct::build_sql_arg(Field_Info &field_info, Block_Buffer &buffer, s
 		stream << value << "," ;
 	}
 	else {
-		LOG_ERROR("Can not find the type %s", field_info.field_type.c_str());
+		LOG_ERROR("Can not find the field_type:%s", field_info.field_type.c_str());
 	}
 	str_sql += stream.str();
 }

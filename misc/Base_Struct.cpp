@@ -21,7 +21,7 @@ Base_Struct::Base_Struct(Xml &xml, TiXmlNode *node):
 		if (sub_node) {
 			std::string label_name;
 			XML_LOOP_BEGIN(sub_node)
-				if((label_name = xml.get_key(sub_node)) == "db"){
+				if((label_name = xml.get_key(sub_node)) == "head"){
 					table_name_ = xml.get_attr_str(sub_node, "table_name");
 					key_index_ = xml.get_attr_str(sub_node, "key_index");
 					msg_id_ = xml.get_attr_int(sub_node, "msg_id");

@@ -107,8 +107,8 @@ int64_t Mysql_Operator::create_player(Create_Role_Info &role_info) {
 	mysql_conn_->execute_update(str_sql);
 
 	int now_sec = Time_Value::gettimeofday().sec();
-	sprintf(str_sql, "insert into role (role_id, role_name, account, client_ip, agent_num, server_num, level, gender, career, create_time, login_time) values (%ld, '%s', '%s', '%s', %d, %d, %d, %d, %d, %d, %d)",
-			role_id, role_info.role_name.c_str(), role_info.account.c_str(), role_info.client_ip.c_str(), agent_num_,
+	sprintf(str_sql, "insert into role (role_id, role_name, account, agent_num, server_num, level, gender, career, create_time, login_time) values (%ld, '%s', '%s', %d, %d, %d, %d, %d, %d, %d)",
+			role_id, role_info.role_name.c_str(), role_info.account.c_str(), agent_num_,
 			server_num_, 1, role_info.gender, role_info.career, now_sec, now_sec);
 	mysql_conn_->execute(str_sql);
 

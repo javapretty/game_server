@@ -31,18 +31,12 @@ void send_game_buffer_to_db(const FunctionCallbackInfo<Value>& args);
 //函数说明：发送消息到log_server 	参数：1.buffer对象	返回值：无
 void send_game_buffer_to_log(const FunctionCallbackInfo<Value>& args);
 
-//函数说明：获取gate消息buffer	参数：无	返回值：buffer对象
-void pop_game_gate_buffer(const FunctionCallbackInfo<Value>& args);
-//函数说明：回收gate消息buffer	参数：1.gate_cid 2.buffer对象	返回值：无
-void push_game_gate_buffer(const FunctionCallbackInfo<Value>& args);
-//函数说明：获取db消息buffer	参数：无	返回值：buffer对象
-void pop_game_db_buffer(const FunctionCallbackInfo<Value>& args);
-//函数说明：回收db消息buffer	参数：1.db_cid 2.buffer对象	返回值：无
-void push_game_db_buffer(const FunctionCallbackInfo<Value>& args);
-//函数说明：获取master消息buffer	参数：无	返回值：buffer对象
-void pop_game_master_buffer(const FunctionCallbackInfo<Value>& args);
-//函数说明：回收master消息buffer	参数：1.master_cid 2.buffer对象	返回值：无
-void push_game_master_buffer(const FunctionCallbackInfo<Value>& args);
+//函数说明：获取gate消息object	参数：无	返回值：消息object
+void pop_game_gate_msg_object(const FunctionCallbackInfo<Value>& args);
+//函数说明：获取db消息object	参数：无	返回值：消息object
+void pop_game_db_msg_object(const FunctionCallbackInfo<Value>& args);
+//函数说明：获取master消息object	参数：无	返回值：消息object
+void pop_game_master_msg_object(const FunctionCallbackInfo<Value>& args);
 //函数说明：获取下线玩家的cid		参数：无	返回值：cid值
 void get_drop_game_player_cid(const FunctionCallbackInfo<Value>& args);
 
@@ -70,18 +64,12 @@ void send_master_buffer_to_db(const FunctionCallbackInfo<Value>& args);
 //函数说明：发送数据到log_server 	参数：1.buffer对象	返回值：无
 void send_master_buffer_to_log(const FunctionCallbackInfo<Value>& args);
 
-//函数说明：获取gate消息buffer	参数：无	返回值：buffer对象
-void pop_master_gate_buffer(const FunctionCallbackInfo<Value>& args);
-//函数说明：回收gate消息buffer	参数：1.gate_cid 2.buffer对象	返回值：无
-void push_master_gate_buffer(const FunctionCallbackInfo<Value>& args);
-//函数说明：获取db消息buffer	参数：无	返回值：buffer对象
-void pop_master_db_buffer(const FunctionCallbackInfo<Value>& args);
-//函数说明：回收db消息buffer	参数：1.db_cid 2.buffer对象	返回值：无
-void push_master_db_buffer(const FunctionCallbackInfo<Value>& args);
-//函数说明：获取master消息buffer	参数：无	返回值：buffer对象
-void pop_master_game_buffer(const FunctionCallbackInfo<Value>& args);
-//函数说明：回收master消息buffer	参数：1.game_cid 2.buffer对象	返回值：无
-void push_master_game_buffer(const FunctionCallbackInfo<Value>& args);
+//函数说明：获取gate消息object	参数：无	返回值：object对象
+void pop_master_gate_msg_object(const FunctionCallbackInfo<Value>& args);
+//函数说明：获取db消息object	参数：无	返回值：object对象
+void pop_master_db_msg_object(const FunctionCallbackInfo<Value>& args);
+//函数说明：获取master消息object	参数：无	返回值：object对象
+void pop_master_game_msg_object(const FunctionCallbackInfo<Value>& args);
 //函数说明：获取下线玩家的cid		参数：无	返回值：cid值
 void get_drop_master_player_cid(const FunctionCallbackInfo<Value>& args);
 

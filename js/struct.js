@@ -20,9 +20,8 @@ Cid_Info.prototype.deserialize = function(buffer) {
 }
 
 function Create_Role_Info() {
-	this.account = ""
-	this.role_name = ""
-	this.client_ip = ""
+	this.account = "";
+	this.role_name = "";
 	this.gender = 0;
 	this.career = 0;
 }
@@ -30,7 +29,6 @@ function Create_Role_Info() {
 Create_Role_Info.prototype.serialize = function(buffer) {
 	buffer.write_string(this.account);
 	buffer.write_string(this.role_name);
-	buffer.write_string(this.client_ip);
 	buffer.write_int8(this.gender);
 	buffer.write_int8(this.career);
 }
@@ -38,14 +36,13 @@ Create_Role_Info.prototype.serialize = function(buffer) {
 Create_Role_Info.prototype.deserialize = function(buffer) {
 	this.account = buffer.read_string();
 	this.role_name = buffer.read_string();
-	this.client_ip = buffer.read_string();
 	this.gender = buffer.read_int8();
 	this.career = buffer.read_int8();
 }
 
 function Create_Guild_Info() {
 	this.guild_id = 0;
-	this.guild_name = ""
+	this.guild_name = "";
 	this.chief_id = 0;
 }
 
@@ -63,8 +60,8 @@ Create_Guild_Info.prototype.deserialize = function(buffer) {
 
 function Role_Info() {
 	this.role_id = 0;
-	this.role_name = ""
-	this.account = ""
+	this.role_name = "";
+	this.account = "";
 	this.level = 0;
 	this.exp = 0;
 	this.gender = 0;
@@ -211,9 +208,9 @@ function Mail_Detail() {
 	this.send_time = 0;
 	this.sender_type = 0;
 	this.sender_id = 0;
-	this.sender_name = ""
-	this.mail_title = ""
-	this.mail_content = ""
+	this.sender_name = "";
+	this.mail_title = "";
+	this.mail_content = "";
 	this.copper = 0;
 	this.gold = 0;
 	this.item_info = new Array();
@@ -256,57 +253,9 @@ Mail_Detail.prototype.deserialize = function(buffer) {
 	}
 }
 
-function Shop_Detail() {
-	this.shop_type = 0;
-	this.refresh_count = 0;
-	this.product_info = new Array();
-}
-
-Shop_Detail.prototype.serialize = function(buffer) {
-	buffer.write_int32(this.shop_type);
-	buffer.write_int32(this.refresh_count);
-	var len = this.product_info.length;
-	buffer.write_uint16(len);
-	for(var i = 0; i < len; ++i) {
-		this.product_info[i].serialize(buffer);
-	}
-}
-
-Shop_Detail.prototype.deserialize = function(buffer) {
-	this.shop_type = buffer.read_int32();
-	this.refresh_count = buffer.read_int32();
-	var len = buffer.read_uint16();
-	for(var i = 0; i < len; ++i) {
-		var product_info_v = new Product_Info();
-		product_info_v.deserialize(buffer);
-		this.product_info.push(product_info_v);
-	}
-}
-
-function Product_Info() {
-	this.product_id = 0;
-	this.item_id = 0;
-	this.price = 0;
-	this.count = 0;
-}
-
-Product_Info.prototype.serialize = function(buffer) {
-	buffer.write_int32(this.product_id);
-	buffer.write_int32(this.item_id);
-	buffer.write_int32(this.price);
-	buffer.write_int32(this.count);
-}
-
-Product_Info.prototype.deserialize = function(buffer) {
-	this.product_id = buffer.read_int32();
-	this.item_id = buffer.read_int32();
-	this.price = buffer.read_int32();
-	this.count = buffer.read_int32();
-}
-
 function Guild_Member_Detail() {
 	this.role_id = 0;
-	this.role_name = ""
+	this.role_name = "";
 	this.level = 0;
 	this.career = 0;
 }
@@ -327,7 +276,7 @@ Guild_Member_Detail.prototype.deserialize = function(buffer) {
 
 function Rank_Member() {
 	this.role_id = 0;
-	this.role_name = ""
+	this.role_name = "";
 	this.value = 0;
 }
 
@@ -345,8 +294,8 @@ Rank_Member.prototype.deserialize = function(buffer) {
 
 function Master_Player_Info() {
 	this.role_id = 0;
-	this.account = ""
-	this.role_name = ""
+	this.account = "";
+	this.role_name = "";
 	this.level = 0;
 	this.gender = 0;
 	this.career = 0;
@@ -375,9 +324,9 @@ Master_Player_Info.prototype.deserialize = function(buffer) {
 
 function Game_Player_Info() {
 	this.role_id = 0;
-	this.role_name = ""
-	this.account = ""
-	this.client_ip = ""
+	this.role_name = "";
+	this.account = "";
+	this.client_ip = "";
 	this.agent_num = 0;
 	this.server_num = 0;
 	this.level = 0;
@@ -393,7 +342,7 @@ function Game_Player_Info() {
 	this.vip_exp = 0;
 	this.charge_gold = 0;
 	this.guild_id = 0;
-	this.guild_name = ""
+	this.guild_name = "";
 }
 
 Game_Player_Info.prototype.serialize = function(buffer) {
@@ -520,32 +469,30 @@ Mail_Info.prototype.deserialize = function(buffer) {
 	}
 }
 
-function Shop_Info() {
-	this.role_id = 0;
-	this.shop_map = new Map();
+function Player_Data() {
+	this.player_info = new Game_Player_Info();
+	this.hero_info = new Hero_Info();
+	this.bag_info = new Bag_Info();
+	this.mail_info = new Mail_Info();
 }
 
-Shop_Info.prototype.serialize = function(buffer) {
-	buffer.write_int64(this.role_id);
-	buffer.write_uint16(this.shop_map.size());
-	this.shop_map.each(function(_key,_v,index) {
-		_v.serialize(buffer);
-	});
+Player_Data.prototype.serialize = function(buffer) {
+	this.player_info.serialize(buffer);
+	this.hero_info.serialize(buffer);
+	this.bag_info.serialize(buffer);
+	this.mail_info.serialize(buffer);
 }
 
-Shop_Info.prototype.deserialize = function(buffer) {
-	this.role_id = buffer.read_int64();
-	var len = buffer.read_uint16();
-	for (var i = 0; i < len; ++i) {
-		var _v = new Shop_Detail();
-		_v.deserialize(buffer);
-		this.shop_map.insert(_v.shop_type, _v);
-	}
+Player_Data.prototype.deserialize = function(buffer) {
+	this.player_info.deserialize(buffer);
+	this.hero_info.deserialize(buffer);
+	this.bag_info.deserialize(buffer);
+	this.mail_info.deserialize(buffer);
 }
 
 function Guild_Info() {
 	this.guild_id = 0;
-	this.guild_name = ""
+	this.guild_name = "";
 	this.chief_id = 0;
 	this.create_time = 0;
 	this.is_change = 0;
@@ -594,7 +541,7 @@ Guild_Info.prototype.deserialize = function(buffer) {
 function Offline_Info() {
 	this.role_id = 0;
 	this.guild_id = 0;
-	this.guild_name = ""
+	this.guild_name = "";
 	this.flag = 0;
 }
 
@@ -642,8 +589,8 @@ Rank_Info.prototype.deserialize = function(buffer) {
 }
 
 function MSG_100000() {
-	this.account = ""
-	this.password = ""
+	this.account = "";
+	this.password = "";
 }
 
 MSG_100000.prototype.serialize = function(buffer) {
@@ -657,9 +604,9 @@ MSG_100000.prototype.deserialize = function(buffer) {
 }
 
 function MSG_500000() {
-	this.ip = ""
+	this.ip = "";
 	this.port = 0;
-	this.session = ""
+	this.session = "";
 }
 
 MSG_500000.prototype.serialize = function(buffer) {
@@ -675,8 +622,8 @@ MSG_500000.prototype.deserialize = function(buffer) {
 }
 
 function MSG_100001() {
-	this.account = ""
-	this.password = ""
+	this.account = "";
+	this.password = "";
 }
 
 MSG_100001.prototype.serialize = function(buffer) {
@@ -690,9 +637,9 @@ MSG_100001.prototype.deserialize = function(buffer) {
 }
 
 function MSG_500001() {
-	this.ip = ""
+	this.ip = "";
 	this.port = 0;
-	this.session = ""
+	this.session = "";
 }
 
 MSG_500001.prototype.serialize = function(buffer) {
@@ -708,8 +655,8 @@ MSG_500001.prototype.deserialize = function(buffer) {
 }
 
 function MSG_100002() {
-	this.account = ""
-	this.session = ""
+	this.account = "";
+	this.session = "";
 }
 
 MSG_100002.prototype.serialize = function(buffer) {
@@ -723,7 +670,7 @@ MSG_100002.prototype.deserialize = function(buffer) {
 }
 
 function MSG_500002() {
-	this.account = ""
+	this.account = "";
 }
 
 MSG_500002.prototype.serialize = function(buffer) {
@@ -762,27 +709,27 @@ MSG_500003.prototype.deserialize = function(buffer) {
 }
 
 function MSG_110001() {
-	this.chatype = 0;
-	this.chat_content = ""
-	this.role_name = ""
+	this.chat_type = 0;
+	this.chat_content = "";
+	this.role_name = "";
 }
 
 MSG_110001.prototype.serialize = function(buffer) {
-	buffer.write_int8(this.chatype);
+	buffer.write_int8(this.chat_type);
 	buffer.write_string(this.chat_content);
 	buffer.write_string(this.role_name);
 }
 
 MSG_110001.prototype.deserialize = function(buffer) {
-	this.chatype = buffer.read_int8();
+	this.chat_type = buffer.read_int8();
 	this.chat_content = buffer.read_string();
 	this.role_name = buffer.read_string();
 }
 
 function MSG_510001() {
 	this.chatype = 0;
-	this.chat_content = ""
-	this.role_name = ""
+	this.chat_content = "";
+	this.role_name = "";
 	this.gender = 0;
 	this.career = 0;
 	this.vip_level = 0;
@@ -807,7 +754,7 @@ MSG_510001.prototype.deserialize = function(buffer) {
 }
 
 function MSG_110101() {
-	this.guild_name = ""
+	this.guild_name = "";
 }
 
 MSG_110101.prototype.serialize = function(buffer) {
@@ -966,21 +913,15 @@ MSG_510201.prototype.deserialize = function(buffer) {
 }
 
 function MSG_120001() {
-	this.role_id = 0;
-	this.account = ""
-	this.client_ip = ""
+	this.account = "";
 }
 
 MSG_120001.prototype.serialize = function(buffer) {
-	buffer.write_int64(this.role_id);
 	buffer.write_string(this.account);
-	buffer.write_string(this.client_ip);
 }
 
 MSG_120001.prototype.deserialize = function(buffer) {
-	this.role_id = buffer.read_int64();
 	this.account = buffer.read_string();
-	this.client_ip = buffer.read_string();
 }
 
 function MSG_520001() {
@@ -996,15 +937,24 @@ MSG_520001.prototype.deserialize = function(buffer) {
 }
 
 function MSG_120002() {
-	this.role_info = new Create_Role_Info();
+	this.account = "";
+	this.role_name = "";
+	this.gender = 0;
+	this.career = 0;
 }
 
 MSG_120002.prototype.serialize = function(buffer) {
-	this.role_info.serialize(buffer);
+	buffer.write_string(this.account);
+	buffer.write_string(this.role_name);
+	buffer.write_int8(this.gender);
+	buffer.write_int8(this.career);
 }
 
 MSG_120002.prototype.deserialize = function(buffer) {
-	this.role_info.deserialize(buffer);
+	this.account = buffer.read_string();
+	this.role_name = buffer.read_string();
+	this.gender = buffer.read_int8();
+	this.career = buffer.read_int8();
 }
 
 function MSG_520002() {
@@ -1209,7 +1159,7 @@ MSG_520202.prototype.deserialize = function(buffer) {
 }
 
 function MSG_120203() {
-	this.receiver_name = ""
+	this.receiver_name = "";
 	this.mail_detail = new Mail_Detail();
 }
 
@@ -1436,100 +1386,58 @@ MSG_520305.prototype.deserialize = function(buffer) {
 	this.skill_id = buffer.read_int32();
 }
 
-function MSG_120400() {
-	this.shop_type = 0;
+function MSG_140100() {
 }
 
-MSG_120400.prototype.serialize = function(buffer) {
-	buffer.write_int32(this.shop_type);
+MSG_140100.prototype.serialize = function(buffer) {
 }
 
-MSG_120400.prototype.deserialize = function(buffer) {
-	this.shop_type = buffer.read_int32();
+MSG_140100.prototype.deserialize = function(buffer) {
 }
 
-function MSG_520400() {
-	this.shop_detail = new Shop_Detail();
+function MSG_140200() {
 }
 
-MSG_520400.prototype.serialize = function(buffer) {
-	this.shop_detail.serialize(buffer);
+MSG_140200.prototype.serialize = function(buffer) {
 }
 
-MSG_520400.prototype.deserialize = function(buffer) {
-	this.shop_detail.deserialize(buffer);
+MSG_140200.prototype.deserialize = function(buffer) {
 }
 
-function MSG_120401() {
-	this.shop_type = 0;
-	this.product_id = 0;
-	this.amount = 0;
+function MSG_140201() {
+	this.role_id = 0;
 }
 
-MSG_120401.prototype.serialize = function(buffer) {
-	buffer.write_int32(this.shop_type);
-	buffer.write_int32(this.product_id);
-	buffer.write_int32(this.amount);
+MSG_140201.prototype.serialize = function(buffer) {
+	buffer.write_int64(this.role_id);
 }
 
-MSG_120401.prototype.deserialize = function(buffer) {
-	this.shop_type = buffer.read_int32();
-	this.product_id = buffer.read_int32();
-	this.amount = buffer.read_int32();
-}
-
-function MSG_520401() {
-}
-
-MSG_520401.prototype.serialize = function(buffer) {
-}
-
-MSG_520401.prototype.deserialize = function(buffer) {
-}
-
-function MSG_120402() {
-	this.shop_type = 0;
-}
-
-MSG_120402.prototype.serialize = function(buffer) {
-	buffer.write_int32(this.shop_type);
-}
-
-MSG_120402.prototype.deserialize = function(buffer) {
-	this.shop_type = buffer.read_int32();
-}
-
-function MSG_520402() {
-}
-
-MSG_520402.prototype.serialize = function(buffer) {
-}
-
-MSG_520402.prototype.deserialize = function(buffer) {
+MSG_140201.prototype.deserialize = function(buffer) {
+	this.role_id = buffer.read_int64();
 }
 
 function MSG_150001() {
-	this.account = ""
-	this.client_ip = ""
+	this.account = "";
 }
 
 MSG_150001.prototype.serialize = function(buffer) {
 	buffer.write_string(this.account);
-	buffer.write_string(this.client_ip);
 }
 
 MSG_150001.prototype.deserialize = function(buffer) {
 	this.account = buffer.read_string();
-	this.client_ip = buffer.read_string();
 }
 
 function MSG_550001() {
+	this.player_data = new Player_Data();
 }
 
 MSG_550001.prototype.serialize = function(buffer) {
+	this.player_data.serialize(buffer);
 }
 
 MSG_550001.prototype.deserialize = function(buffer) {
+	this.player_data.deserialize(buffer);
 }
 
 function MSG_150002() {
@@ -1545,12 +1453,15 @@ MSG_150002.prototype.deserialize = function(buffer) {
 }
 
 function MSG_550002() {
+	this.player_data = new Player_Data();
 }
 
 MSG_550002.prototype.serialize = function(buffer) {
+	this.player_data.serialize(buffer);
 }
 
 MSG_550002.prototype.deserialize = function(buffer) {
+	this.player_data.deserialize(buffer);
 }
 
 function MSG_150003() {
@@ -1563,15 +1474,15 @@ MSG_150003.prototype.deserialize = function(buffer) {
 }
 
 function MSG_550003() {
-	this.role_id = 0;
+	this.account = "";
 }
 
 MSG_550003.prototype.serialize = function(buffer) {
-	buffer.write_int64(this.role_id);
+	buffer.write_string(this.account);
 }
 
 MSG_550003.prototype.deserialize = function(buffer) {
-	this.role_id = buffer.read_int64();
+	this.account = buffer.read_string();
 }
 
 function MSG_150100() {
@@ -1608,7 +1519,7 @@ MSG_150101.prototype.deserialize = function(buffer) {
 }
 
 function MSG_150102() {
-	this.struct_name = ""
+	this.struct_name = "";
 	this.index_list = new Array();
 }
 
@@ -1771,7 +1682,7 @@ MSG_160000.prototype.deserialize = function(buffer) {
 
 function MSG_160100() {
 	this.guild_id = 0;
-	this.guild_name = ""
+	this.guild_name = "";
 }
 
 MSG_160100.prototype.serialize = function(buffer) {
@@ -1786,10 +1697,10 @@ MSG_160100.prototype.deserialize = function(buffer) {
 
 function MSG_180001() {
 	this.role_id = 0;
-	this.role_name = ""
-	this.account = ""
+	this.role_name = "";
+	this.account = "";
 	this.level = 0;
-	this.client_ip = ""
+	this.client_ip = "";
 	this.login_time = 0;
 	this.logout_time = 0;
 }

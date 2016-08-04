@@ -14,21 +14,37 @@ function Game_Player() {
 	this.hero = new Hero();
 	this.bag = new Bag();
 	this.mail = new Mail();
-	this.shop = new Shop();
 }
 
 //玩家上线，加载数据
-Game_Player.prototype.load_player_data = function(gate_cid, player_cid, client_ip, buffer) {
+Game_Player.prototype.load_player_data = function(gate_cid, player_cid, obj) {
+	print('***************game_player load_data, role_id:', obj.player_data.player_info.role_id, ' role_name:', obj.player_data.player_info.role_name);
 	this.gate_cid = gate_cid;
 	this.player_cid = player_cid; 
-	this.player_info.deserialize(buffer);
-	this.player_info.client_ip = client_ip;
-	this.hero.load_data(this, buffer);
-	this.bag.load_data(this, buffer);
-	this.mail.load_data(this, buffer);
-	this.shop.load_data(this, buffer);
-	
-	print('***************game_player load_data, role_id:', this.player_info.role_id, ' role_name:', this.player_info.role_name);
+	this.player_info.role_id = obj.player_data.player_info.role_id;
+	this.player_info.role_name = obj.player_data.player_info.role_name;
+	this.player_info.account = obj.player_data.player_info.account;
+	this.player_info.client_ip = obj.player_data.player_info.client_ip;
+	this.player_info.agent_num = obj.player_data.player_info.agent_num;
+	this.player_info.server_num = obj.player_data.player_info.server_num;
+	this.player_info.level = obj.player_data.player_info.level;
+	this.player_info.exp = obj.player_data.player_info.exp;
+	this.player_info.gender = obj.player_data.player_info.gender;
+	this.player_info.career = obj.player_data.player_info.career;
+	this.player_info.create_time = obj.player_data.player_info.create_time;
+	this.player_info.login_time = obj.player_data.player_info.login_time;
+	this.player_info.logout_time = obj.player_data.player_info.logout_time;
+	this.player_info.vitality = obj.player_data.player_info.vitality;
+	this.player_info.buy_vitality_times = obj.player_data.player_info.buy_vitality_times;
+	this.player_info.vip_level = obj.player_data.player_info.vip_level;
+	this.player_info.vip_exp = obj.player_data.player_info.vip_exp;
+	this.player_info.charge_gold = obj.player_data.player_info.charge_gold;
+	this.player_info.guild_id = obj.player_data.player_info.guild_id;
+	this.player_info.guild_name = obj.player_data.player_info.guild_name;
+	this.hero.load_data(this, obj);
+	this.bag.load_data(this, obj);
+	this.mail.load_data(this, obj);
+
 	this.cplayer = get_game_player_by_gate_cid(gate_cid, player_cid);
 	if(this.cplayer == null) {
 		print('get game_player null, role_id:', this.player_info.role_id, ' role_name:', this.player_info.role_name);
@@ -58,14 +74,14 @@ Game_Player.prototype.save_player_data = function() {
 }
 
 Game_Player.prototype.sync_player_data_to_db = function(status) {
-	print('***************game_player sync_player_data_to_db,role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name);
+	print('***************sync_player_data_to_db,role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name);
 	var buf = pop_game_buffer();
 	buf.make_inner_message(Msg_GD.SYNC_GAME_DB_SAVE_PLAYER, status);
+	buf.write_string(this.player_info.account);
 	this.player_info.serialize(buf);
 	this.hero.save_data(buf);
 	this.bag.save_data(buf);
 	this.mail.save_data(buf);
-	this.shop.save_data(buf);
 	buf.finish_message();
 	send_game_buffer_to_db(buf);
 	push_game_buffer(buf);
@@ -233,11 +249,9 @@ Game_Player.prototype.buy_vitality = function() {
 	this.set_data_change();
 }
 
-Game_Player.prototype.set_guild_info = function(buffer) {
-	var msg = new MSG_160100();
-	msg.deserialize(buffer);
-	this.player_info.guild_id = msg.guild_id;
-	this.player_info.guild_name = msg.guild_name;
+Game_Player.prototype.set_guild_info = function(obj) {
+	this.player_info.guild_id = obj.guild_id;
+	this.player_info.guild_name = obj.guild_name;
 	this.set_data_change();
 	print('set_guild_info, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, 
 	" guild_id:", this.player_info.guild_id, " guild_name:", this.player_info.guild_name);

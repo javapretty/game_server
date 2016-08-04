@@ -9,7 +9,6 @@
 	<Create_Role_Info>
     	<arg type="string" name="account"/>
     	<arg type="string" name="role_name"/>
-    	<arg type="string" name="client_ip"/>
     	<arg type="int8" name="gender"/>
     	<arg type="int8" name="career"/>
 	</Create_Role_Info>
@@ -73,19 +72,6 @@
 		<vector type="Item_Info" name="item_info"/>
 	</Mail_Detail>
 
-	<Shop_Detail>
-		<arg type="int32" name="shop_type"/>
-		<arg type="int32" name="refresh_count"/>
-		<vector type="Product_Info" name="product_info"/>
-	</Shop_Detail>
-
-	<Product_Info>
-		<arg type="int32" name="product_id"/>
-		<arg type="int32" name="item_id"/>
-		<arg type="int32" name="price"/>
-		<arg type="int32" name="count"/>
-	</Product_Info>
-
 	<Guild_Member_Detail>
 		<arg type="int64" name="role_id"/>
 		<arg type="string" name="role_name"/>
@@ -109,18 +95,9 @@
     	<arg type="int32" name="vip_level"/>
 	</Master_Player_Info>
 	
-<!--游戏内需要保存数据库的数据添加db标签,并添加dbname和index属性(需要直接发消息到数据库保存的应赋值给(msg_id) -->
-	<Player_Data type="mem_only">
-		<!--玩家个人数据在此定义-->
-		<struct type="Game_Player_Info" name="role_info"/>
-		<struct type="Hero_Info" name="hero_info"/>
-		<struct type="Bag_Info" name="bag_info"/>
-		<struct type="Mail_Info" name="mail_info"/>
-		<struct type="Shop_Info" name="shop_info"/>
-	</Player_Data>
-
+<!--游戏内需要保存数据库的数据添加head标签,并添加dbname和index属性(需要直接发消息到数据库保存的应赋值给(msg_id) -->
 	<Game_Player_Info>
-		<db table_name="role" key_index="role_id"/>
+		<head table_name="role" key_index="role_id"/>
 		<arg type="int64" name="role_id"/>
 		<arg type="string" name="role_name"/>
 		<arg type="string" name="account"/>
@@ -144,13 +121,13 @@
 	</Game_Player_Info>
 	
 	<Hero_Info>
-		<db table_name="hero" key_index="role_id"/>
+		<head table_name="hero" key_index="role_id"/>
 		<arg type="int64" name="role_id"/>
 		<unordered_map type="Hero_Detail" key_name="hero_id" key_type="int32" name="hero_map"/>
 	</Hero_Info>
 
 	<Bag_Info>
-		<db table_name="bag" key_index="role_id"/>
+		<head table_name="bag" key_index="role_id"/>
 		<arg type="int64" name="role_id"/>
 		<arg type="int32" name="copper"/>
 		<arg type="int32" name="gold"/>
@@ -158,17 +135,19 @@
 	</Bag_Info>
 	
 	<Mail_Info>
-		<db table_name="mail" key_index="role_id"/>
+		<head table_name="mail" key_index="role_id"/>
 		<arg type="int64" name="role_id"/>
 		<arg type="int32" name="total_count"/>
 		<unordered_map type="Mail_Detail" key_type="int32" key_name="mail_id" name="mail_map"/>
 	</Mail_Info>
 	
-	<Shop_Info>
-		<db table_name="shop" key_index="role_id"/>
-		<arg type="int64" name="role_id"/>
-		<unordered_map type="Shop_Detail" key_type="int32" key_name="shop_type" name="shop_map"/>
-	</Shop_Info>
+	<Player_Data>
+		<!--玩家保存到数据库的数据-->
+		<struct type="Game_Player_Info" name="player_info"/>
+		<struct type="Hero_Info" name="hero_info"/>
+		<struct type="Bag_Info" name="bag_info"/>
+		<struct type="Mail_Info" name="mail_info"/>
+	</Player_Data>
 	
 	<Master_Data type="mem_only">
 		<!--master数据在此定义-->
@@ -178,7 +157,7 @@
 	</Master_Data>
 	
 	<Guild_Info>
-		<db table_name="guild" key_index="guild_id" msg_id="150103"/>
+		<head table_name="guild" key_index="guild_id" msg_id="150103"/>
 		<arg type="int64" name="guild_id"/>
 		<arg type="string" name="guild_name"/>
 		<arg type="int64" name="chief_id"/>
@@ -189,7 +168,7 @@
 	</Guild_Info>
 
 	<Offline_Info>
-		<db table_name="offline" key_index="role_id" msg_id="150104"/>
+		<head table_name="offline" key_index="role_id" msg_id="150104"/>
 		<arg type="int64" name="role_id"/>
 		<arg type="int64" name="guild_id"/>
 		<arg type="string" name="guild_name"/>
@@ -197,7 +176,7 @@
 	</Offline_Info>
 	
 	<Rank_Info>
-		<db table_name="rank" key_index="rank_type" msg_id="150105"/>
+		<head table_name="rank" key_index="rank_type" msg_id="150105"/>
 		<arg type="int64" name="rank_type"/>
 		<arg type="int32" name="min_value"/>
 		<arg type="int64" name="min_role_id"/>

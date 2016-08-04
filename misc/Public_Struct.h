@@ -26,11 +26,11 @@ enum Error_Code {
 };
 
 enum	 Role_Status {
-	ROLE_SUCCESS_LOAD = 1,		//加载成功
-	ROLE_SUCCESS_CREATE = 2,	//创建成功
-	ROLE_NOT_EXIST = 3,				//角色不存在
-	ROLE_HAS_EXIST = 4,				//	角色已经存在
-	ROLE_SAVE_OFFLINE = 5,		//角色下线保存
+	ROLE_SUCCESS_LOAD 	= 0,		//加载成功
+	ROLE_SUCCESS_CREATE = 0,	//创建成功
+	ROLE_NOT_EXIST 			= 1,		//角色不存在
+	ROLE_HAS_EXIST 			= 2,		//	角色已经存在
+	ROLE_SAVE_OFFLINE 	= 3,		//角色下线保存
 };
 
 enum Server_Status {

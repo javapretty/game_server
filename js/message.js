@@ -44,10 +44,6 @@ if (typeof Msg_CG == "undefined") {
 	Msg_CG.REQ_ADD_EQUIP_LEVEL = 120303; //提高英雄装备等级
 	Msg_CG.REQ_EQUIP_ON_OFF = 120304; //英雄装备穿脱
 	Msg_CG.REQ_ADD_SKILL_LEVEL = 120305; //提高英雄技能等级
-	Msg_CG.REQ_ADD_HERO_EXP = 120306; //增加英雄经验
-	Msg_CG.REQ_FETCH_SHOP_INFO = 120400; //拉取商店信息
-	Msg_CG.REQ_BUY_PRODUCT = 120401; //购买物品
-	Msg_CG.REQ_REFRESH_SHOP = 120402; //刷新商店
 }
 
 if (typeof Msg_GC == "undefined") {
@@ -55,7 +51,6 @@ if (typeof Msg_GC == "undefined") {
 	Msg_GC.RES_FETCH_ROLE_INFO = 520001; //获取角色信息(返回)
 	Msg_GC.RES_CREATE_ROLE = 520002; //创建角色(返回)
 	Msg_GC.RES_BUY_VITALITY = 520003; //购买体力(返回)
-	Msg_GC.RES_EXCHANGE_MONEY = 520004; //兑换聚宝盆(返回)
 	Msg_GC.RES_FETCH_BAG_INFO = 520100; //获取背包信息(返回)
 	Msg_GC.RES_USE_ITEM = 520101; //使用物品(返回)
 	Msg_GC.RES_SELL_ITEM = 520102; //出售物品(返回)
@@ -69,10 +64,6 @@ if (typeof Msg_GC == "undefined") {
 	Msg_GC.RES_ADD_EQUIP_LEVEL = 520303; //提高英雄装备等级(返回)
 	Msg_GC.RES_EQUIP_ON_OFF = 520304; //英雄装备穿脱(返回)
 	Msg_GC.RES_ADD_SKILL_LEVEL = 520305; //提高英雄技能等级(返回)
-	Msg_GC.RES_ADD_HERO_EXP = 520306; //增加英雄经验(返回)
-	Msg_GC.RES_FETCH_SHOP_INFO = 520400; //拉取商店信息(返回)
-	Msg_GC.RES_BUY_PRODUCT = 520401; //购买物品(返回)
-	Msg_GC.RES_REFRESH_SHOP = 520402; //刷新商店(返回)
 }
 
 if (typeof Msg_Gate == "undefined") {

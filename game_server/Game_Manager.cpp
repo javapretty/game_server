@@ -9,7 +9,7 @@
 #include "Game_Server.h"
 #include "Game_Connector.h"
 #include "Log_Connector.h"
-#include "Msg_Struct.h"
+#include "Msg_Manager.h"
 
 Game_Manager::Game_Manager(void):
   player_cid_map_(get_hash_table_size(12000)),

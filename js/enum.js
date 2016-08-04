@@ -12,11 +12,11 @@ if (typeof Server_Type == "undefined") {
 
 if (typeof Role_Status == "undefined") {
 	var Role_Status = {};
-	Role_Status.ROLE_SUCCESS_LOAD 		= 1;		//加载成功
-	Role_Status.ROLE_SUCCESS_CREATE 	= 2;		//创建成功
-	Role_Status.ROLE_NOT_EXIST				= 3;		//角色不存在
-	Role_Status.ROLE_HAS_EXIST				= 4;		//	角色已经存在
-	Role_Status.ROLE_SAVE_OFFLINE		= 5;		//角色下线保存
+	Role_Status.ROLE_SUCCESS_LOAD 		= 0;		//加载成功
+	Role_Status.ROLE_SUCCESS_CREATE 	= 0;	//加载成功
+	Role_Status.ROLE_NOT_EXIST 			= 1;		//角色不存在
+	Role_Status.ROLE_HAS_EXIST 			= 2;		//	角色已经存在
+	Role_Status.ROLE_SAVE_OFFLINE 		= 3;		//角色下线保存
 }
 
 if (typeof Shop_Type == "undefined") {

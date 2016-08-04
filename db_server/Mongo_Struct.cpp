@@ -137,7 +137,7 @@ void Mongo_Struct::create_data_arg(Field_Info &field_info, BSONObjBuilder &build
 		builder << field_info.field_name << value;
 	}
 	else {
-		LOG_ERROR("Can not find the type %s", field_info.field_type.c_str());
+		LOG_ERROR("Can not find the field_type:%s", field_info.field_type.c_str());
 	}
 }
 
@@ -149,7 +149,7 @@ void Mongo_Struct::create_data_vector(Field_Info &field_info, BSONObjBuilder &bu
 void Mongo_Struct::create_data_struct(Field_Info &field_info, BSONObjBuilder &builder){
 	Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(field_info.field_type);
 	if(iter == DB_MANAGER->db_struct_name_map().end()){
-		LOG_ERROR("Can not find the module %s", field_info.field_type.c_str());
+		LOG_ERROR("Can not find the struct_name:%s", field_info.field_type.c_str());
 		return;
 	}
 
@@ -201,7 +201,7 @@ void Mongo_Struct::build_buffer_arg(Field_Info &field_info, Block_Buffer &buffer
 		buffer.write_double(value);
 	}
 	else {
-		LOG_ERROR("Can not find the type %s", field_info.field_type.c_str());
+		LOG_ERROR("Can not find the field_type:%s", field_info.field_type.c_str());
 	}
 }
 
@@ -229,7 +229,7 @@ void Mongo_Struct::build_buffer_vector(Field_Info &field_info, Block_Buffer &buf
 void Mongo_Struct::build_buffer_struct(Field_Info &field_info, Block_Buffer &buffer, BSONObj &bsonobj) {
 	Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(field_info.field_type);
 	if(iter == DB_MANAGER->db_struct_name_map().end()){
-		LOG_ERROR("Can not find the module %s", field_info.field_type.c_str());
+		LOG_ERROR("Can not find the struct_name:%s", field_info.field_type.c_str());
 		return;
 	}
 
@@ -280,7 +280,7 @@ void Mongo_Struct::build_bson_arg(Field_Info &field_info, Block_Buffer &buffer, 
 		builder << field_info.field_name << value;
 	}
 	else {
-		LOG_ERROR("Can not find the type %s", field_info.field_type.c_str());
+		LOG_ERROR("Can not find the field_type:%s", field_info.field_type.c_str());
 	}
 }
 
@@ -309,7 +309,7 @@ void Mongo_Struct::build_bson_vector(Field_Info &field_info, Block_Buffer &buffe
 void Mongo_Struct::build_bson_struct(Field_Info &field_info, Block_Buffer &buffer, BSONObjBuilder &builder){
 	Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(field_info.field_type);
 	if(iter == DB_MANAGER->db_struct_name_map().end()){
-		LOG_ERROR("Can not find the module %s", field_info.field_type.c_str());
+		LOG_ERROR("Can not find the struct_name:%s", field_info.field_type.c_str());
 		return;
 	}
 

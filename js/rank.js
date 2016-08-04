@@ -8,18 +8,23 @@ function Rank() {
 	this.rank_map = new Map();
 }
 
-Rank.prototype.load_data = function(buffer){
-	print('load rank_manager data, util.now_msec:', util.now_msec());
-	var msg = new MSG_550105();
-	msg.deserialize(buffer);
-	print('rank list size is ', msg.rank_list.length);
-	for(var i = 0; i < msg.rank_list.length; i++){
-		var rank = msg.rank_list[i];
+Rank.prototype.load_data = function(obj){
+	print('rank list size is ', obj.rank_list.length);
+	return;
+	for(var i = 0; i < obj.rank_list.length; i++){
+		var member_map = new Map();
+		var rank = obj.rank_list[i];
+		for (var j = 0; j < rank.member_map.length; j++) {
+			rank_member = rank.member_map[j];
+			member_map.insert(rank_member.role_id, rank_member);
+		}
+		rank.member_map = member_map;
 		this.rank_map.insert(rank.rank_type, rank);
 	}
 }
 
 Rank.prototype.save_data = function(){
+	return;
 	var msg = new MSG_150105();
 	this.rank_map.each(function(key,value,index) {
 		msg.rank_list.push(value);
@@ -32,14 +37,12 @@ Rank.prototype.save_data = function(){
 	push_master_buffer(buf);
 }
 
-Rank.prototype.fetch_rank_info = function(player, buffer) {
+Rank.prototype.fetch_rank_info = function(player, obj) {
 	print('fetch rank info, util.now_msec:', util.now_msec());
-	var msg = new MSG_110201();
-	msg.deserialize(buffer);
-	var rank_info = this.rank_map.get(msg.type);
+	var rank_info = this.rank_map.get(obj.type);
 	
 	var msg_res = new MSG_510201();
-	msg_res.rank_type = msg.type;
+	msg_res.rank_type = obj.type;
 	rank_info.member_map.each(function(key,value,index) {
 		msg_res.rank_list.push(value);
 	});

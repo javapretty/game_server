@@ -58,13 +58,6 @@ CREATE TABLE `mail` (
   PRIMARY KEY (role_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `shop`;
-CREATE TABLE `shop` (
-  role_id bigint(20) NOT NULL auto_increment,
-  shop_map blob NOT NULL, 
-  PRIMARY KEY (role_id)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 DROP TABLE IF EXISTS `guild`;
 CREATE TABLE `guild` (
   guild_id bigint(20) NOT NULL auto_increment,

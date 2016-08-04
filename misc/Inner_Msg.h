@@ -23,7 +23,6 @@ struct MSG {
 struct Create_Role_Info : public MSG {
 	std::string account;
 	std::string role_name;
-	std::string client_ip;
 	int8_t gender;
 	int8_t career;
 
@@ -163,92 +162,6 @@ struct MSG_140001 : public MSG {
 
 	MSG_140001(void);
 	~MSG_140001();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct MSG_150001 : public MSG {
-	std::string account;
-	std::string client_ip;
-
-	MSG_150001(void);
-	~MSG_150001();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct MSG_550001 : public MSG {
-
-	MSG_550001(void);
-	~MSG_550001();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct MSG_150002 : public MSG {
-	Create_Role_Info role_info;
-
-	MSG_150002(void);
-	~MSG_150002();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct MSG_550002 : public MSG {
-
-	MSG_550002(void);
-	~MSG_550002();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct MSG_150003 : public MSG {
-
-	MSG_150003(void);
-	~MSG_150003();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct MSG_550003 : public MSG {
-	int64_t role_id;
-
-	MSG_550003(void);
-	~MSG_550003();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct MSG_150100 : public MSG {
-	Create_Guild_Info guild_info;
-
-	MSG_150100(void);
-	~MSG_150100();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
-};
-
-struct MSG_550100 : public MSG {
-	Create_Guild_Info guild_info;
-
-	MSG_550100(void);
-	~MSG_550100();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
