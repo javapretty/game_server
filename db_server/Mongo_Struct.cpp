@@ -124,16 +124,16 @@ void Mongo_Struct::create_data_arg(Field_Info &field_info, BSONObjBuilder &build
 			value = key_index;
 		builder << field_info.field_name << (long long int)value;
 	}
-	else if(field_info.field_type == "string"){
-		std::string value = "";
+	else if(field_info.field_type == "double"){
+		double value = 0;
 		builder << field_info.field_name << value;
 	}
 	else if(field_info.field_type == "bool"){
 		bool value = 0;
 		builder << field_info.field_name << value;
 	}
-	else if(field_info.field_type == "double"){
-		double value = 0;
+	else if(field_info.field_type == "string"){
+		std::string value = "";
 		builder << field_info.field_name << value;
 	}
 	else {
@@ -188,17 +188,17 @@ void Mongo_Struct::build_buffer_arg(Field_Info &field_info, Block_Buffer &buffer
 		int64_t value = bsonobj[field_info.field_name].numberLong();
 		buffer.write_int64(value);
 	}
-	else if(field_info.field_type == "string") {
-		std::string value = bsonobj[field_info.field_name].valuestrsafe();
-		buffer.write_string(value);
+	else if(field_info.field_type == "double") {
+		double value = bsonobj[field_info.field_name].numberDouble();
+		buffer.write_double(value);
 	}
 	else if(field_info.field_type == "bool") {
 		bool value = bsonobj[field_info.field_name].numberInt();
 		buffer.write_bool(value);
 	}
-	else if(field_info.field_type == "double") {
-		double value = bsonobj[field_info.field_name].numberDouble();
-		buffer.write_double(value);
+	else if(field_info.field_type == "string") {
+		std::string value = bsonobj[field_info.field_name].valuestrsafe();
+		buffer.write_string(value);
 	}
 	else {
 		LOG_ERROR("Can not find the field_type:%s, struct_name:%s", field_info.field_type.c_str(), struct_name().c_str());
@@ -267,16 +267,16 @@ void Mongo_Struct::build_bson_arg(Field_Info &field_info, Block_Buffer &buffer, 
 		int64_t value = buffer.read_int64();
 		builder << field_info.field_name << (long long int)value;
 	}
-	else if(field_info.field_type == "string") {
-		std::string value = buffer.read_string();
+	else if(field_info.field_type == "double") {
+		double value = buffer.read_double();
 		builder << field_info.field_name << value;
 	}
 	else if(field_info.field_type == "bool") {
 		bool value = buffer.read_bool();
 		builder << field_info.field_name << value;
 	}
-	else if(field_info.field_type == "double") {
-		double value = buffer.read_double();
+	else if(field_info.field_type == "string") {
+		std::string value = buffer.read_string();
 		builder << field_info.field_name << value;
 	}
 	else {

@@ -96,17 +96,17 @@ void Msg_Struct::build_object_arg(Field_Info &field_info, Block_Buffer &buffer, 
 		double val = buffer.read_int64();
 		value = Number::New(isolate, val);
 	}
-	else if(field_info.field_type == "string") {
-		std::string val = buffer.read_string();
-		value = String::NewFromUtf8(isolate, val.c_str(), NewStringType::kNormal).ToLocalChecked();
+	else if(field_info.field_type == "double") {
+		double val = buffer.read_double();
+		value = Number::New(isolate, val);
 	}
 	else if(field_info.field_type == "bool") {
 		bool val = buffer.read_bool();
 		value = Boolean::New(isolate, val);
 	}
-	else if(field_info.field_type == "double") {
-		double val = buffer.read_double();
-		value = Number::New(isolate, val);
+	else if(field_info.field_type == "string") {
+		std::string val = buffer.read_string();
+		value = String::NewFromUtf8(isolate, val.c_str(), NewStringType::kNormal).ToLocalChecked();
 	}
 	else {
 		LOG_ERROR("Can not find the field_type:%s, struct_name:%s", field_info.field_type.c_str(), struct_name().c_str());
@@ -118,6 +118,7 @@ void Msg_Struct::build_object_arg(Field_Info &field_info, Block_Buffer &buffer, 
 
 void Msg_Struct::build_object_vector(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate, v8::Local<v8::Object> object) {
 	EscapableHandleScope handle_scope(isolate);
+
 	uint16_t vec_size = buffer.read_uint16();
 	Local<Array> array = Array::New(isolate, vec_size);
 	if(is_struct(field_info.field_type)) {
@@ -146,17 +147,17 @@ void Msg_Struct::build_object_vector(Field_Info &field_info, Block_Buffer &buffe
 				double value = buffer.read_int64();
 				array->Set(isolate->GetCurrentContext(), i, Number::New(isolate, value)).FromJust();
 			}
-			else if(field_info.field_type == "string") {
-				std::string value = buffer.read_string();
-				array->Set(isolate->GetCurrentContext(), i, String::NewFromUtf8(isolate, value.c_str(), NewStringType::kNormal).ToLocalChecked()).FromJust();
+			else if(field_info.field_type == "double") {
+				double value = buffer.read_double();
+				array->Set(isolate->GetCurrentContext(), i, Number::New(isolate, value)).FromJust();
 			}
 			else if(field_info.field_type == "bool") {
 				bool value = buffer.read_bool();
 				array->Set(isolate->GetCurrentContext(), i, Boolean::New(isolate, value)).FromJust();
 			}
-			else if(field_info.field_type == "double") {
-				double value = buffer.read_double();
-				array->Set(isolate->GetCurrentContext(), i, Number::New(isolate, value)).FromJust();
+			else if(field_info.field_type == "string") {
+				std::string value = buffer.read_string();
+				array->Set(isolate->GetCurrentContext(), i, String::NewFromUtf8(isolate, value.c_str(), NewStringType::kNormal).ToLocalChecked()).FromJust();
 			}
 			else {
 				LOG_ERROR("Can not find the field_type:%s, struct_name:%s", field_info.field_type.c_str(), struct_name().c_str());
@@ -171,6 +172,7 @@ void Msg_Struct::build_object_vector(Field_Info &field_info, Block_Buffer &buffe
 
 void Msg_Struct::build_object_map(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate, v8::Local<v8::Object> object) {
 	EscapableHandleScope handle_scope(isolate);
+
 	uint16_t vec_size = buffer.read_uint16();
 	Local<Map> map = Map::New(isolate);
 	if(is_struct(field_info.field_type)) {
@@ -199,9 +201,9 @@ void Msg_Struct::build_object_map(Field_Info &field_info, Block_Buffer &buffer, 
 						value->ToNumber(isolate->GetCurrentContext()).ToLocalChecked(),
 						sub_object).ToLocalChecked();
 			}
-			else if(field_info.key_type == "string") {
+			else if(field_info.key_type == "double") {
 				map->Set(isolate->GetCurrentContext(),
-										value->ToString(isolate->GetCurrentContext()).ToLocalChecked(),
+										value->ToNumber(isolate->GetCurrentContext()).ToLocalChecked(),
 										sub_object).ToLocalChecked();
 			}
 			else if(field_info.key_type == "bool") {
@@ -209,9 +211,9 @@ void Msg_Struct::build_object_map(Field_Info &field_info, Block_Buffer &buffer, 
 										value->ToBoolean(isolate->GetCurrentContext()).ToLocalChecked(),
 										sub_object).ToLocalChecked();
 			}
-			else if(field_info.key_type == "double") {
+			else if(field_info.key_type == "string") {
 				map->Set(isolate->GetCurrentContext(),
-										value->ToNumber(isolate->GetCurrentContext()).ToLocalChecked(),
+										value->ToString(isolate->GetCurrentContext()).ToLocalChecked(),
 										sub_object).ToLocalChecked();
 			}
 			else {
@@ -239,17 +241,17 @@ void Msg_Struct::build_object_map(Field_Info &field_info, Block_Buffer &buffer, 
 			double value = buffer.read_int64();
 			key = Number::New(isolate, value);
 		}
-		else if(field_info.key_type == "string") {
-			std::string value = buffer.read_string();
-			key = String::NewFromUtf8(isolate, value.c_str(), NewStringType::kNormal).ToLocalChecked();
-		}
-		else if(field_info.key_type == "bool") {
-			bool value = buffer.read_bool();
-			key = Boolean::New(isolate, value);
+		else if(field_info.key_type == "double") {
+			double value = buffer.read_double();
+			key = Number::New(isolate, value);
 		}
 		else if(field_info.key_type == "double") {
 			double value = buffer.read_double();
 			key = Number::New(isolate, value);
+		}
+		else if(field_info.key_type == "string") {
+			std::string value = buffer.read_string();
+			key = String::NewFromUtf8(isolate, value.c_str(), NewStringType::kNormal).ToLocalChecked();
 		}
 		else {
 			LOG_ERROR("Can not find the field_type:%s, struct_name:%s", field_info.field_type.c_str(), struct_name().c_str());
@@ -273,17 +275,17 @@ void Msg_Struct::build_object_map(Field_Info &field_info, Block_Buffer &buffer, 
 			double val = buffer.read_int64();
 			value = Number::New(isolate, val);
 		}
-		else if(field_info.field_type == "string") {
-			std::string val = buffer.read_string();
-			value = String::NewFromUtf8(isolate, val.c_str(), NewStringType::kNormal).ToLocalChecked();
+		else if(field_info.field_type == "double") {
+			double val = buffer.read_double();
+			value = Number::New(isolate, val);
 		}
 		else if(field_info.field_type == "bool") {
 			bool val = buffer.read_bool();
 			value = Boolean::New(isolate, val);
 		}
-		else if(field_info.field_type == "double") {
-			double val = buffer.read_double();
-			value = Number::New(isolate, val);
+		else if(field_info.field_type == "string") {
+			std::string val = buffer.read_string();
+			value = String::NewFromUtf8(isolate, val.c_str(), NewStringType::kNormal).ToLocalChecked();
 		}
 		else {
 			LOG_ERROR("Can not find the field_type:%s, struct_name:%s", field_info.field_type.c_str(), struct_name().c_str());
@@ -359,6 +361,20 @@ void Msg_Struct::build_buffer_arg(Field_Info &field_info, Block_Buffer &buffer, 
 		}
 		buffer.write_int64(val);
 	}
+	else if(field_info.field_type == "double") {
+		double val = 0;
+		if (value->IsNumber()) {
+			val = value->NumberValue(isolate->GetCurrentContext()).FromJust();
+		}
+		buffer.write_double(val);
+	}
+	else if(field_info.field_type == "bool") {
+		bool val = 0;
+		if (value->IsBoolean()) {
+			val = value->BooleanValue(isolate->GetCurrentContext()).FromJust();
+		}
+		buffer.write_bool(val);
+	}
 	else if(field_info.field_type == "string") {
 		std::string val = "";
 		if (value->IsString()) {
@@ -368,20 +384,6 @@ void Msg_Struct::build_buffer_arg(Field_Info &field_info, Block_Buffer &buffer, 
 			val = stream.str();
 		}
 		buffer.write_string(val);
-	}
-	else if(field_info.field_type == "bool") {
-		bool val = 0;
-		if (value->IsBoolean()) {
-			val = value->BooleanValue(isolate->GetCurrentContext()).FromJust();
-		}
-		buffer.write_bool(val);
-	}
-	else if(field_info.field_type == "double") {
-		double val = 0;
-		if (value->IsNumber()) {
-			val = value->NumberValue(isolate->GetCurrentContext()).FromJust();
-		}
-		buffer.write_double(val);
 	}
 	else {
 		LOG_ERROR("Can not find the field_type:%s, struct_name:%s", field_info.field_type.c_str(), struct_name().c_str());

@@ -40,9 +40,8 @@ protected:
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 inline bool Base_Struct::is_struct(const std::string &field_type){
-	if(field_type == "int8" || field_type == "int16" || field_type == "int32" || field_type == "int64" ||field_type == "uint8" ||
-			field_type == "uint16" || field_type == "uint32" || field_type == "uint64" || field_type == "double" || field_type == "bool" ||
-			field_type == "string") return false;
+	if(field_type == "int8" || field_type == "int16" || field_type == "int32" || field_type == "int64" ||
+			field_type == "double" || field_type == "bool" || field_type == "string") return false;
 	return true;
 }
 

@@ -133,14 +133,14 @@ void Mysql_Struct::create_data_arg(Field_Info &field_info, std::string &str_name
 		}
 		stream << value << ",";
 	}
-	else if(field_info.field_type == "string") {
-		stream << "\'\'" << ",";
+	else if(field_info.field_type == "double") {
+		stream << 0 << ",";
 	}
 	else if(field_info.field_type == "bool") {
 		stream << 0 << ",";
 	}
-	else if(field_info.field_type == "double") {
-		stream << 0 << ",";
+	else if(field_info.field_type == "string") {
+		stream << "\'\'" << ",";
 	}
 	else {
 		LOG_ERROR("Can not find the field_type:%s, struct_name:%s", field_info.field_type.c_str(), struct_name().c_str());
@@ -187,17 +187,17 @@ void Mysql_Struct::build_buffer_arg(Field_Info &field_info, Block_Buffer &buffer
 		int64_t value = result->getInt64(field_info.field_name);
 		buffer.write_int64(value);
 	}
-	else if(field_info.field_type == "string") {
-		std::string value = result->getString(field_info.field_name);
-		buffer.write_string(value);
+	else if(field_info.field_type == "double") {
+		double value = result->getDouble(field_info.field_name);
+		buffer.write_double(value);
 	}
 	else if(field_info.field_type == "bool") {
 		bool value = result->getBoolean(field_info.field_name);
 		buffer.write_bool(value);
 	}
-	else if(field_info.field_type == "double") {
-		double value = result->getDouble(field_info.field_name);
-		buffer.write_double(value);
+	else if(field_info.field_type == "string") {
+		std::string value = result->getString(field_info.field_name);
+		buffer.write_string(value);
 	}
 	else {
 		LOG_ERROR("Can not find the field_type:%s, struct_name:%s", field_info.field_type.c_str(), struct_name().c_str());
@@ -252,17 +252,17 @@ void Mysql_Struct::build_sql_arg(Field_Info &field_info, Block_Buffer &buffer, s
 		int64_t value = buffer.read_int64();
 		stream << value << "," ;
 	}
-	else if(field_info.field_type == "string") {
-		std::string value = buffer.read_string();
-		stream << "\'" << value << "\'" << "," ;
+	else if(field_info.field_type == "double") {
+		double value = buffer.read_double();
+		stream << value << "," ;
 	}
 	else if(field_info.field_type == "bool") {
 		bool value = buffer.read_bool();
 		stream << value << "," ;
 	}
-	else if(field_info.field_type == "double") {
-		double value = buffer.read_double();
-		stream << value << "," ;
+	else if(field_info.field_type == "string") {
+		std::string value = buffer.read_string();
+		stream << "\'" << value << "\'" << "," ;
 	}
 	else {
 		LOG_ERROR("Can not find the field_type:%s, struct_name:%s", field_info.field_type.c_str(), struct_name().c_str());

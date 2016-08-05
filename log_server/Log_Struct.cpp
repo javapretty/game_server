@@ -60,17 +60,17 @@ void Log_Struct::build_sql_arg(Field_Info &field_info, Block_Buffer &buffer, std
 		int64_t value = buffer.read_int64();
 		stream << value << "," ;
 	}
-	else if(field_info.field_type == "string") {
-		std::string value = buffer.read_string();
-		stream << "\'" << value << "\'" << "," ;
+	else if(field_info.field_type == "double") {
+		double value = buffer.read_double();
+		stream << value << "," ;
 	}
 	else if(field_info.field_type == "bool") {
 		bool value = buffer.read_bool();
 		stream << value << "," ;
 	}
-	else if(field_info.field_type == "double") {
-		double value = buffer.read_double();
-		stream << value << "," ;
+	else if(field_info.field_type == "string") {
+		std::string value = buffer.read_string();
+		stream << "\'" << value << "\'" << "," ;
 	}
 	else {
 		LOG_ERROR("Can not find the field_type:%s, struct_name:%s", field_info.field_type.c_str(), struct_name().c_str());
