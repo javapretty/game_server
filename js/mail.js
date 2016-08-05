@@ -11,112 +11,90 @@ function Mail() {
 
 Mail.prototype.load_data = function(game_player, obj) {
 	this.game_player = game_player;
-	this.mail_info.role_id = obj.player_data.mail_info.role_id;
-	this.mail_info.total_count = obj.player_data.mail_info.total_count;
-	for (var i = 0; i < obj.player_data.mail_info.mail_map.length; ++i) {
-		var mail_detail = obj.player_data.mail_info.mail_map[i];
-		this.mail_info.item_map.insert(mail_detail.mail_id, mail_detail);
-	}
+	this.mail_info = obj.player_data.mail_info;
 }
 	
 Mail.prototype.save_data = function(obj) {
-	this.mail_info.serialize(obj);
+	obj.player_data.mail_info = this.mail_info;
 }
 
 Mail.prototype.fetch_mail_info = function() {
 	print('fetch_mail_info, role_id:', this.game_player.player_info.role_id, " role_name:", this.game_player.player_info.role_name, " util.now_msec:", util.now_msec());
-	var msg_res = new MSG_520200();
-	this.mail_info.mail_map.each(function(key,value,index) {
-		msg_res.mail_info.push(value);
-    });
-    	
-	var buf = pop_game_buffer();
-	msg_res.serialize(buf);
-	this.game_player.cplayer.respond_success_result(Msg_GC.RES_FETCH_MAIL_INFO, buf);
-	push_game_buffer(buf);
+	var msg = new MSG_520200();
+	for (var value of this.mail_info.mail_map.values()) {
+  		msg.mail_info.push(value);
+	}
+  this.game_player.send_success_msg(Msg_GC.RES_FETCH_MAIL_INFO, msg);
 }
 
 Mail.prototype.pickup_mail = function(obj) {
 	print('pickup_mail, role_id:', this.game_player.player_info.role_id, " role_name:", this.game_player.player_info.role_name, " util.now_msec:", util.now_msec());
-	var msg_res = new MSG_520201();
+	var msg = new MSG_520201();
 	if (obj.mail_id == 0) {
-		var thismail = this;
-		this.mail_info.mail_map.each(function(key,value,index) {
-			var result = thismail.pickup_item_money(value);
+		this.mail_info.mail_map.forEach(function(value, key, map) {
+			var result = this.pickup_item_money(value);
 			if (result == 0) {
-				msg_res.mail_id_info.push(key);
+				msg.mail_id_info.push(key);
 			}
     	});
 	} else {
 		var mail_detail = this.mail_info.mail_map.get(obj.mail_id);
 		if (mail_detail == null) {
-			return this.game_player.cplayer.respond_error_result(Msg_GC.RES_PICKUP_MAIL, Error_Code.ERROR_CLIENT_PARAM);
+			return this.game_player.send_error_msg(Msg_GC.RES_PICKUP_MAIL, Error_Code.ERROR_CLIENT_PARAM);
 		}
 		
 		var result = this.pickup_item_money(value);
 		if (result == 0) {
-			msg_res.mail_id_info.push(obj.mail_id);
+			msg.mail_id_info.push(obj.mail_id);
 		}
 	}
-	
-	var buf = pop_game_buffer();
-	msg_res.serialize(buf);
-	this.game_player.cplayer.respond_success_result(Msg_GC.RES_PICKUP_MAIL, buf);
-	push_game_buffer(buf);
-	
-	this.game_player.set_data_change();
+	this.game_player.send_success_msg(Msg_GC.RES_PICKUP_MAIL, msg);
 }
 
 Mail.prototype.delete_mail = function(obj) {
 	print('delete_mail, role_id:', this.game_player.player_info.role_id, " role_name:", this.game_player.player_info.role_name, " util.now_msec:", util.now_msec());
-	var msg_res = new MSG_520202();
+	var msg = new MSG_520202();
 	if (obj.mail_id == 0) {
-		var thismail = this;
-		this.mail_info.mail_map.each(function(key,value,index) {
-			var result = thismail.pickup_item_money(value);
+		this.mail_info.mail_map.forEach(function(value, key, map) {
+			var result = this.pickup_item_money(value);
 			if (result == 0) {
-				msg_res.mail_id_info.push(key);
+				msg.mail_id_info.push(key);
 			}
     	});
     	this.mail_info.mail_map.clear();
 	} else {
 		var mail_detail = this.mail_info.mail_map.get(obj.mail_id);
 		if (mail_detail == null) {
-			return this.game_player.cplayer.respond_error_result(Msg_GC.RES_DEL_MAIL, Error_Code.ERROR_CLIENT_PARAM);
+			return this.game_player.send_error_msg(Msg_GC.RES_DEL_MAIL, Error_Code.ERROR_CLIENT_PARAM);
 		}
 		
 		var result = this.pickup_item_money(value);
 		if (result == 0) {
-			msg_res.mail_id_info.push(obj.mail_id);
-			this.mail_info.mail_map.remove(obj.mail_id);
+			msg.mail_id_info.push(obj.mail_id);
+			this.mail_info.mail_map.delete(obj.mail_id);
 		}
 	}
-	
-	var buf = pop_game_buffer();
-	msg_res.serialize(buf);
-	this.game_player.cplayer.respond_success_result(Msg_GC.RES_DEL_MAIL, buf);
-	push_game_buffer(buf);
-	
-	this.game_player.set_data_change();
+	this.game_player.send_success_msg(Msg_GC.RES_DEL_MAIL, msg);
 }
 
 Mail.prototype.send_mail = function(obj) {
 	print('send_mail, role_id:', this.game_player.player_info.role_id, " role_name:", this.game_player.player_info.role_name, " util.now_msec:", util.now_msec());
 	var receiver = game_player_role_name_map.get(obj.receiver_name);
 	if (receiver == null) {
-		return this.game_player.cplayer.respond_error_result(Msg_GC.RES_SEND_MAIL, Error_Code.ERROR_ROLE_NOT_EXIST);
+		return this.game_player.send_error_msg(Msg_GC.RES_SEND_MAIL, Error_Code.ERROR_ROLE_NOT_EXIST);
 	}
 	var receiver_id = receiver.role_id();
-	if (receiver_id == this.game_player.player_info.role_id || obj.mail_detail.mail_title.length > 64 || obj.mail_detail.mail_content.length > 512)
-		return this.game_player.cplayer.respond_error_result(Msg_GC.RES_SEND_MAIL, Error_Code.ERROR_CLIENT_PARAM);
+	if (receiver_id == this.game_player.player_info.role_id || obj.mail_detail.mail_title.length > 64 || obj.mail_detail.mail_content.length > 512) {
+		return this.game_player.send_error_msg(Msg_GC.RES_SEND_MAIL, Error_Code.ERROR_CLIENT_PARAM);
+	}
 	
 	var result = this.game_player.bag.bag_sub_money(obj.mail_detail.copper, obj.mail_detail.gold);
 	if (result != 0) {
-		return this.game_player.cplayer.respond_error_result(Msg_GC.RES_SEND_MAIL, result);
+		return this.game_player.send_error_msg(Msg_GC.RES_SEND_MAIL, result);
 	}
 
 	var result = this.send_mail_inner(receiver_id, obj.mail_detail);
-	this.game_player.cplayer.respond_error_result(Msg_GC.RES_SEND_MAIL, result);
+	this.game_player.send_error_msg(Msg_GC.RES_SEND_MAIL, result);
 }
 	
 Mail.prototype.pickup_item_money = function(mail_detail) {	
@@ -147,7 +125,7 @@ Mail.prototype.send_mail_inner = function(receiver_id, mail_detail) {
 		mail_info.total_count++;
 		mail_detail.mail_id = mail_info.total_count + 1000000;
 		mail_detail.send_time = sec();
-		mail_info.mail_map.insert(mail_detail.mail_id, mail_detail);
+		mail_info.mail_map.set(mail_detail.mail_id, mail_detail);
 
 		//邮件数量超过100，删除最后一封
 		if (mail_info.mail_map.size() > 100) {

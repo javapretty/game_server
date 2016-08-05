@@ -4,7 +4,6 @@
 *	时间：2016/02/24
 */
 
-require('map.js');
 require('enum.js');
 require('error.js');
 require('message.js');
@@ -113,7 +112,7 @@ function process_master_gate_msg(obj) {
 	var cid = obj.cid * 10000 + obj.player_cid;
 	var master_player = master_player_gate_cid_map.get(cid);
 	if (!master_player) {
-		print('master_player not exist, gate_cid:', obj.cid, " player_cid:", obj.player_cid, " msg_id:", obj.msg_id);
+		print('master_player not exist, gate_cid:', obj.cid, ' player_cid:', obj.player_cid, ' msg_id:', obj.msg_id);
 		return;
 	}
 	
@@ -143,7 +142,7 @@ function process_master_gate_msg(obj) {
 		guild_manager.kick_out_player(master_player, obj);
 		break;
 	default:
-		print('process_master_gate_msg msg_id not exist, gate_cid:', obj.cid, " player_cid:", obj.player_cid, " msg_id:", obj.msg_id);
+		print('process_master_gate_msg msg_id not exist, gate_cid:', obj.cid, ' player_cid:', obj.player_cid, ' msg_id:', obj.msg_id);
 		break;
 	}
 }

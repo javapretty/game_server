@@ -17,12 +17,7 @@ Offline.prototype.load_data = function(buffer){
 Offline.prototype.save_data = function(){
 	var msg = new MSG_150104();
 	msg.offline_info = this.offline_info;
-	var buf = pop_master_buffer();
-	buf.make_inner_message(Msg_MD.SYNC_MASTER_DB_SAVE_OFFLINE_MSG);
-	msg.serialize(buf);
-	buf.finish_message();
-	send_master_buffer_to_db(buf);
-	push_master_buffer(buf);
+	send_master_msg_to_db(Msg_MD.SYNC_MASTER_DB_SAVE_OFFLINE, msg);
 }
 
 Offline.prototype.save_data_handler = function() {
@@ -43,7 +38,7 @@ Offline.prototype.handle_offline_info = function(player){
 		offline_detail.flag &= 0xFE;
 	}
 	
-	this.offline_info.offline_map.remove(role_id);
+	this.offline_info.offline_map.delete(role_id);
 	this.drop_list.push(role_id);
 	this.set_change(true);
 }
@@ -59,7 +54,7 @@ Offline.prototype.set_offline_detail = function(role_id, guild_id, guild_name) {
 		offline_detail.role_id = role_id;
 		offline_detail.guild_id = guild_id;
 		offline_detail.guild_name = guild_name;
-		this.offline_info.offline_map.insert(role_id, offline_detail);
+		this.offline_info.offline_map.set(role_id, offline_detail);
 	}
 	offline_detail.flag |= 0x01;
 	this.set_change();
@@ -68,14 +63,10 @@ Offline.prototype.set_offline_detail = function(role_id, guild_id, guild_name) {
 Offline.prototype.drop_offline = function(){
 	if (this.drop_list.length <= 0) return;
 	
-	var msg = new MSG_150104();
-	msg.offline_msg_list = this.drop_list;
-	var buf = pop_master_buffer();
-	buf.make_inner_message(Msg_MD.SYNC_MASTER_DB_DROP_OFFLINE_MSG);
-	msg.serialize(buf);
-	buf.finish_message();
-	send_master_buffer_to_db(buf);
-	push_master_buffer(buf);
+	var msg = new MSG_150102();
+	msg.struct_name = "Offline_Info";
+	msg.index_list = this.drop_list;
+	send_master_msg_to_db(Msg_MD.SYNC_MASTER_DB_DELETE_DATA, msg);
 	this.drop_list = [];
 }
 

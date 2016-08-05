@@ -41,38 +41,6 @@ void game_player_link_close(const FunctionCallbackInfo<Value>& args) {
 	player->link_close();
 }
 
-void game_player_respond_success_result(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 2) {
-		LOG_ERROR("respond_success_result args error, length: %d\n", args.Length());
-		return;
-	}
-
-	Game_Player *player = unwrap_game_player(args.Holder());
-	if (!player) {
-		return;
-	}
-
-	int msg_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	Block_Buffer *buf = unwrap_buffer(args[1]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
-	player->respond_success_result(msg_id, buf);
-}
-
-void game_player_respond_error_result(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 2) {
-		LOG_ERROR("respond_error_result args error, length: %d\n", args.Length());
-		return;
-	}
-
-	Game_Player *player = unwrap_game_player(args.Holder());
-	if (!player) {
-		return;
-	}
-
-	int msg_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	int error_code = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	player->respond_error_result(msg_id, error_code);
-}
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Local<Object> wrap_master_player(Isolate* isolate, Master_Player *player) {
 	EscapableHandleScope handle_scope(isolate);
@@ -100,36 +68,4 @@ void master_player_link_close(const FunctionCallbackInfo<Value>& args) {
 	}
 
 	player->link_close();
-}
-
-void master_player_respond_success_result(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 2) {
-		LOG_ERROR("respond_success_result args error, length: %d\n", args.Length());
-		return;
-	}
-
-	Master_Player *player = unwrap_master_player(args.Holder());
-	if (!player) {
-		return;
-	}
-
-	int msg_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	Block_Buffer *buf = unwrap_buffer(args[1]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked());
-	player->respond_success_result(msg_id, buf);
-}
-
-void master_player_respond_error_result(const FunctionCallbackInfo<Value>& args) {
-	if (args.Length() != 2) {
-		LOG_ERROR("respond_error_result args error, length: %d\n", args.Length());
-		return;
-	}
-
-	Master_Player *player = unwrap_master_player(args.Holder());
-	if (!player) {
-		return;
-	}
-
-	int msg_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	int error_code = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	player->respond_error_result(msg_id, error_code);
 }

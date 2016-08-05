@@ -60,6 +60,8 @@ struct Field_Info {
 	std::string field_label;
 	std::string field_type;
 	std::string field_name;
+	std::string key_type;
+	std::string key_name;
 };
 
 struct Server_Conf {

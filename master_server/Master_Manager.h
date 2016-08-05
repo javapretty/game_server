@@ -38,8 +38,6 @@ public:
 
 	Master_Player *pop_master_player(void);
 	int push_master_player(Master_Player *player);
-	Block_Buffer *pop_block_buffer(void);
-	int push_block_buffer(Block_Buffer *buf);
 
 	/// 发送数据接口
 	int send_to_gate(int gate_cid, Block_Buffer &buf);
@@ -141,14 +139,6 @@ inline Master_Player *Master_Manager::pop_master_player(void) {
 
 inline int Master_Manager::push_master_player(Master_Player *player) {
 	return master_player_pool_.push(player);
-}
-
-inline Block_Buffer *Master_Manager::pop_block_buffer(void) {
-	return block_pool_.pop();
-}
-
-inline int Master_Manager::push_block_buffer(Block_Buffer *buf) {
-	return block_pool_.push(buf);
 }
 
 inline int Master_Manager::push_tick(int x) {

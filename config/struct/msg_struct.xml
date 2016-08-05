@@ -369,6 +369,9 @@
 	<MSG_150003>
 		<!--保存玩家信息-->
 		<head msg_id="150003"/>
+		<arg type="bool" name="logout"/>
+		<arg type="string" name="account"/>
+		<struct type="Player_Data" name="player_data"/>
 	</MSG_150003>
 
 	<MSG_550003>
@@ -444,6 +447,7 @@
 	<MSG_160100> 		
 		<!--master通知game设置公会信息-->
 		<head msg_id="160100"/>
+		<arg type="int64" name="role_id"/>
     	<arg type="int64" name="guild_id"/>
     	<arg type="string" name="guild_name"/>
 	</MSG_160100>

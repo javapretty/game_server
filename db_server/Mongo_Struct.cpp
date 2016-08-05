@@ -15,19 +15,19 @@ Mongo_Struct::Mongo_Struct(Xml &xml, TiXmlNode *node) : Base_Struct(xml, node) {
 	table_name_ = stream.str() + table_name_;
 }
 
-Mongo_Struct::~Mongo_Struct(){}
+Mongo_Struct::~Mongo_Struct() {}
 
-void Mongo_Struct::create_data(int64_t key_index){
+void Mongo_Struct::create_data(int64_t key_index) {
 	BSONObjBuilder set_builder ;
 	for(std::vector<Field_Info>::iterator iter = field_vec_.begin();
-			iter != field_vec_.end(); iter++){
-		if((*iter).field_label == "arg"){
+			iter != field_vec_.end(); iter++) {
+		if((*iter).field_label == "arg") {
 			create_data_arg(*iter, set_builder, key_index);
 		}
-		else if((*iter).field_label == "vector"){
+		else if((*iter).field_label == "vector" || (*iter).field_label == "map") {
 			create_data_vector(*iter, set_builder);
 		}
-		else if((*iter).field_label == "struct"){
+		else if((*iter).field_label == "struct") {
 			create_data_struct(*iter, set_builder);
 		}
 	}
@@ -35,7 +35,7 @@ void Mongo_Struct::create_data(int64_t key_index){
 				BSON("$set" << set_builder.obj() ), true);
 }
 
-void Mongo_Struct::load_data(int64_t key_index, Block_Buffer &buffer){
+void Mongo_Struct::load_data(int64_t key_index, Block_Buffer &buffer) {
 	std::vector<BSONObj> total_record;
 	if(key_index == 0) {
 		//加载master公共数据，返回消息是数据列表，需要写入长度
@@ -53,32 +53,32 @@ void Mongo_Struct::load_data(int64_t key_index, Block_Buffer &buffer){
 	for (std::vector<BSONObj>::iterator iter = total_record.begin();
 			iter != total_record.end(); ++iter) {
 		for(std::vector<Field_Info>::iterator it = field_vec_.begin();
-				it != field_vec_.end(); it++){
-			if((*it).field_label == "arg"){
+				it != field_vec_.end(); it++) {
+			if((*it).field_label == "arg") {
 				build_buffer_arg(*it, buffer, *iter);
 			}
-			else if((*it).field_label == "vector"){
+			else if((*it).field_label == "vector" || (*it).field_label == "map") {
 				build_buffer_vector(*it, buffer, *iter);
 			}
-			else if((*it).field_label == "struct"){
+			else if((*it).field_label == "struct") {
 				build_buffer_struct(*it, buffer, *iter);
 			}
 		}
 	}
 }
 
-void Mongo_Struct::save_data(Block_Buffer &buffer){
+void Mongo_Struct::save_data(Block_Buffer &buffer) {
 	BSONObjBuilder set_builder;
 	int64_t key_index = buffer.peek_int64();
 	for(std::vector<Field_Info>::iterator iter = field_vec_.begin();
-			iter != field_vec_.end(); iter++){
-		if((*iter).field_label == "arg"){
+			iter != field_vec_.end(); iter++) {
+		if((*iter).field_label == "arg") {
 			build_bson_arg(*iter, buffer, set_builder);
 		}
-		else if((*iter).field_label == "vector"){
+		else if((*iter).field_label == "vector" || (*iter).field_label == "map") {
 			build_bson_vector(*iter, buffer, set_builder);
 		}
-		else if((*iter).field_label == "struct"){
+		else if((*iter).field_label == "struct") {
 			build_bson_struct(*iter, buffer, set_builder);
 		}
 	}
@@ -88,10 +88,10 @@ void Mongo_Struct::save_data(Block_Buffer &buffer){
 	LOG_DEBUG("table %s save key_index:%ld", table_name_.c_str(), key_index);
 }
 
-void Mongo_Struct::save_data_vector(Block_Buffer &buffer){
+void Mongo_Struct::save_data_vector(Block_Buffer &buffer) {
 	uint16_t count = buffer.read_uint16();
 	LOG_DEBUG("table %s save size:%d", table_name_.c_str(), count);
-	for(int i = 0; i < count; i++){
+	for(int i = 0; i < count; i++) {
 		save_data(buffer);
 	}
 }
@@ -99,13 +99,13 @@ void Mongo_Struct::save_data_vector(Block_Buffer &buffer){
 void Mongo_Struct::delete_data(Block_Buffer &buffer) {
 	uint16_t count = buffer.read_uint16();
 	int64_t index = 0;
-	for(int i = 0; i < count; i++){
+	for(int i = 0; i < count; i++) {
 		index = buffer.read_int64();
 		MONGO_CONNECTION.remove(table_name_, MONGO_QUERY(key_index_ << (long long int)(index)));
 	}
 }
 
-void Mongo_Struct::create_data_arg(Field_Info &field_info, BSONObjBuilder &builder, int64_t key_index){
+void Mongo_Struct::create_data_arg(Field_Info &field_info, BSONObjBuilder &builder, int64_t key_index) {
 	if(field_info.field_type == "int8"){
 		int8_t value = 0;
 		builder << field_info.field_name << (int)value;
@@ -137,7 +137,7 @@ void Mongo_Struct::create_data_arg(Field_Info &field_info, BSONObjBuilder &build
 		builder << field_info.field_name << value;
 	}
 	else {
-		LOG_ERROR("Can not find the field_type:%s", field_info.field_type.c_str());
+		LOG_ERROR("Can not find the field_type:%s, struct_name:%s", field_info.field_type.c_str(), struct_name().c_str());
 	}
 }
 
@@ -146,9 +146,9 @@ void Mongo_Struct::create_data_vector(Field_Info &field_info, BSONObjBuilder &bu
 	builder << field_info.field_name << builder_vec;
 }
 
-void Mongo_Struct::create_data_struct(Field_Info &field_info, BSONObjBuilder &builder){
+void Mongo_Struct::create_data_struct(Field_Info &field_info, BSONObjBuilder &builder) {
 	Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(field_info.field_type);
-	if(iter == DB_MANAGER->db_struct_name_map().end()){
+	if(iter == DB_MANAGER->db_struct_name_map().end()) {
 		LOG_ERROR("Can not find the struct_name:%s", field_info.field_type.c_str());
 		return;
 	}
@@ -157,14 +157,14 @@ void Mongo_Struct::create_data_struct(Field_Info &field_info, BSONObjBuilder &bu
 	std::vector<Field_Info> field_vec = db_struct->field_vec();
 	BSONObjBuilder obj_builder;
 	for(std::vector<Field_Info>::iterator iter = field_vec.begin();
-			iter != field_vec.end(); iter++){
+			iter != field_vec.end(); iter++) {
 		if((*iter).field_label == "arg"){
 			create_data_arg(*iter, obj_builder, 0);
 		}
-		else if((*iter).field_label == "vector"){
+		else if((*iter).field_label == "vector" || (*iter).field_label == "map") {
 			create_data_vector(*iter, obj_builder);
 		}
-		else if((*iter).field_label == "struct"){
+		else if((*iter).field_label == "struct") {
 			create_data_struct(*iter, obj_builder);
 		}
 	}
@@ -172,36 +172,36 @@ void Mongo_Struct::create_data_struct(Field_Info &field_info, BSONObjBuilder &bu
 }
 
 void Mongo_Struct::build_buffer_arg(Field_Info &field_info, Block_Buffer &buffer, BSONObj &bsonobj) {
-	if(field_info.field_type == "int8"){
+	if(field_info.field_type == "int8") {
 		int8_t value = bsonobj[field_info.field_name].numberInt();
 		buffer.write_int8(value);
 	}
-	else if(field_info.field_type == "int16"){
+	else if(field_info.field_type == "int16") {
 		int16_t value = bsonobj[field_info.field_name].numberInt();
 		buffer.write_int16(value);
 	}
-	else if(field_info.field_type == "int32"){
+	else if(field_info.field_type == "int32") {
 		int32_t value = bsonobj[field_info.field_name].numberInt();
 		buffer.write_int32(value);
 	}
-	else if(field_info.field_type == "int64"){
+	else if(field_info.field_type == "int64") {
 		int64_t value = bsonobj[field_info.field_name].numberLong();
 		buffer.write_int64(value);
 	}
-	else if(field_info.field_type == "string"){
+	else if(field_info.field_type == "string") {
 		std::string value = bsonobj[field_info.field_name].valuestrsafe();
 		buffer.write_string(value);
 	}
-	else if(field_info.field_type == "bool"){
+	else if(field_info.field_type == "bool") {
 		bool value = bsonobj[field_info.field_name].numberInt();
 		buffer.write_bool(value);
 	}
-	else if(field_info.field_type == "double"){
+	else if(field_info.field_type == "double") {
 		double value = bsonobj[field_info.field_name].numberDouble();
 		buffer.write_double(value);
 	}
 	else {
-		LOG_ERROR("Can not find the field_type:%s", field_info.field_type.c_str());
+		LOG_ERROR("Can not find the field_type:%s, struct_name:%s", field_info.field_type.c_str(), struct_name().c_str());
 	}
 }
 
@@ -212,7 +212,7 @@ void Mongo_Struct::build_buffer_vector(Field_Info &field_info, Block_Buffer &buf
 
 	BSONObjIterator field_iter(fieldobj);
 	BSONObj obj;
-	if(is_struct(field_info.field_type)){
+	if(is_struct(field_info.field_type)) {
 		while (field_iter.more()) {
 			obj = field_iter.next().embeddedObject();
 			build_buffer_struct(field_info, buffer, obj);
@@ -228,7 +228,7 @@ void Mongo_Struct::build_buffer_vector(Field_Info &field_info, Block_Buffer &buf
 
 void Mongo_Struct::build_buffer_struct(Field_Info &field_info, Block_Buffer &buffer, BSONObj &bsonobj) {
 	Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(field_info.field_type);
-	if(iter == DB_MANAGER->db_struct_name_map().end()){
+	if(iter == DB_MANAGER->db_struct_name_map().end()) {
 		LOG_ERROR("Can not find the struct_name:%s", field_info.field_type.c_str());
 		return;
 	}
@@ -237,58 +237,58 @@ void Mongo_Struct::build_buffer_struct(Field_Info &field_info, Block_Buffer &buf
 	BSONObj fieldobj = bsonobj.getObjectField(field_info.field_type);
 	std::vector<Field_Info> field_vec = db_struct->field_vec();
 	for(std::vector<Field_Info>::iterator iter = field_vec.begin();
-			iter != field_vec.end(); iter++){
-		if((*iter).field_label == "arg"){
+			iter != field_vec.end(); iter++) {
+		if((*iter).field_label == "arg") {
 			build_buffer_arg(*iter, buffer, fieldobj);
 		}
-		else if((*iter).field_label == "vector"){
+		else if((*iter).field_label == "vector" || (*iter).field_label == "map") {
 			build_buffer_vector(*iter, buffer, fieldobj);
 		}
-		else if((*iter).field_label == "struct"){
+		else if((*iter).field_label == "struct") {
 			build_buffer_struct(*iter, buffer, fieldobj);
 		}
 	}
 }
 
 void Mongo_Struct::build_bson_arg(Field_Info &field_info, Block_Buffer &buffer, BSONObjBuilder &builder){
-	if(field_info.field_type == "int8"){
+	if(field_info.field_type == "int8") {
 		int8_t value = buffer.read_int8();
 		builder << field_info.field_name << (int)value;
 	}
-	else if(field_info.field_type == "int16"){
+	else if(field_info.field_type == "int16") {
 		int16_t value = buffer.read_int16();
 		builder << field_info.field_name << (int)value;
 	}
-	else if(field_info.field_type == "int32"){
+	else if(field_info.field_type == "int32") {
 		int32_t value = buffer.read_int32();
 		builder << field_info.field_name << (int)value;
 	}
-	else if(field_info.field_type == "int64"){
+	else if(field_info.field_type == "int64") {
 		int64_t value = buffer.read_int64();
 		builder << field_info.field_name << (long long int)value;
 	}
-	else if(field_info.field_type == "string"){
+	else if(field_info.field_type == "string") {
 		std::string value = buffer.read_string();
 		builder << field_info.field_name << value;
 	}
-	else if(field_info.field_type == "bool"){
+	else if(field_info.field_type == "bool") {
 		bool value = buffer.read_bool();
 		builder << field_info.field_name << value;
 	}
-	else if(field_info.field_type == "double"){
+	else if(field_info.field_type == "double") {
 		double value = buffer.read_double();
 		builder << field_info.field_name << value;
 	}
 	else {
-		LOG_ERROR("Can not find the field_type:%s", field_info.field_type.c_str());
+		LOG_ERROR("Can not find the field_type:%s, struct_name:%s", field_info.field_type.c_str(), struct_name().c_str());
 	}
 }
 
-void Mongo_Struct::build_bson_vector(Field_Info &field_info, Block_Buffer &buffer, BSONObjBuilder &builder){
+void Mongo_Struct::build_bson_vector(Field_Info &field_info, Block_Buffer &buffer, BSONObjBuilder &builder) {
 	std::vector<BSONObj> bson_vec;
 	uint16_t vec_size = buffer.read_uint16();
 
-	if(is_struct(field_info.field_type)){
+	if(is_struct(field_info.field_type)) {
 		for(uint16_t i = 0; i < vec_size; ++i) {
 			BSONObjBuilder obj_builder;
 			build_bson_struct(field_info, buffer, obj_builder);
@@ -308,7 +308,7 @@ void Mongo_Struct::build_bson_vector(Field_Info &field_info, Block_Buffer &buffe
 
 void Mongo_Struct::build_bson_struct(Field_Info &field_info, Block_Buffer &buffer, BSONObjBuilder &builder){
 	Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(field_info.field_type);
-	if(iter == DB_MANAGER->db_struct_name_map().end()){
+	if(iter == DB_MANAGER->db_struct_name_map().end()) {
 		LOG_ERROR("Can not find the struct_name:%s", field_info.field_type.c_str());
 		return;
 	}
@@ -317,14 +317,14 @@ void Mongo_Struct::build_bson_struct(Field_Info &field_info, Block_Buffer &buffe
 	std::vector<Field_Info> field_vec = db_struct->field_vec();
 	BSONObjBuilder obj_builder;
 	for(std::vector<Field_Info>::iterator iter = field_vec.begin();
-			iter != field_vec.end(); iter++){
+			iter != field_vec.end(); iter++) {
 		if((*iter).field_label == "arg"){
 			build_bson_arg(*iter, buffer, obj_builder);
 		}
-		else if((*iter).field_label == "vector"){
+		else if((*iter).field_label == "vector" || (*iter).field_label == "map") {
 			build_bson_vector(*iter, buffer, obj_builder);
 		}
-		else if((*iter).field_label == "struct"){
+		else if((*iter).field_label == "struct") {
 			build_bson_struct(*iter, buffer, obj_builder);
 		}
 	}

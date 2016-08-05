@@ -1,8 +1,3 @@
-/** 
-* This file was auto-generated. Please Do not edit
-*
-* [Version 1.4]
-*/
 
 if (typeof Msg_CM == "undefined") {
 	var Msg_CM = {};

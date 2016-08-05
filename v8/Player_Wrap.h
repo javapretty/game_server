@@ -20,10 +20,6 @@ Game_Player *unwrap_game_player(Local<Object> obj);
 
 //函数说明：game_player关闭连接 	参数：无	返回值：无
 void game_player_link_close(const FunctionCallbackInfo<Value>& args);
-//函数说明：发送成功的消息buffer到client 	参数：1.msg_id 2.buffer对象	返回值：无
-void game_player_respond_success_result(const FunctionCallbackInfo<Value>& args);
-//函数说明：发送错误消息号到client 	参数：1.msg_id 2.error_code	返回值：无
-void game_player_respond_error_result(const FunctionCallbackInfo<Value>& args);
 
 /////////////////////////////Master_Player相关函数////////////////////////////////////////
 Local<Object> wrap_master_player(Isolate* isolate, Master_Player *player);
@@ -31,9 +27,5 @@ Master_Player *unwrap_master_player(Local<Object> obj);
 
 //函数说明：master_player关闭连接 	参数：无	返回值：无
 void master_player_link_close(const FunctionCallbackInfo<Value>& args);
-//函数说明：发送成功的消息buffer到client 	参数：1.msg_id 2.buffer对象	返回值：无
-void master_player_respond_success_result(const FunctionCallbackInfo<Value>& args);
-//函数说明：发送错误消息号到client 	参数：1.msg_id 2.error_code	返回值：无
-void master_player_respond_error_result(const FunctionCallbackInfo<Value>& args);
 
 #endif /* PLAYER_WRAP_H_ */

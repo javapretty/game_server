@@ -30,7 +30,6 @@ public:
 
 protected:
 	inline bool is_struct(const std::string &type);
-	inline bool set_label(const std::string &src_label, std::string &dst_label);
 
 	std::string struct_name_;
 	std::string table_name_;
@@ -45,17 +44,6 @@ inline bool Base_Struct::is_struct(const std::string &field_type){
 			field_type == "uint16" || field_type == "uint32" || field_type == "uint64" || field_type == "double" || field_type == "bool" ||
 			field_type == "string") return false;
 	return true;
-}
-
-inline bool Base_Struct::set_label(const std::string &src_label, std::string &dst_label){
-	if(src_label == "arg" || src_label == "struct"){
-		dst_label = src_label;
-		return true;
-	} else if(src_label == "vector" || src_label == "unordered_map"){
-		dst_label = "vector";
-		return true;
-	}
-	return false;
 }
 
 #endif /* BASE_STRUCT_H_ */

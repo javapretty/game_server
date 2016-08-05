@@ -34,8 +34,6 @@ public:
 
 	Game_Player *pop_game_player(void);
 	int push_game_player(Game_Player *player);
-	Block_Buffer *pop_block_buffer(void);
-	int push_block_buffer(Block_Buffer *buf);
 
 	/// 发送数据接口
 	int send_to_gate(int gate_cid, Block_Buffer &buf);
@@ -126,14 +124,6 @@ inline Game_Player *Game_Manager::pop_game_player(void) {
 
 inline int Game_Manager::push_game_player(Game_Player *player) {
 	return game_player_pool_.push(player);
-}
-
-inline Block_Buffer *Game_Manager::pop_block_buffer(void) {
-	return block_pool_.pop();
-}
-
-inline int Game_Manager::push_block_buffer(Block_Buffer *buf) {
-	return block_pool_.push(buf);
 }
 
 inline void Game_Manager::push_drop_gate_cid(int cid) {

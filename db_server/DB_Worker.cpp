@@ -205,7 +205,8 @@ int DB_Worker::process_create_player(int cid, Create_Role_Info &role_info) {
 }
 
 int DB_Worker::process_save_player(int cid, int status, Block_Buffer &buffer) {
-	if (status == 1) {
+	bool logout = buffer.read_bool();
+	if (logout) {
 		//离线保存
 		std::string account = buffer.read_string();
 		save_player_data(buffer);

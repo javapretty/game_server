@@ -17,7 +17,6 @@ struct MSG {
 	virtual void serialize(Block_Buffer &buffer) const = 0;
 	virtual int deserialize(Block_Buffer &buffer) = 0;
 	virtual void reset(void) = 0;
-	virtual void print(void) = 0;
 };
 
 struct Create_Role_Info : public MSG {
@@ -31,7 +30,6 @@ struct Create_Role_Info : public MSG {
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
-	void print(void);
 };
 
 struct Create_Guild_Info : public MSG {
@@ -44,7 +42,6 @@ struct Create_Guild_Info : public MSG {
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
-	void print(void);
 };
 
 struct MSG_100000 : public MSG {
@@ -56,7 +53,6 @@ struct MSG_100000 : public MSG {
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
-	void print(void);
 };
 
 struct MSG_500000 : public MSG {
@@ -69,7 +65,6 @@ struct MSG_500000 : public MSG {
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
-	void print(void);
 };
 
 struct MSG_100001 : public MSG {
@@ -81,7 +76,6 @@ struct MSG_100001 : public MSG {
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
-	void print(void);
 };
 
 struct MSG_500001 : public MSG {
@@ -94,7 +88,6 @@ struct MSG_500001 : public MSG {
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
-	void print(void);
 };
 
 struct MSG_100002 : public MSG {
@@ -106,7 +99,6 @@ struct MSG_100002 : public MSG {
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
-	void print(void);
 };
 
 struct MSG_500002 : public MSG {
@@ -117,7 +109,6 @@ struct MSG_500002 : public MSG {
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
-	void print(void);
 };
 
 struct MSG_100003 : public MSG {
@@ -128,7 +119,6 @@ struct MSG_100003 : public MSG {
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
-	void print(void);
 };
 
 struct MSG_500003 : public MSG {
@@ -140,7 +130,6 @@ struct MSG_500003 : public MSG {
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
-	void print(void);
 };
 
 struct MSG_140000 : public MSG {
@@ -154,7 +143,6 @@ struct MSG_140000 : public MSG {
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
-	void print(void);
 };
 
 struct MSG_140001 : public MSG {
@@ -165,7 +153,6 @@ struct MSG_140001 : public MSG {
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
-	void print(void);
 };
 
 #endif /* INNER_MSG_H_ */

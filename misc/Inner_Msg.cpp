@@ -36,14 +36,6 @@ void Create_Role_Info::reset(void) {
 	career = 0;
 }
 
-void Create_Role_Info::print(void) {
-	printf("account: %s, ", account.c_str());
-	printf("role_name: %s, ", role_name.c_str());
-	printf("gender: %d, ", gender);
-	printf("career: %d, ", career);
-	printf("\n");
-}
-
 Create_Guild_Info::Create_Guild_Info(void) {
 	reset();
 }
@@ -70,13 +62,6 @@ void Create_Guild_Info::reset(void) {
 	chief_id = 0;
 }
 
-void Create_Guild_Info::print(void) {
-	printf("guild_id: %ld, ", guild_id);
-	printf("guild_name: %s, ", guild_name.c_str());
-	printf("chief_id: %ld, ", chief_id);
-	printf("\n");
-}
-
 MSG_100000::MSG_100000(void) {
 	reset();
 }
@@ -98,12 +83,6 @@ int MSG_100000::deserialize(Block_Buffer &buffer) {
 void MSG_100000::reset(void) {
 	account.clear();
 	password.clear();
-}
-
-void MSG_100000::print(void) {
-	printf("account: %s, ", account.c_str());
-	printf("password: %s, ", password.c_str());
-	printf("\n");
 }
 
 MSG_500000::MSG_500000(void) {
@@ -132,13 +111,6 @@ void MSG_500000::reset(void) {
 	session.clear();
 }
 
-void MSG_500000::print(void) {
-	printf("ip: %s, ", ip.c_str());
-	printf("port: %d, ", port);
-	printf("session: %s, ", session.c_str());
-	printf("\n");
-}
-
 MSG_100001::MSG_100001(void) {
 	reset();
 }
@@ -160,12 +132,6 @@ int MSG_100001::deserialize(Block_Buffer &buffer) {
 void MSG_100001::reset(void) {
 	account.clear();
 	password.clear();
-}
-
-void MSG_100001::print(void) {
-	printf("account: %s, ", account.c_str());
-	printf("password: %s, ", password.c_str());
-	printf("\n");
 }
 
 MSG_500001::MSG_500001(void) {
@@ -194,13 +160,6 @@ void MSG_500001::reset(void) {
 	session.clear();
 }
 
-void MSG_500001::print(void) {
-	printf("ip: %s, ", ip.c_str());
-	printf("port: %d, ", port);
-	printf("session: %s, ", session.c_str());
-	printf("\n");
-}
-
 MSG_100002::MSG_100002(void) {
 	reset();
 }
@@ -224,12 +183,6 @@ void MSG_100002::reset(void) {
 	session.clear();
 }
 
-void MSG_100002::print(void) {
-	printf("account: %s, ", account.c_str());
-	printf("session: %s, ", session.c_str());
-	printf("\n");
-}
-
 MSG_500002::MSG_500002(void) {
 	reset();
 }
@@ -250,11 +203,6 @@ void MSG_500002::reset(void) {
 	account.clear();
 }
 
-void MSG_500002::print(void) {
-	printf("account: %s, ", account.c_str());
-	printf("\n");
-}
-
 MSG_100003::MSG_100003(void) {
 	reset();
 }
@@ -273,11 +221,6 @@ int MSG_100003::deserialize(Block_Buffer &buffer) {
 
 void MSG_100003::reset(void) {
 	client_time = 0;
-}
-
-void MSG_100003::print(void) {
-	printf("client_time: %d, ", client_time);
-	printf("\n");
 }
 
 MSG_500003::MSG_500003(void) {
@@ -301,12 +244,6 @@ int MSG_500003::deserialize(Block_Buffer &buffer) {
 void MSG_500003::reset(void) {
 	client_time = 0;
 	server_time = 0;
-}
-
-void MSG_500003::print(void) {
-	printf("client_time: %d, ", client_time);
-	printf("server_time: %d, ", server_time);
-	printf("\n");
 }
 
 MSG_140000::MSG_140000(void) {
@@ -338,14 +275,6 @@ void MSG_140000::reset(void) {
 	gate_port = 0;
 }
 
-void MSG_140000::print(void) {
-	printf("account: %s, ", account.c_str());
-	printf("session: %s, ", session.c_str());
-	printf("gate_ip: %s, ", gate_ip.c_str());
-	printf("gate_port: %d, ", gate_port);
-	printf("\n");
-}
-
 MSG_140001::MSG_140001(void) {
 	reset();
 }
@@ -364,9 +293,4 @@ int MSG_140001::deserialize(Block_Buffer &buffer) {
 
 void MSG_140001::reset(void) {
 	account.clear();
-}
-
-void MSG_140001::print(void) {
-	printf("account: %s, ", account.c_str());
-	printf("\n");
 }

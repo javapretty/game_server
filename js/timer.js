@@ -30,7 +30,7 @@ function Timer() {
 	//注册game_server定时器
 	this.register_game_timer = function(interval, next_tick, handler) {
 		register_game_timer(game_timer_id, interval, next_tick);
-		game_timer_map.insert(game_timer_id, handler);
+		game_timer_map.set(game_timer_id, handler);
 		game_timer_id++;
 	}
 
@@ -42,7 +42,7 @@ function Timer() {
 	//注册master_server定时器
 	this.register_master_timer = function(interval, next_tick, handler) {
 		register_master_timer(master_timer_id, interval, next_tick);
-		master_timer_map.insert(master_timer_id, handler);
+		master_timer_map.set(master_timer_id, handler);
 		master_timer_id++;
 	}
 
@@ -54,30 +54,28 @@ function Timer() {
 	/////////////////////////////////定时器处理函数//////////////////////////////////
 	this.game_player_handler = function() {
 		var now = util.now_sec();
-		game_player_role_id_map.each(function(key,value,index) {
-			value.tick(now);
-			value.hero.tick(now);
-    	});
+		for (var value of game_player_role_id_map.values()) {
+  			value.tick(now);
+		}
 	}
 
 	this.game_daily_refresh_handler = function() {
-		game_player_role_id_map.each(function(key,value,index) {
-			value.daily_refresh();
-			value.shop.daily_refresh();
-    	});
+		for (var value of game_player_role_id_map.values()) {
+  			value.daily_refresh();
+		}
 	}
 	
 	this.master_player_handler = function() {
 		var now = util.now_sec();
-		master_player_role_id_map.each(function(key,value,index) {
-			value.tick(now);
-    	});
+		for (var value of master_player_role_id_map.values()) {
+  			value.tick(now);
+		}
 	}
 
 	this.master_daily_refresh_handler = function() {
-		master_player_role_id_map.each(function(key,value,index) {
-			value.daily_refresh();
-    	});
+		for (var value of master_player_role_id_map.values()) {
+  			value.daily_refresh();
+		}
 	}
 
 	this.master_data_save_handler = function() {
