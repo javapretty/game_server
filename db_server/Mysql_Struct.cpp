@@ -71,6 +71,11 @@ void Mysql_Struct::load_data(int64_t key_index, Block_Buffer &buffer) {
 void Mysql_Struct::save_data(Block_Buffer &buffer) {
 	std::string str_sql;
 	int64_t key_index = buffer.peek_int64();
+	LOG_DEBUG("table %s save key_index:%ld", table_name_.c_str(), key_index);
+	if (key_index <= 0) {
+		return;
+	}
+
 	for(std::vector<Field_Info>::iterator iter = field_vec_.begin();
 			iter != field_vec_.end(); iter++) {
 		if((*iter).field_label == "arg") {
@@ -88,8 +93,6 @@ void Mysql_Struct::save_data(Block_Buffer &buffer) {
 	char sql[512] = {0};
 	sprintf(sql, "UPDATE %s SET %s where %s=%ld", table_name_.c_str(), str_sql.c_str(), key_index_.c_str(), key_index);
 	MYSQL_CONNECTION->execute(sql);
-
-	LOG_DEBUG("table %s save key_index:%ld", table_name_.c_str(), key_index);
 }
 
 void Mysql_Struct::save_data_vector(Block_Buffer &buffer) {

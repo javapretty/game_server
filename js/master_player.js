@@ -38,8 +38,8 @@ Master_Player.prototype.load_player_data = function(game_cid, player_cid, player
 	master_player_game_cid_map.set(this.game_cid * 10000 + player_cid, this);
 	master_player_role_id_map.set(this.player_info.role_id, this);
 	master_player_role_name_map.set(this.player_info.role_name, this);
-
-	rank_manager.update_rank_level(this);
+	
+	rank_manager.update_rank(Rank_Type.LEVEL_RANK, this);
 }
 	
 //玩家离线，保存数据

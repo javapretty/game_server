@@ -271,7 +271,7 @@ void Msg_Struct::build_buffer_arg(Field_Info &field_info, Block_Buffer &buffer, 
 
 void Msg_Struct::build_buffer_vector(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate, v8::Local<v8::Value> value) {
 	if (!value->IsArray()) {
-		LOG_ERROR("field_name:%s is not vector, struct_name:%s", field_info.field_name.c_str(), struct_name().c_str());
+		LOG_ERROR("field_name:%s is not array, struct_name:%s", field_info.field_name.c_str(), struct_name().c_str());
 		buffer.write_uint16(0);
 		return;
 	}
@@ -301,8 +301,9 @@ void Msg_Struct::build_buffer_map(Field_Info &field_info, Block_Buffer &buffer, 
 	int16_t len = map->Size();
 	buffer.write_uint16(len);
 	Local<Array> array = map->AsArray();
+	//index N is the Nth key and index N + 1 is the Nth value.
 	if(is_struct(field_info.field_type)){
-		for (int i = 0; i < len * 2; ++i) {
+		for (int i = 0; i < len * 2; i = i + 2) {
 			Local<Value> element = array->Get(isolate->GetCurrentContext(), i + 1).ToLocalChecked();
 			build_buffer_struct(field_info, buffer, isolate, element);
 		}
@@ -312,7 +313,7 @@ void Msg_Struct::build_buffer_map(Field_Info &field_info, Block_Buffer &buffer, 
 		key_info.field_label = "args";
 		key_info.field_type = field_info.key_type;
 		key_info.field_name = field_info.key_name;
-		for (int i = 0; i < len * 2; ++i) {
+		for (int i = 0; i < len * 2; i = i + 2) {
 			Local<Value> key = array->Get(isolate->GetCurrentContext(), i).ToLocalChecked();
 			Local<Value> element = array->Get(isolate->GetCurrentContext(), i + 1).ToLocalChecked();
 			build_buffer_struct(key_info, buffer, isolate, key);
@@ -329,7 +330,7 @@ void Msg_Struct::build_buffer_struct(Field_Info &field_info, Block_Buffer &buffe
 	}
 
 	if (!value->IsObject()) {
-		LOG_ERROR("field_name:%s is not struct, struct_name:%s", field_info.field_name.c_str(), struct_name().c_str());
+		LOG_ERROR("field_type:%s field_name:%s is not object, struct_name:%s", field_info.field_type.c_str(), field_info.field_name.c_str(), struct_name().c_str());
 		return;
 	}
 

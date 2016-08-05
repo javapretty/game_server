@@ -70,6 +70,11 @@ void Mongo_Struct::load_data(int64_t key_index, Block_Buffer &buffer) {
 void Mongo_Struct::save_data(Block_Buffer &buffer) {
 	BSONObjBuilder set_builder;
 	int64_t key_index = buffer.peek_int64();
+	LOG_DEBUG("table %s save key_index:%ld", table_name_.c_str(), key_index);
+	if (key_index <= 0) {
+		return;
+	}
+
 	for(std::vector<Field_Info>::iterator iter = field_vec_.begin();
 			iter != field_vec_.end(); iter++) {
 		if((*iter).field_label == "arg") {
@@ -84,8 +89,6 @@ void Mongo_Struct::save_data(Block_Buffer &buffer) {
 	}
 	MONGO_CONNECTION.update(table_name_, MONGO_QUERY(key_index_ << (long long int)key_index),
 			BSON("$set" << set_builder.obj() ), true);
-
-	LOG_DEBUG("table %s save key_index:%ld", table_name_.c_str(), key_index);
 }
 
 void Mongo_Struct::save_data_vector(Block_Buffer &buffer) {
