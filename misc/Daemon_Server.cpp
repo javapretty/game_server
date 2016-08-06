@@ -154,7 +154,7 @@ void Daemon_Server::usage(void) {
 }
 
 int Daemon_Server::fork_exec_args(const char *exec_str, int server_type) {
-	LOG_DEBUG("exec_str = [%s], server_type = %d", exec_str, server_type);
+	LOG_INFO("exec_str = [%s], server_type = %d", exec_str, server_type);
 
 	std::vector<std::string> exec_str_tok;
 	std::istringstream exec_str_stream(exec_str);

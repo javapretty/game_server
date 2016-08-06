@@ -119,7 +119,7 @@ int Login_Manager::unbind_login_player(Login_Player &player) {
 
 int Login_Manager::send_to_client(int player_cid, Block_Buffer &buf) {
 	if (player_cid < 2) {
-		LOG_INFO("player_cid = %d", player_cid);
+		LOG_ERROR("player_cid = %d", player_cid);
 		return -1;
 	}
 	return LOGIN_CLIENT_SERVER->send_block(player_cid, buf);
@@ -127,8 +127,8 @@ int Login_Manager::send_to_client(int player_cid, Block_Buffer &buf) {
 
 int Login_Manager::send_to_gate(int gate_cid, Block_Buffer &buf){
 	if (gate_cid < 2) {
-			LOG_INFO("gate_cid = %d", gate_cid);
-			return -1;
+		LOG_ERROR("gate_cid = %d", gate_cid);
+		return -1;
 	}
 
 	return LOGIN_GATE_SERVER->send_block(gate_cid, buf);
@@ -139,7 +139,7 @@ int Login_Manager::close_client(int player_cid) {
 		Close_Info info(player_cid, tick_time());
 		close_list_.push_back(info);
 	} else {
-		LOG_TRACE("player_cid < 2");
+		LOG_ERROR("close_client, player_cid < 2");
 	}
 	return 0;
 }
@@ -164,7 +164,7 @@ int Login_Manager::self_close_process(void) {
 	int i = 0;
 	while (++i < 60) {
 		sleep(1);
-		LOG_DEBUG("login server has user:%d", player_cid_map_.size());
+		LOG_INFO("login server has user:%d", player_cid_map_.size());
 		if (player_cid_map_.size() == 0)
 			break;
 	}
@@ -300,7 +300,7 @@ void Login_Manager::get_server_info(Block_Buffer &buf) {
 }
 
 void Login_Manager::object_pool_size(void) {
-	LOG_DEBUG("login block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
+	LOG_INFO("login block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
 }
 
 void Login_Manager::free_cache(void) {

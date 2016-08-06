@@ -70,7 +70,7 @@ void Mongo_Struct::load_data(int64_t key_index, Block_Buffer &buffer) {
 void Mongo_Struct::save_data(Block_Buffer &buffer) {
 	BSONObjBuilder set_builder;
 	int64_t key_index = buffer.peek_int64();
-	LOG_DEBUG("table %s save key_index:%ld", table_name_.c_str(), key_index);
+	LOG_INFO("table %s save key_index:%ld", table_name_.c_str(), key_index);
 	if (key_index <= 0) {
 		return;
 	}
@@ -93,7 +93,7 @@ void Mongo_Struct::save_data(Block_Buffer &buffer) {
 
 void Mongo_Struct::save_data_vector(Block_Buffer &buffer) {
 	uint16_t count = buffer.read_uint16();
-	LOG_DEBUG("table %s save size:%d", table_name_.c_str(), count);
+	LOG_INFO("table %s save size:%d", table_name_.c_str(), count);
 	for(int i = 0; i < count; i++) {
 		save_data(buffer);
 	}

@@ -56,7 +56,6 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-
 inline int DB_Worker::push_data_block(Block_Buffer *buf) {
 	data_list_.push_back(buf);
 	return 0;

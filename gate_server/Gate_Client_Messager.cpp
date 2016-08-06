@@ -33,7 +33,7 @@ int Gate_Client_Messager::process_block(Block_Buffer &buf) {
 
 	Gate_Player *player = 0;
 	if ((player = GATE_MANAGER->find_cid_gate_player(player_cid)) == 0) {
-		LOG_DEBUG("cannot find player_cid = %d msg_id = %d ", player_cid, msg_id);
+		LOG_ERROR("cannot find player_cid = %d msg_id = %d ", player_cid, msg_id);
 		return GATE_MANAGER->close_client(player_cid);
 	}
 
@@ -41,7 +41,7 @@ int Gate_Client_Messager::process_block(Block_Buffer &buf) {
 	if (GATE_MANAGER->verify_pack()) {
 		int result = player->verify_msg_info(serial_cipher, msg_time_cipher);
 		if (result != 0) {
-			LOG_DEBUG("player_cid:%d, len:%d, serial_cipher:%llu, msg_time_cipher:%llu, msg_id:%ld, status:%d", player_cid, len, serial_cipher, msg_time_cipher, msg_id, status);
+			LOG_ERROR("msg verify error, player_cid:%d, len:%d, serial_cipher:%llu, msg_time_cipher:%llu, msg_id:%ld, status:%d", player_cid, len, serial_cipher, msg_time_cipher, msg_id, status);
 			Block_Buffer res_buf;
 			res_buf.make_inner_message(msg_id, result);
 			res_buf.finish_message();
@@ -107,7 +107,7 @@ int Gate_Client_Messager::connect_gate(int cid, Block_Buffer &buf) {
 	//重复登录
 	else
 	{
-		LOG_DEBUG("connect_gate, repeat connect, cid:%d, account:%s, session:%s", cid, msg.account.c_str(), msg.session.c_str());
+		LOG_WARN("connect_gate, repeat connect, cid:%d, account:%s, session:%s", cid, msg.account.c_str(), msg.session.c_str());
 		Block_Buffer res_buf;
 		res_buf.make_inner_message(RES_CONNECT_GATE, ERROR_DISCONNECT_RELOGIN);
 		res_buf.finish_message();

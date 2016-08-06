@@ -51,7 +51,7 @@ void Gate_Manager::run_handler(void) {
 
 int Gate_Manager::send_to_client(int player_cid, Block_Buffer &buf) {
 	if (player_cid < 2) {
-		LOG_INFO("player_cid = %d", player_cid);
+		LOG_ERROR("player_cid = %d", player_cid);
 		return -1;
 	}
 	return GATE_CLIENT_SERVER->send_block(player_cid, buf);
@@ -60,7 +60,7 @@ int Gate_Manager::send_to_client(int player_cid, Block_Buffer &buf) {
 int Gate_Manager::send_to_game(Block_Buffer &buf) {
 	int game_cid = GATE_GAME_CONNECTOR->get_cid();
 	if (game_cid < 2) {
-		LOG_INFO("game_cid = %d", game_cid);
+		LOG_ERROR("game_cid = %d", game_cid);
 		return -1;
 	}
 	return GATE_GAME_CONNECTOR->send_block(game_cid, buf);
@@ -69,7 +69,7 @@ int Gate_Manager::send_to_game(Block_Buffer &buf) {
 int Gate_Manager::send_to_login(Block_Buffer &buf) {
 	int login_cid = GATE_LOGIN_CONNECTOR->get_cid();
 	if (login_cid < 2) {
-		LOG_INFO("login_cid = %d", login_cid);
+		LOG_ERROR("login_cid = %d", login_cid);
 		return -1;
 	}
 	return GATE_LOGIN_CONNECTOR->send_block(login_cid, buf);
@@ -78,7 +78,7 @@ int Gate_Manager::send_to_login(Block_Buffer &buf) {
 int Gate_Manager::send_to_master(Block_Buffer &buf) {
 	int master_cid = GATE_MASTER_CONNECTOR->get_cid();
 	if (master_cid < 2) {
-		LOG_INFO("master_cid = %d", master_cid);
+		LOG_ERROR("master_cid = %d", master_cid);
 		return -1;
 	}
 	return GATE_MASTER_CONNECTOR->send_block(master_cid, buf);
@@ -89,7 +89,7 @@ int Gate_Manager::close_client(int player_cid) {
 		Close_Info info(player_cid, tick_time());
 		close_list_.push_back(info);
 	} else {
-		LOG_TRACE("player_cid < 2");
+		LOG_ERROR("close_client, player_cid < 2");
 	}
 	return 0;
 }
@@ -195,7 +195,7 @@ int Gate_Manager::self_close_process(void) {
 	int i = 0;
 	while (++i < 60) {
 		sleep(1);
-		LOG_DEBUG("gate server has user:%d", player_cid_map_.size());
+		LOG_INFO("gate server has user:%d", player_cid_map_.size());
 		if (player_cid_map_.size() == 0)
 			break;
 	}
@@ -312,15 +312,15 @@ void Gate_Manager::get_server_info(Block_Buffer &buf) {
 void Gate_Manager::get_server_ip_port(int player_cid, std::string &ip, int &port) {
 	Svc* svc = GATE_CLIENT_SERVER->find_svc(player_cid);
 	if (!svc) {
-		LOG_DEBUG("get_server_ip_port error, cid:%d", player_cid);
+		LOG_ERROR("get_server_ip_port error, cid:%d", player_cid);
 		return;
 	}
 	svc->get_local_addr(ip, port);
 }
 
 void Gate_Manager::object_pool_size(void) {
-	LOG_DEBUG("gate block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
-	LOG_DEBUG("gate player_pool_ free = %d, used = %d", gate_player_pool_.free_obj_list_size(), gate_player_pool_.used_obj_list_size());
+	LOG_INFO("gate block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
+	LOG_INFO("gate player_pool_ free = %d, used = %d", gate_player_pool_.free_obj_list_size(), gate_player_pool_.used_obj_list_size());
 }
 
 void Gate_Manager::free_cache(void) {

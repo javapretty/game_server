@@ -41,7 +41,7 @@ void Master_Manager::run_handler(void) {
 
 int Master_Manager::send_to_gate(int gate_cid, Block_Buffer &buf) {
 	if (gate_cid < 2) {
-		LOG_INFO("gate_cid = %d", gate_cid);
+		LOG_ERROR("gate_cid = %d", gate_cid);
 		return -1;
 	}
 	return MASTER_GATE_SERVER->send_block(gate_cid, buf);
@@ -49,7 +49,7 @@ int Master_Manager::send_to_gate(int gate_cid, Block_Buffer &buf) {
 
 int Master_Manager::send_to_game(int game_cid, Block_Buffer &buf) {
 	if (game_cid < 2) {
-		LOG_INFO("game_cid = %d", game_cid);
+		LOG_ERROR("game_cid = %d", game_cid);
 		return -1;
 	}
 	return MASTER_GAME_SERVER->send_block(game_cid, buf);
@@ -58,7 +58,7 @@ int Master_Manager::send_to_game(int game_cid, Block_Buffer &buf) {
 int Master_Manager::send_to_db(Block_Buffer &buf) {
 	int db_cid = MASTER_DB_CONNECTOR->get_cid();
 	if (db_cid < 2) {
-		LOG_INFO("db_cid = %d", db_cid);
+		LOG_ERROR("db_cid = %d", db_cid);
 		return -1;
 	}
 	return MASTER_DB_CONNECTOR->send_block(db_cid, buf);
@@ -67,7 +67,7 @@ int Master_Manager::send_to_db(Block_Buffer &buf) {
 int Master_Manager::send_to_log(Block_Buffer &buf) {
 	int log_cid = LOG_CONNECTOR->get_cid();
 	if (log_cid < 2) {
-		LOG_INFO("log_cid = %d", log_cid);
+		LOG_ERROR("log_cid = %d", log_cid);
 		return -1;
 	}
 	return LOG_CONNECTOR->send_block(log_cid, buf);
@@ -91,7 +91,7 @@ int Master_Manager::self_close_process(void) {
 	int i = 0;
 	while (++i < 60) {
 		sleep(1);
-		LOG_DEBUG("master server has user:%d", player_gate_cid_map_.size());
+		LOG_INFO("master server has user:%d", player_gate_cid_map_.size());
 		if (player_gate_cid_map_.size() == 0)
 			break;
 	}
@@ -224,8 +224,8 @@ void Master_Manager::get_server_info(Block_Buffer &buf) {
 }
 
 void Master_Manager::object_pool_size(void) {
-	LOG_DEBUG("master block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
-	LOG_DEBUG("master player_pool_ free = %d, used = %d", master_player_pool_.free_obj_list_size(), master_player_pool_.used_obj_list_size());
+	LOG_INFO("master block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
+	LOG_INFO("master player_pool_ free = %d, used = %d", master_player_pool_.free_obj_list_size(), master_player_pool_.used_obj_list_size());
 }
 
 void Master_Manager::free_cache(void) {

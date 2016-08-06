@@ -96,7 +96,7 @@ void DB_Worker::process_list(void) {
 
 int DB_Worker::process_data_block(Block_Buffer *buf) {
 	if (! buf || !buf->is_legal()) {
-		LOG_ERROR("buf error, buf.read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
+		LOG_ERROR("buf is not legal, buf.read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
 		return -1;
 	}
 

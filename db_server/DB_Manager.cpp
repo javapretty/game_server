@@ -109,7 +109,7 @@ int DB_Manager::push_data_block(Block_Buffer *buf) {
 
 int DB_Manager::send_data_block(int cid, Block_Buffer &buf) {
 	if (cid < 2) {
-		LOG_INFO("cid = %d", cid);
+		LOG_ERROR("cid = %d", cid);
 		return -1;
 	}
 	return DB_SERVER->send_block(cid, buf);

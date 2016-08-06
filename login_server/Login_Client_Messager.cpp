@@ -93,7 +93,7 @@ int Login_Client_Messager::client_register(int cid, int msg_id, Block_Buffer &bu
 	}
 	else
 	{//fail
-		LOG_DEBUG("client_register fail status:%d", status);
+		LOG_WARN("client_register fail status:%d", status);
 		Block_Buffer res_buf;
 		res_buf.make_inner_message(RES_CLIENT_REGISTER, ERROR_REGISTER_VERIFY_FAIL);
 		res_buf.finish_message();
@@ -120,9 +120,8 @@ int Login_Client_Messager::client_login(int cid, int msg_id, Block_Buffer &buf) 
 		LOGIN_MANAGER->get_gate_ip(msg.account, res_msg.ip, res_msg.port);
 		make_session(msg.account, res_msg.session);
 		player = LOGIN_MANAGER->pop_login_player();
-
 		if (! player) {
-			LOG_INFO("login_player_pool_.pop error");
+			LOG_ERROR("login_player_pool_.pop error");
 			return -1;
 		}
 
@@ -146,7 +145,7 @@ int Login_Client_Messager::client_login(int cid, int msg_id, Block_Buffer &buf) 
 	}
 	else
 	{
-		LOG_DEBUG("client_login fail, account:%s, password:%s", msg.account.c_str(), msg.password.c_str());
+		LOG_WARN("client_login fail, account:%s, password:%s", msg.account.c_str(), msg.password.c_str());
 		Block_Buffer res_buf;
 		res_buf.make_inner_message(RES_CLIENT_LOGIN, ERROR_LOGIN_VERIFY_FAIL);
 		res_buf.finish_message();

@@ -236,9 +236,8 @@ void Report_Exception(Isolate* isolate, TryCatch* try_catch,  const char* file_p
   if (message.IsEmpty()) {
 	  	LOG_ERROR("%s\n", exception_string);
   } else {
-    // Print (filename):(line number): (message).
+	  	// Print error filename, linenum
 	  Local<Context> context(isolate->GetCurrentContext());
-
     int linenum = message->GetLineNumber(context).FromJust();
     if (file_path == NULL) {
     		String::Utf8Value filename(message->GetScriptResourceName());

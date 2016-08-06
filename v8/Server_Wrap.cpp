@@ -21,14 +21,14 @@
 
 void register_game_timer(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 3) {
-			LOG_ERROR("register timer args error, length: %d\n", args.Length());
-			return;
+		LOG_ERROR("register timer args error, length: %d\n", args.Length());
+		return;
 	}
 
 	int timer_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int interval = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int first_tick_internal = args[2]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	LOG_ERROR("register_game_timer,timer_id:%d, interval:%dms, first_tick_internal:%ds\n", timer_id, interval, first_tick_internal);
+	LOG_INFO("register_game_timer,timer_id:%d, interval:%dms, first_tick_internal:%ds\n", timer_id, interval, first_tick_internal);
 	GAME_TIMER->register_v8_handler(timer_id, interval, first_tick_internal);
 }
 
@@ -202,14 +202,14 @@ void game_close_client(const FunctionCallbackInfo<Value>& args) {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void register_master_timer(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 3) {
-			LOG_ERROR("register_master_timer args error, length: %d\n", args.Length());
-			return;
+		LOG_ERROR("register_master_timer args error, length: %d\n", args.Length());
+		return;
 	}
 
 	int timer_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int interval = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int first_tick_internal = args[2]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	LOG_ERROR("register_master_timer,timer_id:%d, interval:%dms, first_tick_internal:%ds\n", timer_id, interval, first_tick_internal);
+	LOG_INFO("register_master_timer,timer_id:%d, interval:%dms, first_tick_internal:%ds\n", timer_id, interval, first_tick_internal);
 	MASTER_TIMER->register_v8_handler(timer_id, interval, first_tick_internal);
 }
 

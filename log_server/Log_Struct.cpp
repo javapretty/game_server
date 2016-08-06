@@ -34,7 +34,7 @@ void Log_Struct::save_data(Block_Buffer &buffer) {
 	sprintf(str_sql, "INSERT INTO %s (%s) VALUES (%s)", table_name_.c_str(), str_name.c_str(), str_value.c_str());
 	LOG_DB->connection()->execute(str_sql);
 
-	LOG_DEBUG("table %s save key_index:%ld", table_name_.c_str(), key_index);
+	LOG_INFO("table %s save key_index:%ld", table_name_.c_str(), key_index);
 }
 
 void Log_Struct::build_sql_arg(Field_Info &field_info, Block_Buffer &buffer, std::string &str_name, std::string &str_value) {
