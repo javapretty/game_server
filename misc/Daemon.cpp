@@ -48,19 +48,19 @@ int Daemon::handle_timeout(const Time_Value &tv) {
 	if (ppid == 1) {
 		watcher_->remove(this);
 		switch (type_) {
-		case Log::LOG_LOGIN_SERVER: {
+		case LOG_LOGIN_SERVER: {
 			LOGIN_MANAGER->self_close_process();
 			break;
 		}
-		case Log::LOG_GATE_SERVER: {
+		case LOG_GATE_SERVER: {
 			GATE_MANAGER->self_close_process();
 			break;
 		}
-		case Log::LOG_GAME_SERVER: {
+		case LOG_GAME_SERVER: {
 			GAME_MANAGER->self_close_process();
 			break;
 		}
-		case Log::LOG_MASTER_SERVER: {
+		case LOG_MASTER_SERVER: {
 			MASTER_MANAGER->self_close_process();
 			break;
 		}
@@ -85,7 +85,7 @@ int Daemon::start_log_client(void) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 Daemon_Log::Daemon_Log(void)
-: Daemon(Log::LOG_LOG_SERVER)
+: Daemon(LOG_LOG_SERVER)
 { }
 
 Daemon_Log::~Daemon_Log(void) { }
@@ -106,7 +106,7 @@ void Daemon_Log::destroy(void) {
 }
 
 void Daemon_Log::start_server(void) {
-	Log::instance()->set_log_type(Log::LOG_LOG_SERVER);
+	Log::instance()->set_log_type(LOG_LOG_SERVER);
 	server_conf_.init_server_conf();
 
 	//Log_Server
@@ -130,7 +130,7 @@ void Daemon_Log::start_client(void) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 Daemon_DB::Daemon_DB(void)
-: Daemon(Log::LOG_DB_SERVER)
+: Daemon(LOG_DB_SERVER)
 { }
 
 Daemon_DB::~Daemon_DB(void) { }
@@ -152,7 +152,7 @@ void Daemon_DB::destroy(void) {
 
 void Daemon_DB::start_server(void) {
 	/// start log client
-	Log::instance()->set_log_type(Log::LOG_DB_SERVER);
+	Log::instance()->set_log_type(LOG_DB_SERVER);
 	server_conf_.init_server_conf();
 
 	//DB_Server
@@ -176,7 +176,7 @@ void Daemon_DB::start_client(void) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 Daemon_Login::Daemon_Login(void)
-: Daemon(Log::LOG_LOGIN_SERVER)
+: Daemon(LOG_LOGIN_SERVER)
 { }
 
 Daemon_Login::~Daemon_Login(void) { }
@@ -198,7 +198,7 @@ void Daemon_Login::destroy(void) {
 
 void Daemon_Login::start_server(void) {
 	/// start log client
-	Log::instance()->set_log_type(Log::LOG_LOGIN_SERVER);
+	Log::instance()->set_log_type(LOG_LOGIN_SERVER);
 	server_conf_.init_server_conf();
 
 	/// Login Client Server
@@ -229,7 +229,7 @@ void Daemon_Login::start_client(void) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 Daemon_Master::Daemon_Master(void)
-: Daemon(Log::LOG_MASTER_SERVER)
+: Daemon(LOG_MASTER_SERVER)
 { }
 
 Daemon_Master::~Daemon_Master(void) { }
@@ -251,7 +251,7 @@ void Daemon_Master::destroy(void) {
 
 void Daemon_Master::start_server(void) {
 	/// start log client
-	Log::instance()->set_log_type(Log::LOG_MASTER_SERVER);
+	Log::instance()->set_log_type(LOG_MASTER_SERVER);
 	server_conf_.init_server_conf();
 
 	/// Master Gate Server
@@ -294,7 +294,7 @@ void Daemon_Master::start_client(void) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 Daemon_Game::Daemon_Game(void)
-: Daemon(Log::LOG_GAME_SERVER)
+: Daemon(LOG_GAME_SERVER)
 { }
 
 Daemon_Game::~Daemon_Game(void) { }
@@ -316,7 +316,7 @@ void Daemon_Game::destroy(void) {
 
 void Daemon_Game::start_server(void) {
 	/// start log client
-	Log::instance()->set_log_type(Log::LOG_GAME_SERVER);
+	Log::instance()->set_log_type(LOG_GAME_SERVER);
 	server_conf_.init_server_conf();
 
 	/// Game Gate Server
@@ -362,7 +362,7 @@ void Daemon_Game::start_client(void) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 Daemon_Gate::Daemon_Gate(void)
-: Daemon(Log::LOG_GATE_SERVER)
+: Daemon(LOG_GATE_SERVER)
 { }
 
 Daemon_Gate::~Daemon_Gate(void) { }
@@ -384,7 +384,7 @@ void Daemon_Gate::destroy(void) {
 
 void Daemon_Gate::start_server(void) {
 	/// start log client
-	Log::instance()->set_log_type(Log::LOG_GATE_SERVER);
+	Log::instance()->set_log_type(LOG_GATE_SERVER);
 	server_conf_.init_server_conf();
 
 	/// Gate Client Server

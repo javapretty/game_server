@@ -9,9 +9,19 @@
 
 #include "boost/unordered_map.hpp"
 #include "Time_Value.h"
-#include "Misc.h"
+#include "Public_Define.h"
 #include "Message.h"
 #include "Inner_Msg.h"
+
+enum Log_Server_Type {
+	LOG_MISC 				= 0,
+	LOG_LOG_SERVER 		= 1,
+	LOG_DB_SERVER			=	2,
+	LOG_LOGIN_SERVER	=	3,
+	LOG_MASTER_SERVER	=	4,
+	LOG_GAME_SERVER		=	5,
+	LOG_GATE_SERVER		=	6,
+};
 
 enum Error_Code {
 	ERROR_SERVER_INNER 							= 10000,				//服务器内部错误

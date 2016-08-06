@@ -9,13 +9,11 @@
 #include <sys/types.h>
 #include <time.h>
 #include <errno.h>
-#include <cstdio>
-#include <string>
 #include <sstream>
 #include "Log.h"
 #include "Block_Buffer.h"
-#include "Time_Value.h"
 #include "Log_File.h"
+#include "Public_Struct.h"
 
 Log_File::Log_File(void) { }
 
@@ -36,31 +34,31 @@ int Log_File::make_log_filepath(File_Info &file_info) {
 	file_info.file_path.clear();
 
 	switch (file_info.type) {
-	case Log::LOG_MISC: {
+	case LOG_MISC: {
 		file_info.file_path.append("./log/misc-");
 		break;
 	}
-	case Log::LOG_LOG_SERVER: {
+	case LOG_LOG_SERVER: {
 		file_info.file_path.append("./log/logserver-");
 		break;
 	}
-	case Log::LOG_DB_SERVER: {
+	case LOG_DB_SERVER: {
 		file_info.file_path.append("./log/dbserver-");
 		break;
 	}
-	case Log::LOG_LOGIN_SERVER: {
+	case LOG_LOGIN_SERVER: {
 		file_info.file_path.append("./log/loginserver-");
 		break;
 	}
-	case Log::LOG_MASTER_SERVER: {
+	case LOG_MASTER_SERVER: {
 		file_info.file_path.append("./log/masterserver-");
 		break;
 	}
-	case Log::LOG_GAME_SERVER: {
+	case LOG_GAME_SERVER: {
 		file_info.file_path.append("./log/gameserver-");
 		break;
 	}
-	case Log::LOG_GATE_SERVER: {
+	case LOG_GATE_SERVER: {
 		file_info.file_path.append("./log/gateserver-");
 		break;
 	}
