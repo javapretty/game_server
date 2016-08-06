@@ -1,0 +1,186 @@
+<root>
+
+<!--自定义类型在此定义-->
+	<Cid_Info>
+		<arg type="int32" name="gate_cid"/>
+		<arg type="int32" name="player_cid"/>
+	</Cid_Info>
+	
+	<Create_Role_Info>
+    	<arg type="string" name="account"/>
+    	<arg type="string" name="role_name"/>
+    	<arg type="int8" name="gender"/>
+    	<arg type="int8" name="career"/>
+	</Create_Role_Info>
+	
+	<Create_Guild_Info>
+		<arg type="int64" name="guild_id"/>
+		<arg type="string" name="guild_name"/>
+		<arg type="int64" name="chief_id"/>
+	</Create_Guild_Info>
+	
+	<Role_Info>
+    	<arg type="int64" name="role_id" desc="玩家id"/>
+    	<arg type="string" name="role_name" desc="玩家名字"/>
+    	<arg type="string" name="account" desc="玩家账号名"/>
+    	<arg type="int32" name="level" desc="玩家等级"/>
+    	<arg type="int32" name="exp" desc="玩家经验"/>
+    	<arg type="int8" name="gender" desc="0(女)1(男)"/>
+    	<arg type="int8" name="career" desc="职业"/>
+    	<arg type="int32" name="vitality" desc="玩家体力"/>
+    	<arg type="int32" name="buy_vitality_times" desc="今天购买次数"/>
+    	<arg type="int32" name="vip_level" desc="vip等级"/>
+    	<arg type="int32" name="vip_exp" desc="vip经验"/>
+    	<arg type="int32" name="charge_gold" desc="总共充值的元宝数"/>
+	</Role_Info>
+
+	<Hero_Detail>
+		<arg type="int32" name="hero_id"/>
+		<arg type="int32" name="level"/>
+		<arg type="int32" name="exp"/>
+		<arg type="int32" name="star"/>
+		<arg type="int32" name="quality"/>
+		<arg type="int32" name="energy"/>
+		<vector type="int32" name="skill_info"/>
+		<vector type="Item_Info" name="equip_info"/>
+		<vector type="Property_Detail" name="property_info"/>
+	</Hero_Detail>
+
+	<Item_Info>
+		<arg type="int32" name="item_id"/>
+		<arg type="int32" name="amount"/>
+		<arg type="int32" name="level"/>
+		<arg type="int32" name="exp"/>
+	</Item_Info>
+
+	<Property_Detail>
+		<arg type="int32" name="type"/>
+		<arg type="int32" name="name"/>
+	</Property_Detail>
+	
+	<Mail_Detail>
+		<arg type="bool" name="pickup"/>
+		<arg type="int32" name="mail_id"/>
+		<arg type="int32" name="send_time"/>
+		<arg type="int32" name="sender_type"/>
+		<arg type="int64" name="sender_id"/>
+		<arg type="string" name="sender_name"/>
+		<arg type="string" name="mail_title"/>
+		<arg type="string" name="mail_content"/>
+		<arg type="int32" name="copper"/>
+		<arg type="int32" name="gold"/>
+		<vector type="Item_Info" name="item_info"/>
+	</Mail_Detail>
+
+	<Guild_Member_Detail>
+		<arg type="int64" name="role_id"/>
+		<arg type="string" name="role_name"/>
+		<arg type="int32" name="level"/>
+		<arg type="int32" name="career"/>
+	</Guild_Member_Detail>
+	
+	<Rank_Member>
+		<arg type="int64" name="role_id"/>
+		<arg type="string" name="role_name"/>
+		<arg type="int32" name="value"/>
+	</Rank_Member>
+	
+	<Master_Player_Info>
+    	<arg type="int64" name="role_id"/>
+    	<arg type="string" name="account"/>
+    	<arg type="string" name="role_name"/>
+    	<arg type="int32" name="level"/>
+    	<arg type="int32" name="gender"/>
+    	<arg type="int32" name="career"/>
+    	<arg type="int32" name="vip_level"/>
+	</Master_Player_Info>
+	
+<!--游戏内需要保存数据库的数据添加head标签,并添加dbname和index属性(需要直接发消息到数据库保存的应赋值给(msg_id) -->
+	<Game_Player_Info>
+		<head table_name="role" key_index="role_id"/>
+		<arg type="int64" name="role_id"/>
+		<arg type="string" name="role_name"/>
+		<arg type="string" name="account"/>
+		<arg type="string" name="client_ip"/>
+		<arg type="int32" name="agent_num"/>
+		<arg type="int32" name="server_num"/>
+		<arg type="int32" name="level"/>
+		<arg type="int32" name="exp"/>
+		<arg type="int8" name="gender"/>
+		<arg type="int8" name="career"/>
+		<arg type="int32" name="create_time"/>
+		<arg type="int32" name="login_time"/>
+		<arg type="int32" name="logout_time"/>
+		<arg type="int32" name="vitality"/>
+		<arg type="int32" name="buy_vitality_times"/>
+		<arg type="int32" name="vip_level"/>
+		<arg type="int32" name="vip_exp"/>
+		<arg type="int32" name="charge_gold"/>
+		<arg type="int32" name="guild_id"/>
+		<arg type="string" name="guild_name"/>
+	</Game_Player_Info>
+	
+	<Hero_Info>
+		<head table_name="hero" key_index="role_id"/>
+		<arg type="int64" name="role_id"/>
+		<map type="Hero_Detail" key_name="hero_id" key_type="int32" name="hero_map"/>
+	</Hero_Info>
+
+	<Bag_Info>
+		<head table_name="bag" key_index="role_id"/>
+		<arg type="int64" name="role_id"/>
+		<arg type="int32" name="copper"/>
+		<arg type="int32" name="gold"/>
+		<map type="Item_Info" key_type="int32" key_name="item_id" name="item_map"/>
+	</Bag_Info>
+	
+	<Mail_Info>
+		<head table_name="mail" key_index="role_id"/>
+		<arg type="int64" name="role_id"/>
+		<arg type="int32" name="total_count"/>
+		<map type="Mail_Detail" key_type="int32" key_name="mail_id" name="mail_map"/>
+	</Mail_Info>
+	
+	<Player_Data>
+		<!--玩家保存到数据库的数据-->
+		<struct type="Game_Player_Info" name="player_info"/>
+		<struct type="Hero_Info" name="hero_info"/>
+		<struct type="Bag_Info" name="bag_info"/>
+		<struct type="Mail_Info" name="mail_info"/>
+	</Player_Data>
+	
+	<Master_Data type="mem_only">
+		<!--master数据在此定义-->
+		<struct type="Guild_Info" name="guild_info"/>
+		<struct type="Offline_Info" name="offline_info"/>
+		<struct type="Rank_Info" name="rank_info"/>
+	</Master_Data>
+	
+	<Guild_Info>
+		<head table_name="guild" key_index="guild_id" msg_id="150103"/>
+		<arg type="int64" name="guild_id"/>
+		<arg type="string" name="guild_name"/>
+		<arg type="int64" name="chief_id"/>
+		<arg type="int32" name="create_time"/>
+		<arg type="bool" name="is_change"/>
+		<vector type="Guild_Member_Detail" name="apply_list"/>
+		<vector type="Guild_Member_Detail" name="member_list"/>
+	</Guild_Info>
+
+	<Offline_Info>
+		<head table_name="offline" key_index="role_id" msg_id="150104"/>
+		<arg type="int64" name="role_id"/>
+		<arg type="int64" name="guild_id"/>
+		<arg type="string" name="guild_name"/>
+		<arg type="int32" name="flag"/>
+	</Offline_Info>
+	
+	<Rank_Info>
+		<head table_name="rank" key_index="rank_type" msg_id="150105"/>
+		<arg type="int64" name="rank_type"/>
+		<arg type="int32" name="min_value"/>
+		<arg type="int64" name="min_role_id"/>
+		<map type="Rank_Member" key_type="int64" key_name="role_id" name="member_map"/>
+	</Rank_Info>
+
+</root>

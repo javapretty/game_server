@@ -7,6 +7,7 @@
 #ifndef PUBLIC_STURCT_H_
 #define PUBLIC_STURCT_H_
 
+#include "boost/unordered_map.hpp"
 #include "Time_Value.h"
 #include "Misc.h"
 #include "Message.h"

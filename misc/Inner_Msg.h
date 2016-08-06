@@ -9,17 +9,8 @@
 #define INNER_MSG_H_
 
 #include "Block_Buffer.h"
-#include "boost/unordered_map.hpp"
 
-struct MSG {
-	MSG(){}
-	virtual ~MSG(){}
-	virtual void serialize(Block_Buffer &buffer) const = 0;
-	virtual int deserialize(Block_Buffer &buffer) = 0;
-	virtual void reset(void) = 0;
-};
-
-struct Create_Role_Info : public MSG {
+struct Create_Role_Info {
 	std::string account;
 	std::string role_name;
 	int8_t gender;
@@ -32,7 +23,7 @@ struct Create_Role_Info : public MSG {
 	void reset(void);
 };
 
-struct Create_Guild_Info : public MSG {
+struct Create_Guild_Info {
 	int64_t guild_id;
 	std::string guild_name;
 	int64_t chief_id;
@@ -44,7 +35,7 @@ struct Create_Guild_Info : public MSG {
 	void reset(void);
 };
 
-struct MSG_100000 : public MSG {
+struct MSG_100000 {
 	std::string account;
 	std::string password;
 
@@ -55,7 +46,7 @@ struct MSG_100000 : public MSG {
 	void reset(void);
 };
 
-struct MSG_500000 : public MSG {
+struct MSG_500000 {
 	std::string ip;	//gate_ip
 	int32_t port;	//gate_port
 	std::string session;
@@ -67,7 +58,7 @@ struct MSG_500000 : public MSG {
 	void reset(void);
 };
 
-struct MSG_100001 : public MSG {
+struct MSG_100001 {
 	std::string account;
 	std::string password;
 
@@ -78,7 +69,7 @@ struct MSG_100001 : public MSG {
 	void reset(void);
 };
 
-struct MSG_500001 : public MSG {
+struct MSG_500001 {
 	std::string ip;	//gate_ip
 	int32_t port;	//gate_port
 	std::string session;
@@ -90,7 +81,7 @@ struct MSG_500001 : public MSG {
 	void reset(void);
 };
 
-struct MSG_100002 : public MSG {
+struct MSG_100002 {
 	std::string account;
 	std::string session;	//登录验证的seesion
 
@@ -101,7 +92,7 @@ struct MSG_100002 : public MSG {
 	void reset(void);
 };
 
-struct MSG_500002 : public MSG {
+struct MSG_500002 {
 	std::string account;
 
 	MSG_500002(void);
@@ -111,7 +102,7 @@ struct MSG_500002 : public MSG {
 	void reset(void);
 };
 
-struct MSG_100003 : public MSG {
+struct MSG_100003 {
 	int32_t client_time;
 
 	MSG_100003(void);
@@ -121,7 +112,7 @@ struct MSG_100003 : public MSG {
 	void reset(void);
 };
 
-struct MSG_500003 : public MSG {
+struct MSG_500003 {
 	int32_t client_time;
 	int32_t server_time;
 
@@ -132,7 +123,7 @@ struct MSG_500003 : public MSG {
 	void reset(void);
 };
 
-struct MSG_140000 : public MSG {
+struct MSG_140000 {
 	std::string account;
 	std::string session;
 	std::string gate_ip;
@@ -145,7 +136,7 @@ struct MSG_140000 : public MSG {
 	void reset(void);
 };
 
-struct MSG_140001 : public MSG {
+struct MSG_140001 {
 	std::string account;
 
 	MSG_140001(void);
