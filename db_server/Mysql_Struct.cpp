@@ -31,21 +31,21 @@ void Mysql_Struct::create_data(int64_t key_index) {
 
 	str_name = str_name.substr(0, str_name.length()-1);
 	str_value = str_value.substr(0, str_value.length()-1);
-	char sql[512] = {0};
-	sprintf(sql, "INSERT INTO %s (%s) VALUES (%s)", table_name_.c_str(), str_name.c_str(), str_value.c_str());
-	MYSQL_CONNECTION->execute(sql);
+	char str_sql[512] = {0};
+	sprintf(str_sql, "INSERT INTO %s (%s) VALUES (%s)", table_name_.c_str(), str_name.c_str(), str_value.c_str());
+	MYSQL_CONNECTION->execute(str_sql);
 }
 
 void Mysql_Struct::load_data(int64_t key_index, Block_Buffer &buffer) {
-	char sql[256] = {0};
+	char str_sql[64] = {0};
 	if(key_index == 0) {
 		//加载master公共数据，返回消息是数据列表，需要写入长度
-		sprintf(sql, "select * from %s", table_name_.c_str());
+		sprintf(str_sql, "select * from %s", table_name_.c_str());
 	} else {
 		//加载玩家数据，不需要写长度
-		sprintf(sql, "select * from %s where %s=%ld", table_name_.c_str(), key_index_.c_str(), key_index);
+		sprintf(str_sql, "select * from %s where %s=%ld", table_name_.c_str(), key_index_.c_str(), key_index);
 	}
-	sql::ResultSet *result = MYSQL_CONNECTION->execute_query(sql);
+	sql::ResultSet *result = MYSQL_CONNECTION->execute_query(str_sql);
 	if (result) {
 		if (key_index == 0) {
 			buffer.write_uint16(result->rowsCount());
@@ -69,30 +69,133 @@ void Mysql_Struct::load_data(int64_t key_index, Block_Buffer &buffer) {
 }
 
 void Mysql_Struct::save_data(Block_Buffer &buffer) {
-	std::string str_sql;
 	int64_t key_index = buffer.peek_int64();
 	LOG_INFO("table %s save key_index:%ld", table_name_.c_str(), key_index);
 	if (key_index <= 0) {
 		return;
 	}
 
+	std::string str_insert_name;
+	std::string str_insert_value;
+	std::string str_update;
+	std::stringstream stream;
 	for(std::vector<Field_Info>::iterator iter = field_vec_.begin();
 			iter != field_vec_.end(); iter++) {
-		if(iter->field_label == "arg") {
-			build_sql_arg(*iter, buffer, str_sql);
-		}
-		else if(iter->field_label == "vector" || iter->field_label == "map") {
-			build_sql_vector(*iter, buffer, str_sql);
-		}
-		else if(iter->field_label == "struct") {
-			build_sql_struct(*iter, buffer, str_sql);
-		}
+		stream.str("");
+		stream << iter->field_name << ",";
+		str_insert_name += stream.str();
+
+		stream.str("");
+		stream << "?,";
+		str_insert_value += stream.str();
+
+		stream.str("");
+		stream << iter->field_name << "=?,";
+		str_update += stream.str();
+	}
+	str_insert_name = str_insert_name.substr(0, str_insert_name.length()-1);
+	str_insert_value = str_insert_value.substr(0, str_insert_value.length()-1);
+	str_update = str_update.substr(0, str_update.length()-1);
+
+	//插入更新语句，如果记录不存在则插入，存在则更新
+	char str_sql[512] = {0};
+	sprintf(str_sql, "INSERT INTO %s(%s) VALUES(%s) ON DUPLICATE KEY UPDATE %s",
+			table_name_.c_str(), str_insert_name.c_str(), str_insert_value.c_str(), str_update.c_str());
+	LOG_INFO("save data sql:%s", str_sql);
+	sql::PreparedStatement* pstmt = MYSQL_CONNECTION->create_pstmt(str_sql);
+	if (!pstmt) {
+		LOG_ERROR("create_pstmt error, sql:%s", str_sql);
+		return;
 	}
 
-	str_sql = str_sql.substr(0, str_sql.length()-1);
-	char sql[512] = {0};
-	sprintf(sql, "UPDATE %s SET %s where %s=%ld", table_name_.c_str(), str_sql.c_str(), key_index_.c_str(), key_index);
-	MYSQL_CONNECTION->execute(sql);
+	int param_index = 0;
+	int param_size = field_vec_.size();
+	for(std::vector<Field_Info>::iterator iter = field_vec_.begin();
+			iter != field_vec_.end(); iter++) {
+		param_index++;
+
+		if(iter->field_label == "arg") {
+			if(iter->field_type == "int8") {
+				int8_t value = buffer.read_int8();
+				pstmt->setInt(param_index, value);
+				pstmt->setInt(param_index + param_size, value);
+				LOG_INFO("set pstmt, struct_name:%s, filed_type:%s, field_name:%s, value:%d",
+									struct_name().c_str(), iter->field_type.c_str(), iter->field_name.c_str(), value);
+			}
+			else if(iter->field_type == "int16") {
+				int16_t value = buffer.read_int16();
+				pstmt->setInt(param_index, value);
+				pstmt->setInt(param_index + param_size, value);
+				LOG_INFO("set pstmt, struct_name:%s, filed_type:%s, field_name:%s, value:%d",
+									struct_name().c_str(), iter->field_type.c_str(), iter->field_name.c_str(), value);
+			}
+			else if(iter->field_type == "int32") {
+				int32_t value = buffer.read_int32();
+				pstmt->setInt(param_index, value);
+				pstmt->setInt(param_index + param_size, value);
+				LOG_INFO("set pstmt, struct_name:%s, filed_type:%s, field_name:%s, value:%d",
+									struct_name().c_str(), iter->field_type.c_str(), iter->field_name.c_str(), value);
+			}
+			else if(iter->field_type == "int64") {
+				int64_t value = buffer.read_int64();
+				pstmt->setInt64(param_index, value);
+				pstmt->setInt64(param_index + param_size, value);
+				LOG_INFO("set pstmt, struct_name:%s, filed_type:%s, field_name:%s, value:%ld",
+									struct_name().c_str(), iter->field_type.c_str(), iter->field_name.c_str(), value);
+			}
+			else if(iter->field_type == "double") {
+				double value = buffer.read_double();
+				pstmt->setDouble(param_index, value);
+				pstmt->setDouble(param_index + param_size, value);
+				LOG_INFO("set pstmt, struct_name:%s, filed_type:%s, field_name:%s, value:%lf",
+									struct_name().c_str(), iter->field_type.c_str(), iter->field_name.c_str(), value);
+			}
+			else if(iter->field_type == "bool") {
+				bool value = buffer.read_bool();
+				pstmt->setBoolean(param_index, value);
+				pstmt->setBoolean(param_index + param_size, value);
+				LOG_INFO("set pstmt, struct_name:%s, filed_type:%s, field_name:%s, value:%d",
+									struct_name().c_str(), iter->field_type.c_str(), iter->field_name.c_str(), value);
+			}
+			else if(iter->field_type == "string") {
+				std::string value = buffer.read_string();
+				pstmt->setString(param_index, value);
+				pstmt->setString(param_index + param_size, value);
+				LOG_INFO("set pstmt, struct_name:%s, filed_type:%s, field_name:%s, value:%s",
+									struct_name().c_str(), iter->field_type.c_str(), iter->field_name.c_str(), value.c_str());
+			}
+			else {
+				LOG_ERROR("Can not find the field_type:%s, struct_name:%s", iter->field_type.c_str(), struct_name().c_str());
+			}
+		}
+		else if(iter->field_label == "vector" || iter->field_label == "map") {
+			//int read_idx = buffer.get_read_idx();
+			int field_len = build_field_len_vector(*iter, buffer);
+			LOG_INFO("struct_name:%s, filed_type:%s, field_name:%s, field_len:%d",
+					struct_name().c_str(), iter->field_type.c_str(), iter->field_name.c_str(), field_len);
+			//buffer.set_read_idx(read_idx);
+
+			char buf[64] = "I am a good boy!";
+			DataBuf data_buf(buf, strlen(buf));
+			std::istream s(&data_buf);
+			pstmt->setBlob(param_index, &s);
+			pstmt->setBlob(param_index + param_size, &s);
+		}
+		else if(iter->field_label == "struct") {
+			//int read_idx = buffer.get_read_idx();
+			int field_len = build_field_len_struct(*iter, buffer);
+			LOG_INFO("struct_name:%s, filed_type:%s, field_name:%s, field_len:%d",
+					struct_name().c_str(), iter->field_type.c_str(), iter->field_name.c_str(), field_len);
+			//buffer.set_read_idx(read_idx);
+
+			char buf[64] = "";
+			DataBuf data_buf(buf, strlen(buf));
+			std::istream s(&data_buf);
+			pstmt->setBlob(param_index, &s);
+			pstmt->setBlob(param_index + param_size, &s);
+		}
+	}
+	pstmt->execute();
 }
 
 void Mysql_Struct::save_data_vector(Block_Buffer &buffer) {
@@ -208,80 +311,91 @@ void Mysql_Struct::build_buffer_arg(Field_Info &field_info, Block_Buffer &buffer
 }
 
 void Mysql_Struct::build_buffer_vector(Field_Info &field_info, Block_Buffer &buffer, sql::ResultSet *result) {
-	buffer.write_uint16(0);
+	std::string blob_str = result->getString(field_info.field_name);
+	buffer.copy(blob_str);
+	if (blob_str == "") {
+		buffer.write_uint16(0);
+	}
 }
 
 void Mysql_Struct::build_buffer_struct(Field_Info &field_info, Block_Buffer &buffer, sql::ResultSet *result) {
+	//std::string blob_str = result->getString(field_info.field_name);
+	//buffer.copy(blob_str);
+}
+
+int Mysql_Struct::build_field_len_arg(Field_Info &field_info, Block_Buffer &buffer) {
+	int field_len = 0;
+	if(field_info.field_type == "int8") {
+		int8_t value = buffer.read_int8();
+		field_len = sizeof(value);
+	}
+	else if(field_info.field_type == "int16") {
+		int16_t value = buffer.read_int16();
+		field_len = sizeof(value);
+	}
+	else if(field_info.field_type == "int32") {
+		int32_t value = buffer.read_int32();
+		field_len = sizeof(value);
+	}
+	else if(field_info.field_type == "int64") {
+		int64_t value = buffer.read_int64();
+		field_len = sizeof(value);
+	}
+	else if(field_info.field_type == "double") {
+		double value = buffer.read_double();
+		field_len = sizeof(value);
+	}
+	else if(field_info.field_type == "bool") {
+		bool value = buffer.read_int8();
+		field_len = sizeof(value);
+	}
+	else if(field_info.field_type == "string") {
+		std::string value = buffer.read_string();
+		//string类型变量要先写uint16_t类型的长度
+		field_len = sizeof(value) + sizeof(uint16_t);
+	}
+	else {
+		LOG_ERROR("Can not find the field_type:%s, struct_name:%s", field_info.field_type.c_str(), struct_name().c_str());
+	}
+	return field_len;
+}
+
+int Mysql_Struct::build_field_len_vector(Field_Info &field_info, Block_Buffer &buffer) {
+	int field_len = 2;
+	uint16_t vec_size = buffer.read_uint16();
+	if(is_struct(field_info.field_type)) {
+		for(uint16_t i = 0; i < vec_size; ++i) {
+			field_len += build_field_len_struct(field_info, buffer);
+		}
+	}
+	else{
+		for(uint16_t i = 0; i < vec_size; ++i) {
+			field_len += build_field_len_arg(field_info, buffer);
+		}
+	}
+	return field_len;
+}
+
+int Mysql_Struct::build_field_len_struct(Field_Info &field_info, Block_Buffer &buffer) {
+	int field_len = 0;
 	Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find(field_info.field_type);
 	if(it == DB_MANAGER->db_struct_name_map().end()) {
 		LOG_ERROR("Can not find the struct_name:%s", field_info.field_type.c_str());
-		return;
+		return field_len;
 	}
 
 	std::vector<Field_Info> field_vec = it->second->field_vec();
 	for(std::vector<Field_Info>::iterator iter = field_vec.begin();
 			iter != field_vec.end(); iter++) {
 		if(iter->field_label == "arg") {
-			build_buffer_arg(*iter, buffer, result);
+			field_len += build_field_len_arg(*iter, buffer);
 		}
 		else if(iter->field_label == "vector" || iter->field_label == "map") {
-			build_buffer_vector(*iter, buffer, result);
+			field_len += build_field_len_vector(*iter, buffer);
 		}
 		else if(iter->field_label == "struct") {
-			build_buffer_struct(*iter, buffer, result);
+			field_len += build_field_len_struct(*iter, buffer);
 		}
 	}
-}
-
-void Mysql_Struct::build_sql_arg(Field_Info &field_info, Block_Buffer &buffer, std::string &str_sql) {
-	std::stringstream stream;
-	stream.str("");
-	stream << field_info.field_name << "=";
-
-	if(field_info.field_type == "int8") {
-		int32_t value = buffer.read_int8();
-		stream << value << "," ;
-	}
-	else if(field_info.field_type == "int16") {
-		int32_t value = buffer.read_int16();
-		stream << value << "," ;
-	}
-	else if(field_info.field_type == "int32") {
-		int32_t value = buffer.read_int32();
-		stream << value << "," ;
-	}
-	else if(field_info.field_type == "int64") {
-		int64_t value = buffer.read_int64();
-		stream << value << "," ;
-	}
-	else if(field_info.field_type == "double") {
-		double value = buffer.read_double();
-		stream << value << "," ;
-	}
-	else if(field_info.field_type == "bool") {
-		bool value = buffer.read_bool();
-		stream << value << "," ;
-	}
-	else if(field_info.field_type == "string") {
-		std::string value = buffer.read_string();
-		stream << "\'" << value << "\'" << "," ;
-	}
-	else {
-		LOG_ERROR("Can not find the field_type:%s, struct_name:%s", field_info.field_type.c_str(), struct_name().c_str());
-	}
-	str_sql += stream.str();
-}
-
-void Mysql_Struct::build_sql_vector(Field_Info &field_info, Block_Buffer &buffer, std::string &str_sql) {
-	std::stringstream stream;
-	stream.str("");
-	stream << field_info.field_name << "=\'\'," ;
-	str_sql += stream.str();
-}
-
-void Mysql_Struct::build_sql_struct(Field_Info &field_info, Block_Buffer &buffer, std::string &str_sql) {
-	std::stringstream stream;
-	stream.str("");
-	stream << field_info.field_name << "=\'\'," ;
-	str_sql += stream.str();
+	return field_len;
 }

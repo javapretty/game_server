@@ -48,11 +48,11 @@ int Mysql_Operator::init(void) {
 	mysql_conn_ = MYSQL_MANAGER->get_mysql_conn(dbpoolname);
 
 	sql::ResultSet *result = mysql_conn_->execute_query("select * from global where type='role_id'");
-	if (result && result->rowsCount() <= 0) {
+	if (!result || result->rowsCount() <= 0) {
 		mysql_conn_->execute("insert into global(type, value) values ('role_id', 0)");
 	}
 	result = mysql_conn_->execute_query("select * from global where type='guild_id'");
-	if (result && result->rowsCount() <= 0) {
+	if (!result || result->rowsCount() <= 0) {
 		mysql_conn_->execute("insert into global(type, value) values ('guild_id', 0)");
 	}
 
@@ -90,15 +90,14 @@ int64_t Mysql_Operator::create_player(Create_Role_Info &role_info) {
 
 	//从global表查询当前role_id最大值
 	result = mysql_conn_->execute_query("select * from global where type='role_id'");
-	if (result && result->rowsCount() <= 0) {
+	if (!result || result->rowsCount() <= 0) {
 		LOG_ERROR("find from global type='role_id' not existed");
 		return -1;
 	}
 
 	int order = 1;
-	while(result->next()) {
+	if(result->next()) {
 		order = result->getInt64("value") + 1;
-		break;
 	}
 	int64_t agent = agent_num_ * 10000000000000L;
 	int64_t server = server_num_ * 1000000000L;
@@ -136,15 +135,14 @@ int64_t Mysql_Operator::create_guild(Create_Guild_Info &guild_info) {
 
 	//从global表查询当前role_id最大值
 	result = mysql_conn_->execute_query("select * from global where type='guild_id'");
-	if (result && result->rowsCount() <= 0) {
+	if (!result || result->rowsCount() <= 0) {
 		LOG_ERROR("find from global type='guild_id' not existed");
 		return -1;
 	}
 
 	int order = 1;
-	while(result->next()) {
+	if(result->next()) {
 		order = result->getInt64("value") + 1;
-		break;
 	}
 	int64_t agent = agent_num_ * 10000000000000L;
 	int64_t server = server_num_ * 1000000000L;
@@ -153,7 +151,7 @@ int64_t Mysql_Operator::create_guild(Create_Guild_Info &guild_info) {
 	mysql_conn_->execute_update(str_sql);
 
 	int now_sec = Time_Value::gettimeofday().sec();
-	sprintf(str_sql, "insert into guild (guild_id, guild_name, chief_id, create_time) values (%ld, '%s', %ld, %d)",
+	sprintf(str_sql, "insert into guild (guild_id, guild_name, chief_id, create_time, apply_list, member_list) values (%ld, '%s', %ld, %d, \'\', \'\')",
 			guild_id, guild_info.guild_name.c_str(), guild_info.chief_id, now_sec);
 	mysql_conn_->execute(str_sql);
 

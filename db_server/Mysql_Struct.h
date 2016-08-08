@@ -31,9 +31,9 @@ private:
 	void build_buffer_vector(Field_Info &field_info, Block_Buffer &buffer, sql::ResultSet *result);
 	void build_buffer_struct(Field_Info &field_info, Block_Buffer &buffer, sql::ResultSet *result);
 
-	void build_sql_arg(Field_Info &field_info, Block_Buffer &buffer, std::string &str_sql);
-	void build_sql_vector(Field_Info &field_info, Block_Buffer &buffer, std::string &str_sql);
-	void build_sql_struct(Field_Info &field_info, Block_Buffer &buffer, std::string &str_sql);
+	int build_field_len_arg(Field_Info &field_info, Block_Buffer &buffer);
+	int build_field_len_vector(Field_Info &field_info, Block_Buffer &buffer);
+	int build_field_len_struct(Field_Info &field_info, Block_Buffer &buffer);
 };
 
 #endif /* MYSQL_STRUCT_H_ */
