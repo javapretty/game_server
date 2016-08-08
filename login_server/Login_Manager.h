@@ -8,7 +8,6 @@
 #define LOGIN_MANAGER_H_
 
 #include "Log.h"
-#include "Block_Buffer.h"
 #include "Thread.h"
 #include "List.h"
 #include "Block_List.h"
@@ -19,27 +18,22 @@
 class Login_Manager: public Thread {
 public:
 	typedef Object_Pool<Block_Buffer, Thread_Mutex> Block_Pool;
+	typedef Object_Pool<Login_Player, Spin_Lock> Login_Player_Pool;
+
 	typedef Block_List<Thread_Mutex> Data_List;
 	typedef std::list<Close_Info> Close_List;
-	typedef boost::unordered_map<int, int> Msg_Count_Map;
 	typedef std::vector<Ip_Info> Ip_Vec;
-
-	typedef Object_Pool<Login_Player, Spin_Lock> Login_Player_Pool;
 	typedef List<int, Thread_Mutex> Int_List;
+
 	typedef boost::unordered_map<int, Login_Player *> Login_Player_Cid_Map;
 	typedef boost::unordered_map<std::string, Login_Player *> Login_Player_Account_Map;
+	typedef boost::unordered_map<int, int> Msg_Count_Map;
 
 public:
-	enum {
-		STATUS_NORMAL = 1,
-		STATUS_CLOSING = 2,
-	};
-
 	static Login_Manager *instance(void);
 	int init(void);
 	void run_handler(void);
 
-	/// 服务器状态
 	inline int server_status(void) { return server_status_; }
 
 	int init_gate_ip(void);
@@ -67,15 +61,15 @@ public:
 	/// 主动关闭处理
 	int self_close_process(void);
 
-	/// 通信层投递消息到Login_Manager
-	void push_drop_cid(int cid);
-	int push_login_client_data(Block_Buffer *buf);
-	int push_login_gate_data(Block_Buffer *buf);
-	int push_self_loop_message(Block_Buffer &msg_buf);
-
 	/// 消息处理
 	int process_list();
 	void process_drop_cid(int cid);
+
+	/// 通信层投递消息到Login_Manager
+	void push_drop_cid(int cid);
+	int push_tick(int x);
+	int push_login_client_data(Block_Buffer *buf);
+	int push_login_gate_data(Block_Buffer *buf);
 
 	/// 定时器处理
 	int tick(void);
@@ -91,7 +85,6 @@ public:
 	void free_cache(void);
 
 	/// 统计内部消息量
-	void set_msg_count_onoff(int v);
 	void print_msg_count(void);
 	void inner_msg_count(Block_Buffer &buf);
 	void inner_msg_count(int msg_id);
@@ -112,18 +105,17 @@ private:
 	Block_Pool block_pool_;
 	Login_Player_Pool login_player_pool_;
 
-	Int_List drop_cid_list_;
-	Data_List login_client_data_list_;				///client-->login
-	Data_List login_gate_data_list_;		///login-->connector
-	Data_List self_loop_block_list_; 				/// self_loop_block_list
-	Close_List close_list_; /// 其中的连接cid在n秒后投递到通信层关闭
+	Int_List drop_cid_list_;							//掉线玩家列表
+	Int_List tick_list_;									//定时器列表
+	Data_List login_client_data_list_;			//client-->login
+	Data_List login_gate_data_list_;				//login-->connector
+	Close_List close_list_; 							// 其中的连接cid在n秒后投递到通信层关闭
+
+	Login_Player_Cid_Map player_cid_map_; 				//cid--Login_Player map
+	Login_Player_Account_Map player_account_map_; //role_id--Login_Player map
 
 	Server_Info login_client_server_info_;
 	Server_Info login_gate_server_info_;
-
-	Login_Player_Cid_Map player_cid_map_; /// cid - Login_Player map
-	Login_Player_Account_Map player_account_map_; /// role_id - Login_Player map
-
 	Tick_Info tick_info_;
 	Time_Value tick_time_;
 
@@ -135,7 +127,7 @@ private:
 
 	Ip_Vec gate_ip_vec_;
 
-	Mysql_DB_Conn* mysql_db_conn_;
+	Mysql_Conn* mysql_conn_;
 };
 
 #define LOGIN_MANAGER Login_Manager::instance()
@@ -153,6 +145,11 @@ inline void Login_Manager::push_drop_cid(int cid) {
 	drop_cid_list_.push_back(cid);
 }
 
+inline int Login_Manager::push_tick(int x) {
+	tick_list_.push_back(x);
+	return 0;
+}
+
 inline int Login_Manager::push_login_client_data(Block_Buffer *buf) {
 	login_client_data_list_.push_back(buf);
 	return 0;
@@ -161,26 +158,6 @@ inline int Login_Manager::push_login_client_data(Block_Buffer *buf) {
 inline int Login_Manager::push_login_gate_data(Block_Buffer *buf) {
 	login_gate_data_list_.push_back(buf);
 	return 0;
-}
-
-inline int Login_Manager::push_self_loop_message(Block_Buffer &msg_buf) {
-	Block_Buffer *buf = block_pool_.pop();
-	if (! buf) {
-		LOG_ERROR("block_pool_ pop error");
-		return -1;
-	}
-	buf->reset();
-	buf->copy(&msg_buf);
-	self_loop_block_list_.push_back(buf);
-	return 0;
-}
-
-inline void Login_Manager::set_msg_count_onoff(int v) {
-	if (v == 0 || v == 1) {
-		msg_count_onoff_ = v;
-	} else {
-		LOG_ERROR("error value v = %d", v);
-	}
 }
 
 inline void Login_Manager::inner_msg_count(Block_Buffer &buf) {

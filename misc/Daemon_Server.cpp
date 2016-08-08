@@ -154,7 +154,7 @@ void Daemon_Server::usage(void) {
 }
 
 int Daemon_Server::fork_exec_args(const char *exec_str, int server_type) {
-	LOG_DEBUG("exec_str = [%s], server_type = %d", exec_str, server_type);
+	LOG_INFO("exec_str = [%s], server_type = %d", exec_str, server_type);
 
 	std::vector<std::string> exec_str_tok;
 	std::istringstream exec_str_stream(exec_str);
@@ -187,47 +187,47 @@ int Daemon_Server::fork_exec_args(const char *exec_str, int server_type) {
 int Daemon_Server::fork_exec_log_server(void) {
 	std::stringstream execname_stream;
 	execname_stream << exec_name_ << " --log " << "--label=" << server_label_;
-	fork_exec_args(execname_stream.str().c_str(), Log::LOG_LOG_SERVER);
+	fork_exec_args(execname_stream.str().c_str(), LOG_LOG_SERVER);
 	return 0;
 }
 
 int Daemon_Server::fork_exec_db_server(void) {
 	std::stringstream execname_stream;
 	execname_stream << exec_name_ << " --db " << "--label=" << server_label_;
-	fork_exec_args(execname_stream.str().c_str(), Log::LOG_DB_SERVER);
+	fork_exec_args(execname_stream.str().c_str(), LOG_DB_SERVER);
 	return 0;
 }
 
 int Daemon_Server::fork_exec_login_server(void){
 	std::stringstream execname_stream;
 	execname_stream << exec_name_ << " --login " <<"--label=" << server_label_;
-	fork_exec_args(execname_stream.str().c_str(), Log::LOG_LOGIN_SERVER);
+	fork_exec_args(execname_stream.str().c_str(), LOG_LOGIN_SERVER);
 	return 0;
 }
 
 int Daemon_Server::fork_exec_master_server(void) {
 	std::stringstream execname_stream;
 	execname_stream << exec_name_ << " --master " << "--label=" << server_label_;
-	fork_exec_args(execname_stream.str().c_str(), Log::LOG_MASTER_SERVER);
+	fork_exec_args(execname_stream.str().c_str(), LOG_MASTER_SERVER);
 	return 0;
 }
 
 int Daemon_Server::fork_exec_game_server(void) {
 	std::stringstream execname_stream;
 	execname_stream << exec_name_ << " --game " << "--label=" << server_label_;
-	fork_exec_args(execname_stream.str().c_str(), Log::LOG_GAME_SERVER);
+	fork_exec_args(execname_stream.str().c_str(), LOG_GAME_SERVER);
 	return 0;
 }
 
 int Daemon_Server::fork_exec_gate_server(void) {
 	std::stringstream execname_stream;
 	execname_stream << exec_name_ << " --gate " << "--label=" << server_label_;
-	fork_exec_args(execname_stream.str().c_str(), Log::LOG_GATE_SERVER);
+	fork_exec_args(execname_stream.str().c_str(), LOG_GATE_SERVER);
 	return 0;
 }
 
 void Daemon_Server::sigcld_handle(int signo) {
-	LOG_DEBUG("Daemon_Server receive signo = %d.", signo);
+	LOG_ERROR("Daemon_Server receive signo = %d.", signo);
 	signal(SIGCHLD, sigcld_handle);
 	pid_t pid = wait(NULL);
 	if (pid < 0) {
@@ -239,7 +239,7 @@ void Daemon_Server::sigcld_handle(int signo) {
 void Daemon_Server::restart_process(int pid) {
 	Int_Int_Map::iterator it = daemon_map_.find(pid);
 	if (it == daemon_map_.end()) {
-		LOG_INFO("cannot find process, pid = %d.", pid);
+		LOG_ERROR("cannot find process, pid = %d.", pid);
 		return;
 	}
 
@@ -247,7 +247,7 @@ void Daemon_Server::restart_process(int pid) {
 	Int_Int_Map::iterator core_map_it = core_dump_num_.find(it->second);
 	if (core_map_it != core_dump_num_.end()) {
 		if (core_map_it->second++ > max_core_dump_num) {
-			LOG_INFO("so many core dump, core_dump_num = %d", core_map_it->second);
+			LOG_ERROR("so many core dump, core_dump_num = %d", core_map_it->second);
 			return;
 		}
 	} else {
@@ -255,27 +255,27 @@ void Daemon_Server::restart_process(int pid) {
 	}
 
 	switch (it->second) {
-	case Log::LOG_LOG_SERVER: {
+	case LOG_LOG_SERVER: {
 		fork_exec_log_server();
 		break;
 	}
-	case Log::LOG_DB_SERVER: {
+	case LOG_DB_SERVER: {
 		fork_exec_db_server();
 		break;
 	}
-	case Log::LOG_LOGIN_SERVER: {
+	case LOG_LOGIN_SERVER: {
 		fork_exec_db_server();
 		break;
 	}
-	case Log::LOG_MASTER_SERVER: {
+	case LOG_MASTER_SERVER: {
 		fork_exec_master_server();
 		break;
 	}
-	case Log::LOG_GAME_SERVER: {
+	case LOG_GAME_SERVER: {
 		fork_exec_game_server();
 		break;
 	}
-	case Log::LOG_GATE_SERVER: {
+	case LOG_GATE_SERVER: {
 		fork_exec_gate_server();
 		break;
 	}

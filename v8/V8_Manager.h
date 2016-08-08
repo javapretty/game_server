@@ -31,7 +31,7 @@ public:
 	V8_Manager(void);
 	virtual ~V8_Manager(void);
 
-	int init(int server_type);	//初始化v8虚拟机
+	int init(const char *server_path);
 	int fini(void);
 
 private:

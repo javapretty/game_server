@@ -9,11 +9,13 @@
 #include "Master_Timer.h"
 #include "Master_Server.h"
 #include "Master_Connector.h"
-#include "Master_Client_Messager.h"
-#include "Master_Inner_Messager.h"
+#include "Log_Connector.h"
+#include "Msg_Manager.h"
 
 Master_Manager::Master_Manager(void):
-  player_role_id_map_(get_hash_table_size(12000)),
+	player_gate_cid_map_(get_hash_table_size(12000)),
+	player_game_cid_map_(get_hash_table_size(12000)),
+	player_role_id_map_(get_hash_table_size(12000)),
   server_status_(STATUS_NORMAL),
   msg_count_onoff_(true) { }
 
@@ -28,15 +30,8 @@ Master_Manager *Master_Manager::instance(void) {
 }
 
 int Master_Manager::init(void) {
-	tick_time_ = Time_Value::gettimeofday();
-
-	SERVER_CONFIG;
-	MASTER_INNER_MESSAGER;					/// 内部消息处理
-	MASTER_CLIENT_MESSAGER;					/// 外部消息处理
 	MASTER_TIMER->thr_create();			///	定时器
-
-	set_msg_count_onoff(1);
-
+	MSG_MANAGER->init();
 	return 0;
 }
 
@@ -46,7 +41,7 @@ void Master_Manager::run_handler(void) {
 
 int Master_Manager::send_to_gate(int gate_cid, Block_Buffer &buf) {
 	if (gate_cid < 2) {
-		LOG_INFO("gate_cid = %d", gate_cid);
+		LOG_ERROR("gate_cid = %d", gate_cid);
 		return -1;
 	}
 	return MASTER_GATE_SERVER->send_block(gate_cid, buf);
@@ -54,19 +49,28 @@ int Master_Manager::send_to_gate(int gate_cid, Block_Buffer &buf) {
 
 int Master_Manager::send_to_game(int game_cid, Block_Buffer &buf) {
 	if (game_cid < 2) {
-		LOG_INFO("game_cid = %d", game_cid);
+		LOG_ERROR("game_cid = %d", game_cid);
 		return -1;
 	}
 	return MASTER_GAME_SERVER->send_block(game_cid, buf);
 }
 
-int Master_Manager::send_to_db(Block_Buffer &buf){
+int Master_Manager::send_to_db(Block_Buffer &buf) {
 	int db_cid = MASTER_DB_CONNECTOR->get_cid();
 	if (db_cid < 2) {
-		LOG_INFO("db_cid = %d", db_cid);
+		LOG_ERROR("db_cid = %d", db_cid);
 		return -1;
 	}
 	return MASTER_DB_CONNECTOR->send_block(db_cid, buf);
+}
+
+int Master_Manager::send_to_log(Block_Buffer &buf) {
+	int log_cid = LOG_CONNECTOR->get_cid();
+	if (log_cid < 2) {
+		LOG_ERROR("log_cid = %d", log_cid);
+		return -1;
+	}
+	return LOG_CONNECTOR->send_block(log_cid, buf);
 }
 
 int Master_Manager::close_client(int gate_cid, int player_cid, int error_code) {
@@ -87,7 +91,7 @@ int Master_Manager::self_close_process(void) {
 	int i = 0;
 	while (++i < 60) {
 		sleep(1);
-		LOG_DEBUG("master server has user:%d", player_gate_cid_map_.size());
+		LOG_INFO("master server has user:%d", player_gate_cid_map_.size());
 		if (player_gate_cid_map_.size() == 0)
 			break;
 	}
@@ -95,53 +99,15 @@ int Master_Manager::self_close_process(void) {
 	return 0;
 }
 
-int Master_Manager::boardcast_msg_to_all(Block_Buffer &buf) {
-	for (Master_Player_Role_Id_Map::iterator iter = player_role_id_map_.begin(); iter != player_role_id_map_.end(); ++iter) {
-		if (iter->second) {
-			send_to_gate(iter->second->gate_cid(), buf);
-		}
-	}
-	return 0;
-}
-
 int Master_Manager::process_list(void) {
-	int32_t cid = 0;
-	Block_Buffer *buf = 0;
-
 	while (1) {
 		bool all_empty = true;
 
-		/// game-->master
-		if ((buf = master_game_data_list_.pop_front()) != 0) {
+		//定时器列表
+		if (! tick_list_.empty()) {
 			all_empty = false;
-			if (buf->is_legal()) {
-				cid = buf->peek_int32();
-				MASTER_INNER_MESSAGER->process_game_block(*buf);
-			} else {
-				LOG_ERROR("buf.read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
-				buf->reset();
-			}
-			MASTER_GAME_SERVER->push_block(cid, buf);
-		}
-		/// gate-->master
-		if ((buf = player_login_data_list_.pop_front()) != 0) {
-			all_empty = false;
-			if (buf->is_legal()) {
-				cid = buf->peek_int32();
-				MASTER_CLIENT_MESSAGER->process_client_login_block(*buf);
-			} else {
-				LOG_ERROR("buf read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
-				buf->reset();
-			}
-			MASTER_GATE_SERVER->push_block(cid, buf);
-		}
-		/// 游戏服内部循环消息队列
-		if (! self_loop_block_list_.empty()) {
-			all_empty = false;
-			buf = self_loop_block_list_.front();
-			self_loop_block_list_.pop_front();
-			MASTER_INNER_MESSAGER->process_self_loop_block(*buf);
-			block_pool_.push(buf);
+			tick_list_.pop_front();
+			tick();
 		}
 
 		if (all_empty)
@@ -151,9 +117,7 @@ int Master_Manager::process_list(void) {
 }
 
 int Master_Manager::bind_gate_cid_master_player(int cid, Master_Player &player) {
-	if (! player_gate_cid_map_.insert(std::make_pair(cid, &player)).second) {
-		LOG_ERROR("insert gate cid master player fail, cid:%d, role_id:%ld", cid, player.master_player_info().role_id);
-	}
+	player_gate_cid_map_.insert(std::make_pair(cid, &player));
 	return 0;
 }
 
@@ -171,9 +135,7 @@ Master_Player* Master_Manager::find_gate_cid_master_player(int cid) {
 }
 
 int Master_Manager::bind_game_cid_master_player(int cid, Master_Player &player) {
-	if (! player_game_cid_map_.insert(std::make_pair(cid, &player)).second) {
-		LOG_ERROR("insert game cid master player fail, cid:%d, role_id:%ld", cid, player.master_player_info().role_id);
-	}
+	player_game_cid_map_.insert(std::make_pair(cid, &player));
 	return 0;
 }
 
@@ -191,9 +153,7 @@ Master_Player* Master_Manager::find_game_cid_master_player(int cid) {
 }
 
 int Master_Manager::bind_role_id_master_player(int64_t role_id, Master_Player &player) {
-	if (! player_role_id_map_.insert(std::make_pair(role_id, &player)).second) {
-		LOG_ERROR("insert role id master player fail, role_id:%ld", role_id);
-	}
+	player_role_id_map_.insert(std::make_pair(role_id, &player));
 	return 0;
 }
 
@@ -210,38 +170,15 @@ Master_Player *Master_Manager::find_role_id_master_player(int64_t role_id) {
 		return 0;
 }
 
-int Master_Manager::bind_role_name_master_player(std::string &role_name, Master_Player &player) {
-	if (! player_role_name_map_.insert(std::make_pair(role_name, &player)).second) {
-		LOG_ERROR("insert role name master player fail, role_id:%ld, role_name:%s", player.master_player_info().role_id, role_name.c_str());
-	}
-	return 0;
-}
-
-int Master_Manager::unbind_role_name_master_player(std::string &role_name) {
-	player_role_name_map_.erase(role_name);
-	return 0;
-}
-
-Master_Player *Master_Manager::find_role_name_master_player(std::string &role_name) {
-	Master_Player_Role_Name_Map::iterator it = player_role_name_map_.find(role_name);
-	if (it != player_role_name_map_.end())
-		return it->second;
-	else
-		return 0;
-}
-
 int Master_Manager::unbind_master_player(Master_Player &player) {
 	player_gate_cid_map_.erase(player.gate_cid() * 10000 + player.player_cid());
 	player_game_cid_map_.erase(player.game_cid() * 10000 + player.player_cid());
-	player_role_id_map_.erase(player.master_player_info().role_id);
-	player_role_name_map_.erase(player.master_player_info().role_name);
+	player_role_id_map_.erase(player.role_id());
 	return 0;
 }
 
 int Master_Manager::tick(void) {
 	Time_Value now(Time_Value::gettimeofday());
-	tick_time_ = now;
-
 	player_tick(now);
 	server_info_tick(now);
 	object_pool_tick(now);
@@ -287,8 +224,8 @@ void Master_Manager::get_server_info(Block_Buffer &buf) {
 }
 
 void Master_Manager::object_pool_size(void) {
-	LOG_DEBUG("master block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
-	LOG_DEBUG("master player_pool_ free = %d, used = %d", master_player_pool_.free_obj_list_size(), master_player_pool_.used_obj_list_size());
+	LOG_INFO("master block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
+	LOG_INFO("master player_pool_ free = %d, used = %d", master_player_pool_.free_obj_list_size(), master_player_pool_.used_obj_list_size());
 }
 
 void Master_Manager::free_cache(void) {
@@ -308,9 +245,9 @@ void Master_Manager::print_msg_count(void) {
 	LOG_INFO("inner_msg_count_map_.size = %d\n%s\n", inner_msg_count_map_.size(), stream.str().c_str());
 }
 
-void Master_Manager::load_public_data(){
+void Master_Manager::load_master_db_data(){
 	Block_Buffer buf;
-	buf.make_inner_message(SYNC_MASTER_DB_LOAD_PUBLIC_DATA);
+	buf.make_inner_message(SYNC_MASTER_DB_LOAD_DATA);
 	buf.finish_message();
 	send_to_db(buf);
 }

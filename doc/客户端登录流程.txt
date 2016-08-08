@@ -1,0 +1,4 @@
+客户端发送120001到game_c++,game_c++将消息转到game_js，game_js发送150001到db加载数据，如果数据存在，db将数据发生给game_c++,
+转到game_js,game_js解包数据，存储在game_js内存中，同时将gate_cid, player_cid, role_id设置到game_c++,
+发送消息160000同步数据到master_c++,master_c++将数据转给master_js,master_js解包数据，存储在master_js内存中，登录完成
+如果数据不存在，game_js返回520001给客户端，客户端发送120002创建角色，创建完成从数据库加载数据，然后流程同上

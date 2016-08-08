@@ -5,18 +5,18 @@
 
 #include "Common_Func.h"
 #include "Server_Config.h"
-#include "Gate_Client_Messager.h"
-#include "Gate_Inner_Messager.h"
 #include "Gate_Server.h"
 #include "Gate_Connector.h"
-#include "Gate_Manager.h"
+#include "Gate_Client_Messager.h"
+#include "Gate_Inner_Messager.h"
 #include "Gate_Timer.h"
-#include "Msg_Define.h"
+#include "Gate_Manager.h"
 
 Gate_Manager::Gate_Manager(void):
   player_cid_map_(get_hash_table_size(12000)),
+  player_account_map_(get_hash_table_size(12000)),
   server_status_(STATUS_NORMAL),
-  verify_pack_onoff_(true),
+  verify_pack_onoff_(false),
   msg_count_onoff_(true) { }
 
 Gate_Manager::~Gate_Manager(void) { }
@@ -31,9 +31,6 @@ Gate_Manager *Gate_Manager::instance(void) {
 
 int Gate_Manager::init(void) {
 	tick_time_ = Time_Value::gettimeofday();
-
-	SERVER_CONFIG;
-	md5_key_ = SERVER_CONFIG->server_misc()["gate_md5_key"].asString();
 
 	GATE_INNER_MESSAGER;					/// 内部消息处理
 	GATE_CLIENT_MESSAGER;					/// 外部消息处理
@@ -54,7 +51,7 @@ void Gate_Manager::run_handler(void) {
 
 int Gate_Manager::send_to_client(int player_cid, Block_Buffer &buf) {
 	if (player_cid < 2) {
-		LOG_INFO("player_cid = %d", player_cid);
+		LOG_ERROR("player_cid = %d", player_cid);
 		return -1;
 	}
 	return GATE_CLIENT_SERVER->send_block(player_cid, buf);
@@ -63,7 +60,7 @@ int Gate_Manager::send_to_client(int player_cid, Block_Buffer &buf) {
 int Gate_Manager::send_to_game(Block_Buffer &buf) {
 	int game_cid = GATE_GAME_CONNECTOR->get_cid();
 	if (game_cid < 2) {
-		LOG_INFO("game_cid = %d", game_cid);
+		LOG_ERROR("game_cid = %d", game_cid);
 		return -1;
 	}
 	return GATE_GAME_CONNECTOR->send_block(game_cid, buf);
@@ -72,7 +69,7 @@ int Gate_Manager::send_to_game(Block_Buffer &buf) {
 int Gate_Manager::send_to_login(Block_Buffer &buf) {
 	int login_cid = GATE_LOGIN_CONNECTOR->get_cid();
 	if (login_cid < 2) {
-		LOG_INFO("login_cid = %d", login_cid);
+		LOG_ERROR("login_cid = %d", login_cid);
 		return -1;
 	}
 	return GATE_LOGIN_CONNECTOR->send_block(login_cid, buf);
@@ -81,7 +78,7 @@ int Gate_Manager::send_to_login(Block_Buffer &buf) {
 int Gate_Manager::send_to_master(Block_Buffer &buf) {
 	int master_cid = GATE_MASTER_CONNECTOR->get_cid();
 	if (master_cid < 2) {
-		LOG_INFO("master_cid = %d", master_cid);
+		LOG_ERROR("master_cid = %d", master_cid);
 		return -1;
 	}
 	return GATE_MASTER_CONNECTOR->send_block(master_cid, buf);
@@ -92,7 +89,7 @@ int Gate_Manager::close_client(int player_cid) {
 		Close_Info info(player_cid, tick_time());
 		close_list_.push_back(info);
 	} else {
-		LOG_TRACE("player_cid < 2");
+		LOG_ERROR("close_client, player_cid < 2");
 	}
 	return 0;
 }
@@ -104,13 +101,13 @@ int Gate_Manager::process_list(void) {
 	while (1) {
 		bool all_empty = true;
 
-		/// 掉线玩家列表
+		//掉线玩家列表
 		if (! drop_cid_list_.empty()) {
 			all_empty = false;
 			cid = drop_cid_list_.pop_front();
 			process_drop_cid(cid);
 		}
-		/// client-->gate  消息队列
+		//client-->gate  消息队列
 		if ((buf = gate_client_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
@@ -122,15 +119,7 @@ int Gate_Manager::process_list(void) {
 			}
 			GATE_CLIENT_SERVER->push_block(cid, buf);
 		}
-		/// 游戏服内部循环消息队列
-		if (! self_loop_block_list_.empty()) {
-			all_empty = false;
-			buf = self_loop_block_list_.front();
-			self_loop_block_list_.pop_front();
-			GATE_INNER_MESSAGER->process_self_loop_block(*buf);
-			block_pool_.push(buf);
-		}
-		/// login-->gate  消息队列
+		//login-->gate  消息队列
 		if ((buf = gate_login_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
@@ -142,7 +131,7 @@ int Gate_Manager::process_list(void) {
 			}
 			GATE_LOGIN_CONNECTOR->push_block(cid, buf);
 		}
-		/// game-->gate  消息队列
+		//game-->gate  消息队列
 		if ((buf = gate_game_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
@@ -154,7 +143,7 @@ int Gate_Manager::process_list(void) {
 			}
 			GATE_GAME_CONNECTOR->push_block(cid, buf);
 		}
-		/// master-->gate  消息队列
+		//master-->gate  消息队列
 		if ((buf = gate_master_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
@@ -165,6 +154,12 @@ int Gate_Manager::process_list(void) {
 				buf->reset();
 			}
 			GATE_MASTER_CONNECTOR->push_block(cid, buf);
+		}
+		//定时器列表
+		if (! tick_list_.empty()) {
+			all_empty = false;
+			tick_list_.pop_front();
+			tick();
 		}
 
 		if (all_empty)
@@ -200,7 +195,7 @@ int Gate_Manager::self_close_process(void) {
 	int i = 0;
 	while (++i < 60) {
 		sleep(1);
-		LOG_DEBUG("gate server has user:%d", player_cid_map_.size());
+		LOG_INFO("gate server has user:%d", player_cid_map_.size());
 		if (player_cid_map_.size() == 0)
 			break;
 	}
@@ -249,7 +244,7 @@ Gate_Player *Gate_Manager::find_account_gate_player(std::string& account){
 }
 
 int Gate_Manager::unbind_gate_player(Gate_Player &player) {
-	player_cid_map_.erase(player.get_cid());
+	player_cid_map_.erase(player.get_player_cid());
 	player_account_map_.erase(player.get_account());
 	return 0;
 }
@@ -257,7 +252,6 @@ int Gate_Manager::unbind_gate_player(Gate_Player &player) {
 int Gate_Manager::tick(void) {
 	Time_Value now(Time_Value::gettimeofday());
 	tick_time_ = now;
-
 	close_list_tick(now);
 	player_tick(now);
 	server_info_tick(now);
@@ -318,15 +312,15 @@ void Gate_Manager::get_server_info(Block_Buffer &buf) {
 void Gate_Manager::get_server_ip_port(int player_cid, std::string &ip, int &port) {
 	Svc* svc = GATE_CLIENT_SERVER->find_svc(player_cid);
 	if (!svc) {
-		LOG_DEBUG("get_server_ip_port error, cid:%d", player_cid);
+		LOG_ERROR("get_server_ip_port error, cid:%d", player_cid);
 		return;
 	}
 	svc->get_local_addr(ip, port);
 }
 
 void Gate_Manager::object_pool_size(void) {
-	LOG_DEBUG("gate block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
-	LOG_DEBUG("gate player_pool_ free = %d, used = %d", gate_player_pool_.free_obj_list_size(), gate_player_pool_.used_obj_list_size());
+	LOG_INFO("gate block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
+	LOG_INFO("gate player_pool_ free = %d, used = %d", gate_player_pool_.free_obj_list_size(), gate_player_pool_.used_obj_list_size());
 }
 
 void Gate_Manager::free_cache(void) {

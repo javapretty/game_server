@@ -10,6 +10,7 @@
 #include "V8_Wrap.h"
 #include "Buffer_Wrap.h"
 #include "Server_Config.h"
+#include "Public_Struct.h"
 
 V8_Manager::V8_Manager(void):platform_(nullptr), isolate_(nullptr) { }
 
@@ -17,7 +18,7 @@ V8_Manager::~V8_Manager(void) {
 	fini();
 }
 
-int V8_Manager::init(int server_type) {
+int V8_Manager::init(const char *server_path) {
 	//初始化V8
 	V8::InitializeICU();
 	V8::InitializeExternalStartupData("");
@@ -40,13 +41,7 @@ int V8_Manager::init(int server_type) {
 	Context::Scope context_scope(context);
 	//根据不同的服务器加载不同的脚本
 	const Json::Value &server_misc = SERVER_CONFIG->server_misc();
-	if (server_type == 1) {
-		Run_Script(isolate_, server_misc["game_server_js_path"].asCString());
-	} else if (server_type == 2) {
-		Run_Script(isolate_, server_misc["master_server_js_path"].asCString());
-	} else {
-		LOG_FATAL("server_type:%d fatal", server_type);
-	}
+	Run_Script(isolate_, server_misc[server_path].asCString());
 	return 0;
 }
 
@@ -74,7 +69,7 @@ Game_V8_Manager *Game_V8_Manager::instance(void) {
 }
 
 void Game_V8_Manager::run_handler(void) {
-	init(1);
+	init("game_server_path");
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -91,5 +86,8 @@ Master_V8_Manager *Master_V8_Manager::instance(void) {
 }
 
 void Master_V8_Manager::run_handler(void) {
-	init(2);
+	//多进程模式开启master v8虚拟机
+	if (SERVER_CONFIG->server_misc()["server_type"].asInt() == MULTI_PROCESS)	{
+		init("master_server_path");
+	}
 }

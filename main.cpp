@@ -9,6 +9,8 @@
 #include "Debug_Server.h"
 #include "Daemon_Server.h"
 #include "Server_Config.h"
+#include "Public_Struct.h"
+#include "Log.h"
 
 static void sighandler(int sig_no) { exit(0); } /// for gprof need normal exit
 
@@ -19,12 +21,15 @@ int main(int argc, char *argv[]) {
 	signal(SIGUSR1, sighandler);
 
 	SERVER_CONFIG->load_server_config();
-	if (SERVER_CONFIG->server_misc()["server_type"].asInt() == 1) {
+	int server_type = SERVER_CONFIG->server_misc()["server_type"].asInt();
+	if (server_type == MULTI_PROCESS) {
+		DAEMON_SERVER->init(argc, argv);
+		DAEMON_SERVER->start(argc, argv);
+	} else if (server_type == MULTI_THREAD) {
 		DEBUG_SERVER->init(argc, argv);
 		DEBUG_SERVER->start(argc, argv);
 	} else {
-		DAEMON_SERVER->init(argc, argv);
-		DAEMON_SERVER->start(argc, argv);
+		LOG_FATAL("server start type = %d error abort", server_type);
 	}
 
 	return 0;

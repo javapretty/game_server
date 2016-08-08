@@ -9,10 +9,8 @@ function Config() {
 	this.hero_json = null;			//英雄配置
 	this.level_json = null;			//玩家等级相关配置
 	this.util_json = null;			//公共综合配置
-	this.shop_json = null;			//商店配置
 	this.vip_json = null;				//vip配置
 	this.recharge_json = null;		//充值相关配置
-	this.server_json = null;        //服务器相关配置
 	
 	this.init = function() {
 		try {
@@ -28,17 +26,12 @@ function Config() {
 			var util_str = read_json("config/player/util.json");
 			this.util_json = JSON.parse(util_str);
 			
-			var shop_str = read_json("config/shop/shop.json");
-			this.shop_json = JSON.parse(shop_str);
-			
 			var vip_str = read_json("config/vip/vip.json");
 			this.vip_json = JSON.parse(vip_str);
 			
 			var recharge_str = read_json("config/vip/recharge.json");
 			this.recharge_json = JSON.parse(recharge_str);
 			
-			var server_str = read_json("config/server/server_misc.json");
-			this.server_json = JSON.parse(server_str);
 		} catch (err) {
 			print(err.message);
 		}

@@ -4,7 +4,6 @@
 *	时间：2016/02/24
 */
 
-require('map.js');
 require('enum.js');
 require('error.js');
 require('message.js');
@@ -16,12 +15,17 @@ require('game_player.js');
 require('hero.js');
 require('bag.js');
 require('mail.js');
-require('shop.js');
 
-//cid----game_player  全局玩家对象
+//cid----game_player
 var game_player_cid_map = new Map();
-//role_id---game_player 全局玩家对象
+//role_id---game_player
 var game_player_role_id_map = new Map();
+//role_name---game_player
+var game_player_role_name_map = new Map();
+//account---Cid_Info
+var login_map = new Map();
+//account---now_sec
+var logout_map = new Map();
 
 //加载配置文件
 var config = new Config();
@@ -38,19 +42,25 @@ function main() {
 	while (true) {
 		var all_empty = true;
 		
-		//获得客户端消息
-		var buffer = pop_game_client_buffer();
-		if (buffer != null) {
+		//获得gate客户端消息object
+		var obj = pop_game_gate_msg_object();
+		if (obj != null) {
 			all_empty = false;
-			process_game_client_buffer(buffer);
+			process_game_gate_msg(obj);
 		}
-	
-		//获得上线玩家的信息
-		buffer = get_game_player_load_data_buffer();
-		if (buffer != null) {
+		
+		//获得db服务器消息object
+		var obj = pop_game_db_msg_object();
+		if (obj != null) {
 			all_empty = false;
-			var game_player = new Game_Player();
-			game_player.load_player_data(buffer);
+			process_game_db_msg(obj);
+		}
+		
+		//获得master服务器消息object
+		var obj = pop_game_master_msg_object();
+		if (obj != null) {
+			all_empty = false;
+			process_game_master_msg(obj);
 		}
 	
 		//获得下线玩家的cid
@@ -61,13 +71,6 @@ function main() {
 			if (game_player) {
 				game_player.save_player_data();
 			}
-		}
-		
-		//获得master过来的同步消息
-		var buffer = pop_sync_master_data_buffer();
-		if(buffer != null){
-			all_empty = false;
-			process_game_master_buffer(buffer);
 		}
 
 		//处理定时器消息
@@ -90,107 +93,204 @@ function main() {
 	}	
 }
 
-function process_game_client_buffer(buffer) {
-	var gate_cid = buffer.read_int32();
-	var len = buffer.read_int16();
-	var msg_id = buffer.read_int32();
-	var status = buffer.read_int32();
-	var player_cid = buffer.read_int32();
-	
-	var cid = gate_cid * 10000 + player_cid;
-	var game_player = game_player_cid_map.get(cid);
-	if (!game_player) {
-		print('game_player not exist, gate_cid:', gate_cid, " player_cid:", player_cid, " msg_id:", msg_id);
-		return push_game_client_buffer(gate_cid, buffer);
+function process_game_gate_msg(obj) {
+	if (obj.msg_id == Msg_CG.REQ_FETCH_ROLE_INFO) {
+		fetch_role_info(obj);
+		return;
+	} else if (obj.msg_id == Msg_CG.REQ_CREATE_ROLE) { 
+		create_role(obj);
+		return;
 	}
 	
-	switch(msg_id) {
+	var cid = obj.cid * 10000 + obj.player_cid;
+	var game_player = game_player_cid_map.get(cid);
+	if (!game_player) {
+		print('process_game_gate_msg, game_player not exist, gate_cid:', obj.cid, ' player_cid:', obj.player_cid, ' msg_id:', obj.msg_id);
+		return;
+	}
+	
+	switch(obj.msg_id) {
+	case Msg_Gate.SYNC_GATE_GAME_PLAYER_LOGOUT:
+		game_player.cplayer.link_close();
+		break;	
 	case Msg_CG.REQ_BUY_VITALITY:
 		game_player.buy_vitality();
 		break;	
-	case Msg_CG.REQ_EXCHANGE_MONEY:
-		game_player.exchange_money(buffer);
-		break;
 	case Msg_CG.REQ_FETCH_BAG_INFO:
 		game_player.bag.fetch_bag_info();
 		break;
 	case Msg_CG.REQ_USE_ITEM:
-		game_player.bag.use_item(buffer);
+		game_player.bag.use_item(obj);
 		break;
 	case Msg_CG.REQ_SELL_ITEM:
-		game_player.bag.sell_item(buffer);
+		game_player.bag.sell_item(obj);
 		break
 	case Msg_CG.REQ_FETCH_MAIL_INFO:
 		game_player.mail.fetch_mail_info();
 		break;
 	case Msg_CG.REQ_PICKUP_MAIL:
-		game_player.mail.pickup_mail(buffer);
+		game_player.mail.pickup_mail(obj);
 		break;
 	case Msg_CG.REQ_DEL_MAIL:
-		game_player.mail.delete_mail(buffer);
+		game_player.mail.delete_mail(obj);
 		break;
 	case Msg_CG.REQ_SEND_MAIL:
-		game_player.mail.send_mail(buffer);
+		game_player.mail.send_mail(obj);
 		break;
 	case Msg_CG.REQ_FETCH_HERO_INFO:
-		game_player.hero.fetch_hero_info(buffer);
+		game_player.hero.fetch_hero_info(obj);
 		break;
 	case Msg_CG.REQ_ADD_HERO_STAR:
-		game_player.hero.add_hero_star(buffer);
+		game_player.hero.add_hero_star(obj);
 		break;
 	case Msg_CG.REQ_ADD_HERO_QUALITY:
-		game_player.hero.add_hero_quality(buffer);
+		game_player.hero.add_hero_quality(obj);
 		break;
 	case Msg_CG.REQ_ADD_EQUIP_LEVEL:
-		game_player.hero.add_equip_level(buffer);
+		game_player.hero.add_equip_level(obj);
 		break;
 	case Msg_CG.REQ_EQUIP_ON_OFF:
-		game_player.hero.equip_on_off(buffer);
+		game_player.hero.equip_on_off(obj);
 		break;
 	case Msg_CG.REQ_ADD_SKILL_LEVEL:
-		game_player.hero.add_skill_level(buffer);
+		game_player.hero.add_skill_level(obj);
 		break;
-	case Msg_CG.REQ_FETCH_SHOP_INFO:
-		game_player.shop.fetch_shop_info(buffer);
+	default:
+		print('process_game_gate_msg, msg_id: not exist', obj.msg_id);
 		break;
-	case Msg_CG.REQ_BUY_PRODUCT:
-		game_player.shop.buy_product(buffer);
+	}
+}
+
+function process_game_db_msg(obj) {	
+	switch(obj.msg_id){
+	case Msg_GD.SYNC_DB_GAME_LOAD_PLAYER:
+	case Msg_GD.SYNC_DB_GAME_CREATE_PLAYER: {
+		process_loaded_player_data(obj);
 		break;
-	case Msg_CG.REQ_REFRESH_SHOP:
-		game_player.shop.refresh_by_player(buffer);
-		break;
-	case Msg_CG.REQ_ADD_HERO_EXP:
-		game_player.add_hero_exp_test(buffer);
+	}
+	case Msg_GD.SYNC_DB_GAME_SAVE_PLAYER: {
+		logout_map.delete(obj.account);
 		break;
 	case Msg_CG.REQ_MOVE_TO_POINT:
 		game_player.move_to_point(buffer);
 		break;
+	}
 	default:
-		print('msg_id not exist, gate_cid:', gate_cid, " player_cid:", player_cid, " msg_id:", msg_id);print("can not find the msg_id:", msg_id);
+		print('process_game_db_msg, msg_id: not exist', obj.msg_id);
 		break;
 	}
-	push_game_client_buffer(gate_cid, buffer);
 }
 
-function process_game_master_buffer(buffer) {
-	var cid = buffer.read_int32();
-	var len = buffer.read_int16();
-	var msg_id = buffer.read_int32();
-	var status = buffer.read_int32();
-	var role_id = buffer.read_int64();
-	var game_player = game_player_role_id_map.get(role_id);
-	if(!game_player){
-		print('role_id: ', role_id, ' do not exist!');
+function process_game_master_msg(obj) {
+	var game_player = game_player_role_id_map.get(obj.role_id);
+	if (!game_player) {
+		print('process_game_master_msg, game_player not exist, role_id:', obj.role_id, ' msg_id:', obj.msg_id);
 		return;
 	}
 	
-	switch(msg_id){
-	case Msg_GM.SYNC_MASTER_GAME__GUILD_INFO:
-		game_player.set_guild_info(buffer);
+	switch(obj.msg_id){
+	case Msg_GM.SYNC_MASTER_GAME_GUILD_INFO: {
+		game_player.set_guild_info(obj);
 		break;
+	}
 	default:
-		print('msg_id: ', msg_id, ' from master do not exist!');
+		print('process_game_master_msg, msg_id: not exist', obj.msg_id);
 		break;
 	}
 }
 
+function fetch_role_info(obj) {	
+	//帐号还在登录/登出流程中判断
+	if (login_map.get(obj.account) || logout_map.get(obj.account) ) {
+		print('account in logining status, account:', obj.account);
+		game_close_client(obj.cid, obj.player_cid, Error_Code.ERROR_DISCONNECT_RELOGIN);
+		return;
+	}
+
+	//重复登录判断
+	var player = game_player_role_id_map.get(obj.role_id);
+	if (! player) {
+		//登录加载玩家信息，玩家存在，直接从数据库取数据
+		print('fetch_role_info, load player info from db, account:', obj.account, ' gate_cid:', obj.cid, ' player_cid:', obj.player_cid);
+		var cid_info = new Cid_Info();
+		cid_info.gate_cid = obj.cid;
+		cid_info.player_cid = obj.player_cid;
+		login_map.set(obj.account, cid_info);
+
+		var msg = new MSG_150001();
+		msg.account = obj.account;
+		send_game_msg_to_db(Msg_GD.SYNC_GAME_DB_LOAD_PLAYER, msg);
+	} else {
+		//玩家重复登录，获取信息
+		print('player login again, account:', obj.account);
+	}
+}
+
+function create_role(obj) {
+	if (obj.account.length <= 0 || obj.role_name.length <= 0) {
+		print('create_role parameter invalid, account:', obj.account, ' role_name:', obj.role_name);
+		return;
+	}
+	
+	if (login_map.get(obj.account)) {
+		print('account in logining status, account:', obj.account, ' role_name:', obj.role_name);
+		game_close_client(obj.cid, obj.player_cid, Error_Code.ERROR_DISCONNECT_RELOGIN);
+		return;	
+	}
+
+	var cid_info = new Cid_Info();
+	cid_info.gate_cid = obj.cid;
+	cid_info.player_cid = obj.player_cid;
+	login_map.set(obj.account, cid_info);
+	
+	var msg = new MSG_150002();
+	msg.role_info.account = obj.account;
+	msg.role_info.role_name = obj.role_name;
+	msg.role_info.client_ip = obj.client_ip;
+	msg.role_info.gender = obj.gender;
+	msg.role_info.career = obj.career;
+	send_game_msg_to_db(Msg_GD.SYNC_GAME_DB_CREATE_PLAYER, msg);
+}
+
+function process_loaded_player_data(obj) {
+	print('process_loaded_player_data, status:', obj.status, ' account:', obj.account);
+	
+	var cid_info = login_map.get(obj.account);
+	if (cid_info == null) {
+		print('player is not in login map, account:', obj.account);
+		return;	
+	}
+
+	var gate_cid = cid_info.gate_cid;
+	var player_cid = cid_info.player_cid;
+	if (gate_cid < 2 || player_cid < 2) {
+		print('player cid error, account:', obj.account, ' gate_cid:', gate_cid, ' player_cid:', player_cid);
+		return;
+	}
+	login_map.delete(obj.account);
+
+	switch(obj.status) {
+	//[角色登录]没有玩家数据, 提示创建新角色
+	case Role_Status.ROLE_NOT_EXIST:	{
+		send_game_msg_to_gate(gate_cid, player_cid, Msg_GC.RES_FETCH_ROLE_INFO, Error_Code.ERROR_ROLE_NOT_EXIST);
+		break;
+	}
+	//[创建角色]创建的角色名已存在
+	case Role_Status.ROLE_HAS_EXIST: {
+		send_game_msg_to_gate(gate_cid, player_cid, Msg_GC.RES_CREATE_ROLE, Error_Code.ERROR_ROLE_NAME_EXIST);
+		break;
+	}
+	//[创建角色]创建角色成功
+	case Role_Status.ROLE_SUCCESS_CREATE:
+	//[角色登录]数据加载成功
+	case Role_Status.ROLE_SUCCESS_LOAD: {
+		var game_player = new Game_Player();
+		game_player.load_player_data(gate_cid, player_cid, obj);
+		break;
+	}
+	default: {
+		print("role status:%d error", obj.status);
+		break;
+	}
+	}
+}

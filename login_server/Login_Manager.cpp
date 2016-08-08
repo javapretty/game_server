@@ -16,10 +16,10 @@ Login_Manager::Login_Manager(void):
   player_account_map_(get_hash_table_size(12000)),
 	server_status_(STATUS_NORMAL),
 	msg_count_onoff_(true),
-  mysql_db_conn_(NULL) {}
+  mysql_conn_(NULL) {}
 
 Login_Manager::~Login_Manager(void) {
-	MYSQL_DB_MANAGER->RelDBConn(mysql_db_conn_);
+	MYSQL_MANAGER->rel_mysql_conn(mysql_conn_);
 }
 
 Login_Manager *Login_Manager::instance_;
@@ -33,7 +33,6 @@ Login_Manager *Login_Manager::instance(void) {
 int Login_Manager::init(void) {
 	tick_time_ = Time_Value::gettimeofday();
 
-	SERVER_CONFIG;
 	LOGIN_INNER_MESSAGER;					/// 内部消息处理
 	LOGIN_CLIENT_MESSAGER;					/// 外部消息处理
 	LOGIN_TIMER->thr_create();
@@ -66,7 +65,7 @@ int Login_Manager::init_gate_ip(void) {
 }
 
 void Login_Manager::get_gate_ip(std::string &account, std::string &ip, int &port) {
-	long hash = elf_hash(account.c_str(), account.size());
+	int hash = elf_hash(account.c_str(), account.size());
 	int index = hash % (gate_ip_vec_.size());
 	ip = gate_ip_vec_[index].ip;
 	port = gate_ip_vec_[index].port;
@@ -120,7 +119,7 @@ int Login_Manager::unbind_login_player(Login_Player &player) {
 
 int Login_Manager::send_to_client(int player_cid, Block_Buffer &buf) {
 	if (player_cid < 2) {
-		LOG_INFO("player_cid = %d", player_cid);
+		LOG_ERROR("player_cid = %d", player_cid);
 		return -1;
 	}
 	return LOGIN_CLIENT_SERVER->send_block(player_cid, buf);
@@ -128,8 +127,8 @@ int Login_Manager::send_to_client(int player_cid, Block_Buffer &buf) {
 
 int Login_Manager::send_to_gate(int gate_cid, Block_Buffer &buf){
 	if (gate_cid < 2) {
-			LOG_INFO("gate_cid = %d", gate_cid);
-			return -1;
+		LOG_ERROR("gate_cid = %d", gate_cid);
+		return -1;
 	}
 
 	return LOGIN_GATE_SERVER->send_block(gate_cid, buf);
@@ -140,7 +139,7 @@ int Login_Manager::close_client(int player_cid) {
 		Close_Info info(player_cid, tick_time());
 		close_list_.push_back(info);
 	} else {
-		LOG_TRACE("player_cid < 2");
+		LOG_ERROR("close_client, player_cid < 2");
 	}
 	return 0;
 }
@@ -165,7 +164,7 @@ int Login_Manager::self_close_process(void) {
 	int i = 0;
 	while (++i < 60) {
 		sleep(1);
-		LOG_DEBUG("login server has user:%d", player_cid_map_.size());
+		LOG_INFO("login server has user:%d", player_cid_map_.size());
 		if (player_cid_map_.size() == 0)
 			break;
 	}
@@ -179,7 +178,13 @@ int Login_Manager::process_list(void) {
 	while (1) {
 		bool all_empty = true;
 
-		/// client-->login
+		//掉线玩家列表
+		if (! drop_cid_list_.empty()) {
+			all_empty = false;
+			cid = drop_cid_list_.pop_front();
+			process_drop_cid(cid);
+		}
+		//client-->login
 		if ((buf = login_client_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
@@ -191,7 +196,7 @@ int Login_Manager::process_list(void) {
 			}
 			LOGIN_CLIENT_SERVER->push_block(cid, buf);
 		}
-		/// gate-->login
+		//gate-->login
 		if ((buf = login_gate_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
@@ -203,19 +208,11 @@ int Login_Manager::process_list(void) {
 			}
 			LOGIN_GATE_SERVER->push_block(cid, buf);
 		}
-		/// 掉线玩家列表
-		if (! drop_cid_list_.empty()) {
+		//定时器列表
+		if (! tick_list_.empty()) {
 			all_empty = false;
-			cid = drop_cid_list_.pop_front();
-			process_drop_cid(cid);
-		}
-		/// 游戏服内部循环消息队列
-		if (! self_loop_block_list_.empty()) {
-			all_empty = false;
-			buf = self_loop_block_list_.front();
-			self_loop_block_list_.pop_front();
-			LOGIN_INNER_MESSAGER->process_self_loop_block(*buf);
-			block_pool_.push(buf);
+			tick_list_.pop_front();
+			tick();
 		}
 
 		if (all_empty)
@@ -303,7 +300,7 @@ void Login_Manager::get_server_info(Block_Buffer &buf) {
 }
 
 void Login_Manager::object_pool_size(void) {
-	LOG_DEBUG("login block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
+	LOG_INFO("login block_pool_ free = %d, used = %d", block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
 }
 
 void Login_Manager::free_cache(void) {
@@ -322,19 +319,19 @@ void Login_Manager::print_msg_count(void) {
 }
 
 int Login_Manager::connect_mysql_db() {
-	const Json::Value &server_misc = SERVER_CONFIG->server_misc();
-	if (server_misc == Json::Value::null) {
+	const Json::Value &mysql_account = SERVER_CONFIG->server_misc()["mysql_account"];
+	if (mysql_account == Json::Value::null) {
 		LOG_FATAL("server_misc config error");
 	}
-	std::string mysql_ip(server_misc["mysql_server"]["ip"].asString());
-	int mysql_port = server_misc["mysql_server"]["port"].asInt();
-	std::string mysql_user(server_misc["mysql_server"]["user"].asString());
-	std::string mysql_pw(server_misc["mysql_server"]["password"].asString());
-	std::string db_name("account");
-	std::string pool_name("account_pool");
+	std::string ip(mysql_account["ip"].asString());
+	int port = mysql_account["port"].asInt();
+	std::string user(mysql_account["user"].asString());
+	std::string password(mysql_account["password"].asString());
+	std::string dbname(mysql_account["dbname"].asString());
+	std::string dbpoolname(mysql_account["dbpoolname"].asString());
 
-	MYSQL_DB_MANAGER->Init(mysql_ip, mysql_port, mysql_user, mysql_pw, db_name, pool_name, 16);
-	mysql_db_conn_ = MYSQL_DB_MANAGER->GetDBConn(pool_name);
+	MYSQL_MANAGER->init(ip, port, user, password, dbname, dbpoolname, 16);
+	mysql_conn_ = MYSQL_MANAGER->get_mysql_conn(dbpoolname);
 	return 0;
 }
 
@@ -342,7 +339,7 @@ int Login_Manager::client_register(std::string& account, std::string& password){
 	int ret = 0;
 	try {
 		std::string sql_query = "insert into account_info values (\'" + account + "\', \'" +  password +"\')";
-		ret = mysql_db_conn_->Execute(sql_query.c_str());
+		ret = mysql_conn_->execute(sql_query.c_str());
 	} catch(sql::SQLException &e){
 		int err_code = e.getErrorCode();
 		LOG_ERROR("SQLException, MySQL Error Code = %d, SQLState = %s,%s, account = %s, password = %s",
@@ -357,7 +354,7 @@ int Login_Manager::client_login(std::string& account, std::string& password){
 	int ret = 0;
 	try {
 		std::string sql_query = "select count(1) from account_info where account = \'" + account + "\' and password = \'" + password + "\'";
-		sql::ResultSet* res = mysql_db_conn_->ExecuteQuery(sql_query.c_str());
+		sql::ResultSet* res = mysql_conn_->execute_query(sql_query.c_str());
 		int cnt = 0;
 		while (res->next()) {
 			cnt = res->getInt(1);

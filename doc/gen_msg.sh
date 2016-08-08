@@ -1,48 +1,33 @@
 #! /bin/bash
 
-DEFINE_PATH='../config/structs/'
-SERVER_PATH='../misc/'
-CPP_TARGET='../msg'
+DEFINE_PATH='../config/struct/'
 JS_TARGET='../js'
-ROBOT_PATH='../../robot/msg'
 
 function gen_msg(){
-	gen_cpp
 	gen_js
-	gen_msgd
+	gen_msgid
 	cp_file
-	do_some_others
-}
-
-function gen_cpp(){
-	./serialize_tool cpp $DEFINE_PATH 'game_struct.xml' 'Game_Struct'
-	./serialize_tool cpp $DEFINE_PATH 'outer_msg.xml' 'Client_Message'
-	./serialize_tool cpp $DEFINE_PATH 'inner_msg.xml' 'Server_Message'
+	rm_file
 }
 
 function gen_js(){
-	./serialize_tool js $DEFINE_PATH 'game_struct.xml' 'struct'
-	./serialize_tool js $DEFINE_PATH 'inner_msg.xml' 'struct'
-	./serialize_tool js $DEFINE_PATH 'outer_msg.xml' 'struct'
+	./struct_tool js $DEFINE_PATH 'game_struct.xml' 'struct'
+	./struct_tool js $DEFINE_PATH 'msg_struct.xml' 'struct'
 }
 
-function gen_msgd(){
-	./serialize_tool msg $DEFINE_PATH 'Message.define' 'msg'
+function gen_msgid(){
+	./struct_tool msg $DEFINE_PATH 'message.define' 'msg'
 }
 
 function cp_file(){
 	wildcard='.*'
-	cp -rf CPP/* $CPP_TARGET
-	cp -rf CPP/'Client_Message'${wildcard} $ROBOT_PATH
-	cp -rf CPP/'Game_Struct'${wildcard} $ROBOT_PATH
-	cp -rf CPP/Message.h $ROBOT_PATH
 	cp -rf JS/* $JS_TARGET
+	cp -rf '../config/struct/game_struct.xml' '../../robot/config'
+	cp -rf '../config/struct/msg_struct.xml' '../../robot/config'
 }
 
-function do_some_others(){
-	rm -rf CPP
+function rm_file(){
 	rm -rf JS
 }
 
 gen_msg
-

@@ -3,16 +3,15 @@
  *      Author: zhangyalei
  */
 
-#include "Msg_Define.h"
 #include "Gate_Manager.h"
 #include "Common_Func.h"
 
-Gate_Player::Gate_Player(void) : cid_(0) { }
+Gate_Player::Gate_Player(void) : player_cid_(0) { }
 
 Gate_Player::~Gate_Player(void) { }
 
 void Gate_Player::reset(void) {
-	cid_ = 0;
+	player_cid_ = 0;
 	account_.clear();
 	msg_info_.reset();
 	recycle_tick_.reset();
@@ -34,10 +33,17 @@ int Gate_Player::link_close() {
 
 	recycle_tick_.set(Recycle_Tick::RECYCLE);
 
-	Block_Buffer buf;
-	buf.make_player_message(SYNC_GATE_GAME_PLAYER_SIGNOUT, 0, cid_);
-	buf.finish_message();
-	GATE_MANAGER->send_to_game(buf);
+	//gate同步玩家下线到game
+	Block_Buffer game_buf;
+	game_buf.make_player_message(SYNC_GATE_GAME_PLAYER_LOGOUT, 0, player_cid_);
+	game_buf.finish_message();
+	GATE_MANAGER->send_to_game(game_buf);
+
+	//gate同步玩家下线到master
+	Block_Buffer master_buf;
+	master_buf.make_player_message(SYNC_GATE_MASTER_PLAYER_LOGOUT, 0, player_cid_);
+	master_buf.finish_message();
+	GATE_MANAGER->send_to_master(master_buf);
 
 	return 0;
 }

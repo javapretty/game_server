@@ -6,6 +6,36 @@
 #include "Public_Struct.h"
 #include "Server_Config.h"
 #include "Log.h"
+#include "Mongo_Struct.h"
+#include "Mysql_Struct.h"
+#include "Log_Struct.h"
+#include "Msg_Struct.h"
+
+int load_struct(const char *path, Struct_Type struct_type, Struct_Id_Map &struct_id_map, Struct_Name_Map &struct_name_map){
+	Xml xml;
+	xml.load_xml(path);
+	TiXmlNode *node = xml.get_root_node();
+	XML_LOOP_BEGIN(node)
+		Base_Struct *base_struct = nullptr;
+		if (struct_type == MONGO_STRUCT)	{
+			base_struct = new Mongo_Struct(xml, node);
+		} else if (struct_type == MYSQL_STRUCT) {
+			base_struct = new Mysql_Struct(xml, node);
+		} else if (struct_type == LOG_STRUCT) {
+			base_struct = new Log_Struct(xml, node);
+		} else if (struct_type == MSG_STRUCT) {
+			base_struct = new Msg_Struct(xml, node);
+		} else {
+			LOG_FATAL("load_struct struct_type = %d error abort", struct_type);
+		}
+
+		if(base_struct->msg_id() > 0) {
+			struct_id_map.insert(std::pair<int32_t, Base_Struct*>(base_struct->msg_id(), base_struct));
+		}
+		struct_name_map.insert(std::pair<std::string, Base_Struct*>(base_struct->struct_name(), base_struct));
+	XML_LOOP_END(node)
+	return 0;
+}
 
 void Server_Conf::init_server_conf(void) {
 	const Json::Value &server_conf = SERVER_CONFIG->server_conf();
@@ -13,11 +43,11 @@ void Server_Conf::init_server_conf(void) {
 	Log::instance()->set_file_switcher(server_conf["server_log_switcher"].asInt());
 
 	server_sleep_time = Time_Value(1, 0);					//1s
-	receive_timeout = Time_Value(server_conf["recv_timeout"].asInt(), 0);
-	server_send_interval = Time_Value(0, 100);		//100us
-	connect_send_interval = Time_Value(0, 100);		//100us
+	receive_timeout = Time_Value(server_conf["receive_timeout"].asInt(), 0);	//900s
+	server_send_interval = Time_Value(0, server_conf["server_send_interval"].asInt());				//100us
+	connector_send_interval = Time_Value(0, server_conf["connector_send_interval"].asInt());	//100us
 
-	server_ip = "127.0.0.1";
+	server_ip = server_conf["server_ip"].asString();
 	log_port = server_conf["log_server"]["port"].asInt();
 	db_port = server_conf["db_server"]["port"].asInt();
 	login_client_network_protocol = server_conf["login_server"]["client_network_protocol"].asInt();
@@ -28,59 +58,4 @@ void Server_Conf::init_server_conf(void) {
 	game_gate_port = server_conf["game_server"]["gate_port"].asInt();
 	gate_client_network_protocol = server_conf["gate_server"]["client_network_protocol"].asInt();
 	gate_client_port = server_conf["gate_server"]["client_port"].asInt();
-}
-
-Ip_Info::Ip_Info(void) {
-	reset();
-}
-
-Ip_Info::~Ip_Info() {
-}
-
-void Ip_Info::serialize(Block_Buffer &buffer) const {
-	buffer.write_string(ip);
-	buffer.write_int32(port);
-}
-
-int Ip_Info::deserialize(Block_Buffer &buffer) {
-	ip = buffer.read_string();
-	port = buffer.read_int32();
-	return 0;
-}
-
-void Ip_Info::reset(void) {
-	ip.clear();
-	port = 0;
-}
-
-Login_Player_Info::Login_Player_Info(void) {
-	reset();
-}
-
-Login_Player_Info::~Login_Player_Info() {
-}
-
-void Login_Player_Info::serialize(Block_Buffer &buffer) const {
-	buffer.write_string(account);
-	buffer.write_string(gate_ip);
-	buffer.write_int32(gate_port);
-	buffer.write_string(session);
-	buffer.write_int64(session_tick);
-}
-
-int Login_Player_Info::deserialize(Block_Buffer &buffer) {
-	account = buffer.read_string();
-	gate_ip = buffer.read_string();
-	gate_port = buffer.read_int32();
-	session = buffer.read_string();
-	session_tick = buffer.read_int64();
-	return 0;
-}
-
-void Login_Player_Info::reset(void) {
-	account.clear();
-	gate_ip.clear();
-	gate_port = 0;
-	session.clear();
-	session_tick = 0;
 }

@@ -48,19 +48,19 @@ int Daemon::handle_timeout(const Time_Value &tv) {
 	if (ppid == 1) {
 		watcher_->remove(this);
 		switch (type_) {
-		case Log::LOG_LOGIN_SERVER: {
+		case LOG_LOGIN_SERVER: {
 			LOGIN_MANAGER->self_close_process();
 			break;
 		}
-		case Log::LOG_GATE_SERVER: {
+		case LOG_GATE_SERVER: {
 			GATE_MANAGER->self_close_process();
 			break;
 		}
-		case Log::LOG_GAME_SERVER: {
+		case LOG_GAME_SERVER: {
 			GAME_MANAGER->self_close_process();
 			break;
 		}
-		case Log::LOG_MASTER_SERVER: {
+		case LOG_MASTER_SERVER: {
 			MASTER_MANAGER->self_close_process();
 			break;
 		}
@@ -73,7 +73,7 @@ int Daemon::handle_timeout(const Time_Value &tv) {
 int Daemon::start_log_client(void) {
 	int cid = -1;
 	//Log_Connector
-	LOG_CONNECTOR->set(server_conf_.server_ip, server_conf_.log_port, server_conf_.connect_send_interval);
+	LOG_CONNECTOR->set(server_conf_.server_ip, server_conf_.log_port, server_conf_.connector_send_interval);
 	LOG_CONNECTOR->init();
 	LOG_CONNECTOR->start();
 	if ((cid = LOG_CONNECTOR->connect_server())< 2) {
@@ -85,7 +85,7 @@ int Daemon::start_log_client(void) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 Daemon_Log::Daemon_Log(void)
-: Daemon(Log::LOG_LOG_SERVER)
+: Daemon(LOG_LOG_SERVER)
 { }
 
 Daemon_Log::~Daemon_Log(void) { }
@@ -106,7 +106,7 @@ void Daemon_Log::destroy(void) {
 }
 
 void Daemon_Log::start_server(void) {
-	Log::instance()->set_log_type(Log::LOG_LOG_SERVER);
+	Log::instance()->set_log_type(LOG_LOG_SERVER);
 	server_conf_.init_server_conf();
 
 	//Log_Server
@@ -130,7 +130,7 @@ void Daemon_Log::start_client(void) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 Daemon_DB::Daemon_DB(void)
-: Daemon(Log::LOG_DB_SERVER)
+: Daemon(LOG_DB_SERVER)
 { }
 
 Daemon_DB::~Daemon_DB(void) { }
@@ -152,7 +152,7 @@ void Daemon_DB::destroy(void) {
 
 void Daemon_DB::start_server(void) {
 	/// start log client
-	Log::instance()->set_log_type(Log::LOG_DB_SERVER);
+	Log::instance()->set_log_type(LOG_DB_SERVER);
 	server_conf_.init_server_conf();
 
 	//DB_Server
@@ -176,7 +176,7 @@ void Daemon_DB::start_client(void) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 Daemon_Login::Daemon_Login(void)
-: Daemon(Log::LOG_LOGIN_SERVER)
+: Daemon(LOG_LOGIN_SERVER)
 { }
 
 Daemon_Login::~Daemon_Login(void) { }
@@ -198,7 +198,7 @@ void Daemon_Login::destroy(void) {
 
 void Daemon_Login::start_server(void) {
 	/// start log client
-	Log::instance()->set_log_type(Log::LOG_LOGIN_SERVER);
+	Log::instance()->set_log_type(LOG_LOGIN_SERVER);
 	server_conf_.init_server_conf();
 
 	/// Login Client Server
@@ -229,7 +229,7 @@ void Daemon_Login::start_client(void) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 Daemon_Master::Daemon_Master(void)
-: Daemon(Log::LOG_MASTER_SERVER)
+: Daemon(LOG_MASTER_SERVER)
 { }
 
 Daemon_Master::~Daemon_Master(void) { }
@@ -251,7 +251,7 @@ void Daemon_Master::destroy(void) {
 
 void Daemon_Master::start_server(void) {
 	/// start log client
-	Log::instance()->set_log_type(Log::LOG_MASTER_SERVER);
+	Log::instance()->set_log_type(LOG_MASTER_SERVER);
 	server_conf_.init_server_conf();
 
 	/// Master Gate Server
@@ -279,15 +279,14 @@ void Daemon_Master::start_client(void) {
 	start_log_client();
 	
 	int cid = -1;
-	MASTER_DB_CONNECTOR->set(server_conf_.server_ip, server_conf_.db_port, server_conf_.connect_send_interval);
+	MASTER_DB_CONNECTOR->set(server_conf_.server_ip, server_conf_.db_port, server_conf_.connector_send_interval);
 	MASTER_DB_CONNECTOR->init();
 	MASTER_DB_CONNECTOR->start();
 	if ((cid = MASTER_DB_CONNECTOR->connect_server()) < 2) {
 		LOG_FATAL("master_db_connector fatal cid:%d,port:%d", cid, server_conf_.db_port);
 	}
 	MASTER_DB_CONNECTOR->thr_create();
-	//加载PUBLIC数据
-	MASTER_MANAGER->load_public_data();
+	MASTER_MANAGER->load_master_db_data();
 
 	MASTER_V8_MANAGER->thr_create();			//master server v8 engine
 	Daemon::loop();
@@ -295,7 +294,7 @@ void Daemon_Master::start_client(void) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 Daemon_Game::Daemon_Game(void)
-: Daemon(Log::LOG_GAME_SERVER)
+: Daemon(LOG_GAME_SERVER)
 { }
 
 Daemon_Game::~Daemon_Game(void) { }
@@ -317,7 +316,7 @@ void Daemon_Game::destroy(void) {
 
 void Daemon_Game::start_server(void) {
 	/// start log client
-	Log::instance()->set_log_type(Log::LOG_GAME_SERVER);
+	Log::instance()->set_log_type(LOG_GAME_SERVER);
 	server_conf_.init_server_conf();
 
 	/// Game Gate Server
@@ -339,18 +338,16 @@ void Daemon_Game::start_client(void) {
 
 	int cid = -1;
 	/// Game DB Connector
-	GAME_DB_CONNECTOR->set(server_conf_.server_ip, server_conf_.db_port, server_conf_.connect_send_interval);
+	GAME_DB_CONNECTOR->set(server_conf_.server_ip, server_conf_.db_port, server_conf_.connector_send_interval);
 	GAME_DB_CONNECTOR->init();
 	GAME_DB_CONNECTOR->start();
 	if ((cid = GAME_DB_CONNECTOR->connect_server()) < 2) {
 		LOG_FATAL("game_db_connector fatal cid:%d,port:%d", cid, server_conf_.db_port);
 	}
 	GAME_DB_CONNECTOR->thr_create();
-	//加载DB缓存数据
-	GAME_MANAGER->load_db_cache();
 
 	/// Game Master Connector
-	GAME_MASTER_CONNECTOR->set(server_conf_.server_ip, server_conf_.master_game_port, server_conf_.connect_send_interval);
+	GAME_MASTER_CONNECTOR->set(server_conf_.server_ip, server_conf_.master_game_port, server_conf_.connector_send_interval);
 	GAME_MASTER_CONNECTOR->init();
 	GAME_MASTER_CONNECTOR->start();
 	if ((cid = GAME_MASTER_CONNECTOR->connect_server()) < 2) {
@@ -365,7 +362,7 @@ void Daemon_Game::start_client(void) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 Daemon_Gate::Daemon_Gate(void)
-: Daemon(Log::LOG_GATE_SERVER)
+: Daemon(LOG_GATE_SERVER)
 { }
 
 Daemon_Gate::~Daemon_Gate(void) { }
@@ -387,7 +384,7 @@ void Daemon_Gate::destroy(void) {
 
 void Daemon_Gate::start_server(void) {
 	/// start log client
-	Log::instance()->set_log_type(Log::LOG_GATE_SERVER);
+	Log::instance()->set_log_type(LOG_GATE_SERVER);
 	server_conf_.init_server_conf();
 
 	/// Gate Client Server
@@ -409,7 +406,7 @@ void Daemon_Gate::start_client(void) {
 
 	int cid = -1;
 	/// Gate Login Connector
-	GATE_LOGIN_CONNECTOR->set(server_conf_.server_ip, server_conf_.login_gate_port, server_conf_.connect_send_interval);
+	GATE_LOGIN_CONNECTOR->set(server_conf_.server_ip, server_conf_.login_gate_port, server_conf_.connector_send_interval);
 	GATE_LOGIN_CONNECTOR->init();
 	GATE_LOGIN_CONNECTOR->start();
 	if ((cid = GATE_LOGIN_CONNECTOR->connect_server()) < 2) {
@@ -418,7 +415,7 @@ void Daemon_Gate::start_client(void) {
 	GATE_LOGIN_CONNECTOR->thr_create();
 
 	/// Gate Game Connector
-	GATE_GAME_CONNECTOR->set(server_conf_.server_ip, server_conf_.game_gate_port, server_conf_.connect_send_interval);
+	GATE_GAME_CONNECTOR->set(server_conf_.server_ip, server_conf_.game_gate_port, server_conf_.connector_send_interval);
 	GATE_GAME_CONNECTOR->init();
 	GATE_GAME_CONNECTOR->start();
 	if ((cid = GATE_GAME_CONNECTOR->connect_server()) < 2) {
@@ -427,7 +424,7 @@ void Daemon_Gate::start_client(void) {
 	GATE_GAME_CONNECTOR->thr_create();
 
 	/// Gate Master Connector
-	GATE_MASTER_CONNECTOR->set(server_conf_.server_ip, server_conf_.master_gate_port, server_conf_.connect_send_interval);
+	GATE_MASTER_CONNECTOR->set(server_conf_.server_ip, server_conf_.master_gate_port, server_conf_.connector_send_interval);
 	GATE_MASTER_CONNECTOR->init();
 	GATE_MASTER_CONNECTOR->start();
 	if ((cid = GATE_MASTER_CONNECTOR->connect_server()) < 2) {

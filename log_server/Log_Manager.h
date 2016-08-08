@@ -8,12 +8,11 @@
 #ifndef LOG_MANAGER_H_
 #define LOG_MANAGER_H_
 
+#include "Log_File.h"
 #include "Thread.h"
 #include "Thread_Mutex.h"
 #include "List.h"
 #include "Block_Buffer.h"
-#include "File_Record.h"
-#include "DB_Record.h"
 
 class Log_Manager: public Thread {
 public:
@@ -21,32 +20,27 @@ public:
 	typedef List<int, Thread_Mutex> Tick_List;
 
 	static Log_Manager *instance(void);
-
 	int init(void);
-
-	int push_data_block(Block_Buffer *buf);
-
-	int push_tick(int x);
-
 	void run_handler(void);
 
-	int process_list(void);
+	int push_data_block(Block_Buffer *buf);
+	int push_tick(int x);
 
+	int process_list(void);
 	int process_block(Block_Buffer &buf);
+
+	int tick(void);
 
 private:
 	Log_Manager(void);
 	virtual ~Log_Manager(void);
-
-	int tick(void);
 
 private:
 	static Log_Manager *instance_;
 	Block_List block_list_;
 	Tick_List tick_list_;
 
-	File_Record file_record_;
-	DB_Record db_record_;
+	Log_File log_file_;
 };
 
 #define LOG_MANAGER Log_Manager::instance()

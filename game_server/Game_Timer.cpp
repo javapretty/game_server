@@ -4,24 +4,15 @@
  */
 
 
-#include "Msg_Define.h"
 #include "Game_Manager.h"
 #include "Game_Timer.h"
 
-Game_Timer_Handler::Game_Timer_Handler(void) {
-	init_tick_msg_buf();
-}
+Game_Timer_Handler::Game_Timer_Handler(void) { }
 
 Game_Timer_Handler::~Game_Timer_Handler(void) { }
 
-void Game_Timer_Handler::init_tick_msg_buf(void) {
-	tick_msg_buf_.reset();
-	tick_msg_buf_.make_inner_message(SYNC_INNER_TIMER_TICK);
-	tick_msg_buf_.finish_message();
-}
-
 int Game_Timer_Handler::handle_timeout(const Time_Value &tv) {
-	GAME_MANAGER->push_self_loop_message(tick_msg_buf_);
+	GAME_MANAGER->push_tick(tv.sec());
 	GAME_TIMER->v8_tick(tv);
 	return 0;
 }

@@ -9,25 +9,77 @@
 
 #include "boost/unordered_map.hpp"
 #include "Time_Value.h"
-#include "Misc.h"
-#include "Server_Message.h"
+#include "Public_Define.h"
+#include "Message.h"
+#include "Inner_Msg.h"
 
-enum	 {
-	SUCCESS_LOADED = 1,			/// 加载成功
-	SUCCESS_CREATED,		/// 创建成功
-	ROLE_NOT_EXIST,			/// 角色不存在
-	ROLE_HAS_EXIST,			///	角色已经存在
-	ROLE_SAVE_OFFLINE,	/// 角色下线保存
+enum Log_Server_Type {
+	LOG_MISC 				= 0,
+	LOG_LOG_SERVER 		= 1,
+	LOG_DB_SERVER			=	2,
+	LOG_LOGIN_SERVER	=	3,
+	LOG_MASTER_SERVER	=	4,
+	LOG_GAME_SERVER		=	5,
+	LOG_GATE_SERVER		=	6,
 };
 
-struct Ip_Info;
-struct Login_Player_Info;
+enum Error_Code {
+	ERROR_SERVER_INNER 							= 10000,				//服务器内部错误
+	ERROR_CLIENT_SESSION 						= 10001,				//session错误
+	ERROR_CONNECT_TIMEOUT 					= 10002,				//连接超时
+	ERROR_MSG_COUNT									= 10003,				//消息数量过多
+	ERROR_MSG_SERIAL 								= 10004,				//消息序列号错误
+	ERROR_MSG_TIME 									= 10005,				//消息时间错误
+	ERROR_REGISTER_VERIFY_FAIL				= 10006,				//注册验证失败
+	ERROR_LOGIN_VERIFY_FAIL					= 10007,				//登录验证失败
+	ERROR_DISCONNECT_SELF 					= 10008,				//服务重启中,稍候再试
+	ERROR_DISCONNECT_RELOGIN				= 10009,				//账号在其它地方登陆
+};
+
+enum	 Role_Status {
+	ROLE_SUCCESS_LOAD 	= 0,		//加载成功
+	ROLE_SUCCESS_CREATE = 0,	//创建成功
+	ROLE_NOT_EXIST 			= 1,		//角色不存在
+	ROLE_HAS_EXIST 			= 2,		//	角色已经存在
+	ROLE_SAVE_OFFLINE 	= 3,		//角色下线保存
+};
+
+enum Server_Status {
+	STATUS_NORMAL = 1,				//正常状态
+	STATUS_CLOSING = 2,				//关闭中状态
+};
+
+enum Server_Type {
+	MULTI_PROCESS = 1,				//多进程
+	MULTI_THREAD = 2,					//多线程
+};
+
+enum Struct_Type {
+	MONGO_STRUCT = 1,					//mongo数据库结构体
+	MYSQL_STRUCT = 2,					//mysql数据库结构体
+	LOG_STRUCT = 3,						//日志数据库结构体
+	MSG_STRUCT = 4,						//消息结构体
+};
+
+class Base_Struct;
+typedef boost::unordered_map<int32_t, Base_Struct *> Struct_Id_Map;
+typedef boost::unordered_map<std::string, Base_Struct *> Struct_Name_Map;
+
+int load_struct(const char *path, Struct_Type struct_type, Struct_Id_Map &struct_id_map, Struct_Name_Map &struct_name_map);
+
+struct Field_Info {
+	std::string field_label;
+	std::string field_type;
+	std::string field_name;
+	std::string key_type;
+	std::string key_name;
+};
 
 struct Server_Conf {
 	Time_Value server_sleep_time;
 	Time_Value receive_timeout;
 	Time_Value server_send_interval;
-	Time_Value connect_send_interval;
+	Time_Value connector_send_interval;
 
 	std::string server_ip;
 	int log_port;
@@ -57,20 +109,12 @@ public:
 	}
 };
 
-struct Cid_Info {
-	int gate_cid;
-	int player_cid;
+struct Ip_Info {
+	std::string ip;
+	int32_t port;
 
-	Cid_Info(void) : gate_cid(0), player_cid(0) {}
-	Cid_Info(int gate_cid_, int player_cid_) : gate_cid(gate_cid_), player_cid(player_cid_) {};
-};
-
-struct Saving_Info {
-	int64_t role_id;		// 角色
-	Time_Value timestamp;	// 保存时的时间错
-
-	Saving_Info(void) : role_id(0) {}
-	Saving_Info(int64_t role_id_, Time_Value timestamp_) : role_id(role_id_), timestamp(timestamp_) {};
+	Ip_Info(void): ip("127.0.0.1"), port(0) {}
+	Ip_Info(std::string &ip_, int port_): ip(ip_), port(port_) {}
 };
 
 struct Close_Info {
@@ -78,18 +122,19 @@ struct Close_Info {
 	Time_Value timestamp;
 
 	Close_Info(void) : cid(-1), timestamp(Time_Value::zero) { }
-	Close_Info(int p_cid, const Time_Value &p_timestamp) : cid(p_cid), timestamp(p_timestamp) { }
+	Close_Info(int cid_, const Time_Value &timestamp_): cid(cid_), timestamp(timestamp_) { }
 };
 
 struct Msg_Info {
 	bool is_inited;
 	int cid;
-	long hash_key;								/// 用于加解密的hash key
+	int hash_key;								/// 用于加解密的hash key
 	uint32_t msg_serial;					/// 上一条消息序号
 	Time_Value msg_timestamp;			/// 上一条消息时间戳
 	uint32_t msg_interval_count_;	/// 操作频率统计
 	Time_Value msg_interval_timestamp;
 
+	Msg_Info() { reset(); }
 	void reset(void) {
 		is_inited = false;
 		cid = -1;
@@ -108,9 +153,6 @@ struct Tick_Info {
 	const Time_Value player_interval_tick; /// Game_Player定时器间隔
 	Time_Value player_last_tick;
 
-	const Time_Value saving_scanner_interval_tick;	// 玩家下线保存表的扫描
-	Time_Value saving_scanner_last_tick;
-
 	const Time_Value object_pool_interval_tick;
 	Time_Value object_pool_last_tick;
 
@@ -119,8 +161,6 @@ struct Tick_Info {
 	  server_info_last_tick(Time_Value::zero),
 	  player_interval_tick(Time_Value(0, 500 * 1000)),
 	  player_last_tick(Time_Value::zero),
-	  saving_scanner_interval_tick(20, 0),
-	  saving_scanner_last_tick(Time_Value::zero),
 	  object_pool_interval_tick(300, 0),
 	  object_pool_last_tick(Time_Value::zero)
 	{ }
@@ -147,29 +187,23 @@ struct Recycle_Tick {
 	}
 };
 
-struct DB_Cache {
-	const static int player_cache_map_bucket_num = 50000;
+struct Player_DB_Cache {
+	int64_t role_id;
+	std::string role_name;
+	std::string account;
+	int32_t agent_num;
+	int32_t server_num;
+	int32_t level;
 
-	DB_Cache(void)
-	: id_player_cache_map(player_cache_map_bucket_num),
-	  account_player_cache_map(player_cache_map_bucket_num)
-	{ }
-
-	boost::unordered_map<int64_t,Player_DB_Cache> id_player_cache_map;
-	boost::unordered_map<std::string,Player_DB_Cache> account_player_cache_map;
-};
-
-
-struct Ip_Info {
-	std::string ip;
-	int32_t port;
-
-	Ip_Info(void);
-	~Ip_Info();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
+	Player_DB_Cache(void) { reset(); }
+	void reset(void) {
+		role_id = 0;
+		role_name.clear();
+		account.clear();
+		agent_num = 0;
+		server_num = 0;
+		level = 0;
+	}
 };
 
 struct Login_Player_Info {
@@ -179,12 +213,14 @@ struct Login_Player_Info {
 	std::string session;
 	int64_t session_tick;
 
-	Login_Player_Info(void);
-	~Login_Player_Info();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-	void print(void);
+	Login_Player_Info(void) { reset(); }
+	void reset(void) {
+		account.clear();
+		gate_ip.clear();
+		gate_port = 0;
+		session.clear();
+		session_tick = 0;
+	}
 };
 
 #endif /* PUBLIC_STURCT_H_ */

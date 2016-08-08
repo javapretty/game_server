@@ -21,9 +21,7 @@ class Log_Timer: public Thread {
 public:
 	static Log_Timer *instance(void);
 	static void destroy(void);
-
 	virtual void run_handler(void);
-
 	void register_handler(void);
 
 private:

@@ -8,102 +8,69 @@ void print();
 //函数说明：程序睡眠Time_Value(0,100)	参数：无	返回值：无
 void sleep();
 
-2、buffer函数
-//函数说明：重置buffer	参数：无	返回值：无
-void buffer_reset();
-//函数说明：生成服务器内部消息buffer	参数：1,msg_id	返回值：无
-void make_inner_message();
-//函数说明：生成玩家消息buffer	参数：1,msg_id 2,status 3, player_cid	返回值：无
-void make_player_message();
-//函数说明：完成消息buffer的生成	参数：无	返回值：无
-void finish_message();
-
-//函数说明：从buffer读取数据 	参数：无	返回值：读到的数据
-void read_int8();
-void read_int16();
-void read_int32();
-void read_int64();
-void read_uint8();
-void read_uint16();
-void read_uint32();
-void read_uint64();
-void read_double();
-void read_bool();
-void read_string();
-
-//函数说明：将数据写到buffer 	参数：1,数据值	返回值：无
-void write_int8();
-void write_int16();
-void write_int32();
-void write_int64();
-void write_uint8();
-void write_uint16();
-void write_uint32();
-void write_uint64();
-void write_double();
-void write_bool();
-void write_string();
-
-3、game_server函数
+2、game_server函数
 //函数说明：注册定时器到c++层		参数：1.定时器id 2.定时器间隔(毫秒单位) 3.从注册定时器到下次定时器到期中间间隔秒数	返回值：无
 void register_game_timer(const FunctionCallbackInfo<Value>& args);
 //函数说明：从c++层获取超时定时器	参数：无	返回值：到期的timer_id
 void get_game_timer_id(const FunctionCallbackInfo<Value>& args);
-//函数说明：新建game buffer	参数：无	返回值：buffer对象
-void pop_game_buffer();
-//函数说明：回收game buffer	参数：1,buffer	返回值：无
-void push_game_buffer();
-//函数说明：发送消息到db_server 	参数：1,buffer对象	返回值：无
-void send_game_buffer_to_db();
-//函数说明：获取客户端消息buffer	参数：无	返回值：buffer对象
-void pop_game_client_buffer();
-//函数说明：回收客户端消息buffer	参数：buffer对象	返回值：无
-void push_game_client_buffer();
-//函数说明：获取登录玩家的数据buffer	参数：无	返回值：buffer对象
-void get_game_player_load_data_buffer();
-//函数说明：获取下线玩家的cid		参数：无	返回值：cid值
-void get_drop_game_player_cid();
-//函数说明：通过cid获取game_player对象  	参数：1,gate_cid 2,player_cid	返回值：player对象
-void get_game_player_by_cid();
-//函数说明：通过role_name获取game_player对象  	参数：1,role_name	返回值：player对象
-void get_game_player_by_name();
 
-4、master_server函数
+//函数说明：获取gate消息object	参数：无	返回值：消息object
+void pop_game_gate_msg_object(const FunctionCallbackInfo<Value>& args);
+//函数说明：获取master消息object	参数：无	返回值：消息object
+void pop_game_master_msg_object(const FunctionCallbackInfo<Value>& args);
+//函数说明：获取db消息object	参数：无	返回值：消息object
+void pop_game_db_msg_object(const FunctionCallbackInfo<Value>& args);
+
+//函数说明：发送消息object到gate_server	参数：1.gate_cid 2.player_cid 3.msg_id 4.status 5.消息object	返回值：无
+void send_game_msg_to_gate(const FunctionCallbackInfo<Value>& args);
+//函数说明：发送消息object到master_server	参数：1.player_cid 2.msg_id 3.status 4.消息object	返回值：无
+void send_game_msg_to_master(const FunctionCallbackInfo<Value>& args);
+//函数说明：发送消息object到db_server	参数：1.msg_id 2.消息object	返回值：无
+void send_game_msg_to_db(const FunctionCallbackInfo<Value>& args);
+//函数说明：发送消息object到log_server	参数：1.msg_id 2.消息object	返回值：无
+void send_game_msg_to_log(const FunctionCallbackInfo<Value>& args);
+
+//函数说明：获取下线玩家的cid		参数：无	返回值：cid值
+void get_drop_game_player_cid(const FunctionCallbackInfo<Value>& args);
+//函数说明：通过gate_cid获取game_player对象  	参数：1.gate_cid 2.player_cid	返回值：game_player对象
+void get_game_player_by_gate_cid(const FunctionCallbackInfo<Value>& args);
+//函数说明：game_server关闭客户端连接  	参数：1.gate_cid 2.player_cid 3,error_code	返回值：无
+void game_close_client(const FunctionCallbackInfo<Value>& args);
+
+3、master_server函数
 //函数说明：注册定时器到c++层		参数：1.定时器id 2.定时器间隔(毫秒单位) 3.从注册定时器到下次定时器到期中间间隔秒数	返回值：无
 void register_master_timer(const FunctionCallbackInfo<Value>& args);
 //函数说明：从c++层获取超时定时器	参数：无	返回值：到期的timer_id
 void get_master_timer_id(const FunctionCallbackInfo<Value>& args);
-//函数说明：新建master buffer	参数：无	返回值：buffer对象
-void pop_master_buffer();
-//函数说明：回收master buffer	参数：1,buffer	返回值：无
-void push_master_buffer();
-//函数说明：发送消息到db_server 	参数：1,buffer对象	返回值：无
-void send_master_buffer_to_db();
-//函数说明：获取客户端消息buffer	参数：无	返回值：buffer对象
-void pop_master_client_buffer();
-//函数说明：回收客户端消息buffer	参数：buffer对象	返回值：无
-void push_master_client_buffer();
-//函数说明：获取登录玩家的数据buffer	参数：无	返回值：buffer对象
-void get_master_player_load_data_buffer();
+
+//函数说明：获取gate消息object	参数：无	返回值：object对象
+void pop_master_gate_msg_object(const FunctionCallbackInfo<Value>& args);
+//函数说明：获取master消息object	参数：无	返回值：object对象
+void pop_master_game_msg_object(const FunctionCallbackInfo<Value>& args);
+//函数说明：获取db消息object	参数：无	返回值：object对象
+void pop_master_db_msg_object(const FunctionCallbackInfo<Value>& args);
+
+//函数说明：发送消息object到gate_server	参数：1.gate_cid 2.player_cid 3.msg_id 4.status 5.消息object	返回值：无
+void send_master_msg_to_gate(const FunctionCallbackInfo<Value>& args);
+//函数说明：发送消息object到game_server	参数：1.game_cid 2.player_cid 3.msg_id 4.status 5.消息object	返回值：无
+void send_master_msg_to_game(const FunctionCallbackInfo<Value>& args);
+//函数说明：发送消息object到db_server	参数：1.msg_id 2.消息object返回值：无
+void send_master_msg_to_db(const FunctionCallbackInfo<Value>& args);
+//函数说明：发送消息object到log_server	参数：1.msg_id 2.消息object	返回值：无
+void send_master_msg_to_log(const FunctionCallbackInfo<Value>& args);
+
 //函数说明：获取下线玩家的cid		参数：无	返回值：cid值
-void get_drop_master_player_cid();
-//函数说明：通过cid获取master_player对象  	参数：1,gate_cid 2,player_cid	返回值：player对象
-void get_master_player_by_cid();
-//函数说明：通过role_name获取master_player对象  	参数：1,role_name	返回值：player对象
-void get_master_player_by_name();
+void get_drop_master_player_cid(const FunctionCallbackInfo<Value>& args);
+//函数说明：通过gate_cid获取master_player对象  	参数：1,gate_cid 2,player_cid	返回值：master_player对象
+void get_master_player_by_gate_cid(const FunctionCallbackInfo<Value>& args);
+//函数说明：通过game_cid获取master_player对象  	参数：1,game_cid 2,player_cid	返回值：master_player对象
+void get_master_player_by_game_cid(const FunctionCallbackInfo<Value>& args);
+//函数说明：master_server关闭客户端连接  	参数：1,gate_cid 2,player_cid 3,error_code	返回值：无
+void master_close_client(const FunctionCallbackInfo<Value>& args);
 
-5、game_player函数
-//函数说明：获取game_player save_data buffer对象 	参数：无	返回值：buffer对象
-void get_save_data_buffer();
-//函数说明：发送成功的消息buffer到client 	参数：1,msg_id 2,buffer对象	返回值：无
-void respond_success_result();
-//函数说明：发送错误消息号到client 	参数：1,msg_id 2,错误号	返回值：无
-void respond_error_result();
+4、player函数
+//函数说明：game_player关闭连接 	参数：无	返回值：无
+void link_close(const FunctionCallbackInfo<Value>& args);
 
-6、master_player函数
-//函数说明：获取master_player save_data buffer对象 	参数：无	返回值：buffer对象
-void get_save_data_buffer();
-//函数说明：发送成功的消息buffer到client 	参数：1,msg_id 2,buffer对象	返回值：无
-void respond_success_result();
-//函数说明：发送错误消息号到client 	参数：1,msg_id 2,错误号	返回值：无
-void respond_error_result();
+//函数说明：master_player关闭连接 	参数：无	返回值：无
+void link_close(const FunctionCallbackInfo<Value>& args);

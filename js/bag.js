@@ -9,49 +9,38 @@ function Bag() {
 	this.bag_info = new Bag_Info();
 }
 	
-Bag.prototype.load_data = function(game_player, buffer) {
+Bag.prototype.load_data = function(game_player, obj) {
 	this.game_player = game_player;
-	this.bag_info.deserialize(buffer);
+	this.bag_info = obj.player_data.bag_info;	
 }
 
-Bag.prototype.save_data = function(buffer) {
-	this.bag_info.serialize(buffer);
+Bag.prototype.save_data = function(obj) {
+	obj.player_data.bag_info = this.bag_info;
 }
 
 Bag.prototype.fetch_bag_info = function() {
 	print('fetch_bag_info, role_id:', this.game_player.player_info.role_id, " role_name:", this.game_player.player_info.role_name, " util.now_msec:", util.now_msec());
-	
-	var msg_res = new MSG_520100();
-	this.bag_info.item_map.each(function(key,value,index) {
-		msg_res.item_info.push(value);
-    });
-    	
-	var buf = pop_game_buffer();
-	msg_res.serialize(buf);
-	this.game_player.cplayer.respond_success_result(Msg_GC.RES_FETCH_BAG_INFO, buf);
-	push_game_buffer(buf);
+	var msg = new MSG_520100();
+	for (var value of this.bag_info.item_map.values()) {
+  		msg.item_info.push(value);
+	}
+  this.game_player.send_success_msg(Msg_GC.RES_FETCH_BAG_INFO, msg);
 }
 	
-Bag.prototype.use_item = function(buffer) {
+Bag.prototype.use_item = function(obj) {
 	print('use_item, role_id:', this.game_player.player_info.role_id, " role_name:", this.game_player.player_info.role_name, " util.now_msec:", util.now_msec());
-	
-	var msg_req = new MSG_120101();
-	msg_req.deserialize(buffer);
 	var item_array = new Array();
-	item_array.push(msg_req.item);
+	item_array.push(obj.item);
 	var result = this.bag_erase_item(item_array);
-	this.game_player.cplayer.respond_error_result(Msg_GC.RES_USE_ITEM, result);
+	this.game_player.send_error_msg(Msg_GC.RES_USE_ITEM, result);
 }
 	
-Bag.prototype.sell_item = function(buffer) {
+Bag.prototype.sell_item = function(obj) {
 	print('sell_item, role_id:', this.game_player.player_info.role_id, " role_name:", this.game_player.player_info.role_name, " util.now_msec:", util.now_msec());
-	
-	var msg_req = new MSG_120102();
-	msg_req.deserialize(buffer);
 	var item_array = new Array();
-	item_array.push(msg_req.item);
+	item_array.push(obj.item);
 	var result = this.bag_erase_item(item_array);
-	this.game_player.cplayer.respond_error_result(Msg_GC.RES_SELL_ITEM, result);
+	this.game_player.send_error_msg(Msg_GC.RES_SELL_ITEM, result);
 }
 	
 Bag.prototype.bag_add_money = function(copper, gold) {
@@ -87,7 +76,7 @@ Bag.prototype.bag_insert_item = function(item_array) {
 	for (var i = 0; i < item_array.length; ++i) {
 		var item_info = this.bag_info.item_map.get(item_array[i].item_id);
 		if (item_info == null) {
-			this.bag_info.item_map.insert(item_array[i].item_id, item_array[i]);	
+			this.bag_info.item_map.set(item_array[i].item_id, item_array[i]);	
 		} else {
 			item_info.amount += item_array[i].amount;
 		}	
@@ -113,7 +102,7 @@ Bag.prototype.bag_erase_item = function(item_array) {
 		var item_info = this.bag_info.item_map.get(item_array[i].id);
 		item_info.amount -= item_array[i].amount;
 		if (item_info.amount == 0) {
-			this.bag_info.item_map.remove(item.id);
+			this.bag_info.item_map.delete(item.id);
 		}
 	}
 	
@@ -122,26 +111,16 @@ Bag.prototype.bag_erase_item = function(item_array) {
 }
 	
 Bag.prototype.bag_active_money = function() {
-	var msg_active = new MSG_300100();
-	msg_active.copper = this.bag_info.copper;
-	msg_active.gold = this.bag_info.gold;
-	
-	var buf = pop_game_buffer();
-	msg_active.serialize(buf);
-	this.game_player.cplayer.respond_success_result(Msg_Active.ACTIVE_MONEY_INFO, buf);
-	push_game_buffer(buf);
-	this.game_player.set_data_change();
+	var msg = new MSG_300100();
+	msg.copper = this.bag_info.copper;
+	msg.gold = this.bag_info.gold;
+	this.game_player.send_success_msg(Msg_Active.ACTIVE_MONEY_INFO, msg);
 }
 	
 Bag.prototype.bag_active_item = function() {
-	var msg_active = new MSG_300101();
-	this.bag_info.item_map.each(function(key,value,index) {
-		msg_active.item_info.push(value);
-    });
-    	
-	var buf = pop_game_buffer();
-	msg_active.serialize(buf);
-	this.game_player.cplayer.respond_success_result(Msg_Active.ACTIVE_ITEM_INFO, buf);
-	push_game_buffer(buf);
-	this.game_player.set_data_change();
+	var msg = new MSG_300101();
+	for (var value of this.bag_info.item_map.values()) {
+  		msg.item_info.push(value);
+	}
+  this.game_player.send_success_msg(Msg_Active.ACTIVE_ITEM_INFO, msg);
 }

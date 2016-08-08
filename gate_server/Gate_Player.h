@@ -14,8 +14,8 @@ public:
 	Gate_Player(void);
 	virtual ~Gate_Player(void);
 
-	void set_cid(int cid) { cid_ = cid; }
-	int get_cid(void) { return cid_; }
+	void set_player_cid(int cid) { player_cid_ = cid; }
+	int get_player_cid(void) { return player_cid_; }
 	void set_account(std::string  &account) { account_ = account; }
 	std::string& get_account(void) { return account_; }
 	void reset(void);
@@ -29,7 +29,7 @@ public:
 	void reset_msg_info(void) { msg_info_.reset(); }
 
 private:
-	int cid_;		//client和gate连接的cid
+	int player_cid_;		//client和gate连接的cid
 	std::string account_;
 	Msg_Info msg_info_;
 	Recycle_Tick recycle_tick_;

@@ -9,7 +9,6 @@
 
 #include "Thread.h"
 #include "Epoll_Watcher.h"
-#include "Block_Buffer.h"
 #include "Priority_Queue.h"
 #include "List.h"
 #include "Public_Struct.h"
@@ -19,11 +18,7 @@ public:
 	Game_Timer_Handler(void);
 	virtual ~Game_Timer_Handler(void);
 
-	void init_tick_msg_buf(void);
 	virtual int handle_timeout(const Time_Value &tv);
-
-private:
-	Block_Buffer tick_msg_buf_;
 };
 
 class Game_Timer: public Thread {
