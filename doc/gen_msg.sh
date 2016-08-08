@@ -11,7 +11,7 @@ function gen_msg(){
 }
 
 function gen_js(){
-	./struct_tool js $DEFINE_PATH 'game_db_struct.xml' 'struct'
+	./struct_tool js $DEFINE_PATH 'game_struct.xml' 'struct'
 	./struct_tool js $DEFINE_PATH 'msg_struct.xml' 'struct'
 }
 
@@ -22,7 +22,8 @@ function gen_msgid(){
 function cp_file(){
 	wildcard='.*'
 	cp -rf JS/* $JS_TARGET
-	cp -rf '../config/struct/' '../../robot/config'
+	cp -rf '../config/struct/game_struct.xml' '../../robot/config'
+	cp -rf '../config/struct/msg_struct.xml' '../../robot/config'
 }
 
 function rm_file(){
