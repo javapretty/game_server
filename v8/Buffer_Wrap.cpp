@@ -9,12 +9,10 @@
 #include "Buffer_Wrap.h"
 #include "Log.h"
 
-extern Global<ObjectTemplate> _g_buffer_template;
-
 Local<Object> wrap_buffer(Isolate* isolate, Block_Buffer *buf) {
 	EscapableHandleScope handle_scope(isolate);
 
-	Local<ObjectTemplate> localTemplate = Local<ObjectTemplate>::New(isolate, _g_buffer_template);
+	Local<ObjectTemplate> localTemplate = ObjectTemplate::New(isolate);
 	localTemplate->SetInternalFieldCount(1);
 	Local<External> buf_ptr = External::New(isolate, buf);
 	//将指针存在V8对象内部

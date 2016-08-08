@@ -17,13 +17,12 @@ int DB_Worker::load_player_data(int64_t role_id, Block_Buffer &buffer) {
 	Base_Struct *player_def = DB_MANAGER->get_player_data_struct();
 	for(std::vector<Field_Info>::iterator iter = player_def->field_vec().begin();
 			iter != player_def->field_vec().end(); iter++){
-		Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find((*iter).field_type);
+		Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find(iter->field_type);
 		if(it == DB_MANAGER->db_struct_name_map().end()){
-			LOG_ERROR("Can not find the module %s", (*iter).field_type.c_str());
+			LOG_ERROR("Can not find the struct_name %s", iter->field_type.c_str());
 			return -1;
 		}
-		Base_Struct *def = it->second;
-		def->load_data(role_id, buffer);
+		it->second->load_data(role_id, buffer);
 	}
 	return 0;
 }
@@ -31,16 +30,15 @@ int DB_Worker::load_player_data(int64_t role_id, Block_Buffer &buffer) {
 int DB_Worker::create_player_data(int64_t role_id) {
 	Base_Struct *role_def = DB_MANAGER->get_player_data_struct();
 	for(std::vector<Field_Info>::iterator iter = role_def->field_vec().begin();
-			iter != role_def->field_vec().end(); iter++){
-		Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find((*iter).field_type);
-		if((*iter).field_type == "Game_Player_Info")
-			continue;
+			iter != role_def->field_vec().end(); iter++) {
+		if(iter->field_type == "Game_Player_Info") continue;
+
+		Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find(iter->field_type);
 		if(it == DB_MANAGER->db_struct_name_map().end()){
-			LOG_ERROR("Can not find the module %s", (*iter).field_type.c_str());
+			LOG_ERROR("Can not find the struct_name %s", iter->field_type.c_str());
 			return -1;
 		}
-		Base_Struct *def = it->second;
-		def->create_data(role_id);
+		it->second->create_data(role_id);
 	}
 	return 0;
 }
@@ -48,15 +46,13 @@ int DB_Worker::create_player_data(int64_t role_id) {
 int DB_Worker::save_player_data(Block_Buffer &buffer) {
 	Base_Struct *role_def = DB_MANAGER->get_player_data_struct();
 	for(std::vector<Field_Info>::iterator iter = role_def->field_vec().begin();
-			iter != role_def->field_vec().end(); iter++){
-		std::string type_name = (*iter).field_type;
-		Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find(type_name);
-		if(it == DB_MANAGER->db_struct_name_map().end()){
-			LOG_ERROR("Can not find the module %s", type_name.c_str());
+			iter != role_def->field_vec().end(); iter++) {
+		Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find(iter->field_type);
+		if(it == DB_MANAGER->db_struct_name_map().end()) {
+			LOG_ERROR("Can not find the struct_name %s", iter->field_type.c_str());
 			return -1;
 		}
-		Base_Struct *def = it->second;
-		def->save_data(buffer);
+		it->second->save_data(buffer);
 	}
 	return 0;
 }
@@ -205,10 +201,11 @@ int DB_Worker::process_create_player(int cid, Create_Role_Info &role_info) {
 }
 
 int DB_Worker::process_save_player(int cid, int status, Block_Buffer &buffer) {
+	//先把两个额外字段读出来，再保存玩家数据，防止buffer错乱
 	bool logout = buffer.read_bool();
+	std::string account = buffer.read_string();
 	if (logout) {
 		//离线保存
-		std::string account = buffer.read_string();
 		save_player_data(buffer);
 
 		Block_Buffer buf;

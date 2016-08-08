@@ -54,7 +54,7 @@ Game_Player.prototype.save_player_data = function() {
 }
 
 Game_Player.prototype.sync_player_data_to_db = function(logout) {
-	print('***************sync_player_data_to_db,role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name);
+	print('***************sync_player_data_to_db, logout:', logout, ' role_id:', this.player_info.role_id, ' role_name:', this.player_info.role_name);
 	var msg = new MSG_150003();
 	msg.logout = logout;
 	msg.account = this.player_info.account;

@@ -96,6 +96,14 @@
 	</Master_Player_Info>
 	
 <!--游戏内需要保存数据库的数据添加head标签,并添加dbname和index属性(需要直接发消息到数据库保存的应赋值给(msg_id) -->
+	<Player_Data>
+		<!--玩家保存到数据库的数据-->
+		<struct type="Game_Player_Info" name="player_info"/>
+		<struct type="Hero_Info" name="hero_info"/>
+		<struct type="Bag_Info" name="bag_info"/>
+		<struct type="Mail_Info" name="mail_info"/>
+	</Player_Data>
+	
 	<Game_Player_Info>
 		<head table_name="role" key_index="role_id"/>
 		<arg type="int64" name="role_id"/>
@@ -140,14 +148,6 @@
 		<arg type="int32" name="total_count"/>
 		<map type="Mail_Detail" key_type="int32" key_name="mail_id" name="mail_map"/>
 	</Mail_Info>
-	
-	<Player_Data>
-		<!--玩家保存到数据库的数据-->
-		<struct type="Game_Player_Info" name="player_info"/>
-		<struct type="Hero_Info" name="hero_info"/>
-		<struct type="Bag_Info" name="bag_info"/>
-		<struct type="Mail_Info" name="mail_info"/>
-	</Player_Data>
 	
 	<Master_Data type="mem_only">
 		<!--master数据在此定义-->

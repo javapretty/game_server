@@ -93,6 +93,13 @@ function Master_Player_Info() {
 	this.vip_level = 0;
 }
 
+function Player_Data() {
+	this.player_info = new Game_Player_Info();
+	this.hero_info = new Hero_Info();
+	this.bag_info = new Bag_Info();
+	this.mail_info = new Mail_Info();
+}
+
 function Game_Player_Info() {
 	this.role_id = 0;
 	this.role_name = "";
@@ -132,13 +139,6 @@ function Mail_Info() {
 	this.role_id = 0;
 	this.total_count = 0;
 	this.mail_map = new Map();
-}
-
-function Player_Data() {
-	this.player_info = new Game_Player_Info();
-	this.hero_info = new Hero_Info();
-	this.bag_info = new Bag_Info();
-	this.mail_info = new Mail_Info();
 }
 
 function Guild_Info() {

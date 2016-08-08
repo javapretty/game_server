@@ -54,13 +54,13 @@ void Mongo_Struct::load_data(int64_t key_index, Block_Buffer &buffer) {
 			iter != total_record.end(); ++iter) {
 		for(std::vector<Field_Info>::iterator it = field_vec_.begin();
 				it != field_vec_.end(); it++) {
-			if((*it).field_label == "arg") {
+			if(it->field_label == "arg") {
 				build_buffer_arg(*it, buffer, *iter);
 			}
-			else if((*it).field_label == "vector" || (*it).field_label == "map") {
+			else if(it->field_label == "vector" || it->field_label == "map") {
 				build_buffer_vector(*it, buffer, *iter);
 			}
-			else if((*it).field_label == "struct") {
+			else if(it->field_label == "struct") {
 				build_buffer_struct(*it, buffer, *iter);
 			}
 		}
