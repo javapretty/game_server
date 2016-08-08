@@ -41,17 +41,29 @@ v8::Local<v8::Object> Msg_Struct::build_msg_object(Isolate* isolate, int cid, in
 	if (status == 0) {
 		for(std::vector<Field_Info>::iterator iter = field_vec_.begin();
 				iter != field_vec_.end(); iter++) {
-			if((*iter).field_label == "arg") {
-				build_object_arg(*iter, buffer, isolate, buf_obj);
+			if(iter->field_label == "arg") {
+				Local<Value> value = build_object_arg(*iter, buffer, isolate);
+				buf_obj->Set(isolate->GetCurrentContext(),
+						String::NewFromUtf8(isolate, iter->field_name.c_str(), NewStringType::kNormal).ToLocalChecked(),
+						value).FromJust();
 			}
-			else if((*iter).field_label == "vector") {
-				build_object_vector(*iter, buffer, isolate, buf_obj);
+			else if(iter->field_label == "vector") {
+				Local<Array> array = build_object_vector(*iter, buffer, isolate);
+				buf_obj->Set(isolate->GetCurrentContext(),
+						String::NewFromUtf8(isolate, iter->field_name.c_str(), NewStringType::kNormal).ToLocalChecked(),
+						array).FromJust();
 			}
-			else if((*iter).field_label == "map") {
-				build_object_map(*iter, buffer, isolate, buf_obj);
+			else if(iter->field_label == "map") {
+				Local<Map> map = build_object_map(*iter, buffer, isolate);
+				buf_obj->Set(isolate->GetCurrentContext(),
+						String::NewFromUtf8(isolate, iter->field_name.c_str(), NewStringType::kNormal).ToLocalChecked(),
+						map).FromJust();
 			}
-			else if((*iter).field_label == "struct") {
-				build_object_struct(*iter, buffer, isolate, buf_obj);
+			else if(iter->field_label == "struct") {
+				Local<Object> object = build_object_struct(*iter, buffer, isolate);
+				buf_obj->Set(isolate->GetCurrentContext(),
+						String::NewFromUtf8(isolate, iter->field_name.c_str(), NewStringType::kNormal).ToLocalChecked(),
+						object).FromJust();
 			}
 		}
 	}
@@ -62,23 +74,24 @@ void Msg_Struct::build_msg_buffer(Isolate* isolate, v8::Local<v8::Object> object
 	for(std::vector<Field_Info>::iterator iter = field_vec_.begin();
 			iter != field_vec_.end(); iter++) {
 		Local<Value> value = object->Get(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, iter->field_name.c_str(), NewStringType::kNormal).ToLocalChecked()).ToLocalChecked();
-
-		if((*iter).field_label == "arg") {
+		if(iter->field_label == "arg") {
 			build_buffer_arg(*iter, buffer, isolate, value);
 		}
-		else if((*iter).field_label == "vector") {
+		else if(iter->field_label == "vector") {
 			build_buffer_vector(*iter, buffer, isolate, value);
 		}
-		else if((*iter).field_label == "map") {
+		else if(iter->field_label == "map") {
 			build_buffer_map(*iter, buffer, isolate, value);
 		}
-		else if((*iter).field_label == "struct") {
+		else if(iter->field_label == "struct") {
 			build_buffer_struct(*iter, buffer, isolate, value);
 		}
 	}
 }
 
-void Msg_Struct::build_object_arg(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate, v8::Local<v8::Object> object) {
+v8::Local<v8::Value> Msg_Struct::build_object_arg(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate) {
+	EscapableHandleScope handle_scope(isolate);
+
 	Local<Value> value;
 	if(field_info.field_type == "int8") {
 		int8_t val = buffer.read_int8();
@@ -110,105 +123,99 @@ void Msg_Struct::build_object_arg(Field_Info &field_info, Block_Buffer &buffer, 
 	}
 	else {
 		LOG_ERROR("Can not find the field_type:%s, struct_name:%s", field_info.field_type.c_str(), struct_name().c_str());
+		return handle_scope.Escape(Local<Value>());
 	}
-
-	object->Set(isolate->GetCurrentContext(),
-			String::NewFromUtf8(isolate, field_info.field_name.c_str(), NewStringType::kNormal).ToLocalChecked(), value).FromJust();
+	return handle_scope.Escape(value);
 }
 
-void Msg_Struct::build_object_vector(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate, v8::Local<v8::Object> object) {
+v8::Local<v8::Array> Msg_Struct::build_object_vector(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate) {
 	EscapableHandleScope handle_scope(isolate);
-	Local<ObjectTemplate> localTemplate = ObjectTemplate::New(isolate);
 
 	uint16_t vec_size = buffer.read_uint16();
 	Local<Array> array = Array::New(isolate, vec_size);
 	if(is_struct(field_info.field_type)) {
 		for(uint16_t i = 0; i < vec_size; ++i) {
-			Local<Object> sub_object = localTemplate->NewInstance(isolate->GetCurrentContext()).ToLocalChecked();
-			build_object_struct(field_info, buffer, isolate, sub_object);
-			array->Set(isolate->GetCurrentContext(), i, sub_object).FromJust();
+			Local<Object> object = build_object_struct(field_info, buffer, isolate);
+			array->Set(isolate->GetCurrentContext(), i, object).FromJust();
 		}
 	}
-	else{
+	else {
 		for(uint16_t i = 0; i < vec_size; ++i) {
-			Local<Object> sub_object = localTemplate->NewInstance(isolate->GetCurrentContext()).ToLocalChecked();
-			build_object_arg(field_info, buffer, isolate, sub_object);
-			Local<Value> value = sub_object->Get(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, field_info.field_name.c_str(), NewStringType::kNormal).ToLocalChecked()).ToLocalChecked();
+			Local<Value> value = build_object_arg(field_info, buffer, isolate);
 			array->Set(isolate->GetCurrentContext(), i, value).FromJust();
 		}
 	}
-	//设置数组变量的值
-	object->Set(isolate->GetCurrentContext(),
-			String::NewFromUtf8(isolate, field_info.field_name.c_str(), NewStringType::kNormal).ToLocalChecked(),
-			handle_scope.Escape(array)).FromJust();
+
+	return handle_scope.Escape(array);
 }
 
-void Msg_Struct::build_object_map(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate, v8::Local<v8::Object> object) {
+v8::Local<v8::Map> Msg_Struct::build_object_map(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate) {
 	EscapableHandleScope handle_scope(isolate);
-	Local<ObjectTemplate> localTemplate = ObjectTemplate::New(isolate);
 
 	uint16_t vec_size = buffer.read_uint16();
 	Local<Map> map = Map::New(isolate);
 	if(is_struct(field_info.field_type)) {
 		for(uint16_t i = 0; i < vec_size; ++i) {
-			Local<Object> sub_object = localTemplate->NewInstance(isolate->GetCurrentContext()).ToLocalChecked();
-			build_object_struct(field_info, buffer, isolate, sub_object);
-			Local<Value> key = sub_object->Get(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, field_info.key_name.c_str(), NewStringType::kNormal).ToLocalChecked()).ToLocalChecked();
-			map->Set(isolate->GetCurrentContext(), key, sub_object).ToLocalChecked();
+			Local<Object> object = build_object_struct(field_info, buffer, isolate);
+			Local<Value> key = object->Get(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, field_info.key_name.c_str(), NewStringType::kNormal).ToLocalChecked()).ToLocalChecked();
+			map->Set(isolate->GetCurrentContext(), key, object).ToLocalChecked();
 		}
 	}
 	else {
-		Local<Object> key_object = localTemplate->NewInstance(isolate->GetCurrentContext()).ToLocalChecked();
 		Field_Info key_info;
 		key_info.field_label = "args";
 		key_info.field_type = field_info.key_type;
 		key_info.field_name = field_info.key_name;
-		build_object_arg(key_info, buffer, isolate, key_object);
-		Local<Value> key = key_object->Get(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, field_info.key_name.c_str(), NewStringType::kNormal).ToLocalChecked()).ToLocalChecked();
-
-		Local<Object> value_object = localTemplate->NewInstance(isolate->GetCurrentContext()).ToLocalChecked();
-		build_object_arg(field_info, buffer, isolate, value_object);
-		Local<Value> value = key_object->Get(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, field_info.field_name.c_str(), NewStringType::kNormal).ToLocalChecked()).ToLocalChecked();
+		Local<Value> key = build_object_arg(key_info, buffer, isolate);
+		Local<Value> value = build_object_arg(field_info, buffer, isolate);
 
 		map->Set(isolate->GetCurrentContext(), key, value).ToLocalChecked();
 	}
-	//设置数组变量的值
-	object->Set(isolate->GetCurrentContext(),
-			String::NewFromUtf8(isolate, field_info.field_name.c_str(), NewStringType::kNormal).ToLocalChecked(),
-			handle_scope.Escape(map)).FromJust();
+
+	return handle_scope.Escape(map);
 }
 
-void Msg_Struct::build_object_struct(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate, v8::Local<v8::Object> object) {
-	Struct_Name_Map::iterator iter = MSG_MANAGER->msg_struct_name_map().find(field_info.field_type);
-	if(iter == MSG_MANAGER->msg_struct_name_map().end()){
+v8::Local<v8::Object> Msg_Struct::build_object_struct(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate) {
+	EscapableHandleScope handle_scope(isolate);
+
+	Struct_Name_Map::iterator it = MSG_MANAGER->msg_struct_name_map().find(field_info.field_type);
+	if(it == MSG_MANAGER->msg_struct_name_map().end()){
 		LOG_ERROR("Can not find the struct_name:%s", field_info.field_type.c_str());
-		return;
+		return handle_scope.Escape(Local<Object>());
 	}
 
-	EscapableHandleScope handle_scope(isolate);
 	Local<ObjectTemplate> localTemplate = ObjectTemplate::New(isolate);
-	Local<Object> sub_object = localTemplate->NewInstance(isolate->GetCurrentContext()).ToLocalChecked();
-	Base_Struct *msg_struct  = iter->second;
-	std::vector<Field_Info> field_vec = msg_struct->field_vec();
+	Local<Object> object = localTemplate->NewInstance(isolate->GetCurrentContext()).ToLocalChecked();
+	std::vector<Field_Info> field_vec = it->second->field_vec();
 	for(std::vector<Field_Info>::iterator iter = field_vec.begin();
-			iter != field_vec.end(); iter++){
-		if((*iter).field_label == "arg"){
-			build_object_arg(*iter, buffer, isolate, sub_object);
+			iter != field_vec.end(); iter++) {
+		if(iter->field_label == "arg") {
+			Local<Value> value = build_object_arg(*iter, buffer, isolate);
+			object->Set(isolate->GetCurrentContext(),
+								String::NewFromUtf8(isolate, iter->field_name.c_str(), NewStringType::kNormal).ToLocalChecked(),
+								value).FromJust();
 		}
-		else if((*iter).field_label == "vector"){
-			build_object_vector(*iter, buffer, isolate, sub_object);
+		else if(iter->field_label == "vector") {
+			Local<Array> array = build_object_vector(*iter, buffer, isolate);
+			object->Set(isolate->GetCurrentContext(),
+								String::NewFromUtf8(isolate, iter->field_name.c_str(), NewStringType::kNormal).ToLocalChecked(),
+								array).FromJust();
 		}
-		else if((*iter).field_label == "map"){
-			build_object_map(*iter, buffer, isolate, sub_object);
+		else if(iter->field_label == "map") {
+			Local<Map> map = build_object_map(*iter, buffer, isolate);
+			object->Set(isolate->GetCurrentContext(),
+								String::NewFromUtf8(isolate, iter->field_name.c_str(), NewStringType::kNormal).ToLocalChecked(),
+								map).FromJust();
 		}
-		else if((*iter).field_label == "struct"){
-			build_object_struct(*iter, buffer, isolate, sub_object);
+		else if(iter->field_label == "struct") {
+			Local<Object> sub_object = build_object_struct(*iter, buffer, isolate);
+			object->Set(isolate->GetCurrentContext(),
+								String::NewFromUtf8(isolate, iter->field_name.c_str(), NewStringType::kNormal).ToLocalChecked(),
+								sub_object).FromJust();
 		}
 	}
-	//设置结构体变量类型的值
-	object->Set(isolate->GetCurrentContext(),
-			String::NewFromUtf8(isolate, field_info.field_name.c_str(), NewStringType::kNormal).ToLocalChecked(),
-			handle_scope.Escape(sub_object)).FromJust();
+
+	return handle_scope.Escape(object);
 }
 
 void Msg_Struct::build_buffer_arg(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate, v8::Local<v8::Value> value) {
@@ -281,7 +288,7 @@ void Msg_Struct::build_buffer_vector(Field_Info &field_info, Block_Buffer &buffe
 	buffer.write_uint16(len);
 	for (int i = 0; i < len; ++i) {
 		Local<Value> element = array->Get(isolate->GetCurrentContext(), i).ToLocalChecked();
-		if(is_struct(field_info.field_type)){
+		if(is_struct(field_info.field_type)) {
 			build_buffer_struct(field_info, buffer, isolate, element);
 		}
 		else {
@@ -323,8 +330,8 @@ void Msg_Struct::build_buffer_map(Field_Info &field_info, Block_Buffer &buffer, 
 }
 
 void Msg_Struct::build_buffer_struct(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate, v8::Local<v8::Value> value) {
-	Struct_Name_Map::iterator iter = MSG_MANAGER->msg_struct_name_map().find(field_info.field_type);
-	if(iter == MSG_MANAGER->msg_struct_name_map().end()) {
+	Struct_Name_Map::iterator it = MSG_MANAGER->msg_struct_name_map().find(field_info.field_type);
+	if(it == MSG_MANAGER->msg_struct_name_map().end()) {
 		LOG_ERROR("Can not find the struct_name:%s", field_info.field_type.c_str());
 		return;
 	}
@@ -335,22 +342,20 @@ void Msg_Struct::build_buffer_struct(Field_Info &field_info, Block_Buffer &buffe
 	}
 
 	Local<Object> object = value->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
-	Base_Struct *msg_struct  = iter->second;
-	std::vector<Field_Info> field_vec = msg_struct->field_vec();
+	std::vector<Field_Info> field_vec = it->second->field_vec();
 	for(std::vector<Field_Info>::iterator iter = field_vec.begin();
 			iter != field_vec.end(); iter++) {
 		Local<Value> element = object->Get(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, iter->field_name.c_str(), NewStringType::kNormal).ToLocalChecked()).ToLocalChecked();
-
-		if((*iter).field_label == "arg") {
+		if(iter->field_label == "arg") {
 			build_buffer_arg(*iter, buffer, isolate, element);
 		}
-		else if((*iter).field_label == "vector") {
+		else if(iter->field_label == "vector") {
 			build_buffer_vector(*iter, buffer, isolate, element);
 		}
-		else if((*iter).field_label == "map") {
+		else if(iter->field_label == "map") {
 			build_buffer_map(*iter, buffer, isolate, element);
 		}
-		else if((*iter).field_label == "struct") {
+		else if(iter->field_label == "struct") {
 			build_buffer_struct(*iter, buffer, isolate, element);
 		}
 	}

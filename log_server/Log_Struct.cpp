@@ -19,11 +19,11 @@ void Log_Struct::save_data(Block_Buffer &buffer) {
 	int64_t key_index = buffer.peek_int64();
 	for(std::vector<Field_Info>::iterator iter = field_vec_.begin();
 			iter != field_vec_.end(); iter++) {
-		if((*iter).field_label == "arg") {
+		if(iter->field_label == "arg") {
 			build_sql_arg(*iter, buffer, str_name, str_value);
 		}
 		else {
-			LOG_ERROR("Can not find the field_label: %s", (*iter).field_label.c_str());
+			LOG_ERROR("Can not find the field_label: %s", iter->field_label.c_str());
 			return;
 		}
 	}

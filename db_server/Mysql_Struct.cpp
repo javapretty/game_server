@@ -18,13 +18,13 @@ void Mysql_Struct::create_data(int64_t key_index) {
 	std::string str_value;
 	for(std::vector<Field_Info>::iterator iter = field_vec_.begin();
 			iter != field_vec_.end(); iter++) {
-		if((*iter).field_label == "arg") {
+		if(iter->field_label == "arg") {
 			create_data_arg(*iter, str_name, str_value, key_index);
 		}
-		else if((*iter).field_label == "vector" || (*iter).field_label == "map") {
+		else if(iter->field_label == "vector" || iter->field_label == "map") {
 			create_data_vector(*iter, str_name, str_value);
 		}
-		else if((*iter).field_label == "struct") {
+		else if(iter->field_label == "struct") {
 			create_data_struct(*iter, str_name, str_value);
 		}
 	}
@@ -52,16 +52,16 @@ void Mysql_Struct::load_data(int64_t key_index, Block_Buffer &buffer) {
 		}
 
 		while (result->next()) {
-			for(std::vector<Field_Info>::iterator it = field_vec_.begin();
-					it != field_vec_.end(); it++) {
-				if((*it).field_label == "arg") {
-					build_buffer_arg(*it, buffer, result);
+			for(std::vector<Field_Info>::iterator iter = field_vec_.begin();
+					iter != field_vec_.end(); iter++) {
+				if(iter->field_label == "arg") {
+					build_buffer_arg(*iter, buffer, result);
 				}
-				else if((*it).field_label == "vector" || (*it).field_label == "map") {
-					build_buffer_vector(*it, buffer, result);
+				else if(iter->field_label == "vector" || iter->field_label == "map") {
+					build_buffer_vector(*iter, buffer, result);
 				}
-				else if((*it).field_label == "struct") {
-					build_buffer_struct(*it, buffer, result);
+				else if(iter->field_label == "struct") {
+					build_buffer_struct(*iter, buffer, result);
 				}
 			}
 		}
@@ -78,13 +78,13 @@ void Mysql_Struct::save_data(Block_Buffer &buffer) {
 
 	for(std::vector<Field_Info>::iterator iter = field_vec_.begin();
 			iter != field_vec_.end(); iter++) {
-		if((*iter).field_label == "arg") {
+		if(iter->field_label == "arg") {
 			build_sql_arg(*iter, buffer, str_sql);
 		}
-		else if((*iter).field_label == "vector" || (*iter).field_label == "map") {
+		else if(iter->field_label == "vector" || iter->field_label == "map") {
 			build_sql_vector(*iter, buffer, str_sql);
 		}
-		else if((*iter).field_label == "struct") {
+		else if(iter->field_label == "struct") {
 			build_sql_struct(*iter, buffer, str_sql);
 		}
 	}
@@ -212,23 +212,22 @@ void Mysql_Struct::build_buffer_vector(Field_Info &field_info, Block_Buffer &buf
 }
 
 void Mysql_Struct::build_buffer_struct(Field_Info &field_info, Block_Buffer &buffer, sql::ResultSet *result) {
-	Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(field_info.field_type);
-	if(iter == DB_MANAGER->db_struct_name_map().end()) {
+	Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find(field_info.field_type);
+	if(it == DB_MANAGER->db_struct_name_map().end()) {
 		LOG_ERROR("Can not find the struct_name:%s", field_info.field_type.c_str());
 		return;
 	}
 
-	Base_Struct *db_struct  = iter->second;
-	std::vector<Field_Info> field_vec = db_struct->field_vec();
+	std::vector<Field_Info> field_vec = it->second->field_vec();
 	for(std::vector<Field_Info>::iterator iter = field_vec.begin();
 			iter != field_vec.end(); iter++) {
-		if((*iter).field_label == "arg") {
+		if(iter->field_label == "arg") {
 			build_buffer_arg(*iter, buffer, result);
 		}
-		else if((*iter).field_label == "vector" || (*iter).field_label == "map") {
+		else if(iter->field_label == "vector" || iter->field_label == "map") {
 			build_buffer_vector(*iter, buffer, result);
 		}
-		else if((*iter).field_label == "struct") {
+		else if(iter->field_label == "struct") {
 			build_buffer_struct(*iter, buffer, result);
 		}
 	}

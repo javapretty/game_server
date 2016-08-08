@@ -22,10 +22,10 @@ public:
 	void build_msg_buffer(Isolate* isolate, v8::Local<v8::Object> object, Block_Buffer &buffer);
 
 private:
-	void build_object_arg(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate, v8::Local<v8::Object> object);
-	void build_object_vector(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate, v8::Local<v8::Object> object);
-	void build_object_map(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate, v8::Local<v8::Object> object);
-	void build_object_struct(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate, v8::Local<v8::Object> object);
+	v8::Local<v8::Value> build_object_arg(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate);
+	v8::Local<v8::Array> build_object_vector(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate);
+	v8::Local<v8::Map> build_object_map(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate);
+	v8::Local<v8::Object> build_object_struct(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate);
 
 	void build_buffer_arg(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate, v8::Local<v8::Value> value);
 	void build_buffer_vector(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate, v8::Local<v8::Value> value);

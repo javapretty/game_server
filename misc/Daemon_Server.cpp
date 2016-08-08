@@ -227,7 +227,7 @@ int Daemon_Server::fork_exec_gate_server(void) {
 }
 
 void Daemon_Server::sigcld_handle(int signo) {
-	LOG_DEBUG("Daemon_Server receive signo = %d.", signo);
+	LOG_ERROR("Daemon_Server receive signo = %d.", signo);
 	signal(SIGCHLD, sigcld_handle);
 	pid_t pid = wait(NULL);
 	if (pid < 0) {
@@ -239,7 +239,7 @@ void Daemon_Server::sigcld_handle(int signo) {
 void Daemon_Server::restart_process(int pid) {
 	Int_Int_Map::iterator it = daemon_map_.find(pid);
 	if (it == daemon_map_.end()) {
-		LOG_INFO("cannot find process, pid = %d.", pid);
+		LOG_ERROR("cannot find process, pid = %d.", pid);
 		return;
 	}
 
@@ -247,7 +247,7 @@ void Daemon_Server::restart_process(int pid) {
 	Int_Int_Map::iterator core_map_it = core_dump_num_.find(it->second);
 	if (core_map_it != core_dump_num_.end()) {
 		if (core_map_it->second++ > max_core_dump_num) {
-			LOG_INFO("so many core dump, core_dump_num = %d", core_map_it->second);
+			LOG_ERROR("so many core dump, core_dump_num = %d", core_map_it->second);
 			return;
 		}
 	} else {
