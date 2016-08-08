@@ -241,3 +241,11 @@ Game_Player.prototype.add_hero_exp_test = function(buffer) {
 	this.sync_data_to_master();
 }
 
+Game_Player.prototype.move_to_point = function(buffer) {
+	print('move to point, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
+	var msg = new MSG_120500();
+	msg.deserialize(buffer);
+	this.add_exp(msg.exp);
+	this.sync_data_to_master();
+}
+

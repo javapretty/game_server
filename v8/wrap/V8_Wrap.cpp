@@ -18,6 +18,7 @@
 Global<ObjectTemplate> _g_buffer_template;
 Global<ObjectTemplate> _g_game_player_template;
 Global<ObjectTemplate> _g_master_player_template;
+Global<ObjectTemplate> _g_entity_template;
 
 Local<Context> Create_Context(Isolate* isolate) {
 	Local<ObjectTemplate> global = ObjectTemplate::New(isolate);

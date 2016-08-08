@@ -242,6 +242,13 @@
 	<MSG_520402>
 	</MSG_520402>
 
+	<MSG_120500>
+		<!--移动玩家到某位置-->
+		<arg type="double" value="x", desc="目标x坐标"/>
+		<arg type="double" value="y", desc="目标y坐标"/>
+		<arg type="double" value="z", desc="目标z坐标"/>
+	</MSG_120500>
+	
 	<MSG_100000>
 		<!--注册-->
 	    <arg type="string" value="account"/>

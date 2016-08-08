@@ -89,6 +89,8 @@ enum Client_Game_Message {
 	REQ_FETCH_SHOP_INFO								= 120400,	//拉取商店信息
 	REQ_BUY_PRODUCT										= 120401,	//购买物品
 	REQ_REFRESH_SHOP									= 120402,	//刷新商店
+
+	REQ_MOVE_TO_POINT							= 120500 //移动到某一地点
 };
 
 enum Game_Client_Message {
@@ -117,6 +119,8 @@ enum Game_Client_Message {
 	RES_FETCH_SHOP_INFO								= 520400,	//拉取商店信息(返回)
 	RES_BUY_PRODUCT										= 520401,	//购买物品(返回)
 	RES_REFRESH_SHOP									= 520402,	//刷新商店(返回)
+
+	RES_SYNC_PLAYER_POSITION						= 520500 //同步玩家位置信息(返回)
 };
 
 //内部消息命名说明：SYNC_源服务器名_目的服务器名_消息名

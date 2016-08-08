@@ -218,7 +218,7 @@ struct Game_Player_Info : public MSG {
 
 struct Hero_Info : public MSG {
 	int64_t role_id;	
-	boost::unordered_map<int32_t, Hero_Detail> hero_map;	
+	boost::unordered_map<int32_t, Hero_Detail> hero_map;
 
 	Hero_Info(void);
 	~Hero_Info();
@@ -232,7 +232,7 @@ struct Bag_Info : public MSG {
 	int64_t role_id;	
 	int32_t copper;	
 	int32_t gold;	
-	boost::unordered_map<int32_t, Item_Info> item_map;	
+	boost::unordered_map<int32_t, Item_Info> item_map;
 
 	Bag_Info(void);
 	~Bag_Info();
@@ -245,7 +245,7 @@ struct Bag_Info : public MSG {
 struct Mail_Info : public MSG {
 	int64_t role_id;	
 	int32_t total_count;	
-	boost::unordered_map<int32_t, Mail_Detail> mail_map;	
+	boost::unordered_map<int32_t, Mail_Detail> mail_map;
 
 	Mail_Info(void);
 	~Mail_Info();
@@ -257,7 +257,7 @@ struct Mail_Info : public MSG {
 
 struct Shop_Info : public MSG {
 	int64_t role_id;	
-	boost::unordered_map<int32_t, Shop_Detail> shop_map;	
+	boost::unordered_map<int32_t, Shop_Detail> shop_map;
 
 	Shop_Info(void);
 	~Shop_Info();

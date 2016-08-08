@@ -162,6 +162,9 @@ function process_game_client_buffer(buffer) {
 	case Msg_CG.REQ_ADD_HERO_EXP:
 		game_player.add_hero_exp_test(buffer);
 		break;
+	case Msg_CG.REQ_MOVE_TO_POINT:
+		game_player.move_to_point(buffer);
+		break;
 	default:
 		print('msg_id not exist, gate_cid:', gate_cid, " player_cid:", player_cid, " msg_id:", msg_id);print("can not find the msg_id:", msg_id);
 		break;
