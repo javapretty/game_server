@@ -47,11 +47,11 @@ int Mysql_Operator::init(void) {
 	MYSQL_MANAGER->init(ip, port, user, password, dbname, dbpoolname, 16);
 	mysql_conn_ = MYSQL_MANAGER->get_mysql_conn(dbpoolname);
 
-	sql::ResultSet *result = mysql_conn_->execute_query("select * from global where type='role_id'");
+	sql::ResultSet *result = mysql_conn_->execute_query("select type from global where type='role_id'");
 	if (!result || result->rowsCount() <= 0) {
 		mysql_conn_->execute("insert into global(type, value) values ('role_id', 0)");
 	}
-	result = mysql_conn_->execute_query("select * from global where type='guild_id'");
+	result = mysql_conn_->execute_query("select type from global where type='guild_id'");
 	if (!result || result->rowsCount() <= 0) {
 		mysql_conn_->execute("insert into global(type, value) values ('guild_id', 0)");
 	}
@@ -61,7 +61,7 @@ int Mysql_Operator::init(void) {
 }
 
 int Mysql_Operator::load_db_cache(void) {
-	sql::ResultSet *result = mysql_conn_->execute_query("select * from role");
+	sql::ResultSet *result = mysql_conn_->execute_query("select role_id,role_name,account,agent_num,server_num from role");
 	if (result) {
 		while(result->next()) {
 			Player_DB_Cache db_cache;
@@ -70,7 +70,6 @@ int Mysql_Operator::load_db_cache(void) {
 			db_cache.account = result->getString("account");
 			db_cache.agent_num = result->getInt("agent_num");
 			db_cache.server_num = result->getInt("server_num");
-			db_cache.level = result->getInt("level");
 			DB_MANAGER->db_cache_id_map().insert(std::make_pair(db_cache.role_id, db_cache));
 			DB_MANAGER->db_cache_account_map().insert(std::make_pair(db_cache.account, db_cache));
 		}
@@ -81,7 +80,7 @@ int Mysql_Operator::load_db_cache(void) {
 
 int64_t Mysql_Operator::create_player(Create_Role_Info &role_info) {
 	char str_sql[256] = {0};
-	sprintf(str_sql, "select * from role where account='%s' and role_name='%s'", role_info.account.c_str(), role_info.role_name.c_str());
+	sprintf(str_sql, "select role_id from role where account='%s' and role_name='%s'", role_info.account.c_str(), role_info.role_name.c_str());
 	sql::ResultSet *result = mysql_conn_->execute_query(str_sql);
 	if (result && result->rowsCount() > 0) {
 		LOG_ERROR("create_player account = %s role_name = %s existed", role_info.account.c_str(), role_info.role_name.c_str());
@@ -117,7 +116,6 @@ int64_t Mysql_Operator::create_player(Create_Role_Info &role_info) {
 	db_cache.account = role_info.account;
 	db_cache.agent_num = agent_num_;
 	db_cache.server_num = server_num_;
-	db_cache.level = 1;
 	DB_MANAGER->db_cache_id_map().insert(std::make_pair(db_cache.role_id, db_cache));
 	DB_MANAGER->db_cache_account_map().insert(std::make_pair(db_cache.account, db_cache));
 	LOG_INFO("***************create role, role_id:%ld, db_cache count:%d***************", role_id, DB_MANAGER->db_cache_account_map().size());
@@ -126,7 +124,7 @@ int64_t Mysql_Operator::create_player(Create_Role_Info &role_info) {
 
 int64_t Mysql_Operator::create_guild(Create_Guild_Info &guild_info) {
 	char str_sql[256] = {0};
-	sprintf(str_sql, "select * from guild where guild_name='%s'", guild_info.guild_name.c_str());
+	sprintf(str_sql, "select guild_id from guild where guild_name='%s'", guild_info.guild_name.c_str());
 	sql::ResultSet *result = mysql_conn_->execute_query(str_sql);
 	if (result && result->rowsCount() > 0) {
 		LOG_ERROR("create_guild guild_name = %s existed", guild_info.guild_name.c_str());
@@ -151,7 +149,7 @@ int64_t Mysql_Operator::create_guild(Create_Guild_Info &guild_info) {
 	mysql_conn_->execute_update(str_sql);
 
 	int now_sec = Time_Value::gettimeofday().sec();
-	sprintf(str_sql, "insert into guild (guild_id, guild_name, chief_id, create_time, apply_list, member_list) values (%ld, '%s', %ld, %d, \'\', \'\')",
+	sprintf(str_sql, "insert into guild (guild_id, guild_name, chief_id, create_time, is_change, member_list, apply_list) values (%ld, '%s', %ld, %d, 0, \'\', \'\')",
 			guild_id, guild_info.guild_name.c_str(), guild_info.chief_id, now_sec);
 	mysql_conn_->execute(str_sql);
 

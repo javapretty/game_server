@@ -65,8 +65,8 @@ CREATE TABLE `guild` (
   chief_id bigint(20) NOT NULL default '0',
   create_time int(11) NOT NULL default '0',
   is_change tinyint(3) NOT NULL default '0',
-  apply_list blob NOT NULL,
   member_list blob NOT NULL, 
+  apply_list blob NOT NULL,
   PRIMARY KEY (guild_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

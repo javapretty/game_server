@@ -102,7 +102,6 @@ int Mongo_Operator::load_db_cache(void) {
 		db_cache.account = obj["account"].valuestrsafe();
 		db_cache.agent_num = obj["agent_num"].numberInt();
 		db_cache.server_num = obj["server_num"].numberInt();
-		db_cache.level = obj["level"].numberInt();
 		DB_MANAGER->db_cache_id_map().insert(std::make_pair(db_cache.role_id, db_cache));
 		DB_MANAGER->db_cache_account_map().insert(std::make_pair(db_cache.account, db_cache));
 	}
@@ -148,7 +147,6 @@ int64_t Mongo_Operator::create_player(Create_Role_Info &role_info) {
 	db_cache.account = role_info.account;
 	db_cache.agent_num = agent_num_;
 	db_cache.server_num = server_num_;
-	db_cache.level = 1;
 	DB_MANAGER->db_cache_id_map().insert(std::make_pair(db_cache.role_id, db_cache));
 	DB_MANAGER->db_cache_account_map().insert(std::make_pair(db_cache.account, db_cache));
 	LOG_INFO("***************create role, role_id:%ld, db_cache count:%d***************", role_id, DB_MANAGER->db_cache_account_map().size());

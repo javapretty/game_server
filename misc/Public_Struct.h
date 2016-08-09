@@ -184,7 +184,6 @@ struct Player_DB_Cache {
 	std::string account;
 	int32_t agent_num;
 	int32_t server_num;
-	int32_t level;
 
 	Player_DB_Cache(void) { reset(); }
 	void reset(void) {
@@ -193,7 +192,6 @@ struct Player_DB_Cache {
 		account.clear();
 		agent_num = 0;
 		server_num = 0;
-		level = 0;
 	}
 };
 

@@ -145,8 +145,8 @@ function Guild_Info() {
 	this.chief_id = 0;
 	this.create_time = 0;
 	this.is_change = 0;
-	this.apply_list = new Array();
 	this.member_list = new Array();
+	this.apply_list = new Array();
 }
 
 function Offline_Info() {
