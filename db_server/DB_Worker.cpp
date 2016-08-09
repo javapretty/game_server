@@ -184,7 +184,7 @@ int DB_Worker::process_create_guild(int cid, Create_Guild_Info &guild_info) {
 
 int DB_Worker::process_load_master(int cid) {
 	Base_Struct *master_data = DB_MANAGER->get_master_data_struct();
-	for(std::vector<Field_Info>::iterator iter = master_data->field_vec().begin();
+	for(std::vector<Field_Info>::const_iterator iter = master_data->field_vec().begin();
 				iter != master_data->field_vec().end(); iter++){
 		std::string type_name = (*iter).field_type;
 		Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find(type_name);
@@ -206,7 +206,7 @@ int DB_Worker::process_load_master(int cid) {
 
 int DB_Worker::create_player_data(int64_t role_id,  Block_Buffer &buffer) {
 	Base_Struct *role_def = DB_MANAGER->get_player_data_struct();
-	for(std::vector<Field_Info>::iterator iter = role_def->field_vec().begin();
+	for(std::vector<Field_Info>::const_iterator iter = role_def->field_vec().begin();
 			iter != role_def->field_vec().end(); iter++) {
 		Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find(iter->field_type);
 		if(it == DB_MANAGER->db_struct_name_map().end()){
@@ -225,7 +225,7 @@ int DB_Worker::create_player_data(int64_t role_id,  Block_Buffer &buffer) {
 
 int DB_Worker::load_player_data(int64_t role_id, Block_Buffer &buffer) {
 	Base_Struct *player_def = DB_MANAGER->get_player_data_struct();
-	for(std::vector<Field_Info>::iterator iter = player_def->field_vec().begin();
+	for(std::vector<Field_Info>::const_iterator iter = player_def->field_vec().begin();
 			iter != player_def->field_vec().end(); iter++){
 		Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find(iter->field_type);
 		if(it == DB_MANAGER->db_struct_name_map().end()){
@@ -239,7 +239,7 @@ int DB_Worker::load_player_data(int64_t role_id, Block_Buffer &buffer) {
 
 int DB_Worker::save_player_data(Block_Buffer &buffer) {
 	Base_Struct *role_def = DB_MANAGER->get_player_data_struct();
-	for(std::vector<Field_Info>::iterator iter = role_def->field_vec().begin();
+	for(std::vector<Field_Info>::const_iterator iter = role_def->field_vec().begin();
 			iter != role_def->field_vec().end(); iter++) {
 		Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find(iter->field_type);
 		if(it == DB_MANAGER->db_struct_name_map().end()) {

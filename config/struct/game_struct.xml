@@ -76,7 +76,6 @@
 		<arg type="int64" name="role_id"/>
 		<arg type="string" name="role_name"/>
 		<arg type="int32" name="level"/>
-		<arg type="int32" name="career"/>
 	</Guild_Member_Detail>
 	
 	<Rank_Member>
@@ -90,9 +89,8 @@
     	<arg type="string" name="account"/>
     	<arg type="string" name="role_name"/>
     	<arg type="int32" name="level"/>
-    	<arg type="int32" name="gender"/>
-    	<arg type="int32" name="career"/>
-    	<arg type="int32" name="vip_level"/>
+    	<arg type="int8" name="gender"/>
+    	<arg type="int8" name="career"/>
 	</Master_Player_Info>
 	
 <!--游戏内需要保存数据库的数据添加head标签,并添加dbname和index属性(需要直接发消息到数据库保存的应赋值给(msg_id) -->
@@ -105,7 +103,7 @@
 	</Player_Data>
 	
 	<Game_Player_Info>
-		<head table_name="role" key_index="role_id"/>
+		<head table_name="role" index_name="role_id"/>
 		<arg type="int64" name="role_id"/>
 		<arg type="string" name="role_name"/>
 		<arg type="string" name="account"/>
@@ -129,13 +127,13 @@
 	</Game_Player_Info>
 	
 	<Hero_Info>
-		<head table_name="hero" key_index="role_id"/>
+		<head table_name="hero" index_name="role_id"/>
 		<arg type="int64" name="role_id"/>
 		<map type="Hero_Detail" key_name="hero_id" key_type="int32" name="hero_map"/>
 	</Hero_Info>
 
 	<Bag_Info>
-		<head table_name="bag" key_index="role_id"/>
+		<head table_name="bag" index_name="role_id"/>
 		<arg type="int64" name="role_id"/>
 		<arg type="int32" name="copper"/>
 		<arg type="int32" name="gold"/>
@@ -143,7 +141,7 @@
 	</Bag_Info>
 	
 	<Mail_Info>
-		<head table_name="mail" key_index="role_id"/>
+		<head table_name="mail" index_name="role_id"/>
 		<arg type="int64" name="role_id"/>
 		<arg type="int32" name="total_count"/>
 		<map type="Mail_Detail" key_type="int32" key_name="mail_id" name="mail_map"/>
@@ -157,7 +155,7 @@
 	</Master_Data>
 	
 	<Guild_Info>
-		<head table_name="guild" key_index="guild_id" msg_id="150103"/>
+		<head table_name="guild" index_name="guild_id" msg_id="150103"/>
 		<arg type="int64" name="guild_id"/>
 		<arg type="string" name="guild_name"/>
 		<arg type="int64" name="chief_id"/>
@@ -168,7 +166,7 @@
 	</Guild_Info>
 
 	<Offline_Info>
-		<head table_name="offline" key_index="role_id" msg_id="150104"/>
+		<head table_name="offline" index_name="role_id" msg_id="150104"/>
 		<arg type="int64" name="role_id"/>
 		<arg type="int64" name="guild_id"/>
 		<arg type="string" name="guild_name"/>
@@ -176,7 +174,7 @@
 	</Offline_Info>
 	
 	<Rank_Info>
-		<head table_name="rank" key_index="rank_type" msg_id="150105"/>
+		<head table_name="rank" index_name="rank_type" msg_id="150105"/>
 		<arg type="int64" name="rank_type"/>
 		<arg type="int32" name="min_value"/>
 		<arg type="int64" name="min_role_id"/>

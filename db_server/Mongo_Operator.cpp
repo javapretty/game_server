@@ -81,7 +81,7 @@ int Mongo_Operator::init(void) {
 
 	for(Struct_Id_Map::iterator iter = DB_MANAGER->db_struct_id_map().begin();
 			iter != DB_MANAGER->db_struct_id_map().end(); iter++){
-		MONGO_CONNECTION.createIndex(iter->second->table_name(), BSON(iter->second->key_index() << 1));
+		MONGO_CONNECTION.createIndex(iter->second->table_name(), BSON(iter->second->index_name() << 1));
 	}
 
 	load_db_cache();

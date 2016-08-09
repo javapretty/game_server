@@ -119,7 +119,6 @@ Game_Player.prototype.sync_login_to_master = function() {
 	msg.player_info.level = this.player_info.level;
 	msg.player_info.gender = this.player_info.gender;
 	msg.player_info.career = this.player_info.career;
-	msg.player_info.vip_level = this.player_info.vip_level;
 	send_game_msg_to_master(this.player_cid, Msg_GM.SYNC_GAME_MASTER_PLYAER_LOGIN, 0, msg);
 }
 

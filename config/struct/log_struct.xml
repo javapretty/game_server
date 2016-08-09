@@ -1,6 +1,6 @@
 <root>
 	<Logout_Info>
-		<head table_name="logout" key_index="role_id" msg_id="180001"/>
+		<head table_name="logout" index_name="role_id" msg_id="180001"/>
 		<arg type="int64" name="role_id"/>
 		<arg type="string" name="account"/>
 		<arg type="string" name="role_name"/>

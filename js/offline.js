@@ -11,7 +11,7 @@ function Offline() {
 }
 
 Offline.prototype.load_data = function(buffer){
-	print('load offline info, util.now_msec:', util.now_msec());
+	
 }
 
 Offline.prototype.save_data = function(){

@@ -17,8 +17,8 @@ void Log_Struct::save_data(Block_Buffer &buffer) {
 	std::string str_name;
 	std::string str_value;
 	int64_t key_index = buffer.peek_int64();
-	for(std::vector<Field_Info>::iterator iter = field_vec_.begin();
-			iter != field_vec_.end(); iter++) {
+	for(std::vector<Field_Info>::const_iterator iter = field_vec().begin();
+			iter != field_vec().end(); iter++) {
 		if(iter->field_label == "arg") {
 			build_sql_arg(*iter, buffer, str_name, str_value);
 		}
@@ -31,13 +31,13 @@ void Log_Struct::save_data(Block_Buffer &buffer) {
 	str_name = str_name.substr(0, str_name.length()-1);
 	str_value = str_value.substr(0, str_value.length()-1);
 	char str_sql[512] = {0};
-	sprintf(str_sql, "INSERT INTO %s (%s) VALUES (%s)", table_name_.c_str(), str_name.c_str(), str_value.c_str());
+	sprintf(str_sql, "INSERT INTO %s (%s) VALUES (%s)", table_name().c_str(), str_name.c_str(), str_value.c_str());
 	LOG_DB->connection()->execute(str_sql);
 
-	LOG_INFO("table %s save key_index:%ld", table_name_.c_str(), key_index);
+	LOG_INFO("table %s save key_index:%ld", table_name().c_str(), key_index);
 }
 
-void Log_Struct::build_sql_arg(Field_Info &field_info, Block_Buffer &buffer, std::string &str_name, std::string &str_value) {
+void Log_Struct::build_sql_arg(const Field_Info &field_info, Block_Buffer &buffer, std::string &str_name, std::string &str_value) {
 	std::stringstream stream;
 	stream.str("");
 	stream << field_info.field_name << "," ;

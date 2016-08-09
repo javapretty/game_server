@@ -24,17 +24,17 @@ public:
 	virtual void delete_data(Block_Buffer &buffer);
 
 private:
-	void create_data_arg(Field_Info &field_info, Block_Buffer &buffer, BSONObjBuilder &builder, int64_t key_index);
-	void create_data_vector(Field_Info &field_info, Block_Buffer &buffer, BSONObjBuilder &builder);
-	void create_data_struct(Field_Info &field_info, Block_Buffer &buffer, BSONObjBuilder &builder);
+	void create_data_arg(const Field_Info &field_info, Block_Buffer &buffer, BSONObjBuilder &builder, int64_t key_index);
+	void create_data_vector(const Field_Info &field_info, Block_Buffer &buffer, BSONObjBuilder &builder);
+	void create_data_struct(const Field_Info &field_info, Block_Buffer &buffer, BSONObjBuilder &builder);
 
-	void build_buffer_arg(Field_Info &field_info, Block_Buffer &buffer, BSONObj &bsonobj);
-	void build_buffer_vector(Field_Info &field_info, Block_Buffer &buffer, BSONObj &bsonobj);
-	void build_buffer_struct(Field_Info &field_info, Block_Buffer &buffer, BSONObj &bsonobj);
+	void build_buffer_arg(const Field_Info &field_info, Block_Buffer &buffer, BSONObj &bsonobj);
+	void build_buffer_vector(const Field_Info &field_info, Block_Buffer &buffer, BSONObj &bsonobj);
+	void build_buffer_struct(const Field_Info &field_info, Block_Buffer &buffer, BSONObj &bsonobj);
 
-	void build_bson_arg(Field_Info &field_info, Block_Buffer &buffer, BSONObjBuilder &builder);
-	void build_bson_vector(Field_Info &field_info, Block_Buffer &buffer, BSONObjBuilder &builder);
-	void build_bson_struct(Field_Info &field_info, Block_Buffer &buffer, BSONObjBuilder &builder);
+	void build_bson_arg(const Field_Info &field_info, Block_Buffer &buffer, BSONObjBuilder &builder);
+	void build_bson_vector(const Field_Info &field_info, Block_Buffer &buffer, BSONObjBuilder &builder);
+	void build_bson_struct(const Field_Info &field_info, Block_Buffer &buffer, BSONObjBuilder &builder);
 };
 
 #endif /* MONGO_STRUCT_H_ */

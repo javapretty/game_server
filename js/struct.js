@@ -74,7 +74,6 @@ function Guild_Member_Detail() {
 	this.role_id = 0;
 	this.role_name = "";
 	this.level = 0;
-	this.career = 0;
 }
 
 function Rank_Member() {
@@ -90,7 +89,6 @@ function Master_Player_Info() {
 	this.level = 0;
 	this.gender = 0;
 	this.career = 0;
-	this.vip_level = 0;
 }
 
 function Player_Data() {

@@ -10,10 +10,11 @@ function Guild() {
 	this.drop_list = new Array();
 }
 
-Guild.prototype.load_data = function(obj){
-	print('load guild data, util.now_msec:', util.now_msec());
-	for(var i = 0; i < obj.guild_list.length; i++){
+Guild.prototype.load_data = function(obj) {
+	print('load guild, guild size:', obj.guild_list.length);	
+	for(var i = 0; i < obj.guild_list.length; i++) {
 		var guild = obj.guild_list[i];
+		print('guild data, guild_id:', guild.guild_id, ' guild_name:', guild.guild_name);
 		this.guild_map.set(guild.guild_id, guild);
 	}
 }
@@ -57,11 +58,11 @@ Guild.prototype.member_join_guild = function(player, guild_detail, apply = false
 	member_detail.role_id = player.player_info.role_id;
 	member_detail.role_name = player.player_info.role_name;
 	member_detail.level = player.player_info.level;
-	member_detail.career = player.player_info.career;
-	if(!apply)
-		guild_detail.member_list.push(member_detail);
-	else
+	if (apply) {
 		guild_detail.apply_list.push(member_detail);
+	} else {
+		guild_detail.member_list.push(member_detail);
+	}
 }
 
 Guild.prototype.create_guild = function(player, obj) {

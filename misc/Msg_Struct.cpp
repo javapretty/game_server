@@ -39,8 +39,8 @@ v8::Local<v8::Object> Msg_Struct::build_msg_object(Isolate* isolate, int cid, in
 
 	//消息返回成功加载数据
 	if (status == 0) {
-		for(std::vector<Field_Info>::iterator iter = field_vec_.begin();
-				iter != field_vec_.end(); iter++) {
+		for(std::vector<Field_Info>::const_iterator iter = field_vec().begin();
+				iter != field_vec().end(); iter++) {
 			if(iter->field_label == "arg") {
 				Local<Value> value = build_object_arg(*iter, buffer, isolate);
 				buf_obj->Set(isolate->GetCurrentContext(),
@@ -71,8 +71,8 @@ v8::Local<v8::Object> Msg_Struct::build_msg_object(Isolate* isolate, int cid, in
 }
 
 void Msg_Struct::build_msg_buffer(Isolate* isolate, v8::Local<v8::Object> object, Block_Buffer &buffer) {
-	for(std::vector<Field_Info>::iterator iter = field_vec_.begin();
-			iter != field_vec_.end(); iter++) {
+	for(std::vector<Field_Info>::const_iterator iter = field_vec().begin();
+			iter != field_vec().end(); iter++) {
 		Local<Value> value = object->Get(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, iter->field_name.c_str(), NewStringType::kNormal).ToLocalChecked()).ToLocalChecked();
 		if(iter->field_label == "arg") {
 			build_buffer_arg(*iter, buffer, isolate, value);
@@ -89,7 +89,7 @@ void Msg_Struct::build_msg_buffer(Isolate* isolate, v8::Local<v8::Object> object
 	}
 }
 
-v8::Local<v8::Value> Msg_Struct::build_object_arg(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate) {
+v8::Local<v8::Value> Msg_Struct::build_object_arg(const Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate) {
 	EscapableHandleScope handle_scope(isolate);
 
 	Local<Value> value;
@@ -128,7 +128,7 @@ v8::Local<v8::Value> Msg_Struct::build_object_arg(Field_Info &field_info, Block_
 	return handle_scope.Escape(value);
 }
 
-v8::Local<v8::Array> Msg_Struct::build_object_vector(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate) {
+v8::Local<v8::Array> Msg_Struct::build_object_vector(const Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate) {
 	EscapableHandleScope handle_scope(isolate);
 
 	uint16_t vec_size = buffer.read_uint16();
@@ -149,7 +149,7 @@ v8::Local<v8::Array> Msg_Struct::build_object_vector(Field_Info &field_info, Blo
 	return handle_scope.Escape(array);
 }
 
-v8::Local<v8::Map> Msg_Struct::build_object_map(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate) {
+v8::Local<v8::Map> Msg_Struct::build_object_map(const Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate) {
 	EscapableHandleScope handle_scope(isolate);
 
 	uint16_t vec_size = buffer.read_uint16();
@@ -175,7 +175,7 @@ v8::Local<v8::Map> Msg_Struct::build_object_map(Field_Info &field_info, Block_Bu
 	return handle_scope.Escape(map);
 }
 
-v8::Local<v8::Object> Msg_Struct::build_object_struct(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate) {
+v8::Local<v8::Object> Msg_Struct::build_object_struct(const Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate) {
 	EscapableHandleScope handle_scope(isolate);
 
 	Struct_Name_Map::iterator it = MSG_MANAGER->msg_struct_name_map().find(field_info.field_type);
@@ -187,7 +187,7 @@ v8::Local<v8::Object> Msg_Struct::build_object_struct(Field_Info &field_info, Bl
 	Local<ObjectTemplate> localTemplate = ObjectTemplate::New(isolate);
 	Local<Object> object = localTemplate->NewInstance(isolate->GetCurrentContext()).ToLocalChecked();
 	std::vector<Field_Info> field_vec = it->second->field_vec();
-	for(std::vector<Field_Info>::iterator iter = field_vec.begin();
+	for(std::vector<Field_Info>::const_iterator iter = field_vec.begin();
 			iter != field_vec.end(); iter++) {
 		if(iter->field_label == "arg") {
 			Local<Value> value = build_object_arg(*iter, buffer, isolate);
@@ -218,7 +218,7 @@ v8::Local<v8::Object> Msg_Struct::build_object_struct(Field_Info &field_info, Bl
 	return handle_scope.Escape(object);
 }
 
-void Msg_Struct::build_buffer_arg(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate, v8::Local<v8::Value> value) {
+void Msg_Struct::build_buffer_arg(const Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate, v8::Local<v8::Value> value) {
 	if(field_info.field_type == "int8") {
 		int8_t val = 0;
 		if (value->IsInt32()) {
@@ -276,7 +276,7 @@ void Msg_Struct::build_buffer_arg(Field_Info &field_info, Block_Buffer &buffer, 
 	}
 }
 
-void Msg_Struct::build_buffer_vector(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate, v8::Local<v8::Value> value) {
+void Msg_Struct::build_buffer_vector(const Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate, v8::Local<v8::Value> value) {
 	if (!value->IsArray()) {
 		LOG_ERROR("field_name:%s is not array, struct_name:%s", field_info.field_name.c_str(), struct_name().c_str());
 		buffer.write_uint16(0);
@@ -297,7 +297,7 @@ void Msg_Struct::build_buffer_vector(Field_Info &field_info, Block_Buffer &buffe
 	}
 }
 
-void Msg_Struct::build_buffer_map(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate, v8::Local<v8::Value> value) {
+void Msg_Struct::build_buffer_map(const Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate, v8::Local<v8::Value> value) {
 	if (!value->IsMap()) {
 		LOG_ERROR("field_name:%s is not map, struct_name:%s", field_info.field_name.c_str(), struct_name().c_str());
 		buffer.write_uint16(0);
@@ -329,7 +329,7 @@ void Msg_Struct::build_buffer_map(Field_Info &field_info, Block_Buffer &buffer, 
 	}
 }
 
-void Msg_Struct::build_buffer_struct(Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate, v8::Local<v8::Value> value) {
+void Msg_Struct::build_buffer_struct(const Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate, v8::Local<v8::Value> value) {
 	Struct_Name_Map::iterator it = MSG_MANAGER->msg_struct_name_map().find(field_info.field_type);
 	if(it == MSG_MANAGER->msg_struct_name_map().end()) {
 		LOG_ERROR("Can not find the struct_name:%s", field_info.field_type.c_str());
@@ -343,7 +343,7 @@ void Msg_Struct::build_buffer_struct(Field_Info &field_info, Block_Buffer &buffe
 
 	Local<Object> object = value->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
 	std::vector<Field_Info> field_vec = it->second->field_vec();
-	for(std::vector<Field_Info>::iterator iter = field_vec.begin();
+	for(std::vector<Field_Info>::const_iterator iter = field_vec.begin();
 			iter != field_vec.end(); iter++) {
 		Local<Value> element = object->Get(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, iter->field_name.c_str(), NewStringType::kNormal).ToLocalChecked()).ToLocalChecked();
 		if(iter->field_label == "arg") {
