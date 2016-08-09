@@ -12,6 +12,7 @@
 #include "Public_Define.h"
 #include "Message.h"
 #include "Inner_Msg.h"
+#include "Base_Struct.h"
 
 enum Log_Server_Type {
 	LOG_MISC 				= 0,
@@ -61,19 +62,9 @@ enum Struct_Type {
 	MSG_STRUCT = 4,						//消息结构体
 };
 
-class Base_Struct;
 typedef boost::unordered_map<int32_t, Base_Struct *> Struct_Id_Map;
 typedef boost::unordered_map<std::string, Base_Struct *> Struct_Name_Map;
-
 int load_struct(const char *path, Struct_Type struct_type, Struct_Id_Map &struct_id_map, Struct_Name_Map &struct_name_map);
-
-struct Field_Info {
-	std::string field_label;
-	std::string field_type;
-	std::string field_name;
-	std::string key_type;
-	std::string key_name;
-};
 
 struct Server_Conf {
 	Time_Value server_sleep_time;
