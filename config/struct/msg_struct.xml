@@ -95,37 +95,15 @@
 	</MSG_510102>
 
 	<MSG_110103>
-		<!--申请加入公会-->
+		<!--踢出帮会-->
 		<head msg_id="110103"/>
-   	<arg type="int64" name="guild_id"/>
+    	<arg type="int64" name="guild_id"/>
+    	<arg type="int64" name="role_id"/>
 	</MSG_110103>
 
 	<MSG_510103>
 		<head msg_id="510103"/>
 	</MSG_510103>
-
-	<MSG_110104>
-		<!--允许加入公会-->
-		<head msg_id="110104"/>
-    	<arg type="int64" name="guild_id"/>
-    	<arg type="int64" name="role_id"/>
-    	<arg type="bool" name="allow" desc="允许加入(true)或拒绝加入(false)"/>
-	</MSG_110104>
-
-	<MSG_510104>
-		<head msg_id="510104"/>
-	</MSG_510104>
-
-	<MSG_110105>
-		<!--踢出帮会-->
-		<head msg_id="110105"/>
-    	<arg type="int64" name="guild_id"/>
-    	<arg type="int64" name="role_id"/>
-	</MSG_110105>
-
-	<MSG_510105>
-		<head msg_id="510105"/>
-	</MSG_510105>
 
 	<MSG_110201>
 		<!--拉取排行榜信息-->

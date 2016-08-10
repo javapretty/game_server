@@ -172,12 +172,10 @@ int64_t Mongo_Operator::create_guild(Create_Guild_Info &guild_info) {
 	int64_t server = server_num_ * 1000000000L;
 	int64_t guild_id = agent + server + order;
 
-	int now_sec = Time_Value::gettimeofday().sec();
 	MONGO_CONNECTION.update("game.guild", MONGO_QUERY("guild_id" << ((long long int)guild_id)), BSON("$set" <<
 			BSON("guild_id" << (long long int)guild_id
 					<< "guild_name" << guild_info.guild_name
-					<< "chief_id" << (long long int)guild_info.chief_id
-					<< "create_time" << now_sec)), true);
+					<< "chief_id" << (long long int)guild_info.chief_id)), true);
 
 	LOG_INFO("***************create guild,guild_id:%ld***************", guild_id);
 	return guild_id;

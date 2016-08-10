@@ -148,9 +148,8 @@ int64_t Mysql_Operator::create_guild(Create_Guild_Info &guild_info) {
 	sprintf(str_sql, "update global set value=%d where type='guild_id'", order);
 	mysql_conn_->execute_update(str_sql);
 
-	int now_sec = Time_Value::gettimeofday().sec();
-	sprintf(str_sql, "insert into guild (guild_id, guild_name, chief_id, create_time, is_change, member_list, apply_list) values (%ld, '%s', %ld, %d, 0, \'\', \'\')",
-			guild_id, guild_info.guild_name.c_str(), guild_info.chief_id, now_sec);
+	sprintf(str_sql, "insert into guild (guild_id, guild_name, chief_id, create_time, is_change, member_list) values (%ld, '%s', %ld, 0, 0, \'\')",
+			guild_id, guild_info.guild_name.c_str(), guild_info.chief_id);
 	mysql_conn_->execute(str_sql);
 
 	LOG_INFO("***************create guild,guild_id:%ld***************", guild_id);

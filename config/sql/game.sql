@@ -29,7 +29,7 @@ CREATE TABLE `role` (
   vip_level int(11) NOT NULL default '0',
   vip_exp int(11) NOT NULL default '0',
   charge_gold int(11) NOT NULL default '0',
-  guild_id int(11) NOT NULL default '0',
+  guild_id bigint(20) NOT NULL default '0',
   guild_name varchar(120) NOT NULL default '',
   PRIMARY KEY (role_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -66,7 +66,6 @@ CREATE TABLE `guild` (
   create_time int(11) NOT NULL default '0',
   is_change tinyint(3) NOT NULL default '0',
   member_list blob NOT NULL, 
-  apply_list blob NOT NULL,
   PRIMARY KEY (guild_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

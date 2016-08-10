@@ -146,7 +146,6 @@ function Guild_Info() {
 	this.create_time = 0;
 	this.is_change = 0;
 	this.member_list = new Array();
-	this.apply_list = new Array();
 }
 
 function Offline_Info() {
@@ -236,26 +235,10 @@ function MSG_510102() {
 
 function MSG_110103() {
 	this.guild_id = 0;
+	this.role_id = 0;
 }
 
 function MSG_510103() {
-}
-
-function MSG_110104() {
-	this.guild_id = 0;
-	this.role_id = 0;
-	this.allow = 0;
-}
-
-function MSG_510104() {
-}
-
-function MSG_110105() {
-	this.guild_id = 0;
-	this.role_id = 0;
-}
-
-function MSG_510105() {
 }
 
 function MSG_110201() {

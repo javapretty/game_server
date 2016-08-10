@@ -4,9 +4,7 @@ if (typeof Msg_CM == "undefined") {
 	Msg_CM.REQ_SEND_CHAT_INFO = 110001; //发送世界聊天消息
 	Msg_CM.REQ_CREATE_GUILD = 110101; //申请创建公会
 	Msg_CM.REQ_DISSOVE_GUILD = 110102; //申请解散公会
-	Msg_CM.REQ_JOIN_GUILD = 110103; //申请加入公会
-	Msg_CM.REQ_GUILD_ALLOW_JOIN = 110104; //允许入帮
-	Msg_CM.REQ_GUILD_KICK_OUT = 110105; //踢出帮会
+	Msg_CM.REQ_GUILD_KICK_OUT = 110103; //踢出帮会
 	Msg_CM.REQ_FETCH_RANK = 110201; //拉取排行榜信息
 }
 

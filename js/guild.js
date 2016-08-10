@@ -53,16 +53,12 @@ Guild.prototype.save_data_handler = function() {
 	this.drop_guild();
 }
 
-Guild.prototype.member_join_guild = function(player, guild_detail, apply = false) {
+Guild.prototype.member_join_guild = function(player, guild_detail) {
 	var member_detail = new Guild_Member_Detail();
 	member_detail.role_id = player.player_info.role_id;
 	member_detail.role_name = player.player_info.role_name;
 	member_detail.level = player.player_info.level;
-	if (apply) {
-		guild_detail.apply_list.push(member_detail);
-	} else {
-		guild_detail.member_list.push(member_detail);
-	}
+	guild_detail.member_list.push(member_detail);
 }
 
 Guild.prototype.create_guild = function(player, obj) {
@@ -85,6 +81,7 @@ Guild.prototype.create_guild_res = function(obj) {
 	guild_detail.guild_id = obj.guild_info.guild_id;
 	guild_detail.guild_name = obj.guild_info.guild_name;
 	guild_detail.chief_id = obj.guild_info.chief_id;
+	guild_detail.create_time = util.now_sec();
 	guild_detail.is_change = true;
 
 	this.member_join_guild(player, guild_detail);
@@ -117,45 +114,6 @@ Guild.prototype.dissove_guild = function(player, obj) {
 	var msg = new MSG_510102();
 	msg.guild_id = obj.guild_id;
 	player.send_success_msg(Msg_MC.RES_DISSOVE_GUILD, msg);
-}
-
-Guild.prototype.join_guild = function(player, obj) {
-	print('join_guild, util.now_msec:', util.now_msec());
-	var guild_detail = this.guild_map.get(obj.guild_id);
-	if(guild_detail == null){
-		return player.send_error_msg(Msg_MC.RES_JOIN_GUILD, Error_Code.ERROR_GUILD_NOT_EXIST);
-	}
-	this.member_join_guild(player, guild_detail, true);
-	guild_detail.is_change = true;
-	player.send_error_msg(Msg_MC.RES_JOIN_GUILD, 0);
-}
-
-Guild.prototype.allow_join_player = function(player, obj) {
-	print('allow join guild, util.now_msec:', util.now_msec());
-	var guild_detail = this.guild_map.get(obj.guild_id);
-	if(guild_detail == null){
-		return player.send_error_msg(Msg_MC.RES_JOIN_GUILD, Error_Code.ERROR_GUILD_NOT_EXIST);
-	}
-
-	for(var i = 0; i < guild_detail.apply_list.length; i++) {
-		if(obj.role_id == guild_detail.apply_list[i].role_id) {
-			if(obj.allow){
-				var member = guild_detail.apply_list[i];
-				guild_detail.member_list.push(member);
-				
-				var mem_player = master_player_role_id_map.get(member.role_id);
-				if(mem_player == null){
-					offline_manager.set_offline_detail(member.role_id, guild_detail.guild_id, guild_detail.guild_name);
-				} else {
-					this.sync_guild_info_to_game(mem_player, guild_detail.guild_id, guild_detail.guild_name);
-				}
-			}
-			guild_detail.apply_list.splice(i, 1);
-			guild_detail.is_change = true;
-			return player.send_error_msg(Msg_MC.RES_GUILD_ALLOW_JOIN, 0);
-		}
-	}
-	player.send_error_msg(Msg_MC.RES_JOIN_GUILD, Error_Code.ERROR_CLIENT_PARAM);
 }
 
 Guild.prototype.kick_out_player = function(player, obj) {

@@ -117,13 +117,13 @@ void Mysql_Struct::save_data(Block_Buffer &buffer) {
 				table_name().c_str(), str_name.c_str(), str_value.c_str());
 	}
 
+	LOG_INFO("pstmt sql:%s", str_sql);
 	sql::PreparedStatement* pstmt = MYSQL_CONNECTION->create_pstmt(str_sql);
 	if (!pstmt) {
 		LOG_ERROR("create_pstmt error, sql:%s", str_sql);
 		return;
 	}
 
-	char blob_data[1024] = {0};
 	int param_index = 0;
 	for(std::vector<Field_Info>::const_iterator iter = field_vec().begin();
 			iter != field_vec().end(); iter++) {
@@ -157,6 +157,8 @@ void Mysql_Struct::save_data(Block_Buffer &buffer) {
 			else if(iter->field_type == "string") {
 				std::string value = buffer.read_string();
 				pstmt->setString(param_index, value);
+				//LOG_INFO("struct_name:%s, field_type:%s, field_name:%s, param_index:%d, value:%s", struct_name().c_str(),
+				//		iter->field_type.c_str(), iter->field_name.c_str(), param_index, value.c_str());
 			}
 			else {
 				LOG_ERROR("Can not find the field_type:%s, struct_name:%s", iter->field_type.c_str(), struct_name().c_str());
@@ -166,24 +168,28 @@ void Mysql_Struct::save_data(Block_Buffer &buffer) {
 			int read_idx = buffer.get_read_idx();
 			int field_len = build_field_len_vector(*iter, buffer);
 			buffer.set_read_idx(read_idx);
-			LOG_INFO("field_name:%s, field_len:%d", iter->field_name.c_str(), field_len);
 
 			//从read_idx处开始，取filed_len长度的数据
+			char blob_data[1024] = {0};
 			buffer.copy_out(blob_data, field_len);
 			DataBuf data_buf(blob_data, field_len);
 			std::istream s(&data_buf);
 			pstmt->setBlob(param_index, &s);
+			LOG_INFO("struct_name:%s, field_type:%s, field_name:%s, param_index:%d, field_len:%d, data:%s", struct_name().c_str(),
+					iter->field_type.c_str(), iter->field_name.c_str(), param_index, field_len, blob_data);
 		}
 		else if(iter->field_label == "struct") {
 			int read_idx = buffer.get_read_idx();
 			int field_len = build_field_len_struct(*iter, buffer);
 			buffer.set_read_idx(read_idx);
-			LOG_INFO("field_name:%s, field_len:%d", iter->field_name.c_str(), field_len);
 
+			char blob_data[1024] = {0};
 			buffer.copy_out(blob_data, field_len);
 			DataBuf data_buf(blob_data, field_len);
 			std::istream s(&data_buf);
 			pstmt->setBlob(param_index, &s);
+			LOG_INFO("struct_name:%s, field_type:%s, field_name:%s, param_index:%d, field_len:%d, data:%s", struct_name().c_str(),
+					iter->field_type.c_str(), iter->field_name.c_str(), param_index, field_len, blob_data);
 		}
 	}
 	pstmt->execute();
@@ -363,13 +369,16 @@ int Mysql_Struct::build_field_len_arg(const Field_Info &field_info, Block_Buffer
 		field_len = sizeof(value);
 	}
 	else if(field_info.field_type == "bool") {
-		bool value = buffer.read_int8();
+		bool value = buffer.read_bool();
 		field_len = sizeof(value);
 	}
 	else if(field_info.field_type == "string") {
 		std::string value = buffer.read_string();
-		//string类型变量要先写uint16_t类型的长度
-		field_len = sizeof(value) + sizeof(uint16_t);
+		//注意：string类型长度要用length计算,还要加上uint16_t类型的长度变量
+		field_len = value.length() + sizeof(uint16_t);
+
+		//LOG_WARN("struct_name:%s, field_type:%s, field_name:%s field_len:%d, value:%s", struct_name().c_str(),
+		//		field_info.field_type.c_str(), field_info.field_name.c_str(), field_len, value.c_str());
 	}
 	else {
 		LOG_ERROR("Can not find the field_type:%s, struct_name:%s", field_info.field_type.c_str(), struct_name().c_str());

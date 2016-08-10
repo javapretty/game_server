@@ -106,7 +106,7 @@ v8::Local<v8::Value> Msg_Struct::build_object_arg(const Field_Info &field_info, 
 		value = Int32::New(isolate, val);
 	}
 	else if(field_info.field_type == "int64") {
-		double val = buffer.read_int64();
+		int64_t val = buffer.read_int64();
 		value = Number::New(isolate, val);
 	}
 	else if(field_info.field_type == "double") {

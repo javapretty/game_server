@@ -122,7 +122,7 @@
 		<arg type="int32" name="vip_level"/>
 		<arg type="int32" name="vip_exp"/>
 		<arg type="int32" name="charge_gold"/>
-		<arg type="int32" name="guild_id"/>
+		<arg type="int64" name="guild_id"/>
 		<arg type="string" name="guild_name"/>
 	</Game_Player_Info>
 	
@@ -162,7 +162,6 @@
 		<arg type="int32" name="create_time"/>
 		<arg type="bool" name="is_change"/>
 		<vector type="Guild_Member_Detail" name="member_list"/>
-		<vector type="Guild_Member_Detail" name="apply_list"/>
 	</Guild_Info>
 
 	<Offline_Info>
