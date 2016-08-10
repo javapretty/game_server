@@ -23,17 +23,17 @@ public:
 	virtual void delete_data(Block_Buffer &buffer);
 
 private:
-	void create_data_arg(const Field_Info &field_info, Block_Buffer &buffer, std::string &str_name, std::string &str_value, int64_t key_index);
-	void create_data_vector(const Field_Info &field_info, Block_Buffer &buffer, std::string &str_name, std::string &str_value);
-	void create_data_struct(const Field_Info &field_info, Block_Buffer &buffer, std::string &str_name, std::string &str_value);
+	int create_data_arg(const Field_Info &field_info, Block_Buffer &buffer, Block_Buffer &blob_buffer);
+	int create_data_vector(const Field_Info &field_info, Block_Buffer &buffer, Block_Buffer &blob_buffer);
+	int create_data_struct(const Field_Info &field_info, Block_Buffer &buffer, Block_Buffer &blob_buffer);
 
 	void build_buffer_arg(const Field_Info &field_info, Block_Buffer &buffer, sql::ResultSet *result);
 	void build_buffer_vector(const Field_Info &field_info, Block_Buffer &buffer, sql::ResultSet *result);
 	void build_buffer_struct(const Field_Info &field_info, Block_Buffer &buffer, sql::ResultSet *result);
 
-	int build_field_len_arg(const Field_Info &field_info, Block_Buffer &buffer);
-	int build_field_len_vector(const Field_Info &field_info, Block_Buffer &buffer);
-	int build_field_len_struct(const Field_Info &field_info, Block_Buffer &buffer);
+	int build_len_arg(const Field_Info &field_info, Block_Buffer &buffer);
+	int build_len_vector(const Field_Info &field_info, Block_Buffer &buffer);
+	int build_len_struct(const Field_Info &field_info, Block_Buffer &buffer);
 };
 
 #endif /* MYSQL_STRUCT_H_ */
