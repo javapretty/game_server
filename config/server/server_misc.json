@@ -1,6 +1,6 @@
 {
 	"server_type" : 1,						//服务器架构类型 1：多进程 2：多线程
-	"db_type" : 2,								//数据库类型 1：mongodb 2:mysql
+	"db_type" : 1,								//数据库类型 1：mongodb 2:mysql
 	"server_label" : "test",			//服务器标签，ps查询进程时候区分用
 	"game_open_time" : 1381370400,	//游戏开服时间,unix时间戳
 	"agent_num" : 1,							//平台编号，比如37wan编号为1，4399为2，生成角色id,帮派id时候用
