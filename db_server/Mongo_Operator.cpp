@@ -25,17 +25,19 @@ DBClientConnection &Mongo_Operator::connection(void) {
 	GUARD(MUTEX, mon, connection_map_lock_);
 
 	const int64_t thread_key = pthread_self();
-	DBClientConnection *conn = 0;
-	Connection_Map::iterator it = connection_map_.find(thread_key);
-	if (it == connection_map_.end()) {
+	DBClientConnection *conn = nullptr;
+	Connection_Map::iterator iter = connection_map_.find(thread_key);
+	if (iter == connection_map_.end()) {
 		conn = connection_pool_.pop();
+
+		//每个线程开启一个mongodb连接，分开处理db请求
+		const Json::Value &mongodb_game = SERVER_CONFIG->server_misc()["mongodb_game"];
+		if (mongodb_game == Json::Value::null) {
+			LOG_FATAL("server_misc error, cannot find mongodb_game!");
+		}
 
 		std::string err_msg;
 		std::stringstream host_stream;
-		const Json::Value &mongodb_game = SERVER_CONFIG->server_misc()["mongodb_game"];
-		if (mongodb_game == Json::Value::null) {
-			LOG_FATAL("server_misc config cannot find mongodb_game");
-		}
 		host_stream << (mongodb_game["ip"].asString());
 		if (mongodb_game.isMember("port")) {
 			host_stream << ":" << (mongodb_game["port"].asInt());
@@ -43,7 +45,7 @@ DBClientConnection &Mongo_Operator::connection(void) {
 		conn->connect(host_stream.str().c_str(), err_msg);
 		connection_map_[thread_key] = conn;
 	} else {
-		conn = it->second;
+		conn = iter->second;
 	}
 
   return *conn;

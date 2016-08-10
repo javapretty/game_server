@@ -170,7 +170,7 @@ void Mysql_Struct::save_data(Block_Buffer &buffer) {
 			buffer.set_read_idx(read_idx);
 
 			//从read_idx处开始，取filed_len长度的数据
-			char blob_data[1024] = {0};
+			char blob_data[4096] = {0};
 			buffer.copy_out(blob_data, field_len);
 			DataBuf data_buf(blob_data, field_len);
 			std::istream s(&data_buf);
@@ -183,7 +183,7 @@ void Mysql_Struct::save_data(Block_Buffer &buffer) {
 			int field_len = build_field_len_struct(*iter, buffer);
 			buffer.set_read_idx(read_idx);
 
-			char blob_data[1024] = {0};
+			char blob_data[4096] = {0};
 			buffer.copy_out(blob_data, field_len);
 			DataBuf data_buf(blob_data, field_len);
 			std::istream s(&data_buf);

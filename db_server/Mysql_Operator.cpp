@@ -10,11 +10,9 @@
 #include "Server_Config.h"
 #include "DB_Manager.h"
 
-Mysql_Operator::Mysql_Operator(void) : mysql_conn_(nullptr), agent_num_(0), server_num_(0) { }
+Mysql_Operator::Mysql_Operator(void) : agent_num_(0), server_num_(0) { }
 
-Mysql_Operator::~Mysql_Operator(void) {
-	MYSQL_MANAGER->rel_mysql_conn(mysql_conn_);
-}
+Mysql_Operator::~Mysql_Operator(void) { }
 
 Mysql_Operator *Mysql_Operator::instance_;
 
@@ -22,6 +20,39 @@ Mysql_Operator *Mysql_Operator::instance(void) {
 	if (instance_ == 0)
 		instance_ = new Mysql_Operator;
 	return instance_;
+}
+
+Mysql_Conn *Mysql_Operator::connection(void) {
+	GUARD(MUTEX, mon, connection_map_lock_);
+
+	const int64_t thread_key = pthread_self();
+	Mysql_Conn *conn = nullptr;
+	Connection_Map::iterator iter = connection_map_.find(thread_key);
+	if (iter == connection_map_.end()) {
+		//每个线程开启一个mysql连接，分开处理sql请求
+		const Json::Value &mysql_game = SERVER_CONFIG->server_misc()["mysql_game"];
+		if (mysql_game == Json::Value::null) {
+			LOG_FATAL("server_misc null, can not find mysql_game!");
+		}
+
+		std::string ip(mysql_game["ip"].asString());
+		int port = mysql_game["port"].asInt();
+		std::string user(mysql_game["user"].asString());
+		std::string password(mysql_game["password"].asString());
+		std::string dbname(mysql_game["dbname"].asString());
+		std::stringstream dbpool_stream;
+		dbpool_stream.str("");
+		dbpool_stream << mysql_game["dbpoolname"].asString();
+		dbpool_stream << "_" << thread_key;
+		std::string dbpoolname = dbpool_stream.str();
+		MYSQL_MANAGER->init(ip, port, user, password, dbname, dbpoolname, 16);
+		conn = MYSQL_MANAGER->get_mysql_conn(dbpoolname);
+		connection_map_[thread_key] = conn;
+	} else {
+		conn = iter->second;
+	}
+
+  return conn;
 }
 
 int Mysql_Operator::init(void) {
@@ -37,23 +68,13 @@ int Mysql_Operator::init(void) {
 	if (agent_num_ < 1) agent_num_ = 1;
 	if (server_num_ < 1) server_num_ = 1;
 
-	//连接mysql
-	std::string ip(server_misc["mysql_game"]["ip"].asString());
-	int port = server_misc["mysql_game"]["port"].asInt();
-	std::string user(server_misc["mysql_game"]["user"].asString());
-	std::string password(server_misc["mysql_game"]["password"].asString());
-	std::string dbname(server_misc["mysql_game"]["dbname"].asString());
-	std::string dbpoolname(server_misc["mysql_game"]["dbpoolname"].asString());
-	MYSQL_MANAGER->init(ip, port, user, password, dbname, dbpoolname, 16);
-	mysql_conn_ = MYSQL_MANAGER->get_mysql_conn(dbpoolname);
-
-	sql::ResultSet *result = mysql_conn_->execute_query("select type from global where type='role_id'");
+	sql::ResultSet *result = MYSQL_CONNECTION->execute_query("select type from global where type='role_id'");
 	if (!result || result->rowsCount() <= 0) {
-		mysql_conn_->execute("insert into global(type, value) values ('role_id', 0)");
+		MYSQL_CONNECTION->execute("insert into global(type, value) values ('role_id', 0)");
 	}
-	result = mysql_conn_->execute_query("select type from global where type='guild_id'");
+	result = MYSQL_CONNECTION->execute_query("select type from global where type='guild_id'");
 	if (!result || result->rowsCount() <= 0) {
-		mysql_conn_->execute("insert into global(type, value) values ('guild_id', 0)");
+		MYSQL_CONNECTION->execute("insert into global(type, value) values ('guild_id', 0)");
 	}
 
 	load_db_cache();
@@ -61,7 +82,7 @@ int Mysql_Operator::init(void) {
 }
 
 int Mysql_Operator::load_db_cache(void) {
-	sql::ResultSet *result = mysql_conn_->execute_query("select role_id,role_name,account,agent_num,server_num from role");
+	sql::ResultSet *result = MYSQL_CONNECTION->execute_query("select role_id,role_name,account,agent_num,server_num from role");
 	if (result) {
 		while(result->next()) {
 			Player_DB_Cache db_cache;
@@ -81,14 +102,14 @@ int Mysql_Operator::load_db_cache(void) {
 int64_t Mysql_Operator::create_player(Create_Role_Info &role_info) {
 	char str_sql[256] = {0};
 	sprintf(str_sql, "select role_id from role where account='%s' and role_name='%s'", role_info.account.c_str(), role_info.role_name.c_str());
-	sql::ResultSet *result = mysql_conn_->execute_query(str_sql);
+	sql::ResultSet *result = MYSQL_CONNECTION->execute_query(str_sql);
 	if (result && result->rowsCount() > 0) {
 		LOG_ERROR("create_player account = %s role_name = %s existed", role_info.account.c_str(), role_info.role_name.c_str());
 		return -1;
 	}
 
 	//从global表查询当前role_id最大值
-	result = mysql_conn_->execute_query("select * from global where type='role_id'");
+	result = MYSQL_CONNECTION->execute_query("select * from global where type='role_id'");
 	if (!result || result->rowsCount() <= 0) {
 		LOG_ERROR("find from global type='role_id' not existed");
 		return -1;
@@ -102,13 +123,13 @@ int64_t Mysql_Operator::create_player(Create_Role_Info &role_info) {
 	int64_t server = server_num_ * 1000000000L;
 	int64_t role_id = agent + server + order;
 	sprintf(str_sql, "update global set value=%d where type='role_id'", order);
-	mysql_conn_->execute_update(str_sql);
+	MYSQL_CONNECTION->execute_update(str_sql);
 
 	int now_sec = Time_Value::gettimeofday().sec();
 	sprintf(str_sql, "insert into role (role_id, role_name, account, agent_num, server_num, level, gender, career, create_time, login_time) values (%ld, '%s', '%s', %d, %d, %d, %d, %d, %d, %d)",
 			role_id, role_info.role_name.c_str(), role_info.account.c_str(), agent_num_,
 			server_num_, 1, role_info.gender, role_info.career, now_sec, now_sec);
-	mysql_conn_->execute(str_sql);
+	MYSQL_CONNECTION->execute(str_sql);
 
 	Player_DB_Cache db_cache;
 	db_cache.role_id = role_id;
@@ -125,14 +146,14 @@ int64_t Mysql_Operator::create_player(Create_Role_Info &role_info) {
 int64_t Mysql_Operator::create_guild(Create_Guild_Info &guild_info) {
 	char str_sql[256] = {0};
 	sprintf(str_sql, "select guild_id from guild where guild_name='%s'", guild_info.guild_name.c_str());
-	sql::ResultSet *result = mysql_conn_->execute_query(str_sql);
+	sql::ResultSet *result = MYSQL_CONNECTION->execute_query(str_sql);
 	if (result && result->rowsCount() > 0) {
 		LOG_ERROR("create_guild guild_name = %s existed", guild_info.guild_name.c_str());
 		return -1;
 	}
 
 	//从global表查询当前role_id最大值
-	result = mysql_conn_->execute_query("select * from global where type='guild_id'");
+	result = MYSQL_CONNECTION->execute_query("select * from global where type='guild_id'");
 	if (!result || result->rowsCount() <= 0) {
 		LOG_ERROR("find from global type='guild_id' not existed");
 		return -1;
@@ -146,11 +167,11 @@ int64_t Mysql_Operator::create_guild(Create_Guild_Info &guild_info) {
 	int64_t server = server_num_ * 1000000000L;
 	int64_t guild_id = agent + server + order;
 	sprintf(str_sql, "update global set value=%d where type='guild_id'", order);
-	mysql_conn_->execute_update(str_sql);
+	MYSQL_CONNECTION->execute_update(str_sql);
 
 	sprintf(str_sql, "insert into guild (guild_id, guild_name, chief_id, create_time, is_change, member_list) values (%ld, '%s', %ld, 0, 0, \'\')",
 			guild_id, guild_info.guild_name.c_str(), guild_info.chief_id);
-	mysql_conn_->execute(str_sql);
+	MYSQL_CONNECTION->execute(str_sql);
 
 	LOG_INFO("***************create guild,guild_id:%ld***************", guild_id);
 	return guild_id;
