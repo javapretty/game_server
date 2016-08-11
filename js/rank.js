@@ -9,10 +9,11 @@ function Rank() {
 }
 
 Rank.prototype.load_data = function(obj) {
-	print('load rank, rank size:', obj.rank_list.length);	
+	print('load rank data, size:', obj.rank_list.length);	
 	for(var i = 0; i < obj.rank_list.length; i++) {
-		print('rank type:', obj.rank_list[i].rank_type, ' min_role_id:', obj.rank_list[i].min_role_id);	
-		this.rank_map.set(obj.rank_list[i].rank_type, obj.rank_list[i]);
+		var rank_info = obj.rank_list[i];
+		print('rank type:', rank_info.rank_type, ' min_role_id:', rank_info.min_role_id);	
+		this.rank_map.set(rank_info.rank_type, rank_info);
 	}
 }
 

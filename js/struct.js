@@ -144,7 +144,6 @@ function Guild_Info() {
 	this.guild_name = "";
 	this.chief_id = 0;
 	this.create_time = 0;
-	this.is_change = 0;
 	this.member_list = new Array();
 }
 
@@ -159,7 +158,6 @@ function Offline_Info() {
 	this.role_id = 0;
 	this.guild_id = 0;
 	this.guild_name = "";
-	this.flag = 0;
 }
 
 function MSG_100000() {

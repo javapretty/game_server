@@ -8,24 +8,22 @@ function Guild() {
 	this.guild_map = new Map();
 	this.save_list = new Array();
 	this.drop_list = new Array();
+	this.is_change = false;
 }
 
 Guild.prototype.load_data = function(obj) {
-	print('load guild, guild size:', obj.guild_list.length);	
+	print('load guild data, size:', obj.guild_list.length);	
 	for(var i = 0; i < obj.guild_list.length; i++) {
-		var guild = obj.guild_list[i];
-		print('guild data, guild_id:', guild.guild_id, ' guild_name:', guild.guild_name);
-		this.guild_map.set(guild.guild_id, guild);
+		var guild_info = obj.guild_list[i];
+		print('guild_id:', guild_info.guild_id, ' guild_name:', guild_info.guild_name);
+		this.guild_map.set(guild_info.guild_id, guild_info);
 	}
 }
 
 Guild.prototype.save_data = function(){
 	var msg = new MSG_150103();
 	for (var value of this.guild_map.values()) {
-  		if (value.is_change) {
-			msg.guild_list.push(value);
-			value.is_change = false;
-		}
+  		msg.guild_list.push(value);
 	}
   send_master_msg_to_db(Msg_MD.SYNC_MASTER_DB_SAVE_GUILD, msg);
 }
@@ -49,8 +47,10 @@ Guild.prototype.sync_guild_info_to_game = function(player, guild_id, guild_name)
 }
 
 Guild.prototype.save_data_handler = function() {
+	if (!this.is_change) return;
 	this.save_data();
 	this.drop_guild();
+	this.is_change = false;
 }
 
 Guild.prototype.member_join_guild = function(player, guild_detail) {
@@ -59,6 +59,7 @@ Guild.prototype.member_join_guild = function(player, guild_detail) {
 	member_detail.role_name = player.player_info.role_name;
 	member_detail.level = player.player_info.level;
 	guild_detail.member_list.push(member_detail);
+	this.is_change = true;
 }
 
 Guild.prototype.create_guild = function(player, obj) {
@@ -82,7 +83,6 @@ Guild.prototype.create_guild_res = function(obj) {
 	guild_detail.guild_name = obj.guild_info.guild_name;
 	guild_detail.chief_id = obj.guild_info.chief_id;
 	guild_detail.create_time = util.now_sec();
-	guild_detail.is_change = true;
 
 	this.member_join_guild(player, guild_detail);
 	this.guild_map.set(guild_detail.guild_id, guild_detail);
@@ -116,6 +116,7 @@ Guild.prototype.dissove_guild = function(player, obj) {
 	var msg = new MSG_510102();
 	msg.guild_id = obj.guild_id;
 	player.send_success_msg(Msg_MC.RES_DISSOVE_GUILD, msg);
+	this.is_change = true;
 }
 
 Guild.prototype.kick_out_player = function(player, obj) {
@@ -128,7 +129,6 @@ Guild.prototype.kick_out_player = function(player, obj) {
 	for(var i = 0; i < guild_detail.member_list.length; i++){
 		if(obj.role_id == guild_detail.member_list[i].role_id){
 			guild_detail.member_list.splice(i, 1);
-			guild_detail.is_change = true;
 				
 			var mem_player = master_player_role_id_map.get(obj.role_id);
 			if(mem_player == null){
@@ -140,4 +140,5 @@ Guild.prototype.kick_out_player = function(player, obj) {
 		}
 	}
 	player.send_error_msg(Msg_MC.RES_GUILD_KICK_OUT, Error_Code.ERROR_CLIENT_PARAM);
+	this.is_change = true;
 }
