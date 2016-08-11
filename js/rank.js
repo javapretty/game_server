@@ -17,7 +17,7 @@ Rank.prototype.load_data = function(obj) {
 }
 
 Rank.prototype.save_data = function() {
-	var msg = new MSG_150105();
+	var msg = new MSG_150104();
 	for (var value of this.rank_map.values()) {
   		msg.rank_list.push(value);
 	}
@@ -73,7 +73,7 @@ Rank.prototype.update_rank = function(type, player) {
 	var rank_value = this.get_rank_value(type, player);
 	var rank_member = rank_info.member_map.get(player.player_info.role_id);
 	if(rank_member == null) {
-		rank_member = new Rank_Member();
+		rank_member = new Rank_Member_Detail();
 		rank_member.role_id = player.player_info.role_id;
 		rank_member.role_name = player.player_info.role_name;
 		rank_member.value = rank_value;

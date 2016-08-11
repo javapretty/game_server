@@ -13,8 +13,8 @@ require('util.js');
 require('timer.js');
 require('master_player.js');
 require('guild.js');
-require('offline.js');
 require('rank.js');
+require('offline.js');
 
 //cid----master_player  cid = gate_cid * 10000 + player_cid
 var master_player_gate_cid_map = new Map();
@@ -29,12 +29,12 @@ var master_player_role_name_map = new Map();
 var config = new Config();
 config.init();
 
-//公会
+//公会管理器
 var guild_manager = new Guild();
+//排行榜管理器
+var rank_manager = new Rank();
 //离线管理器
 var offline_manager = new Offline();
-//排行榜
-var rank_manager = new Rank();
 
 //定时器管理器
 var timer = new Timer();
@@ -155,11 +155,11 @@ function process_master_db_msg(obj) {
 	case Msg_MD.SYNC_DB_MASTER_LOAD_GUILD:
 		guild_manager.load_data(obj);
 		break;
-	case Msg_MD.SYNC_DB_MASTER_LOAD_OFFLINE:
-		offline_manager.load_data(obj);
-		break;
 	case Msg_MD.SYNC_DB_MASTER_LOAD_RANK:
 		rank_manager.load_data(obj);
+		break;
+	case Msg_MD.SYNC_DB_MASTER_LOAD_OFFLINE:
+		offline_manager.load_data(obj);
 		break;
 	default:
 		print('process_master_db_msg, msg_id: not exist', msg_id);

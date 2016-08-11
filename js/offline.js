@@ -11,11 +11,10 @@ function Offline() {
 }
 
 Offline.prototype.load_data = function(buffer){
-	
 }
 
 Offline.prototype.save_data = function(){
-	var msg = new MSG_150104();
+	var msg = new MSG_150105();
 	msg.offline_info = this.offline_info;
 	send_master_msg_to_db(Msg_MD.SYNC_MASTER_DB_SAVE_OFFLINE, msg);
 }

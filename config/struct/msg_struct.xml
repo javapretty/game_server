@@ -115,7 +115,7 @@
 		<head msg_id="510201"/>
 		<arg type="int32" name="rank_type"/>
 		<arg type="int32" name="self_rank"/>
-	  <vector type="Rank_Member" name="rank_list"/>
+	  <vector type="Rank_Member_Detail" name="rank_list"/>
 	</MSG_510201>
 	
 <!--Client与Game通信消息-->
@@ -161,13 +161,13 @@
 
 	<MSG_520100>
 		<head msg_id="520100"/>
-    	<vector type="Item_Info" name="item_info"/>
+    	<vector type="Item_Detail" name="item_info"/>
 	</MSG_520100>
 
 	<MSG_120101>
 		<!--使用物品-->
 		<head msg_id="120101"/>
-    	<struct type="Item_Info" name="item"/>
+    	<struct type="Item_Detail" name="item"/>
 	</MSG_120101>
 
 	<MSG_520101>
@@ -177,7 +177,7 @@
 	<MSG_120102>
 		<!--出售物品-->
 		<head msg_id="120102"/>
-	  <struct type="Item_Info" name="item"/>
+	  <struct type="Item_Detail" name="item"/>
 	</MSG_120102>
 
 	<MSG_520102>
@@ -266,7 +266,7 @@
 		<head msg_id="120303"/>
 	  <arg type="int32" name="hero_id"/>
 	  <arg type="int32" name="equip_index" desc="装备位置索引"/>
-	  <vector type="Item_Info" name="item_info" desc="喂掉的装备列表"/>
+	  <vector type="Item_Detail" name="item_info" desc="喂掉的装备列表"/>
 	</MSG_120303>
 
 	<MSG_520303>
@@ -283,7 +283,7 @@
 	  <arg type="int32" name="hero_id"/>
 	  <arg type="int32" name="equip_index" desc="装备位置索引"/>
 	  <arg type="bool" name="on" desc="true表示穿，false表示脱"/>
-	  <struct type="Item_Info" name="equip_info" desc="装备信息"/>
+	  <struct type="Item_Detail" name="equip_info" desc="装备信息"/>
 	</MSG_120304>
 
 	<MSG_520304>
@@ -291,7 +291,7 @@
 	  <arg type="int32" name="hero_id"/>
 	  <arg type="int32" name="equip_index" desc="装备位置索引"/>
 	  <arg type="bool" name="on" desc="true表示穿，false表示脱"/>
-	  <struct type="Item_Info" name="equip_info" desc="装备信息"/>
+	  <struct type="Item_Detail" name="equip_info" desc="装备信息"/>
 	</MSG_520304>
 
 	<MSG_120305>
@@ -394,25 +394,25 @@
 	</MSG_550103>
 
 	<MSG_150104>
-		<!--保存离线信息-->
+		<!--保存排行榜信息-->
 		<head msg_id="150104"/>
-    	<vector type="Offline_Info" name="offline_list"/>
+    	<vector type="Rank_Info" name="rank_list"/>
 	</MSG_150104>
 
 	<MSG_550104>
 		<head msg_id="550104"/>
-    	<vector type="Offline_Info" name="offline_list"/>
-	</MSG_550104>
-
-	<MSG_150105>
-		<!--保存排行榜信息-->
-		<head msg_id="150105"/>
     	<vector type="Rank_Info" name="rank_list"/>
+	</MSG_550104>
+	
+	<MSG_150105>
+		<!--保存离线信息-->
+		<head msg_id="150105"/>
+    	<vector type="Offline_Info" name="offline_list"/>
 	</MSG_150105>
 
 	<MSG_550105>
 		<head msg_id="550105"/>
-    	<vector type="Rank_Info" name="rank_list"/>
+    	<vector type="Offline_Info" name="offline_list"/>
 	</MSG_550105>
 
 <!--Game与Master通信消息-->
@@ -468,7 +468,7 @@
 	<MSG_300101>
 		<!--物品信息更新-->
 		<head msg_id="300101"/>
-    	<vector type="Item_Info" name="item_info"/>
+    	<vector type="Item_Detail" name="item_info"/>
 	</MSG_300101>
 
 	<MSG_300200>

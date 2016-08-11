@@ -183,20 +183,18 @@ int DB_Worker::process_create_guild(int cid, Create_Guild_Info &guild_info) {
 }
 
 int DB_Worker::process_load_master(int cid) {
-	Base_Struct *master_data = DB_MANAGER->get_master_data_struct();
-	for(std::vector<Field_Info>::const_iterator iter = master_data->field_vec().begin();
-				iter != master_data->field_vec().end(); iter++){
-		std::string type_name = (*iter).field_type;
-		Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find(type_name);
+	Base_Struct *master_struct = DB_MANAGER->get_master_data_struct();
+	for(std::vector<Field_Info>::const_iterator iter = master_struct->field_vec().begin();
+				iter != master_struct->field_vec().end(); iter++){
+		Struct_Name_Map::iterator it = DB_MANAGER->db_struct_name_map().find(iter->field_type);
 		if(it == DB_MANAGER->db_struct_name_map().end()){
-			LOG_ERROR("Can not find the module %s", type_name.c_str());
+			LOG_ERROR("Can not find the struct_name:%s", iter->field_type.c_str());
 			return -1;
 		}
 
-		Base_Struct *def = it->second;
 		Block_Buffer buf;
-		buf.make_inner_message(def->msg_id() + 400000);
-		def->load_data(0, buf);
+		buf.make_inner_message(it->second->msg_id() + 400000);
+		it->second->load_data(0, buf);
 		buf.finish_message();
 		DB_MANAGER->send_data_block(cid, buf);
 	}

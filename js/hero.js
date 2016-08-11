@@ -43,7 +43,7 @@ Hero.prototype.add_hero_star = function(obj) {
   		return this.game_player.send_error_msg(Msg_GC.RES_ADD_HERO_STAR, Error_Code.ERROR_CLIENT_OPERATE);
     }
     	
-	var item = new Item_Info();
+	var item = new Item_Detail();
 	item.id = hero_obj.star_item_id;
 	item.amount = hero_obj.star_item_amount[hero_detail.level];
 	var item_array = new Array();
@@ -164,7 +164,7 @@ Hero.prototype.equip_on_off = function(obj) {
 		if (result != 0) {
 			return this.game_player.send_error_msg(Msg_GC.RES_EQUIP_ON_OFF, result);
 		}
-		hero_detail.equip_info[obj.equip_index] = new Item_Info();
+		hero_detail.equip_info[obj.equip_index] = new Item_Detail();
 	}
 	this.refresh_hero_property(hero_detail);
 	this.game_player.set_data_change();

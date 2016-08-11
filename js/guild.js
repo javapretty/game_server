@@ -86,6 +86,8 @@ Guild.prototype.create_guild_res = function(obj) {
 
 	this.member_join_guild(player, guild_detail);
 	this.guild_map.set(guild_detail.guild_id, guild_detail);
+	//公会创建完成保存一次数据，防止服务器异常终止，数据丢失
+	this.save_data();
 	this.sync_guild_info_to_game(player, guild_detail.guild_id, guild_detail.guild_name);
 	
 	var msg = new MSG_510101();

@@ -111,24 +111,34 @@ int Mongo_Operator::load_db_cache(void) {
 	return 0;
 }
 
+int64_t Mongo_Operator::generate_id(std::string type) {
+	BSONObj result;
+	char str_json[128] = {0};
+	sprintf(str_json, "{findandmodify:'global', query:{type:'%s'}, update:{$inc:{value:1}}}", type.c_str());
+	if (MONGO_CONNECTION.runCommand("game", fromjson(str_json), result) == false) {
+		LOG_ERROR("findandmodify global type='%s' value failed", type.c_str());
+		return -1;
+	}
+
+	int order = result.getFieldDotted("value.value").numberLong() + 1;
+	int64_t agent = agent_num_ * 10000000000000L;
+	int64_t server = server_num_ * 1000000000L;
+	int64_t id = agent + server + order;
+	return id;
+}
+
 int64_t Mongo_Operator::create_player(Create_Role_Info &role_info) {
-	BSONObj res = MONGO_CONNECTION.findOne("game.role", MONGO_QUERY("account" << role_info.account << "role_name" << role_info.role_name));
-	if (!res.isEmpty()) {
+	BSONObj result = MONGO_CONNECTION.findOne("game.role", MONGO_QUERY("account" << role_info.account << "role_name" << role_info.role_name));
+	if (!result.isEmpty()) {
 		LOG_ERROR("create_player account = %s role_name = %s existed", role_info.account.c_str(), role_info.role_name.c_str());
 		return -1;
 	}
 
-	//从global表查询当前role_id最大值
-	BSONObj cmd = fromjson("{findandmodify:'global', query:{type:'role_id'}, update:{$inc:{value:1}}}");
-	if (MONGO_CONNECTION.runCommand("game", cmd, res) == false) {
-		LOG_ERROR("increase global type='role_id' value failed");
+	int64_t role_id = generate_id("role_id");
+	if (role_id < 0) {
+		LOG_ERROR("create_player generate_id error, role_id:%ld, account = %s role_name = %s", role_id, role_info.account.c_str(), role_info.role_name.c_str());
 		return -1;
 	}
-
-	int order = res.getFieldDotted("value.value").numberLong() + 1;
-	int64_t agent = agent_num_ * 10000000000000L;
-	int64_t server = server_num_ * 1000000000L;
-	int64_t role_id = agent + server + order;
 
 	int now_sec = Time_Value::gettimeofday().sec();
 	MONGO_CONNECTION.update("game.role", MONGO_QUERY("role_id" << ((long long int)role_id)), BSON("$set" <<
@@ -162,23 +172,19 @@ int64_t Mongo_Operator::create_guild(Create_Guild_Info &guild_info) {
 		return -1;
 	}
 
-	//从global表查询当前role_id最大值
-	BSONObj cmd = fromjson("{findandmodify:'global', query:{type:'guild_id'}, update:{$inc:{value:1}}}");
-	if (MONGO_CONNECTION.runCommand("game", cmd, res) == false) {
-		LOG_ERROR("increase global type='guild_id' value failed");
+	int64_t guild_id = generate_id("guild_id");
+	if (guild_id < 0) {
+		LOG_ERROR("create_guild generate_id error, create_guild:%ld, guild_name = %s", guild_id, guild_info.guild_name.c_str());
 		return -1;
 	}
 
-	int order = res.getFieldDotted("value.value").numberLong() + 1;
-	int64_t agent = agent_num_ * 10000000000000L;
-	int64_t server = server_num_ * 1000000000L;
-	int64_t guild_id = agent + server + order;
-
-	MONGO_CONNECTION.update("game.guild", MONGO_QUERY("guild_id" << ((long long int)guild_id)), BSON("$set" <<
-			BSON("guild_id" << (long long int)guild_id
-					<< "guild_name" << guild_info.guild_name
-					<< "chief_id" << (long long int)guild_info.chief_id)), true);
-
+	Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find("Guild_Info");
+	if(iter == DB_MANAGER->db_struct_name_map().end()){
+		LOG_ERROR("Can not find the struct_name Guild_Info");
+		return -1;
+	}
+	Block_Buffer buf;
+	iter->second->create_data(guild_id, buf);
 	LOG_INFO("***************create guild,guild_id:%ld***************", guild_id);
 	return guild_id;
 }

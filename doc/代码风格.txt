@@ -9,7 +9,7 @@
 5、消息号,消息结构体定义必须成对出现
 //使用物品
 struct MSG_120101 {
-	Item_Info item;
+	Item_Detail item;
 };
 struct MSG_520101 {
 };
