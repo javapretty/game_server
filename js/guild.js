@@ -6,7 +6,6 @@
 
 function Guild() {
 	this.guild_map = new Map();
-	this.save_list = new Array();
 	this.drop_list = new Array();
 	this.is_change = false;
 }
@@ -26,6 +25,7 @@ Guild.prototype.save_data = function(){
   		msg.guild_list.push(value);
 	}
   send_master_msg_to_db(Msg_MD.SYNC_MASTER_DB_SAVE_GUILD, msg);
+  this.is_change = false;
 }
 
 Guild.prototype.drop_guild = function(){

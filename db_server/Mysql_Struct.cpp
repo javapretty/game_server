@@ -244,8 +244,8 @@ void Mysql_Struct::save_data(Block_Buffer &buffer) {
 			std::istream s(&data_buf);
 			pstmt->setBlob(param_index, &s);
 
-			LOG_INFO("struct_name:%s, field_type:%s, field_name:%s, param_index:%d, field_len:%d", struct_name().c_str(),
-					iter->field_type.c_str(), iter->field_name.c_str(), param_index, field_len);
+			LOG_INFO("struct_name:%s, fileld_label:%s, field_type:%s, field_name:%s, param_index:%d, field_len:%d, read_idx:%d", struct_name().c_str(),
+					iter->field_label.c_str(), iter->field_type.c_str(), iter->field_name.c_str(), param_index, field_len, buffer.get_read_idx());
 		}
 		else if(iter->field_label == "struct") {
 			int read_idx = buffer.get_read_idx();
@@ -258,8 +258,8 @@ void Mysql_Struct::save_data(Block_Buffer &buffer) {
 			std::istream s(&data_buf);
 			pstmt->setBlob(param_index, &s);
 
-			LOG_INFO("struct_name:%s, field_type:%s, field_name:%s, param_index:%d, field_len:%d", struct_name().c_str(),
-					iter->field_type.c_str(), iter->field_name.c_str(), param_index, field_len);
+			LOG_INFO("struct_name:%s, fileld_label:%s, field_type:%s, field_name:%s, param_index:%d, field_len:%d, read_idx:%d", struct_name().c_str(),
+					iter->field_label.c_str(), iter->field_type.c_str(), iter->field_name.c_str(), param_index, field_len, buffer.get_read_idx());
 		}
 	}
 	pstmt->execute();
