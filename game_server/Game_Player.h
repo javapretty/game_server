@@ -9,6 +9,8 @@
 
 #include "Public_Struct.h"
 
+class Scene_Entity;
+
 class Game_Player {
 public:
 	Game_Player(void);
@@ -23,6 +25,7 @@ public:
 	}
 	inline int gate_cid(void) { return gate_cid_; }
 	inline int player_cid(void) { return player_cid_; }
+	inline Scene_Entity *scene_entity(){return scene_entity_;}
 
 	void reset(void);
 	int tick(Time_Value &now);
@@ -32,6 +35,7 @@ private:
 	int gate_cid_;			//gate连接game的cid
 	int player_cid_;		//player连接gate的cid
 	Recycle_Tick recycle_tick_;
+	Scene_Entity *scene_entity_;
 };
 
 #endif /* GAME_PLAYER_H_ */

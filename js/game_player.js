@@ -32,7 +32,9 @@ Game_Player.prototype.load_player_data = function(gate_cid, player_cid, obj) {
 		game_close_client(gate_cid, player_cid, Error_Code.ERROR_CLIENT_PARAM);
 		return;
 	}
-	
+	this.cplayer.enter_scene(this.player_info.last_scene, this.player_info.last_pos.x, this.player_info.last_pos.y, this.player_info.last_pos.z);
+	this.cplayer.set_ioi_info();
+
 	this.sync_login_to_client();
 	this.sync_login_to_master();
 	game_player_cid_map.set(this.gate_cid * 10000 + this.player_cid, this);
@@ -76,9 +78,17 @@ Game_Player.prototype.tick = function(now) {
 	if(this.is_change){
 		if (now - this.sync_player_data_tick >= 15) {
 			this.sync_player_data_to_db(false);
+			this.set_aoi_info()
 			this.sync_player_data_tick = now;
 		}
 	}
+}
+
+Game_Player.prototype.set_aoi_info = function() {
+	var aoi_info = new Aoi_Info;
+	aoi_info.name = this.player_info.account_name;
+	aoi_info.name = this.player_info.level;
+	this.cplayer.set_aoi_info(aoi_info);
 }
 
 Game_Player.prototype.daily_refresh = function() {
@@ -235,11 +245,8 @@ Game_Player.prototype.add_hero_exp_test = function(buffer) {
 	this.sync_data_to_master();
 }
 
-Game_Player.prototype.move_to_point = function(buffer) {
+Game_Player.prototype.move_to_point = function(obj) {
 	print('move to point, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
-	var msg = new MSG_120500();
-	msg.deserialize(buffer);
-	this.add_exp(msg.exp);
-	this.sync_data_to_master();
+	this.cplayer.move_to_point(obj.pos.x, obj.pos.y, obj.pos.z);
 }
 

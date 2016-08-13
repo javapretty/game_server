@@ -328,7 +328,17 @@
 	  <arg type="int32" name="hero_id"/>
 	  <arg type="int32" name="skill_id"/>
 	</MSG_520305>
+
+	<MSG_120400>
+		<head msg_id="120400"/>
+		<struct type="Position3D" name="pos"/>
+	</MSG_120400>
 	
+	<MSG_520400>
+		<head msg_id="520400"/>
+		<vector type="Position3D" name="aoi_pos"/>
+	</MSG_520400>
+
 <!--Gate与Game与Master通信消息-->
 	<MSG_140100>
 		<head msg_id="140100"/>

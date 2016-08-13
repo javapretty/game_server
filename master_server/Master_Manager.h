@@ -13,7 +13,6 @@
 #include "Block_List.h"
 #include "Object_Pool.h"
 #include "Master_Player.h"
-#include "Msg_Define.h"
 #include "Public_Struct.h"
 
 class Master_Manager: public Thread {

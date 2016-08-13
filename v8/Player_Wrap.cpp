@@ -9,6 +9,8 @@
 #include "Player_Wrap.h"
 #include "Game_Manager.h"
 #include "Master_Manager.h"
+#include "Scene_Manager.h"
+#include "Msg_Manager.h"
 
 extern Global<ObjectTemplate> _g_game_player_template;
 extern Global<ObjectTemplate> _g_master_player_template;
@@ -39,6 +41,67 @@ void game_player_link_close(const FunctionCallbackInfo<Value>& args) {
 	}
 
 	player->link_close();
+}
+
+void enter_scene(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 4) {
+		LOG_ERROR("enter_scene args error, length: %d\n", args.Length());
+		return;
+	}
+	Game_Player *player = unwrap_game_player(args.Holder());
+	if(!player) {
+		return;
+	}
+	int scene_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	if(scene_id == 0){
+
+		return;
+	}
+	float x = args[1]->NumberValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	float y = args[2]->NumberValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	float z = args[3]->NumberValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	player->scene_entity()->pos().set_position(x, y, z);
+	Game_Scene *scene = SCENE_MANAGER->get_scene(scene_id);
+	if(scene != NULL) {
+		scene->on_enter_scene(player->scene_entity());
+	}
+}
+
+void move_to_point(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 3) {
+		LOG_ERROR("move_to_point args error, length: %d\n", args.Length());
+		return;
+	}
+	Game_Player *player = unwrap_game_player(args.Holder());
+	if(!player) {
+		return;
+	}
+
+	float x = args[0]->NumberValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	float y = args[1]->NumberValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	float z = args[2]->NumberValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+
+	Game_Scene *scene = player->scene_entity()->scene();
+	if(scene != NULL){
+		scene->on_move_scene(player->scene_entity(), Position3D(x,y,z));
+	}
+}
+
+void set_aoi_info(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 1) {
+		LOG_ERROR("move_to_point args error, length: %d\n", args.Length());
+		return;
+	}
+	Game_Player *player = unwrap_game_player(args.Holder());
+	if(!player) {
+		return;
+	}
+	Struct_Name_Map::iterator iter = MSG_MANAGER->msg_struct_name_map().find("Aoi_Info");
+	if(iter != MSG_MANAGER->msg_struct_name_map().end()){
+		Msg_Struct *msg_struct  = dynamic_cast<Msg_Struct*>(iter->second);
+		player->scene_entity()->aoi_info().reset();
+		msg_struct->build_msg_buffer(args.GetIsolate(), args[0]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked(), player->scene_entity()->aoi_info());
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

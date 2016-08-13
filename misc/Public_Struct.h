@@ -223,4 +223,18 @@ struct Login_Player_Info {
 	}
 };
 
+struct Position3D {
+	Position3D();
+	Position3D(float posx, float posy, float posz);
+	~Position3D();
+	float operator - (Position3D pos);
+	void operator = (Position3D pos);
+	void set_position(float posx, float posy, float posz);
+	void set_position(Position3D pos);
+
+	float x;
+	float y;
+	float z;
+};
+
 #endif /* PUBLIC_STURCT_H_ */

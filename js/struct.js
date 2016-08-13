@@ -1,4 +1,15 @@
 
+function Aoi_Info() {
+	this.name = "";
+	this.level = 0;
+}
+
+function Position3D() {
+	this.x = 0;
+	this.y = 0;
+	this.z = 0;
+}
+
 function Cid_Info() {
 	this.gate_cid = 0;
 	this.player_cid = 0;
@@ -121,6 +132,8 @@ function Game_Player_Info() {
 	this.charge_gold = 0;
 	this.guild_id = 0;
 	this.guild_name = "";
+	this.last_scene = 0;
+	this.last_pos = new Position3D();
 }
 
 function Hero_Info() {
@@ -408,6 +421,14 @@ function MSG_120305() {
 function MSG_520305() {
 	this.hero_id = 0;
 	this.skill_id = 0;
+}
+
+function MSG_120400() {
+	this.pos = new Position3D();
+}
+
+function MSG_520400() {
+	this.aoi_pos = new Array();
 }
 
 function MSG_140100() {

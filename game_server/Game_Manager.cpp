@@ -10,6 +10,7 @@
 #include "Game_Connector.h"
 #include "Log_Connector.h"
 #include "Msg_Manager.h"
+#include "Scene_Manager.h"
 
 Game_Manager::Game_Manager(void):
   player_cid_map_(get_hash_table_size(12000)),
@@ -29,6 +30,7 @@ Game_Manager *Game_Manager::instance(void) {
 int Game_Manager::init(void) {
 	GAME_TIMER->thr_create();			///定时器
 	MSG_MANAGER->init();
+	SCENE_MANAGER->create_new_scene();
 	return 0;
 }
 
@@ -160,6 +162,7 @@ int Game_Manager::tick(void) {
 	server_info_tick(now);
 	object_pool_tick(now);
 	//LOG->show_msg_time(now);
+	SCENE_MANAGER->tick(now);
 	return 0;
 }
 

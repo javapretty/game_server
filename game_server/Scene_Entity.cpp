@@ -3,66 +3,42 @@
  *      Author: lijunliang
  */
 
-#include <Scene_Entity.h>
+#include "Scene_Entity.h"
+#include "Scene_Manager.h"
+#include "Game_Manager.h"
+#include "Aoi_Entity.h"
 
-Position3D::Position3D(float posx = 0, float posy = 0, float posz = 0):
-		x(posx),
-		y(posy),
-		z(posz)
-{
-}
-
-Position3D::~Position3D(){
-
-}
-
-float Position3D::operator - (Position3D pos){
-		return (float)sqrt(pow(x - pos.x, 2) + pow(y - pos.y, 2) + pow(z - pos.z, 2));
-}
-
-void Position3D::setPosition(float posx = 0, float posy = 0, float posz = 0){
-		x = posx; y=posy; z=posz;
-}
-
-void Position3D::setPosition(Position3D pos){
-	setPosition(pos.x, pos.y, pos.z);
-}
-
-void Position3D::serialize(Block_Buffer &buffer) const {
-	buffer.write_double(x);
-	buffer.write_double(y);
-	buffer.write_double(z);
-}
-
-int Position3D::deserialize(Block_Buffer &buffer) {
-	x = buffer.read_double();
-	y = buffer.read_double();
-	z = buffer.read_double();
-	return 0;
-}
-
-void Position3D::reset(void) {
-	x = 0.f;
-	y = 0.f;
-	z = 0.f;
-}
-
-void Position3D::print(void) {}
-
-Scene_Entity::Scene_Entity():
-	entity_id_(0),
-	player_id_(0),
+Scene_Entity::Scene_Entity(Game_Player *game_player):
+	entity_id_(1),
+	player_(game_player),
 	pos_(0, 0, 0),
-	speedx_(0),
-	speedy_(0),
-	speedz_(0),
+	opos_(0, 0, 0),
 	scene_(0),
-	aoi_map_(),
-	need_sync_(false)
+	radius_(3),
+	aoi_entity_(new Aoi_Entity(this)),
+	need_sync_(false),
+	extra_info_()
 {
-
+	entity_id_ = SCENE_MANAGER->get_next_id();
 }
 
 Scene_Entity::~Scene_Entity() {
 
+}
+
+int Scene_Entity::on_update_position(Position3D new_pos) {
+	opos_ = pos_;
+	pos_ = new_pos;
+	return 0;
+}
+
+void Scene_Entity::write_aoi_info(Block_Buffer &buffer) {
+	buffer.write_double(pos_.x);
+	buffer.write_double(pos_.y);
+	buffer.write_double(pos_.z);
+	buffer.copy(&extra_info_);
+}
+
+void Scene_Entity::broadcast_aoi_info() {
+	aoi_entity_->broadcast_aoi_info();
 }

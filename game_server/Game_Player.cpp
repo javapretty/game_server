@@ -5,11 +5,14 @@
 
 #include "Common_Func.h"
 #include "Game_Manager.h"
+#include "Scene_Entity.h"
 
 Game_Player::Game_Player(void):
 	gate_cid_(0),
-	player_cid_(0)
-{ }
+	player_cid_(0),
+	scene_entity_(new Scene_Entity(this))
+{
+}
 
 Game_Player::~Game_Player(void) { }
 

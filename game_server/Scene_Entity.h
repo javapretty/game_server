@@ -9,49 +9,46 @@
 #include <string>
 #include <stdint.h>
 #include <math.h>
-#include "Game_Struct.h"
+#include <list>
+#include "Public_Struct.h"
+#include "Game_Player.h"
 
 typedef int64_t ENTITY_ID;
 
-struct Position3D : public MSG {
-	Position3D(float posx = 0, float posy = 0, float posz = 0);
-	~Position3D();
-	float operator - (Position3D sp);
-	void setPosition(float posx = 0, float posy = 0, float posz = 0);
-	void setPosition(Position3D pos);
-	virtual void serialize(Block_Buffer &buffer) const;
-	virtual int deserialize(Block_Buffer &buffer);
-	virtual void reset(void);
-	virtual void print(void);
-
-	float x;
-	float y;
-	float z;
-};
-
-class Game_Scene;
+class Aoi_Entity;
 class Scene_Entity;
+class Game_Scene;
 
-typedef boost::unordered_map<ENTITY_ID, Scene_Entity *> AOI_MAP;
+typedef boost::unordered_map<ENTITY_ID, Scene_Entity *> ENTITIES_MAP;
 
-class Scene_Entity : public MSG {
+class Scene_Entity {
 public:
-	Scene_Entity();
+	Scene_Entity(Game_Player *game_player);
 	~Scene_Entity();
 	int on_update_position(Position3D new_pos);
+	void write_aoi_info(Block_Buffer &buffer);
+	void broadcast_aoi_info();
 
-	inline void set_scene(Game_Scene *scene){scene_ = scene;}
 	inline ENTITY_ID entity_id(){return entity_id_;}
+	inline Position3D pos(){return pos_;}
+	inline Position3D opos(){return opos_;}
+	inline void scene(Game_Scene *scene){scene_ = scene;}
+	inline Game_Scene *scene(){return scene_;}
+	inline float radius(){return radius_;}
+	inline Aoi_Entity *aoi_entity(){return aoi_entity_;}
+	inline Block_Buffer &aoi_info(){return extra_info_;}
+	inline bool need_sync(){return need_sync_;}
+	inline void set_sync(bool flag){need_sync_ = flag;}
+	inline Game_Player *game_player(){return player_;}
 private:
 	ENTITY_ID entity_id_;
-	int64_t player_id_;
-	Position3D pos_;
-	float speedx_;
-	float speedy_;
-	float speedz_;
+	Game_Player *player_;
+	Position3D pos_, opos_;
 	Game_Scene *scene_;
-	AOI_MAP aoi_map_;
+	float radius_;
+	Aoi_Entity *aoi_entity_;
 	bool need_sync_;
+	Block_Buffer extra_info_;
 };
 
 #endif

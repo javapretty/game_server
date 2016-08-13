@@ -155,6 +155,9 @@ function process_game_gate_msg(obj) {
 	case Msg_CG.REQ_ADD_SKILL_LEVEL:
 		game_player.hero.add_skill_level(obj);
 		break;
+	case Msg_CG.REQ_MOVE_TO_POINT:
+		//game_player.move_to_point(obj);
+		break;
 	default:
 		print('process_game_gate_msg, msg_id: not exist', obj.msg_id);
 		break;
@@ -170,9 +173,6 @@ function process_game_db_msg(obj) {
 	}
 	case Msg_GD.SYNC_DB_GAME_SAVE_PLAYER: {
 		logout_map.delete(obj.account);
-		break;
-	case Msg_CG.REQ_MOVE_TO_POINT:
-		game_player.move_to_point(buffer);
 		break;
 	}
 	default:

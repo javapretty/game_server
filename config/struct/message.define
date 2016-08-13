@@ -72,6 +72,8 @@ enum Client_Game_Message {
 	REQ_ADD_EQUIP_LEVEL						= 120303,	//提高英雄装备等级
 	REQ_EQUIP_ON_OFF							=	120304,	//英雄装备穿脱
 	REQ_ADD_SKILL_LEVEL						= 120305,	//提高英雄技能等级
+	
+	REQ_MOVE_TO_POINT							= 120400,	//移动到某点
 };
 
 enum Game_Client_Message {
@@ -94,6 +96,8 @@ enum Game_Client_Message {
 	RES_ADD_EQUIP_LEVEL						= 520303,	//提高英雄装备等级(返回)
 	RES_EQUIP_ON_OFF							=	520304,	//英雄装备穿脱(返回)
 	RES_ADD_SKILL_LEVEL						= 520305,	//提高英雄技能等级(返回)
+	
+	RES_SYNC_AOI_INFO							= 520400,	//通知场景中AOI信息(返回)
 };
 
 //内部消息命名说明：SYNC_源服务器名_目的服务器名_消息名

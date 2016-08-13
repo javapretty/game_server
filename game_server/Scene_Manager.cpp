@@ -3,7 +3,7 @@
  *      Author: lijunliang
  */
 
-#include <Scene_Manager.h>
+#include "Scene_Manager.h"
 
 Scene_Manager *Scene_Manager::instance_ = NULL;
 
@@ -15,7 +15,8 @@ Scene_Manager *Scene_Manager::instance() {
 
 Scene_Manager::Scene_Manager():
 		scenes_map_(),
-		auto_allocated_id_(0)
+		auto_allocated_id_(0),
+		last_sync_(0)
 {
 }
 
@@ -34,4 +35,13 @@ Game_Scene *Scene_Manager::get_scene(SCENE_ID scene_id){
 	if(iter != scenes_map_.end())
 		return iter->second;
 	return NULL;
+}
+
+void Scene_Manager::tick(Time_Value now) {
+	if(now - last_sync_ >= Time_Value(100)){
+		for(SCENES_MAP::iterator iter = scenes_map_.begin(); iter != scenes_map_.end(); iter++){
+			iter->second->broadcast_aoi_info();
+		}
+		last_sync_ = now;
+	}
 }

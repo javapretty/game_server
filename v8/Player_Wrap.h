@@ -21,6 +21,9 @@ Game_Player *unwrap_game_player(Local<Object> obj);
 //函数说明：game_player关闭连接 	参数：无	返回值：无
 void game_player_link_close(const FunctionCallbackInfo<Value>& args);
 
+void enter_scene(const FunctionCallbackInfo<Value>& args);
+void move_to_point(const FunctionCallbackInfo<Value>& args);
+void set_aoi_info(const FunctionCallbackInfo<Value>& args);
 /////////////////////////////Master_Player相关函数////////////////////////////////////////
 Local<Object> wrap_master_player(Isolate* isolate, Master_Player *player);
 Master_Player *unwrap_master_player(Local<Object> obj);

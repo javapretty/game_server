@@ -39,6 +39,7 @@ if (typeof Msg_CG == "undefined") {
 	Msg_CG.REQ_ADD_EQUIP_LEVEL = 120303; //提高英雄装备等级
 	Msg_CG.REQ_EQUIP_ON_OFF = 120304; //英雄装备穿脱
 	Msg_CG.REQ_ADD_SKILL_LEVEL = 120305; //提高英雄技能等级
+	Msg_CG.REQ_MOVE_TO_POINT = 120400; //移动到某点
 }
 
 if (typeof Msg_GC == "undefined") {
@@ -59,6 +60,7 @@ if (typeof Msg_GC == "undefined") {
 	Msg_GC.RES_ADD_EQUIP_LEVEL = 520303; //提高英雄装备等级(返回)
 	Msg_GC.RES_EQUIP_ON_OFF = 520304; //英雄装备穿脱(返回)
 	Msg_GC.RES_ADD_SKILL_LEVEL = 520305; //提高英雄技能等级(返回)
+	Msg_GC.RES_SYNC_AOI_INFO = 520400; //通知场景中AOI信息(返回)
 }
 
 if (typeof Msg_Gate == "undefined") {
