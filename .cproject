@@ -55,6 +55,7 @@
 									<listOptionValue builtIn="false" value="v8"/>
 									<listOptionValue builtIn="false" value="v8_libplatform"/>
 									<listOptionValue builtIn="false" value="netlib"/>
+									<listOptionValue builtIn="false" value="curl"/>
 									<listOptionValue builtIn="false" value="crypto"/>
 									<listOptionValue builtIn="false" value="mysqlcppconn"/>
 									<listOptionValue builtIn="false" value="jsoncpp"/>
@@ -125,6 +126,7 @@
 									<listOptionValue builtIn="false" value="v8"/>
 									<listOptionValue builtIn="false" value="v8_libplatform"/>
 									<listOptionValue builtIn="false" value="netlib"/>
+									<listOptionValue builtIn="false" value="curl"/>
 									<listOptionValue builtIn="false" value="crypto"/>
 									<listOptionValue builtIn="false" value="mysqlcppconn"/>
 									<listOptionValue builtIn="false" value="jsoncpp"/>
