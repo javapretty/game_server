@@ -55,6 +55,7 @@ void Server_Conf::init_server_conf(void) {
 	login_gate_port = server_conf["login_server"]["gate_port"].asInt();
 	master_gate_port = server_conf["master_server"]["gate_port"].asInt();
 	master_game_port = server_conf["master_server"]["game_port"].asInt();
+	master_http_port = server_conf["master_server"]["http_port"].asInt();
 	game_gate_port = server_conf["game_server"]["gate_port"].asInt();
 	gate_client_network_protocol = server_conf["gate_server"]["client_network_protocol"].asInt();
 	gate_client_port = server_conf["gate_server"]["client_port"].asInt();

@@ -268,6 +268,13 @@ void Daemon_Master::start_server(void) {
 	MASTER_GAME_SERVER->thr_create();
 	LOG_DEBUG("master_game_server listen at port:%d", server_conf_.master_game_port);
 
+	/// Master Http Server
+	MASTER_HTTP_SERVER->set(server_conf_.master_http_port, server_conf_.receive_timeout, server_conf_.server_send_interval);
+	MASTER_HTTP_SERVER->init();
+	MASTER_HTTP_SERVER->start();
+	MASTER_HTTP_SERVER->thr_create();
+	LOG_DEBUG("master_http_server listen at port:%d", server_conf_.master_game_port);
+
 	MASTER_MANAGER->init();
 	MASTER_MANAGER->thr_create();
 

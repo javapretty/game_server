@@ -13,6 +13,61 @@ Msg_Struct::Msg_Struct(Xml &xml, TiXmlNode *node) : Base_Struct(xml, node) {}
 
 Msg_Struct::~Msg_Struct() {}
 
+v8::Local<v8::Object> Msg_Struct::build_msg_object(Isolate* isolate, int cid, int msg_id, const Json::Value &value) {
+	EscapableHandleScope handle_scope(isolate);
+
+	Local<ObjectTemplate> localTemplate = ObjectTemplate::New(isolate);
+	Local<Object> buf_obj = localTemplate->NewInstance(isolate->GetCurrentContext()).ToLocalChecked();
+	buf_obj->Set(isolate->GetCurrentContext(),
+			String::NewFromUtf8(isolate, "cid", NewStringType::kNormal).ToLocalChecked(),
+			Int32::New(isolate, cid)).FromJust();
+	buf_obj->Set(isolate->GetCurrentContext(),
+			String::NewFromUtf8(isolate, "msg_id", NewStringType::kNormal).ToLocalChecked(),
+			Int32::New(isolate, msg_id)).FromJust();
+
+	for(std::vector<Field_Info>::const_iterator iter = field_vec().begin();
+			iter != field_vec().end(); iter++) {
+		Local<Value> js_value;
+		if(iter->field_type == "int8") {
+			int8_t val = value[iter->field_name].asInt();
+			js_value = Int32::New(isolate, val);
+		}
+		else if(iter->field_type == "int16") {
+			int16_t val = value[iter->field_name].asInt();
+			js_value = Int32::New(isolate, val);
+		}
+		else if(iter->field_type == "int32") {
+			int32_t val = value[iter->field_name].asInt();
+			js_value = Int32::New(isolate, val);
+		}
+		else if(iter->field_type == "int64") {
+			int64_t val = value[iter->field_name].asDouble();
+			js_value = Number::New(isolate, val);
+		}
+		else if(iter->field_type == "double") {
+			double val = value[iter->field_name].asDouble();
+			js_value = Number::New(isolate, val);
+		}
+		else if(iter->field_type == "bool") {
+			bool val = value[iter->field_name].asBool();
+			js_value = Boolean::New(isolate, val);
+		}
+		else if(iter->field_type == "string") {
+			std::string val = value[iter->field_name].asString();
+			js_value = String::NewFromUtf8(isolate, val.c_str(), NewStringType::kNormal).ToLocalChecked();
+		}
+		else {
+			LOG_ERROR("Can not find the field_type:%s, struct_name:%s", iter->field_type.c_str(), struct_name().c_str());
+			return handle_scope.Escape(Local<Object>());
+		}
+
+		buf_obj->Set(isolate->GetCurrentContext(),
+				String::NewFromUtf8(isolate, iter->field_name.c_str(), NewStringType::kNormal).ToLocalChecked(),
+				js_value).FromJust();
+	}
+	return handle_scope.Escape(buf_obj);
+}
+
 v8::Local<v8::Object> Msg_Struct::build_msg_object(Isolate* isolate, int cid, int player_cid, int msg_id, int status, Block_Buffer &buffer) {
 	EscapableHandleScope handle_scope(isolate);
 

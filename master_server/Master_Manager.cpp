@@ -73,6 +73,14 @@ int Master_Manager::send_to_log(Block_Buffer &buf) {
 	return LOG_CONNECTOR->send_block(log_cid, buf);
 }
 
+int Master_Manager::send_to_http(int http_cid, Block_Buffer &buf) {
+	if (http_cid < 2) {
+		LOG_ERROR("game_cid = %d", http_cid);
+		return -1;
+	}
+	return MASTER_HTTP_SERVER->send_block(http_cid, buf);
+}
+
 int Master_Manager::close_client(int gate_cid, int player_cid, int error_code) {
 	Block_Buffer buf;
 	buf.make_player_message(ACTIVE_DISCONNECT, error_code, player_cid);

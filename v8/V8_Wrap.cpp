@@ -70,6 +70,8 @@ Local<Context> Create_Context(Isolate* isolate) {
 			FunctionTemplate::New(isolate, pop_master_game_msg_object));
 	global->Set(String::NewFromUtf8(isolate, "pop_master_db_msg_object", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, pop_master_db_msg_object));
+	global->Set(String::NewFromUtf8(isolate, "pop_master_http_msg_object", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, pop_master_http_msg_object));
 
 	global->Set(String::NewFromUtf8(isolate, "send_master_msg_to_gate", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, send_master_msg_to_gate));
@@ -79,6 +81,8 @@ Local<Context> Create_Context(Isolate* isolate) {
 			FunctionTemplate::New(isolate, send_master_msg_to_db));
 	global->Set(String::NewFromUtf8(isolate, "send_master_msg_to_log", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, send_master_msg_to_log));
+	global->Set(String::NewFromUtf8(isolate, "send_master_msg_to_http", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, send_master_msg_to_http));
 
 	global->Set(String::NewFromUtf8(isolate, "get_drop_master_player_cid", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, get_drop_master_player_cid));

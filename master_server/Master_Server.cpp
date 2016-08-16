@@ -58,3 +58,29 @@ void Master_Game_Server::process_list(void) {
 		}
 	}
 }
+
+////////////////////////////////////////////////////////////////////////////////
+Master_Http_Server::Master_Http_Server(void) { }
+
+Master_Http_Server::~Master_Http_Server(void) { }
+
+Master_Http_Server *Master_Http_Server::instance_ = 0;
+
+Master_Http_Server *Master_Http_Server::instance(void) {
+	if (! instance_)
+		instance_ = new Master_Http_Server;
+	return instance_;
+}
+
+void Master_Http_Server::process_list(void) {
+	Block_Buffer *buf = 0;
+	while (1) {
+		if (!block_list_.empty()) {
+			buf = block_list_.pop_front();
+			MASTER_MANAGER->push_master_http_data(buf);
+		} else {
+			//没有数据时候延迟
+			Time_Value::sleep(Time_Value(0,100));
+		}
+	}
+}

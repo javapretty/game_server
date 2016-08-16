@@ -53,6 +53,8 @@ void pop_master_gate_msg_object(const FunctionCallbackInfo<Value>& args);
 void pop_master_game_msg_object(const FunctionCallbackInfo<Value>& args);
 //函数说明：获取db消息object	参数：无	返回值：object对象
 void pop_master_db_msg_object(const FunctionCallbackInfo<Value>& args);
+//函数说明：获取http消息object	参数：无	返回值：object对象
+void pop_master_http_msg_object(const FunctionCallbackInfo<Value>& args);
 
 //函数说明：发送消息object到gate_server	参数：1.gate_cid 2.player_cid 3.msg_id 4.status 5.消息object	返回值：无
 void send_master_msg_to_gate(const FunctionCallbackInfo<Value>& args);
@@ -62,6 +64,8 @@ void send_master_msg_to_game(const FunctionCallbackInfo<Value>& args);
 void send_master_msg_to_db(const FunctionCallbackInfo<Value>& args);
 //函数说明：发送消息object到log_server	参数：1.msg_id 2.消息object	返回值：无
 void send_master_msg_to_log(const FunctionCallbackInfo<Value>& args);
+//函数说明：发送消息object到http_server	参数：1.http_cid 2.msg_id 3.消息object	返回值：无
+void send_master_msg_to_http(const FunctionCallbackInfo<Value>& args);
 
 //函数说明：获取下线玩家的cid		参数：无	返回值：cid值
 void get_drop_master_player_cid(const FunctionCallbackInfo<Value>& args);

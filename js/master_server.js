@@ -68,6 +68,13 @@ function main() {
 			process_master_game_msg(obj);
 		}
 		
+		//获得http服务器消息object
+		var obj = pop_master_http_msg_object();
+		if(obj != null) {
+			all_empty = false;
+			process_master_http_msg(obj);
+		}
+		
 		//获得下线玩家的cid
 		var cid = get_drop_master_player_cid();
 		if (cid > 0) {
@@ -168,11 +175,21 @@ function process_master_db_msg(obj) {
 }
 
 function process_master_game_msg(obj) {
-	if (obj.msg_id == Msg_GM.SYNC_GAME_MASTER_PLYAER_LOGIN) {
+	switch(obj.msg_id) {
+	case Msg_GM.SYNC_GAME_MASTER_PLYAER_LOGIN: {
 		var master_player = master_player_role_id_map.get(obj.player_info.role_id);
 		if (master_player == null) {
 			master_player = new Master_Player();
 		}
 		master_player.load_player_data(obj.cid, obj.player_cid, obj.player_info);
+		break;
 	}
+	default:
+		print('process_master_game_msg, msg_id: not exist', msg_id);
+		break;
+	}
+}
+
+function process_master_http_msg(obj) {
+
 }

@@ -9,6 +9,7 @@
 #define MSG_STRUCT_H_
 
 #include "include/v8.h"
+#include "json/json.h"
 #include "Base_Struct.h"
 
 using namespace v8;
@@ -18,6 +19,7 @@ public:
 	Msg_Struct(Xml &xml, TiXmlNode *node);
 	virtual ~Msg_Struct();
 
+	v8::Local<v8::Object> build_msg_object(Isolate* isolate, int cid, int msg_id, const Json::Value &value);
 	v8::Local<v8::Object> build_msg_object(Isolate* isolate, int cid, int player_cid, int msg_id, int status, Block_Buffer &buffer);
 	void build_msg_buffer(Isolate* isolate, v8::Local<v8::Object> object, Block_Buffer &buffer);
 

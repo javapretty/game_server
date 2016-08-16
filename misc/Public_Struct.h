@@ -80,6 +80,7 @@ struct Server_Conf {
 	int login_gate_port;
 	int master_gate_port;
 	int master_game_port;
+	int master_http_port;
 	int game_gate_port;
 	int gate_client_network_protocol;
 	int gate_client_port;
