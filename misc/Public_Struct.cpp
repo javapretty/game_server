@@ -55,9 +55,21 @@ void Server_Conf::init_server_conf(void) {
 	login_gate_port = server_conf["login_server"]["gate_port"].asInt();
 	master_gate_port = server_conf["master_server"]["gate_port"].asInt();
 	master_game_port = server_conf["master_server"]["game_port"].asInt();
-	game_gate_port = server_conf["game_server"]["gate_port"].asInt();
-	gate_client_network_protocol = server_conf["gate_server"]["client_network_protocol"].asInt();
-	gate_client_port = server_conf["gate_server"]["client_port"].asInt();
+	for(uint i = 0; i < server_conf["game_server"].size(); i++){
+		Server_Detail server_info;
+		server_info.id = server_conf["game_server"][i]["id"].asInt();
+		server_info.ip = server_conf["game_server"][i]["ip"].asString();
+		server_info.port = server_conf["game_server"][i]["port"].asInt();
+		game_list.push_back(server_info);
+	}
+	for(uint i = 0; i < server_conf["gate_server"].size(); i++){
+		Server_Detail server_info;
+		server_info.id = server_conf["gate_server"][i]["id"].asInt();
+		server_info.ip = server_conf["gate_server"][i]["ip"].asString();
+		server_info.port = server_conf["gate_server"][i]["port"].asInt();
+		server_info.network_protocol = server_conf["gate_server"][i]["client_network_protocol"].asInt();
+		gate_list.push_back(server_info);
+	}
 }
 
 Position3D::Position3D():

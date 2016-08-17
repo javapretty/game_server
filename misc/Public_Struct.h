@@ -75,7 +75,15 @@ struct Field_Info {
 	std::string key_name;
 };
 
+struct Server_Detail {
+	int id;
+	std::string ip;
+	int port;
+	int network_protocol;
+};
+
 struct Server_Conf {
+	typedef std::list<Server_Detail> SERVER_LIST;
 	Time_Value server_sleep_time;
 	Time_Value receive_timeout;
 	Time_Value server_send_interval;
@@ -89,9 +97,8 @@ struct Server_Conf {
 	int login_gate_port;
 	int master_gate_port;
 	int master_game_port;
-	int game_gate_port;
-	int gate_client_network_protocol;
-	int gate_client_port;
+	SERVER_LIST game_list;
+	SERVER_LIST gate_list;
 
 	void init_server_conf(void);
 };

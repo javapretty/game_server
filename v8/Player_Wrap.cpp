@@ -67,6 +67,10 @@ void enter_scene(const FunctionCallbackInfo<Value>& args) {
 	}
 }
 
+void leave_scene(const FunctionCallbackInfo<Value>& args) {
+
+}
+
 void move_to_point(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 3) {
 		LOG_ERROR("move_to_point args error, length: %d\n", args.Length());
@@ -99,6 +103,7 @@ void set_aoi_info(const FunctionCallbackInfo<Value>& args) {
 	Struct_Name_Map::iterator iter = MSG_MANAGER->msg_struct_name_map().find("Aoi_Info");
 	if(iter != MSG_MANAGER->msg_struct_name_map().end()){
 		Msg_Struct *msg_struct  = dynamic_cast<Msg_Struct*>(iter->second);
+		GUARD(Thread_Mutex, mon, SCENE_MANAGER->lock());
 		player->scene_entity()->aoi_info().reset();
 		msg_struct->build_msg_buffer(args.GetIsolate(), args[0]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked(), player->scene_entity()->aoi_info());
 	}

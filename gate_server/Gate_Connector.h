@@ -12,21 +12,34 @@
 
 class Gate_Game_Connector: public Connector {
 public:
-	static Gate_Game_Connector *instance(void);
-
-	virtual void process_list(void);
-
-private:
 	Gate_Game_Connector(void);
 	virtual ~Gate_Game_Connector(void);
 	Gate_Game_Connector(const Gate_Game_Connector &);
 	const Gate_Game_Connector &operator=(const Gate_Game_Connector &);
 
+	virtual void process_list(void);
+
 private:
-	static Gate_Game_Connector *instance_;
 };
 
-#define GATE_GAME_CONNECTOR Gate_Game_Connector::instance()
+class Gate_Game_Connector_Manager {
+	typedef boost::unordered_map<int, Gate_Game_Connector *> GATE_GAME_MAP;
+public:
+	static Gate_Game_Connector_Manager *instance();
+	void start_new_connector(int id, std::string ip, int port, Time_Value &send_interval);
+	void free_cache();
+	void push_block(int cid, Block_Buffer *buffer);
+	int send_block(int cid, Block_Buffer &buf);
+	GATE_GAME_MAP &game_map(){return game_map_;}
+private:
+	Gate_Game_Connector_Manager();
+	~Gate_Game_Connector_Manager();
+private:
+	static Gate_Game_Connector_Manager *instance_;
+	GATE_GAME_MAP game_map_;
+};
+
+#define GATE_GAME_CONNECTOR_MANAGER Gate_Game_Connector_Manager::instance()
 
 ////////////////////////////////////////////////////////////////////////
 

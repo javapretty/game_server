@@ -50,6 +50,7 @@ enum Master_Client_Message {
 	RES_GUILD_ALLOW_JOIN  				= 510104,  //允许入帮(返回)
 	RES_GUILD_KICK_OUT  					= 510105,  //踢出帮会(返回)
 	RES_FETCH_RANK  							= 510201,  //拉取排行榜信息(返回)
+	RES_PLAYER_CHANGE_SCENE						= 510300,  //切换场景时通知客户端选择哪个game
 };
 
 enum Client_Game_Message {
@@ -74,6 +75,7 @@ enum Client_Game_Message {
 	REQ_ADD_SKILL_LEVEL						= 120305,	//提高英雄技能等级
 	
 	REQ_MOVE_TO_POINT							= 120400,	//移动到某点
+	REQ_CHANGE_SCENE							= 120401,	//切换场景
 };
 
 enum Game_Client_Message {
@@ -98,6 +100,7 @@ enum Game_Client_Message {
 	RES_ADD_SKILL_LEVEL						= 520305,	//提高英雄技能等级(返回)
 	
 	RES_SYNC_AOI_INFO							= 520400,	//通知场景中AOI信息(返回)
+	RES_CHANGE_SCENE							= 520401,	//切换场景(返回)
 };
 
 //内部消息命名说明：SYNC_源服务器名_目的服务器名_消息名
@@ -136,6 +139,8 @@ enum Master_DB_Message {
 enum Game_Master_Message {
 	SYNC_GAME_MASTER_PLYAER_LOGIN			=	160000,	//game同步玩家上线到master
 	SYNC_MASTER_GAME_GUILD_INFO        = 160100,  //master通知game公会信息
+	SYNC_PLAYER_CHANGE_SCENE			= 160101, //game通知master玩家请求切换其他game上的场景
+	SYNC_GAME_SCENE_ID					= 160102, //通知master每个game上的场景信息
 };
 
 enum LOG_Message {

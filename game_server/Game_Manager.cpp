@@ -15,7 +15,8 @@
 Game_Manager::Game_Manager(void):
   player_cid_map_(get_hash_table_size(12000)),
   server_status_(STATUS_NORMAL),
-  msg_count_onoff_(true) { }
+  msg_count_onoff_(true),
+  server_id_(0){ }
 
 Game_Manager::~Game_Manager(void) {}
 
@@ -27,10 +28,11 @@ Game_Manager *Game_Manager::instance(void) {
 	return instance_;
 }
 
-int Game_Manager::init(void) {
+int Game_Manager::init(int id) {
 	GAME_TIMER->thr_create();			///定时器
 	MSG_MANAGER->init();
-	SCENE_MANAGER->create_new_scene();
+	SCENE_MANAGER->create_new_scene(1001);
+	server_id_ = id;
 	return 0;
 }
 

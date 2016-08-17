@@ -19,6 +19,7 @@ if (typeof Msg_MC == "undefined") {
 	Msg_MC.RES_GUILD_ALLOW_JOIN = 510104; //允许入帮(返回)
 	Msg_MC.RES_GUILD_KICK_OUT = 510105; //踢出帮会(返回)
 	Msg_MC.RES_FETCH_RANK = 510201; //拉取排行榜信息(返回)
+	Msg_MC.RES_PLAYER_CHANGE_SCENE = 510300; //切换场景时通知客户端选择哪个game
 }
 
 if (typeof Msg_CG == "undefined") {
@@ -40,6 +41,7 @@ if (typeof Msg_CG == "undefined") {
 	Msg_CG.REQ_EQUIP_ON_OFF = 120304; //英雄装备穿脱
 	Msg_CG.REQ_ADD_SKILL_LEVEL = 120305; //提高英雄技能等级
 	Msg_CG.REQ_MOVE_TO_POINT = 120400; //移动到某点
+	Msg_CG.REQ_CHANGE_SCENE = 120401; //切换场景
 }
 
 if (typeof Msg_GC == "undefined") {
@@ -61,6 +63,7 @@ if (typeof Msg_GC == "undefined") {
 	Msg_GC.RES_EQUIP_ON_OFF = 520304; //英雄装备穿脱(返回)
 	Msg_GC.RES_ADD_SKILL_LEVEL = 520305; //提高英雄技能等级(返回)
 	Msg_GC.RES_SYNC_AOI_INFO = 520400; //通知场景中AOI信息(返回)
+	Msg_GC.RES_CHANGE_SCENE = 520401; //切换场景(返回)
 }
 
 if (typeof Msg_Gate == "undefined") {
@@ -100,6 +103,8 @@ if (typeof Msg_GM == "undefined") {
 	var Msg_GM = {};
 	Msg_GM.SYNC_GAME_MASTER_PLYAER_LOGIN = 160000; //game同步玩家上线到master
 	Msg_GM.SYNC_MASTER_GAME_GUILD_INFO = 160100; //master通知game公会信息
+	Msg_GM.SYNC_PLAYER_CHANGE_SCENE = 160101; //game通知master玩家请求切换其他game上的场景
+	Msg_GM.SYNC_GAME_SCENE_ID = 160102; //通知master每个game上的场景信息
 }
 
 if (typeof Msg_Log == "undefined") {

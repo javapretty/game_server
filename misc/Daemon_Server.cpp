@@ -38,6 +38,7 @@ struct option Daemon_Server::long_options[] = {
 		{"game",		no_argument,		0,	'f'},
 		{"gate",		no_argument,		0,	'g'},
 		{"label",	required_argument,		0,	'h'},
+		{"id",		required_argument,		0,	'i'},
 		{0, 0, 0, 0}
 };
 
@@ -71,6 +72,7 @@ int Daemon_Server::parse_cmd_arguments(int argc, char *argv[]) {
 	bool switch_game_server = false;
 	bool switch_gate_server = false;
 
+	int server_id;
 	int c = 0;
 	while ((c = getopt_long(argc, argv, "vdm:", long_options, NULL)) != -1) {
 		switch (c) {
@@ -106,6 +108,10 @@ int Daemon_Server::parse_cmd_arguments(int argc, char *argv[]) {
 			server_label_ = optarg;
 			break;
 		}
+		case 'i': { /// server_id
+			server_id = atoi(optarg);
+			break;
+		}
 		default: {
 			switch_daemon_server = true;
 			break;
@@ -133,10 +139,10 @@ int Daemon_Server::parse_cmd_arguments(int argc, char *argv[]) {
 		run_master_server();
 
 	if (switch_game_server)
-		run_game_server();
+		run_game_server(server_id);
 
 	if (switch_gate_server)
-		run_gate_server();
+		run_gate_server(server_id);
 
 	return 0;
 }
@@ -153,7 +159,7 @@ void Daemon_Server::usage(void) {
 			<< " in general, you just use -a arguement to start server.\n" << std::endl;
 }
 
-int Daemon_Server::fork_exec_args(const char *exec_str, int server_type) {
+int Daemon_Server::fork_exec_args(const char *exec_str, int server_type, int id) {
 	LOG_INFO("exec_str = [%s], server_type = %d", exec_str, server_type);
 
 	std::vector<std::string> exec_str_tok;
@@ -178,7 +184,10 @@ int Daemon_Server::fork_exec_args(const char *exec_str, int server_type) {
 			LOG_FATAL("execvp %s fatal", pathname);
 		}
 	} else { /// parent
-		daemon_map_.insert(std::make_pair(pid, server_type));
+		Process_Info info;
+		info.type = server_type;
+		info.id = id;
+		daemon_map_.insert(std::make_pair(pid, info));
 	}
 
 	return pid;
@@ -212,17 +221,17 @@ int Daemon_Server::fork_exec_master_server(void) {
 	return 0;
 }
 
-int Daemon_Server::fork_exec_game_server(void) {
+int Daemon_Server::fork_exec_game_server(int id) {
 	std::stringstream execname_stream;
-	execname_stream << exec_name_ << " --game " << "--label=" << server_label_;
-	fork_exec_args(execname_stream.str().c_str(), LOG_GAME_SERVER);
+	execname_stream << exec_name_ << " --game" <<" --id=" << id << " --label=" << server_label_;
+	fork_exec_args(execname_stream.str().c_str(), LOG_GAME_SERVER, id);
 	return 0;
 }
 
-int Daemon_Server::fork_exec_gate_server(void) {
+int Daemon_Server::fork_exec_gate_server(int id) {
 	std::stringstream execname_stream;
-	execname_stream << exec_name_ << " --gate " << "--label=" << server_label_;
-	fork_exec_args(execname_stream.str().c_str(), LOG_GATE_SERVER);
+	execname_stream << exec_name_ << " --gate" <<" --id=" << id << " --label=" << server_label_;
+	fork_exec_args(execname_stream.str().c_str(), LOG_GATE_SERVER, id);
 	return 0;
 }
 
@@ -233,28 +242,29 @@ void Daemon_Server::sigcld_handle(int signo) {
 	if (pid < 0) {
 		LOG_ERROR("wait error, pid:%d", pid);
 	}
+	sleep(5);
 	DAEMON_SERVER->restart_process(pid);
 }
 
 void Daemon_Server::restart_process(int pid) {
-	Int_Int_Map::iterator it = daemon_map_.find(pid);
+	Int_Process_Map::iterator it = daemon_map_.find(pid);
 	if (it == daemon_map_.end()) {
 		LOG_ERROR("cannot find process, pid = %d.", pid);
 		return;
 	}
-
+	Process_Info info = it->second;
 	/// cond core dump max times
-	Int_Int_Map::iterator core_map_it = core_dump_num_.find(it->second);
+	Int_Int_Map::iterator core_map_it = core_dump_num_.find(info.type);
 	if (core_map_it != core_dump_num_.end()) {
 		if (core_map_it->second++ > max_core_dump_num) {
-			LOG_ERROR("so many core dump, core_dump_num = %d", core_map_it->second);
+			LOG_ERROR("so many core dump, core_dump_num = %d", info.type);
 			return;
 		}
 	} else {
-		core_dump_num_.insert(std::make_pair(it->second, 0));
+		core_dump_num_.insert(std::make_pair(info.type, 0));
 	}
 
-	switch (it->second) {
+	switch (it->second.type) {
 	case LOG_LOG_SERVER: {
 		fork_exec_log_server();
 		break;
@@ -272,11 +282,11 @@ void Daemon_Server::restart_process(int pid) {
 		break;
 	}
 	case LOG_GAME_SERVER: {
-		fork_exec_game_server();
+		fork_exec_game_server(info.id);
 		break;
 	}
 	case LOG_GATE_SERVER: {
-		fork_exec_gate_server();
+		fork_exec_gate_server(info.id);
 		break;
 	}
 	default: {
@@ -300,6 +310,7 @@ void Daemon_Server::record_pid_file(void) {
 }
 
 void Daemon_Server::run_daemon_server(void) {
+	server_conf_.init_server_conf();
 	//if (daemon(1, 0) != 0) {
 	//	LOG_FATAL("daemon fatal");
 	//}
@@ -318,10 +329,17 @@ void Daemon_Server::run_daemon_server(void) {
 	fork_exec_master_server();
 
 	/// start game server
-	fork_exec_game_server();
+	for(Server_Conf::SERVER_LIST::iterator iter = server_conf_.game_list.begin();
+			iter != server_conf_.game_list.end(); iter++) {
+		fork_exec_game_server((*iter).id);
+	}
 
 	/// start gate_server
-	fork_exec_gate_server();
+	for(Server_Conf::SERVER_LIST::iterator iter = server_conf_.gate_list.begin();
+			iter != server_conf_.gate_list.end(); iter++) {
+		fork_exec_gate_server((*iter).id);
+	}
+
 }
 
 void Daemon_Server::run_log_server(void) {
@@ -344,12 +362,12 @@ void Daemon_Server::run_master_server(void) {
 	DAEMON_MASTER->start_client();
 }
 
-void Daemon_Server::run_game_server(void) {
-	DAEMON_GAME->start_server();
+void Daemon_Server::run_game_server(int server_id) {
+	DAEMON_GAME->start_server(server_id);
 	DAEMON_GAME->start_client();
 }
 
-void Daemon_Server::run_gate_server(void) {
-	DAEMON_GATE->start_server();
+void Daemon_Server::run_gate_server(int server_id) {
+	DAEMON_GATE->start_server(server_id);
 	DAEMON_GATE->start_client();
 }

@@ -6,12 +6,17 @@
 #include "Gate_Manager.h"
 #include "Common_Func.h"
 
-Gate_Player::Gate_Player(void) : player_cid_(0) { }
+Gate_Player::Gate_Player(void) :
+	player_cid_(0),
+	game_cid_(0),
+	is_login_(true){ }
 
 Gate_Player::~Gate_Player(void) { }
 
 void Gate_Player::reset(void) {
 	player_cid_ = 0;
+	game_cid_ = 0;
+	is_login_ = true;
 	account_.clear();
 	msg_info_.reset();
 	recycle_tick_.reset();
@@ -37,7 +42,7 @@ int Gate_Player::link_close() {
 	Block_Buffer game_buf;
 	game_buf.make_player_message(SYNC_GATE_GAME_PLAYER_LOGOUT, 0, player_cid_);
 	game_buf.finish_message();
-	GATE_MANAGER->send_to_game(game_buf);
+	GATE_MANAGER->send_to_game(game_cid_, game_buf);
 
 	//gate同步玩家下线到master
 	Block_Buffer master_buf;

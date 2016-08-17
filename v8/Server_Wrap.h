@@ -72,4 +72,6 @@ void get_master_player_by_game_cid(const FunctionCallbackInfo<Value>& args);
 //函数说明：master_server关闭客户端连接  	参数：1,gate_cid 2,player_cid 3,error_code	返回值：无
 void master_close_client(const FunctionCallbackInfo<Value>& args);
 
+void is_scene_in_process(const FunctionCallbackInfo<Value>& args);
+
 #endif /* SERVER_WRAP_H_ */

@@ -283,6 +283,10 @@ function MSG_510201() {
 	this.rank_list = new Array();
 }
 
+function MSG_510300() {
+	this.game_id = 0;
+}
+
 function MSG_120001() {
 	this.account = "";
 }
@@ -431,6 +435,14 @@ function MSG_520400() {
 	this.aoi_pos = new Array();
 }
 
+function MSG_120401() {
+	this.target_scene = 0;
+	this.pos = new Position3D();
+}
+
+function MSG_520401() {
+}
+
 function MSG_140100() {
 }
 
@@ -515,6 +527,16 @@ function MSG_160100() {
 	this.role_id = 0;
 	this.guild_id = 0;
 	this.guild_name = "";
+}
+
+function MSG_160101() {
+	this.target_scene = 0;
+	this.role_id = 0;
+}
+
+function MSG_160102() {
+	this.scene_id = 0;
+	this.game_id = 0;
 }
 
 function MSG_180001() {

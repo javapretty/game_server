@@ -16,6 +16,8 @@ public:
 
 	void set_player_cid(int cid) { player_cid_ = cid; }
 	int get_player_cid(void) { return player_cid_; }
+	void set_game_cid(int id) { game_cid_ = id; }
+	int get_game_cid(void) { return game_cid_; }
 	void set_account(std::string  &account) { account_ = account; }
 	std::string& get_account(void) { return account_; }
 	void reset(void);
@@ -28,11 +30,15 @@ public:
 	int verify_msg_info(uint32_t serial_cipher, uint32_t msg_time_cipher);
 	void reset_msg_info(void) { msg_info_.reset(); }
 
+	inline bool is_login(){return is_login_;}
+	inline void set_login(){is_login_ = false;}
 private:
 	int player_cid_;		//client和gate连接的cid
 	std::string account_;
 	Msg_Info msg_info_;
 	Recycle_Tick recycle_tick_;
+	int game_cid_;				//player所在game_cid
+	bool is_login_;
 };
 
 #endif /* GATE_PLAYER_H_ */

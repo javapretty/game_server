@@ -64,12 +64,11 @@ void Aoi_Entity::broadcast_sync() {
 
 void Aoi_Entity::broadcast_aoi_info() {
 	Block_Buffer buf;
-	buf.write_uint16(aoi_map_.size() + 1);
-	entity_->write_aoi_info(buf);
+	buf.write_uint16(aoi_map_.size());
 	for(AOI_MAP::iterator iter = aoi_map_.begin(); iter != aoi_map_.end(); iter++){
 		Aoi_Entity *entity = iter->second;
 		entity->scene_entity()->write_aoi_info(buf);
 	}
-	entity_->game_player()->respond_success_result(120400, &buf);
+	entity_->game_player()->respond_success_result(520400, &buf);
 	set_sync(false);
 }

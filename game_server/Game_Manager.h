@@ -27,7 +27,7 @@ public:
 
 public:
 	static Game_Manager *instance(void);
-	int init(void);
+	int init(int id);
 	void run_handler(void);
 
 	inline int server_status(void) { return server_status_; }
@@ -84,6 +84,7 @@ public:
 	void inner_msg_count(Block_Buffer &buf);
 	void inner_msg_count(int msg_id);
 
+	inline int server_id(){return server_id_;}
 private:
 	Game_Manager(void);
 	virtual ~Game_Manager(void);
@@ -112,6 +113,7 @@ private:
 
 	/// 消息统计
 	bool msg_count_onoff_;
+	int server_id_;
 	Msg_Count_Map inner_msg_count_map_; //内部消息统计
 };
 

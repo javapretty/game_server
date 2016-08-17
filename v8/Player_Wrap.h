@@ -23,6 +23,7 @@ void game_player_link_close(const FunctionCallbackInfo<Value>& args);
 
 void enter_scene(const FunctionCallbackInfo<Value>& args);
 void move_to_point(const FunctionCallbackInfo<Value>& args);
+void leave_scene(const FunctionCallbackInfo<Value>& args);
 void set_aoi_info(const FunctionCallbackInfo<Value>& args);
 /////////////////////////////Master_Player相关函数////////////////////////////////////////
 Local<Object> wrap_master_player(Isolate* isolate, Master_Player *player);
