@@ -107,7 +107,7 @@ function main() {
 
 function process_master_gate_msg(obj) {
 	//gate通知master玩家登录，加载信息
-	if (obj.msg_id == Msg_Gate.SYNC_GATE_MASTER_PLAYER_LOGIN) {
+	if (obj.msg_id == Msg.SYNC_GATE_MASTER_PLAYER_LOGIN) {
 		var master_player = master_player_role_id_map.get(obj.role_id);
 		if (master_player == null) {
 			master_player = new Master_Player();
@@ -124,28 +124,28 @@ function process_master_gate_msg(obj) {
 	}
 	
 	switch(obj.msg_id) {
-	case Msg_Gate.SYNC_GATE_MASTER_PLAYER_LOGOUT:
+	case Msg.SYNC_GATE_MASTER_PLAYER_LOGOUT:
 		master_player.cplayer.link_close();
 		break;
-	case Msg_CM.REQ_SEND_CHAT_INFO:
+	case Msg.REQ_SEND_CHAT_INFO:
 		master_player.send_chat_info(obj);
 		break;
-	case Msg_CM.REQ_CREATE_GUILD:
+	case Msg.REQ_CREATE_GUILD:
 		guild_manager.create_guild(master_player, obj);
 		break;
-	case Msg_CM.REQ_DISSOVE_GUILD:
+	case Msg.REQ_DISSOVE_GUILD:
 		guild_manager.dissove_guild(master_player, obj);
 		break;
-	case Msg_CM.REQ_JOIN_GUILD:
+	case Msg.REQ_JOIN_GUILD:
 		guild_manager.join_guild(master_player, obj);
 		break;
-	case Msg_CM.REQ_FETCH_RANK:
+	case Msg.REQ_FETCH_RANK:
 		rank_manager.fetch_rank_info(master_player, obj);
 		break;
-	case Msg_CM.REQ_GUILD_ALLOW_JOIN:
+	case Msg.REQ_GUILD_ALLOW_JOIN:
 		guild_manager.allow_join_player(master_player, obj);
 		break;
-	case Msg_CM.REQ_GUILD_KICK_OUT:
+	case Msg.REQ_GUILD_KICK_OUT:
 		guild_manager.kick_out_player(master_player, obj);
 		break;
 	default:
@@ -156,16 +156,16 @@ function process_master_gate_msg(obj) {
 
 function process_master_db_msg(obj) {
 	switch(obj.msg_id) {
-	case Msg_MD.SYNC_DB_MASTER_CREATE_GUILD:
+	case Msg.SYNC_DB_MASTER_CREATE_GUILD:
 		guild_manager.create_guild_res(obj);
 		break;
-	case Msg_MD.SYNC_DB_MASTER_LOAD_GUILD:
+	case Msg.SYNC_DB_MASTER_LOAD_GUILD:
 		guild_manager.load_data(obj);
 		break;
-	case Msg_MD.SYNC_DB_MASTER_LOAD_RANK:
+	case Msg.SYNC_DB_MASTER_LOAD_RANK:
 		rank_manager.load_data(obj);
 		break;
-	case Msg_MD.SYNC_DB_MASTER_LOAD_OFFLINE:
+	case Msg.SYNC_DB_MASTER_LOAD_OFFLINE:
 		offline_manager.load_data(obj);
 		break;
 	default:
@@ -176,7 +176,7 @@ function process_master_db_msg(obj) {
 
 function process_master_game_msg(obj) {
 	switch(obj.msg_id) {
-	case Msg_GM.SYNC_GAME_MASTER_PLYAER_LOGIN: {
+	case Msg.SYNC_GAME_MASTER_PLYAER_LOGIN: {
 		var master_player = master_player_role_id_map.get(obj.player_info.role_id);
 		if (master_player == null) {
 			master_player = new Master_Player();
@@ -192,7 +192,7 @@ function process_master_game_msg(obj) {
 
 function process_master_http_msg(obj) {
 	switch(obj.msg_id) {
-	case Msg_Http.HTTP_MODIFY_PLAYR_GOLD: {
+	case Msg.HTTP_MODIFY_PLAYR_GOLD: {
 		print('process_master_http_msg, msg_id:', obj.msg_id, " role_name:", obj.role_name, " gold:", obj.gold);
 		break;
 	}

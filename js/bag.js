@@ -24,7 +24,7 @@ Bag.prototype.fetch_bag_info = function() {
 	for (var value of this.bag_info.item_map.values()) {
   		msg.item_info.push(value);
 	}
-  this.game_player.send_success_msg(Msg_GC.RES_FETCH_BAG_INFO, msg);
+  this.game_player.send_success_msg(Msg.RES_FETCH_BAG_INFO, msg);
 }
 	
 Bag.prototype.use_item = function(obj) {
@@ -32,7 +32,7 @@ Bag.prototype.use_item = function(obj) {
 	var item_array = new Array();
 	item_array.push(obj.item);
 	var result = this.bag_erase_item(item_array);
-	this.game_player.send_error_msg(Msg_GC.RES_USE_ITEM, result);
+	this.game_player.send_error_msg(Msg.RES_USE_ITEM, result);
 }
 	
 Bag.prototype.sell_item = function(obj) {
@@ -40,7 +40,7 @@ Bag.prototype.sell_item = function(obj) {
 	var item_array = new Array();
 	item_array.push(obj.item);
 	var result = this.bag_erase_item(item_array);
-	this.game_player.send_error_msg(Msg_GC.RES_SELL_ITEM, result);
+	this.game_player.send_error_msg(Msg.RES_SELL_ITEM, result);
 }
 	
 Bag.prototype.bag_add_money = function(copper, gold) {
@@ -114,7 +114,7 @@ Bag.prototype.bag_active_money = function() {
 	var msg = new MSG_300100();
 	msg.copper = this.bag_info.copper;
 	msg.gold = this.bag_info.gold;
-	this.game_player.send_success_msg(Msg_Active.ACTIVE_MONEY_INFO, msg);
+	this.game_player.send_success_msg(Msg.ACTIVE_MONEY_INFO, msg);
 }
 	
 Bag.prototype.bag_active_item = function() {
@@ -122,5 +122,5 @@ Bag.prototype.bag_active_item = function() {
 	for (var value of this.bag_info.item_map.values()) {
   		msg.item_info.push(value);
 	}
-  this.game_player.send_success_msg(Msg_Active.ACTIVE_ITEM_INFO, msg);
+  this.game_player.send_success_msg(Msg.ACTIVE_ITEM_INFO, msg);
 }

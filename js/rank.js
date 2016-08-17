@@ -22,7 +22,7 @@ Rank.prototype.save_data = function() {
 	for (var value of this.rank_map.values()) {
   		msg.rank_list.push(value);
 	}
-	send_master_msg_to_db(Msg_MD.SYNC_MASTER_DB_SAVE_RANK, msg);
+	send_master_msg_to_db(Msg.SYNC_MASTER_DB_SAVE_RANK, msg);
 }
 
 Rank.prototype.fetch_rank_info = function(player, obj) {
@@ -41,7 +41,7 @@ Rank.prototype.fetch_rank_info = function(player, obj) {
 			break;
 		}
 	}
-	player.send_success_msg(Msg_MC.RES_FETCH_RANK, msg);
+	player.send_success_msg(Msg.RES_FETCH_RANK, msg);
 }
 
 Rank.prototype.get_rank_value = function(type, player) {

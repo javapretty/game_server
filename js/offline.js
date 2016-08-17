@@ -24,7 +24,7 @@ Offline.prototype.save_data = function() {
 	for (var value of this.offline_map.values()) {
   		msg.offline_list.push(value);
 	}
-	send_master_msg_to_db(Msg_MD.SYNC_MASTER_DB_SAVE_OFFLINE, msg);
+	send_master_msg_to_db(Msg.SYNC_MASTER_DB_SAVE_OFFLINE, msg);
 }
 
 Offline.prototype.save_data_handler = function() {
@@ -66,6 +66,6 @@ Offline.prototype.drop_offline = function(){
 	var msg = new MSG_150102();
 	msg.struct_name = "Offline_Info";
 	msg.index_list = this.drop_list;
-	send_master_msg_to_db(Msg_MD.SYNC_MASTER_DB_DELETE_DATA, msg);
+	send_master_msg_to_db(Msg.SYNC_MASTER_DB_DELETE_DATA, msg);
 	this.drop_list = [];
 }
