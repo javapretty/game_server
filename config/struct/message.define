@@ -5,17 +5,16 @@
 140000-140099		Gate<--->Login
 140100-140199		Gate<--->Game
 140200-140299		Gate<--->Master
-150000-159999  Game<--->DB
+150000-150099  Game--->DB
+150100-159999	  Master--->DB
 160000-169999		Game<--->Master
-170000-179999		Master<--->DB
-180000-189999		Game--->LogStream		操作流水日志
-190000-199999
+170000-179999		Game Master--->Log
+180000-189999		Http--->Master
 300000-309999		ActiveMessage			服务器发到客户端主动消息
-400000-499999		InnerMessage			服务器内部消息
 500000-500999		Login,Gate->Client
 510000-519999		Master->Client
 520000-529999		Game->Client
-550000-559999		DB-->Game
+550000-559999		DB-->Game Master
 */
 
 enum Client_Login_Message {
@@ -135,7 +134,11 @@ enum Game_Master_Message {
 };
 
 enum LOG_Message {
-	SYNC_LOG_LOGINOUT 								= 180001,	//后台登录退出流水
+	SYNC_LOG_LOGINOUT 								= 170000,	//玩家登出日志
+};
+
+enum Http_Message {
+	HTTP_MODIFY_PLAYR_GOLD 						= 180000,	//后台修改玩家元宝
 };
 
 enum Active_Message{

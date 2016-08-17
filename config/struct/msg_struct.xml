@@ -431,9 +431,9 @@
 	</MSG_160100>
 	
 <!--Log_Message--> 
-	<MSG_180001>
-		<!--后台登录退出流水-->
-		<head msg_id="180001"/>
+	<MSG_170000>
+		<!--玩家登出日志-->
+		<head msg_id="170000"/>
     	<arg type="int64" name="role_id"/>
     	<arg type="string" name="role_name"/>
     	<arg type="string" name="account"/>
@@ -441,7 +441,15 @@
     	<arg type="string" name="client_ip"/>
     	<arg type="int32" name="login_time"/>
     	<arg type="int32" name="logout_time"/>
-	</MSG_180001>
+	</MSG_170000>
+	
+<!--Http_Message--> 
+	<MSG_180000>
+		<!--后台修改玩家元宝-->
+		<head msg_id="180000"/>
+    	<arg type="string" name="role_name"/>
+    	<arg type="int32" name="gold"/>
+	</MSG_180000>
 
 <!--服务器主动发送到客户端的消息-->
 	<MSG_300001>

@@ -112,7 +112,7 @@ int Debug_Server::start(int argc, char *argv[]) {
 	LOG_DEBUG("master_game_server listen at port:%d", server_conf_.master_game_port);
 
 	/// Master Http Server
-	MASTER_HTTP_SERVER->set(server_conf_.master_http_port, server_conf_.receive_timeout, server_conf_.server_send_interval);
+	MASTER_HTTP_SERVER->set(server_conf_.master_http_port, server_conf_.receive_timeout, server_conf_.server_send_interval, HTTP);
 	MASTER_HTTP_SERVER->init();
 	MASTER_HTTP_SERVER->start();
 	MASTER_HTTP_SERVER->thr_create();

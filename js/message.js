@@ -100,7 +100,12 @@ if (typeof Msg_GM == "undefined") {
 
 if (typeof Msg_Log == "undefined") {
 	var Msg_Log = {};
-	Msg_Log.SYNC_LOG_LOGINOUT = 180001; //后台登录退出流水
+	Msg_Log.SYNC_LOG_LOGINOUT = 170000; //玩家登出日志
+}
+
+if (typeof Msg_Http == "undefined") {
+	var Msg_Http = {};
+	Msg_Http.HTTP_MODIFY_PLAYR_GOLD = 180000; //后台修改玩家元宝
 }
 
 if (typeof Msg_Active == "undefined") {

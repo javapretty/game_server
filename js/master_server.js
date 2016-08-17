@@ -169,7 +169,7 @@ function process_master_db_msg(obj) {
 		offline_manager.load_data(obj);
 		break;
 	default:
-		print('process_master_db_msg, msg_id: not exist', msg_id);
+		print('process_master_db_msg, msg_id: not exist', obj.msg_id);
 		break;
 	}
 }
@@ -185,11 +185,19 @@ function process_master_game_msg(obj) {
 		break;
 	}
 	default:
-		print('process_master_game_msg, msg_id: not exist', msg_id);
+		print('process_master_game_msg, msg_id: not exist', obj.msg_id);
 		break;
 	}
 }
 
 function process_master_http_msg(obj) {
-
+	switch(obj.msg_id) {
+	case Msg_Http.HTTP_MODIFY_PLAYR_GOLD: {
+		print('process_master_http_msg, msg_id:', obj.msg_id, " role_name:", obj.role_name, " gold:", obj.gold);
+		break;
+	}
+	default:
+		print('process_master_game_msg, msg_id: not exist', obj.msg_id);
+		break;
+	}
 }

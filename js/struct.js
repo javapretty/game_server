@@ -475,7 +475,7 @@ function MSG_160100() {
 	this.guild_name = "";
 }
 
-function MSG_180001() {
+function MSG_170000() {
 	this.role_id = 0;
 	this.role_name = "";
 	this.account = "";
@@ -483,6 +483,11 @@ function MSG_180001() {
 	this.client_ip = "";
 	this.login_time = 0;
 	this.logout_time = 0;
+}
+
+function MSG_180000() {
+	this.role_name = "";
+	this.gold = 0;
 }
 
 function MSG_300001() {

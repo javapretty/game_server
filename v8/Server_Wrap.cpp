@@ -284,15 +284,18 @@ void pop_master_db_msg_object(const FunctionCallbackInfo<Value>& args) {
 	}
 }
 
+//可以使用curl命令，向服务器发送post消息，格式如下
+//curl -d "{\"msg_id\":180000, \"role_name\":\"aa\", \"gold\":1000}" "http://127.0.0.1:8080"
 void pop_master_http_msg_object(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = MASTER_MANAGER->pop_master_http_data();
 	if (buf) {
 		int32_t http_cid = buf->read_int32();
 		std::string post_data = buf->read_string();
+		LOG_INFO("http post_data:%s", post_data.c_str());
 	  Json::Reader reader;
 	  Json::Value value;
 		if ( !reader.parse(post_data, value) ) {
-			LOG_ERROR("parse post_data:%s error", post_data.c_str());
+			LOG_ERROR("post_data:%s not json, cannot parse", post_data.c_str());
 			args.GetReturnValue().SetNull();
 			return;
 		}
