@@ -15,20 +15,18 @@
 
 class Epoll_Watcher;
 class Daemon_Server {
-	struct Process_Info {
-		int server_type;
-		int server_id;
-	};
+public:
 	typedef boost::unordered_map<int, Process_Info> Int_Process_Map;
 	typedef boost::unordered_map<int, int> Int_Int_Map;
 
-public:
 	const static int max_core_dump_num = 2500;
 
 	static Daemon_Server *instance(void);
 
 	int init(int argc, char *argv[]);
 	int start(int argc, char *argv[]);
+
+	Server_Conf &server_conf(void) { return server_conf_; }
 
 private:
 	Daemon_Server(void);
@@ -37,7 +35,6 @@ private:
 	const Daemon_Server &operator=(const Daemon_Server &);
 
 	int parse_cmd_arguments(int argc, char *argv[]);
-	void usage(void);
 
 	int fork_exec_args(const char *exec_str, int server_type, int server_id = 0);
 	int fork_exec_log_server(void);
@@ -49,7 +46,6 @@ private:
 
 	static void sigcld_handle(int signo);
 	void restart_process(int pid);
-
 	void record_pid_file(void);
 
 	void run_daemon_server(void);
@@ -66,7 +62,7 @@ private:
 	static struct option long_options[];
 	std::string server_label_;
 
-	Int_Process_Map daemon_map_;
+	Int_Process_Map process_map_;
 	Int_Int_Map core_dump_num_;
 
 	Epoll_Watcher *wait_watcher_;

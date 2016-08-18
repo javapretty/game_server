@@ -66,6 +66,11 @@ typedef boost::unordered_map<int32_t, Base_Struct *> Struct_Id_Map;
 typedef boost::unordered_map<std::string, Base_Struct *> Struct_Name_Map;
 int load_struct(const char *path, Struct_Type struct_type, Struct_Id_Map &struct_id_map, Struct_Name_Map &struct_name_map);
 
+struct Process_Info {
+	int server_type;
+	int server_id;
+};
+
 struct Server_Detail {
 	int server_id;
 	std::string server_ip;

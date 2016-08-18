@@ -21,7 +21,7 @@ public:
 	int start(int argc, char *argv[]);
 	virtual int handle_timeout(const Time_Value &tv) { return 0; }
 
-	const Server_Conf &server_conf(void) { return server_conf_; }
+	Server_Conf &server_conf(void) { return server_conf_; }
 
 private:
 	Debug_Server(void);

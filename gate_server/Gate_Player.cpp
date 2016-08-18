@@ -8,15 +8,13 @@
 
 Gate_Player::Gate_Player(void) :
 	player_cid_(0),
-	game_cid_(0),
-	is_login_(true){ }
+	game_cid_(0) { }
 
 Gate_Player::~Gate_Player(void) { }
 
 void Gate_Player::reset(void) {
 	player_cid_ = 0;
 	game_cid_ = 0;
-	is_login_ = true;
 	account_.clear();
 	msg_info_.reset();
 	recycle_tick_.reset();

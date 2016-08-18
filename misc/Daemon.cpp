@@ -5,11 +5,9 @@
  *      Author: zhangyalei
  */
 
-#include <Debug_Server.h>
 #include <unistd.h>
 #include "Lib_Log.h"
 #include "Epoll_Watcher.h"
-#include "Server_Config.h"
 #include "DB_Server.h"
 #include "DB_Manager.h"
 #include "Log_Connector.h"
@@ -72,12 +70,14 @@ int Daemon::handle_timeout(const Time_Value &tv) {
 
 int Daemon::start_log_client(void) {
 	int cid = -1;
+
+	Server_Conf server_conf = DAEMON_SERVER->server_conf();
 	//Log_Connector
-	LOG_CONNECTOR->set(server_conf_.log_server.server_ip, server_conf_.log_server.server_port, server_conf_.connector_send_interval);
+	LOG_CONNECTOR->set(server_conf.log_server.server_ip, server_conf.log_server.server_port, server_conf.connector_send_interval);
 	LOG_CONNECTOR->init();
 	LOG_CONNECTOR->start();
 	if ((cid = LOG_CONNECTOR->connect_server())< 2) {
-		LOG_FATAL("log_connector fatal cid:%d,port:%d", cid, server_conf_.log_server.server_port);
+		LOG_FATAL("log_connector fatal cid:%d,port:%d", cid, server_conf.log_server.server_port);
 	}
 	LOG_CONNECTOR->thr_create();
 	return 0;
@@ -107,20 +107,20 @@ void Daemon_Log::destroy(void) {
 
 void Daemon_Log::start_server(void) {
 	Log::instance()->set_log_type(LOG_LOG_SERVER);
-	server_conf_.init_server_conf();
 
+	Server_Conf server_conf = DAEMON_SERVER->server_conf();
 	//Log_Server
-	LOG_SERVER->set(server_conf_.log_server.server_port, server_conf_.receive_timeout, server_conf_.server_send_interval, server_conf_.log_server.network_protocol);
+	LOG_SERVER->set(server_conf.log_server.server_port, server_conf.receive_timeout, server_conf.server_send_interval, server_conf.log_server.network_protocol);
 	LOG_SERVER->init();
 	LOG_SERVER->start();
 	LOG_SERVER->thr_create();
-	LOG_DEBUG("log_server listen at port:%d", server_conf_.log_server.server_port);
+	LOG_DEBUG("log_server listen at port:%d", server_conf.log_server.server_port);
 
 	LOG_MANAGER->init();
 	LOG_MANAGER->thr_create();
 
 	//延迟让服务器启动
-	Time_Value::sleep(server_conf_.server_sleep_time);
+	Time_Value::sleep(server_conf.server_sleep_time);
 }
 
 void Daemon_Log::start_client(void) {
@@ -151,22 +151,21 @@ void Daemon_DB::destroy(void) {
 }
 
 void Daemon_DB::start_server(void) {
-	/// start log client
 	Log::instance()->set_log_type(LOG_DB_SERVER);
-	server_conf_.init_server_conf();
 
+	Server_Conf server_conf = DAEMON_SERVER->server_conf();
 	//DB_Server
-	DB_SERVER->set(server_conf_.db_server.server_port, server_conf_.receive_timeout, server_conf_.server_send_interval, server_conf_.db_server.network_protocol);
+	DB_SERVER->set(server_conf.db_server.server_port, server_conf.receive_timeout, server_conf.server_send_interval, server_conf.db_server.network_protocol);
 	DB_SERVER->init();
 	DB_SERVER->start();
 	DB_SERVER->thr_create();
-	LOG_DEBUG("db_server listen at port:%d", server_conf_.db_server.server_port);
+	LOG_DEBUG("db_server listen at port:%d", server_conf.db_server.server_port);
 
 	DB_MANAGER->init();
 	DB_MANAGER->start();
 
 	//延迟让服务器启动
-	Time_Value::sleep(server_conf_.server_sleep_time);
+	Time_Value::sleep(server_conf.server_sleep_time);
 }
 
 void Daemon_DB::start_client(void) {
@@ -197,29 +196,28 @@ void Daemon_Login::destroy(void) {
 }
 
 void Daemon_Login::start_server(void) {
-	/// start log client
 	Log::instance()->set_log_type(LOG_LOGIN_SERVER);
-	server_conf_.init_server_conf();
 
+	Server_Conf server_conf = DAEMON_SERVER->server_conf();
 	/// Login Client Server
-	LOGIN_CLIENT_SERVER->set(server_conf_.login_client_server.server_port, server_conf_.receive_timeout, server_conf_.server_send_interval, server_conf_.login_client_server.network_protocol);
+	LOGIN_CLIENT_SERVER->set(server_conf.login_client_server.server_port, server_conf.receive_timeout, server_conf.server_send_interval, server_conf.login_client_server.network_protocol);
 	LOGIN_CLIENT_SERVER->init();
 	LOGIN_CLIENT_SERVER->start();
 	LOGIN_CLIENT_SERVER->thr_create();
-	LOG_DEBUG("login_client_server listen at port:%d", server_conf_.login_client_server.server_port);
+	LOG_DEBUG("login_client_server listen at port:%d", server_conf.login_client_server.server_port);
 
 	/// Login Gate Server
-	LOGIN_GATE_SERVER->set(server_conf_.login_gate_server.server_port, server_conf_.receive_timeout, server_conf_.server_send_interval, server_conf_.login_gate_server.network_protocol);
+	LOGIN_GATE_SERVER->set(server_conf.login_gate_server.server_port, server_conf.receive_timeout, server_conf.server_send_interval, server_conf.login_gate_server.network_protocol);
 	LOGIN_GATE_SERVER->init();
 	LOGIN_GATE_SERVER->start();
 	LOGIN_GATE_SERVER->thr_create();
-	LOG_DEBUG("login_gate_server listen at port:%d", server_conf_.login_gate_server.server_port);
+	LOG_DEBUG("login_gate_server listen at port:%d", server_conf.login_gate_server.server_port);
 
 	LOGIN_MANAGER->init();
 	LOGIN_MANAGER->thr_create();
 
 	//延迟让服务器启动
-	Time_Value::sleep(server_conf_.server_sleep_time);
+	Time_Value::sleep(server_conf.server_sleep_time);
 }
 
 void Daemon_Login::start_client(void) {
@@ -250,47 +248,48 @@ void Daemon_Master::destroy(void) {
 }
 
 void Daemon_Master::start_server(void) {
-	/// start log client
 	Log::instance()->set_log_type(LOG_MASTER_SERVER);
-	server_conf_.init_server_conf();
 
+	Server_Conf server_conf = DAEMON_SERVER->server_conf();
 	/// Master Gate Server
-	MASTER_GATE_SERVER->set(server_conf_.master_gate_server.server_port, server_conf_.receive_timeout, server_conf_.server_send_interval, server_conf_.master_gate_server.network_protocol);
+	MASTER_GATE_SERVER->set(server_conf.master_gate_server.server_port, server_conf.receive_timeout, server_conf.server_send_interval, server_conf.master_gate_server.network_protocol);
 	MASTER_GATE_SERVER->init();
 	MASTER_GATE_SERVER->start();
 	MASTER_GATE_SERVER->thr_create();
-	LOG_DEBUG("master_gate_server listen at port:%d", server_conf_.master_gate_server.server_port);
+	LOG_DEBUG("master_gate_server listen at port:%d", server_conf.master_gate_server.server_port);
 
 	/// Master Game Server
-	MASTER_GAME_SERVER->set(server_conf_.master_game_server.server_port, server_conf_.receive_timeout, server_conf_.server_send_interval, server_conf_.master_game_server.network_protocol);
+	MASTER_GAME_SERVER->set(server_conf.master_game_server.server_port, server_conf.receive_timeout, server_conf.server_send_interval, server_conf.master_game_server.network_protocol);
 	MASTER_GAME_SERVER->init();
 	MASTER_GAME_SERVER->start();
 	MASTER_GAME_SERVER->thr_create();
-	LOG_DEBUG("master_game_server listen at port:%d", server_conf_.master_game_server.server_port);
+	LOG_DEBUG("master_game_server listen at port:%d", server_conf.master_game_server.server_port);
 
 	/// Master Http Server
-	MASTER_HTTP_SERVER->set(server_conf_.master_http_server.server_port, server_conf_.receive_timeout, server_conf_.server_send_interval, server_conf_.master_http_server.network_protocol);
+	MASTER_HTTP_SERVER->set(server_conf.master_http_server.server_port, server_conf.receive_timeout, server_conf.server_send_interval, server_conf.master_http_server.network_protocol);
 	MASTER_HTTP_SERVER->init();
 	MASTER_HTTP_SERVER->start();
 	MASTER_HTTP_SERVER->thr_create();
-	LOG_DEBUG("master_http_server listen at port:%d", server_conf_.master_http_server.server_port);
+	LOG_DEBUG("master_http_server listen at port:%d", server_conf.master_http_server.server_port);
 
 	MASTER_MANAGER->init();
 	MASTER_MANAGER->thr_create();
 
 	//延迟让服务器启动
-	Time_Value::sleep(server_conf_.server_sleep_time);
+	Time_Value::sleep(server_conf.server_sleep_time);
 }
 
 void Daemon_Master::start_client(void) {
 	start_log_client();
 	
 	int cid = -1;
-	MASTER_DB_CONNECTOR->set(server_conf_.db_server.server_ip, server_conf_.db_server.server_port, server_conf_.connector_send_interval);
+	Server_Conf server_conf = DAEMON_SERVER->server_conf();
+	///Master DB Connector
+	MASTER_DB_CONNECTOR->set(server_conf.db_server.server_ip, server_conf.db_server.server_port, server_conf.connector_send_interval);
 	MASTER_DB_CONNECTOR->init();
 	MASTER_DB_CONNECTOR->start();
 	if ((cid = MASTER_DB_CONNECTOR->connect_server()) < 2) {
-		LOG_FATAL("master_db_connector fatal cid:%d,port:%d", cid, server_conf_.db_server.server_port);
+		LOG_FATAL("master_db_connector fatal cid:%d,port:%d", cid, server_conf.db_server.server_port);
 	}
 	MASTER_DB_CONNECTOR->thr_create();
 	MASTER_MANAGER->load_master_db_data();
@@ -322,20 +321,19 @@ void Daemon_Game::destroy(void) {
 }
 
 void Daemon_Game::start_server(int server_id) {
-	/// start log client
 	Log::instance()->set_log_type(LOG_GAME_SERVER);
-	server_conf_.init_server_conf();
 
-	Server_Detail server_detail;
+	Server_Conf server_conf = DAEMON_SERVER->server_conf();
 	/// Game Gate Server
-	for(Server_List::iterator iter = server_conf_.game_list.begin();
-			iter != server_conf_.game_list.end(); iter++){
+	Server_Detail server_detail;
+	for(Server_List::iterator iter = server_conf.game_list.begin();
+			iter != server_conf.game_list.end(); iter++){
 		if((*iter).server_id == server_id){
 			server_detail = *iter;
 			break;
 		}
 	}
-	GAME_GATE_SERVER->set(server_detail.server_port, server_conf_.receive_timeout, server_conf_.server_send_interval, server_detail.network_protocol);
+	GAME_GATE_SERVER->set(server_detail.server_port, server_conf.receive_timeout, server_conf.server_send_interval, server_detail.network_protocol);
 	GAME_GATE_SERVER->init();
 	GAME_GATE_SERVER->start();
 	GAME_GATE_SERVER->thr_create();
@@ -347,28 +345,29 @@ void Daemon_Game::start_server(int server_id) {
 	GAME_V8_MANAGER->thr_create();				//game server v8 engine
 
 	//延迟让服务器启动
-	Time_Value::sleep(server_conf_.server_sleep_time);
+	Time_Value::sleep(server_conf.server_sleep_time);
 }
 
 void Daemon_Game::start_client(void) {
 	start_log_client();
 
 	int cid = -1;
+	Server_Conf server_conf = DAEMON_SERVER->server_conf();
 	/// Game DB Connector
-	GAME_DB_CONNECTOR->set(server_conf_.db_server.server_ip, server_conf_.db_server.server_port, server_conf_.connector_send_interval);
+	GAME_DB_CONNECTOR->set(server_conf.db_server.server_ip, server_conf.db_server.server_port, server_conf.connector_send_interval);
 	GAME_DB_CONNECTOR->init();
 	GAME_DB_CONNECTOR->start();
 	if ((cid = GAME_DB_CONNECTOR->connect_server()) < 2) {
-		LOG_FATAL("game_db_connector fatal cid:%d,port:%d", cid, server_conf_.db_server.server_port);
+		LOG_FATAL("game_db_connector fatal cid:%d,port:%d", cid, server_conf.db_server.server_port);
 	}
 	GAME_DB_CONNECTOR->thr_create();
 
 	/// Game Master Connector
-	GAME_MASTER_CONNECTOR->set(server_conf_.master_game_server.server_ip, server_conf_.master_game_server.server_port, server_conf_.connector_send_interval);
+	GAME_MASTER_CONNECTOR->set(server_conf.master_game_server.server_ip, server_conf.master_game_server.server_port, server_conf.connector_send_interval);
 	GAME_MASTER_CONNECTOR->init();
 	GAME_MASTER_CONNECTOR->start();
 	if ((cid = GAME_MASTER_CONNECTOR->connect_server()) < 2) {
-		LOG_FATAL("game_master_connector fatal cid:%d,port:%d", cid, server_conf_.master_game_server.server_port);
+		LOG_FATAL("game_master_connector fatal cid:%d,port:%d", cid, server_conf.master_game_server.server_port);
 	}
 	GAME_MASTER_CONNECTOR->thr_create();
 
@@ -398,20 +397,19 @@ void Daemon_Gate::destroy(void) {
 }
 
 void Daemon_Gate::start_server(int id) {
-	/// start log client
 	Log::instance()->set_log_type(LOG_GATE_SERVER);
-	server_conf_.init_server_conf();
 
+	Server_Conf server_conf = DAEMON_SERVER->server_conf();
+	/// Gate Client Server
 	Server_Detail server_detail;
-	for(Server_List::iterator iter = server_conf_.gate_list.begin();
-		iter != server_conf_.gate_list.end(); iter++){
+	for(Server_List::iterator iter = server_conf.gate_list.begin();
+		iter != server_conf.gate_list.end(); iter++){
 		if((*iter).server_id == id){
 			server_detail = *iter;
 			break;
 		}
 	}
-	/// Gate Client Server
-	GATE_CLIENT_SERVER->set(server_detail.server_port, server_conf_.receive_timeout, server_conf_.server_send_interval, server_detail.network_protocol);
+	GATE_CLIENT_SERVER->set(server_detail.server_port, server_conf.receive_timeout, server_conf.server_send_interval, server_detail.network_protocol);
 	GATE_CLIENT_SERVER->init();
 	GATE_CLIENT_SERVER->start();
 	GATE_CLIENT_SERVER->thr_create();
@@ -421,34 +419,35 @@ void Daemon_Gate::start_server(int id) {
 	GATE_MANAGER->thr_create();
 
 	//延迟让服务器启动
-	Time_Value::sleep(server_conf_.server_sleep_time);
+	Time_Value::sleep(server_conf.server_sleep_time);
 }
 
 void Daemon_Gate::start_client(void) {
 	start_log_client();
 
 	int cid = -1;
+	Server_Conf server_conf = DAEMON_SERVER->server_conf();
 	/// Gate Login Connector
-	GATE_LOGIN_CONNECTOR->set(server_conf_.login_gate_server.server_ip, server_conf_.login_gate_server.server_port, server_conf_.connector_send_interval);
+	GATE_LOGIN_CONNECTOR->set(server_conf.login_gate_server.server_ip, server_conf.login_gate_server.server_port, server_conf.connector_send_interval);
 	GATE_LOGIN_CONNECTOR->init();
 	GATE_LOGIN_CONNECTOR->start();
 	if ((cid = GATE_LOGIN_CONNECTOR->connect_server()) < 2) {
-		LOG_FATAL("gate_login_connector fatal cid:%d,port:%d", cid, server_conf_.login_gate_server.server_port);
+		LOG_FATAL("gate_login_connector fatal cid:%d,port:%d", cid, server_conf.login_gate_server.server_port);
 	}
 	GATE_LOGIN_CONNECTOR->thr_create();
 
 	/// Gate Game Connector
-	for(Server_List::iterator iter = server_conf_.game_list.begin();
-			iter != server_conf_.game_list.end(); iter++){
-		GATE_GAME_CONNECTOR_MANAGER->new_connector((*iter).server_id, (*iter).server_ip, (*iter).server_port, server_conf_.connector_send_interval);
+	for(Server_List::iterator iter = server_conf.game_list.begin();
+			iter != server_conf.game_list.end(); iter++){
+		GATE_MANAGER->new_game_connector((*iter).server_id, (*iter).server_ip, (*iter).server_port, server_conf.connector_send_interval);
 	}
 
 	/// Gate Master Connector
-	GATE_MASTER_CONNECTOR->set(server_conf_.master_gate_server.server_ip, server_conf_.login_gate_server.server_port, server_conf_.connector_send_interval);
+	GATE_MASTER_CONNECTOR->set(server_conf.master_gate_server.server_ip, server_conf.master_gate_server.server_port, server_conf.connector_send_interval);
 	GATE_MASTER_CONNECTOR->init();
 	GATE_MASTER_CONNECTOR->start();
 	if ((cid = GATE_MASTER_CONNECTOR->connect_server()) < 2) {
-		LOG_FATAL("gate_master_connector fatal cid:%d,port:%d", cid, server_conf_.login_gate_server.server_port);
+		LOG_FATAL("gate_master_connector fatal cid:%d,port:%d", cid, server_conf.login_gate_server.server_port);
 	}
 	GATE_MASTER_CONNECTOR->thr_create();
 
