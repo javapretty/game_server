@@ -1,7 +1,7 @@
 {
 	"0" : {
 		"name" : "小猪",
-		"star_item_id" : "1000001",
+		"star_item_id" : 1000001,
 		"star_item_amount" : [10,20,30,40,50]
 	}
 }

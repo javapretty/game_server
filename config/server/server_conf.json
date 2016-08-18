@@ -19,7 +19,8 @@
     },
    "master_server" : {
     	"gate_port" : 7504,							//master服务器监听游戏服连接的端口
-    	"game_port" : 7505							//master服务器监听网关服连接的端口
+    	"game_port" : 7505,							//master服务器监听网关服连接的端口
+    	"http_port" : 8080							//master服务器监听后台连接的端口
     },
    "game_server" : [
 		{

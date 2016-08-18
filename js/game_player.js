@@ -64,7 +64,7 @@ Game_Player.prototype.sync_player_data_to_db = function(logout) {
 	this.hero.save_data(msg);
 	this.bag.save_data(msg);
 	this.mail.save_data(msg);
-	send_game_msg_to_db(Msg_GD.SYNC_GAME_DB_SAVE_PLAYER, msg);
+	send_game_msg_to_db(Msg.SYNC_GAME_DB_SAVE_PLAYER, msg);
 
 	this.is_change = false;
 }
@@ -118,7 +118,7 @@ Game_Player.prototype.sync_login_to_client = function() {
 	msg.role_info.vip_level = this.player_info.vip_level;
 	msg.role_info.vip_exp = this.player_info.vip_exp;
 	msg.role_info.charge_gold = this.player_info.charge_gold;
-	this.send_success_msg(Msg_GC.RES_FETCH_ROLE_INFO, msg);
+	this.send_success_msg(Msg.RES_FETCH_ROLE_INFO, msg);
 }
 
 Game_Player.prototype.sync_login_to_master = function() {
@@ -129,12 +129,11 @@ Game_Player.prototype.sync_login_to_master = function() {
 	msg.player_info.level = this.player_info.level;
 	msg.player_info.gender = this.player_info.gender;
 	msg.player_info.career = this.player_info.career;
-	msg.player_info.vip_level = this.player_info.vip_level;
-	send_game_msg_to_master(this.player_cid, Msg_GM.SYNC_GAME_MASTER_PLYAER_LOGIN, 0, msg);
+	send_game_msg_to_master(this.player_cid, Msg.SYNC_GAME_MASTER_PLYAER_LOGIN, 0, msg);
 }
 
 Game_Player.prototype.sync_logout_to_log = function() {
-	var msg = new MSG_180001();
+	var msg = new MSG_170000();
 	msg.role_id = this.player_info.role_id;
 	msg.role_name = this.player_info.role_name;
 	msg.account = this.player_info.account;
@@ -142,14 +141,14 @@ Game_Player.prototype.sync_logout_to_log = function() {
 	msg.client_ip = this.player_info.client_ip;
 	msg.login_time = this.player_info.login_time;
 	msg.logout_time = this.player_info.logout_time;
-	send_game_msg_to_log(Msg_Log.SYNC_LOG_LOGINOUT, msg);
+	send_game_msg_to_log(Msg.SYNC_LOG_LOGINOUT, msg);
 }
 
 Game_Player.prototype.add_exp = function(exp) {
 	print('add_exp, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " exp:", exp);
 	
 	if (exp <= 0) {
-		return this.send_error_msg(Msg_Active.ACTIVE_PLAYER_INFO, Error_Code.ERROR_CLIENT_PARAM);
+		return this.send_error_msg(Msg.ACTIVE_PLAYER_INFO, Error_Code.ERROR_CLIENT_PARAM);
 	}
 	
 	//经验增加升级
@@ -167,7 +166,7 @@ Game_Player.prototype.add_exp = function(exp) {
 	var msg = new MSG_300001();
 	msg.player_level = this.player_info.level;
 	msg.player_exp = this.player_info.exp;
-	this.send_success_msg(Msg_Active.ACTIVE_PLAYER_INFO, msg);
+	this.send_success_msg(Msg.ACTIVE_PLAYER_INFO, msg);
 }
 	
 Game_Player.prototype.update_vip = function(charge_id) {
@@ -186,7 +185,7 @@ Game_Player.prototype.update_vip = function(charge_id) {
 	var msg = new MSG_300002();
 	msg.vip_level = this.player_info.vip_level;
 	msg.vip_exp = this.player_info.vip_exp;
-	this.send_success_msg(Msg_Active.ACTIVE_VIP_INFO, msg);
+	this.send_success_msg(Msg.ACTIVE_VIP_INFO, msg);
 }
 	
 Game_Player.prototype.buy_vitality = function() {
@@ -195,18 +194,18 @@ Game_Player.prototype.buy_vitality = function() {
 	//1.检查可以购买体力次数
 	var max_buy_times = config.vip_json[this.player_info.vip_level].max_buy_vitality;
 	if (this.player_info.buy_vitality_times >= max_buy_times){
-		return send_game_msg_to_gate(this.gate_cid, this.player_cid, Msg_GC.RES_BUY_VITALITY, Error_Code.ERROR_VITALITY_TIMES_NOT_ENOUGH);
+		return send_game_msg_to_gate(this.gate_cid, this.player_cid, Msg.RES_BUY_VITALITY, Error_Code.ERROR_VITALITY_TIMES_NOT_ENOUGH);
 	}
 
 	//2.更新元宝
 	var buy_vitality_gold = config.util_json.buy_vitality_gold;
 	if (buy_vitality_gold == null || this.player_info.buy_vitality_times >= buy_vitality_gold.length) {
-		return send_game_msg_to_gate(this.gate_cid, this.player_cid, Msg_GC.RES_BUY_VITALITY, Error_Code.ERROR_CONFIG_NOT_EXIST);
+		return send_game_msg_to_gate(this.gate_cid, this.player_cid, Msg.RES_BUY_VITALITY, Error_Code.ERROR_CONFIG_NOT_EXIST);
 	}	
 	var cost_gold = buy_vitality_gold[this.player_info.buy_vitality_times];
 	var result = this.bag.bag_sub_money(0, cost_gold);
 	if (result != 0) {
-		return send_game_msg_to_gate(this.gate_cid, this.player_cid, Msg_GC.RES_BUY_VITALITY, result);
+		return send_game_msg_to_gate(this.gate_cid, this.player_cid, Msg.RES_BUY_VITALITY, result);
 	}
 	
 	//3.更新体力(120应该为配置)
@@ -216,7 +215,7 @@ Game_Player.prototype.buy_vitality = function() {
 	
 	var msg = new MSG_520003();
 	msg.vitality = this.player_info.vitality;
-	this.send_success_msg(Msg_GC.RES_BUY_VITALITY, msg);
+	this.send_success_msg(Msg.RES_BUY_VITALITY, msg);
 }
 
 Game_Player.prototype.set_guild_info = function(obj) {

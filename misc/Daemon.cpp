@@ -268,6 +268,13 @@ void Daemon_Master::start_server(void) {
 	MASTER_GAME_SERVER->thr_create();
 	LOG_DEBUG("master_game_server listen at port:%d", server_conf_.master_game_port);
 
+	/// Master Http Server
+	MASTER_HTTP_SERVER->set(server_conf_.master_http_port, server_conf_.receive_timeout, server_conf_.server_send_interval, HTTP);
+	MASTER_HTTP_SERVER->init();
+	MASTER_HTTP_SERVER->start();
+	MASTER_HTTP_SERVER->thr_create();
+	LOG_DEBUG("master_http_server listen at port:%d", server_conf_.master_game_port);
+
 	MASTER_MANAGER->init();
 	MASTER_MANAGER->thr_create();
 
@@ -339,6 +346,8 @@ void Daemon_Game::start_server(int id) {
 	GAME_MANAGER->init(id);
 	GAME_MANAGER->thr_create();
 
+	GAME_V8_MANAGER->thr_create();				//game server v8 engine
+
 	//延迟让服务器启动
 	Time_Value::sleep(server_conf_.server_sleep_time);
 }
@@ -364,8 +373,6 @@ void Daemon_Game::start_client(void) {
 		LOG_FATAL("game_master_connector fatal cid:%d,port:%d", cid, server_conf_.master_game_port);
 	}
 	GAME_MASTER_CONNECTOR->thr_create();
-
-	GAME_V8_MANAGER->thr_create();				//game server v8 engine
 
 	Daemon::loop();
 }

@@ -29,7 +29,7 @@ CREATE TABLE `role` (
   vip_level int(11) NOT NULL default '0',
   vip_exp int(11) NOT NULL default '0',
   charge_gold int(11) NOT NULL default '0',
-  guild_id int(11) NOT NULL default '0',
+  guild_id bigint(20) NOT NULL default '0',
   guild_name varchar(120) NOT NULL default '',
   PRIMARY KEY (role_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -64,20 +64,10 @@ CREATE TABLE `guild` (
   guild_name varchar(120) NOT NULL default '',
   chief_id bigint(20) NOT NULL default '0',
   create_time int(11) NOT NULL default '0',
-  is_change tinyint(3) NOT NULL default '0',
-  apply_list blob NOT NULL,
   member_list blob NOT NULL, 
   PRIMARY KEY (guild_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `offline`;
-CREATE TABLE `offline` (
-  role_id bigint(20) NOT NULL auto_increment,
-  guild_id bigint(20) NOT NULL default '0',
-  guild_name varchar(120) NOT NULL default '',
-  flag int(11), 
-  PRIMARY KEY (role_id)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `rank`;
 CREATE TABLE `rank` (
@@ -86,4 +76,12 @@ CREATE TABLE `rank` (
   min_role_id bigint(20) NOT NULL default '0',
   member_map blob NOT NULL, 
   PRIMARY KEY (rank_type)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `offline`;
+CREATE TABLE `offline` (
+  role_id bigint(20) NOT NULL auto_increment,
+  guild_id bigint(20) NOT NULL default '0',
+  guild_name varchar(120) NOT NULL default '',
+  PRIMARY KEY (role_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -8,11 +8,9 @@
 #ifndef DB_MANAGER_H_
 #define DB_MANAGER_H_
 
-#include "Base_Struct.h"
 #include "DB_Worker.h"
 #include "Log.h"
 #include "Object_Pool.h"
-#include "Block_Buffer.h"
 #include "Thread_Mutex.h"
 
 class DB_Manager {

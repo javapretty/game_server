@@ -13,8 +13,8 @@ require('util.js');
 require('timer.js');
 require('master_player.js');
 require('guild.js');
-require('offline.js');
 require('rank.js');
+require('offline.js');
 
 //cid----master_player  cid = gate_cid * 10000 + player_cid
 var master_player_gate_cid_map = new Map();
@@ -31,12 +31,12 @@ var scene_game_map = new Map();
 var config = new Config();
 config.init();
 
-//公会
+//公会管理器
 var guild_manager = new Guild();
+//排行榜管理器
+var rank_manager = new Rank();
 //离线管理器
 var offline_manager = new Offline();
-//排行榜
-var rank_manager = new Rank();
 
 //定时器管理器
 var timer = new Timer();
@@ -68,6 +68,13 @@ function main() {
 		if(obj != null) {
 			all_empty = false;
 			process_master_game_msg(obj);
+		}
+		
+		//获得http服务器消息object
+		var obj = pop_master_http_msg_object();
+		if(obj != null) {
+			all_empty = false;
+			process_master_http_msg(obj);
 		}
 		
 		//获得下线玩家的cid
@@ -102,7 +109,7 @@ function main() {
 
 function process_master_gate_msg(obj) {
 	//gate通知master玩家登录，加载信息
-	if (obj.msg_id == Msg_Gate.SYNC_GATE_MASTER_PLAYER_LOGIN) {
+	if (obj.msg_id == Msg.SYNC_GATE_MASTER_PLAYER_LOGIN) {
 		var master_player = master_player_role_id_map.get(obj.role_id);
 		if (master_player == null) {
 			master_player = new Master_Player();
@@ -119,28 +126,28 @@ function process_master_gate_msg(obj) {
 	}
 	
 	switch(obj.msg_id) {
-	case Msg_Gate.SYNC_GATE_MASTER_PLAYER_LOGOUT:
+	case Msg.SYNC_GATE_MASTER_PLAYER_LOGOUT:
 		master_player.cplayer.link_close();
 		break;
-	case Msg_CM.REQ_SEND_CHAT_INFO:
+	case Msg.REQ_SEND_CHAT_INFO:
 		master_player.send_chat_info(obj);
 		break;
-	case Msg_CM.REQ_CREATE_GUILD:
+	case Msg.REQ_CREATE_GUILD:
 		guild_manager.create_guild(master_player, obj);
 		break;
-	case Msg_CM.REQ_DISSOVE_GUILD:
+	case Msg.REQ_DISSOVE_GUILD:
 		guild_manager.dissove_guild(master_player, obj);
 		break;
-	case Msg_CM.REQ_JOIN_GUILD:
+	case Msg.REQ_JOIN_GUILD:
 		guild_manager.join_guild(master_player, obj);
 		break;
-	case Msg_CM.REQ_FETCH_RANK:
+	case Msg.REQ_FETCH_RANK:
 		rank_manager.fetch_rank_info(master_player, obj);
 		break;
-	case Msg_CM.REQ_GUILD_ALLOW_JOIN:
+	case Msg.REQ_GUILD_ALLOW_JOIN:
 		guild_manager.allow_join_player(master_player, obj);
 		break;
-	case Msg_CM.REQ_GUILD_KICK_OUT:
+	case Msg.REQ_GUILD_KICK_OUT:
 		guild_manager.kick_out_player(master_player, obj);
 		break;
 	default:
@@ -151,36 +158,51 @@ function process_master_gate_msg(obj) {
 
 function process_master_db_msg(obj) {
 	switch(obj.msg_id) {
-	case Msg_MD.SYNC_DB_MASTER_CREATE_GUILD:
+	case Msg.SYNC_DB_MASTER_CREATE_GUILD:
 		guild_manager.create_guild_res(obj);
 		break;
-	case Msg_MD.SYNC_DB_MASTER_LOAD_GUILD:
+	case Msg.SYNC_DB_MASTER_LOAD_GUILD:
 		guild_manager.load_data(obj);
 		break;
-	case Msg_MD.SYNC_DB_MASTER_LOAD_OFFLINE:
-		offline_manager.load_data(obj);
-		break;
-	case Msg_MD.SYNC_DB_MASTER_LOAD_RANK:
+	case Msg.SYNC_DB_MASTER_LOAD_RANK:
 		rank_manager.load_data(obj);
 		break;
+	case Msg.SYNC_DB_MASTER_LOAD_OFFLINE:
+		offline_manager.load_data(obj);
+		break;
 	default:
-		print('process_master_db_msg, msg_id: not exist', msg_id);
+		print('process_master_db_msg, msg_id: not exist', obj.msg_id);
 		break;
 	}
 }
 
 function process_master_game_msg(obj) {
-	if (obj.msg_id == Msg_GM.SYNC_GAME_MASTER_PLYAER_LOGIN) {
+	switch(obj.msg_id) {
+	case Msg.SYNC_GAME_MASTER_PLYAER_LOGIN: {
 		var master_player = master_player_role_id_map.get(obj.player_info.role_id);
 		if (master_player == null) {
 			master_player = new Master_Player();
 		}
 		master_player.load_player_data(obj.cid, obj.player_cid, obj.player_info);
+		break;
 	}
-	else if (obj.msg_id == Msg_GM.SYNC_GAME_SCENE_ID) {
+	default:
+		print('process_master_game_msg, msg_id: not exist', obj.msg_id);
+		break;
+	}
+}
+
+function process_master_http_msg(obj) {
+	switch(obj.msg_id) {
+	case Msg.HTTP_MODIFY_PLAYR_GOLD: {
+		print('process_master_http_msg, msg_id:', obj.msg_id, " role_name:", obj.role_name, " gold:", obj.gold);
+		break;
+	}
+	case obj.msg_id == Msg.SYNC_GAME_SCENE_ID: {
 		scene_game_map.set(obj.scene_id, obj.game_id);
+		break;
 	}
-	else if (obj.msg_id == Msg_GM.SYNC_PLAYER_CHANGE_SCENE) {
+	case obj.msg_id == Msg.SYNC_PLAYER_CHANGE_SCENE: {
 		var master_player = master_player_role_id_map.get(obj.role_id);
 		if(master_player == null) {
 			print("change scene error! player not exists!");
@@ -189,6 +211,11 @@ function process_master_game_msg(obj) {
 		var msg = new MSG_510300();
 		msg.game_id = scene_game_map.get(obj.target_scene);
 		master_player.send_succuss_msg(Msg_MC.RES_PLAYER_CHANGE_SCENE, msg);
+		break;
+	}
+	default:
+		print('process_master_game_msg, msg_id: not exist', obj.msg_id);
+		break;
 	}
 }
 

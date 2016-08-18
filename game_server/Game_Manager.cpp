@@ -31,7 +31,6 @@ Game_Manager *Game_Manager::instance(void) {
 int Game_Manager::init(int id) {
 	GAME_TIMER->thr_create();			///定时器
 	MSG_MANAGER->init();
-	SCENE_MANAGER->create_new_scene(1001);
 	server_id_ = id;
 	return 0;
 }

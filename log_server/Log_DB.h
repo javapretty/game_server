@@ -8,8 +8,8 @@
 #ifndef LOG_DB_H_
 #define LOG_DB_H_
 
-#include "Base_Struct.h"
 #include "Mysql_Conn.h"
+#include "Public_Struct.h"
 
 class Log_DB {
 public:

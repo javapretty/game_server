@@ -13,11 +13,15 @@
 
 class Mysql_Operator {
 public:
+	typedef boost::unordered_map<int64_t, Mysql_Conn *> Connection_Map;
+
 	static Mysql_Operator *instance(void);
-	Mysql_Conn *connection(void) { return mysql_conn_; }
+	Mysql_Conn *connection(void);
 
 	int init(void);
 	int load_db_cache(void);
+
+	int64_t generate_id(std::string type);
 	int64_t create_player(Create_Role_Info &role_info);
 	int64_t create_guild(Create_Guild_Info &guild_info);
 
@@ -29,7 +33,8 @@ private:
 
 private:
 	static Mysql_Operator *instance_;
-	Mysql_Conn* mysql_conn_;
+	Connection_Map connection_map_;
+	MUTEX connection_map_lock_;
 
 	int agent_num_;				//代理编号
 	int server_num_;			//服务器编号

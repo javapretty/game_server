@@ -18,7 +18,7 @@ public:
 	virtual void save_data(Block_Buffer &buffer);
 
 private:
-	void build_sql_arg(Field_Info &field_info, Block_Buffer &buffer, std::string &str_name, std::string &str_value);
+	void build_sql_arg(const Field_Info &field_info, Block_Buffer &buffer, std::string &str_name, std::string &str_value);
 };
 
 #endif /* LOG_SERVER_LOG_STRUCT_H_ */

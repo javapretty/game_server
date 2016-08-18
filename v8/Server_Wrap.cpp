@@ -5,6 +5,7 @@
  *      Author: zhangyalei
  */
 
+#include "json/json.h"
 #include "V8_Wrap.h"
 #include "Buffer_Wrap.h"
 #include "Player_Wrap.h"
@@ -284,6 +285,36 @@ void pop_master_db_msg_object(const FunctionCallbackInfo<Value>& args) {
 	}
 }
 
+//可以使用curl命令，向服务器发送post消息，格式如下
+//curl -d "{\"msg_id\":180000, \"role_name\":\"aa\", \"gold\":1000}" "http://127.0.0.1:8080"
+void pop_master_http_msg_object(const FunctionCallbackInfo<Value>& args) {
+	Block_Buffer *buf = MASTER_MANAGER->pop_master_http_data();
+	if (buf) {
+		int32_t http_cid = buf->read_int32();
+		std::string post_data = buf->read_string();
+		LOG_INFO("http post_data:%s", post_data.c_str());
+	  Json::Reader reader;
+	  Json::Value value;
+		if ( !reader.parse(post_data, value) ) {
+			LOG_ERROR("post_data:%s not json, cannot parse", post_data.c_str());
+			args.GetReturnValue().SetNull();
+			return;
+		}
+
+		int msg_id = value["msg_id"].asInt();
+		Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
+		if(iter != MSG_MANAGER->msg_struct_id_map().end()){
+			Msg_Struct *msg_struct  = dynamic_cast<Msg_Struct*>(iter->second);
+			args.GetReturnValue().Set(msg_struct->build_msg_object(args.GetIsolate(), http_cid, msg_id, value));
+			MASTER_HTTP_SERVER->push_block(http_cid, buf);
+		} else {
+			args.GetReturnValue().SetNull();
+		}
+	} else {
+		args.GetReturnValue().SetNull();
+	}
+}
+
 void send_master_msg_to_gate(const FunctionCallbackInfo<Value>& args) {
 	int gate_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int player_cid = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
@@ -342,6 +373,20 @@ void send_master_msg_to_log(const FunctionCallbackInfo<Value>& args) {
 	}
 	buf.finish_message();
 	MASTER_MANAGER->send_to_log(buf);
+}
+
+void send_master_msg_to_http(const FunctionCallbackInfo<Value>& args) {
+	int http_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int msg_id = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	Block_Buffer buf;
+	buf.make_inner_message(msg_id);
+	Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
+	if(iter != MSG_MANAGER->msg_struct_id_map().end()){
+		Msg_Struct *msg_struct  = dynamic_cast<Msg_Struct*>(iter->second);
+		msg_struct->build_msg_buffer(args.GetIsolate(), args[2]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked(), buf);
+	}
+	buf.finish_message();
+	MASTER_MANAGER->send_to_http(http_cid, buf);
 }
 
 void get_drop_master_player_cid(const FunctionCallbackInfo<Value>& args) {

@@ -55,7 +55,7 @@ function Hero_Detail() {
 	this.property_info = new Array();
 }
 
-function Item_Info() {
+function Item_Detail() {
 	this.item_id = 0;
 	this.amount = 0;
 	this.level = 0;
@@ -85,10 +85,9 @@ function Guild_Member_Detail() {
 	this.role_id = 0;
 	this.role_name = "";
 	this.level = 0;
-	this.career = 0;
 }
 
-function Rank_Member() {
+function Rank_Member_Detail() {
 	this.role_id = 0;
 	this.role_name = "";
 	this.value = 0;
@@ -101,7 +100,6 @@ function Master_Player_Info() {
 	this.level = 0;
 	this.gender = 0;
 	this.career = 0;
-	this.vip_level = 0;
 }
 
 function Player_Data() {
@@ -159,16 +157,7 @@ function Guild_Info() {
 	this.guild_name = "";
 	this.chief_id = 0;
 	this.create_time = 0;
-	this.is_change = 0;
-	this.apply_list = new Array();
 	this.member_list = new Array();
-}
-
-function Offline_Info() {
-	this.role_id = 0;
-	this.guild_id = 0;
-	this.guild_name = "";
-	this.flag = 0;
 }
 
 function Rank_Info() {
@@ -176,6 +165,12 @@ function Rank_Info() {
 	this.min_value = 0;
 	this.min_role_id = 0;
 	this.member_map = new Map();
+}
+
+function Offline_Info() {
+	this.role_id = 0;
+	this.guild_id = 0;
+	this.guild_name = "";
 }
 
 function MSG_100000() {
@@ -251,26 +246,10 @@ function MSG_510102() {
 
 function MSG_110103() {
 	this.guild_id = 0;
+	this.role_id = 0;
 }
 
 function MSG_510103() {
-}
-
-function MSG_110104() {
-	this.guild_id = 0;
-	this.role_id = 0;
-	this.allow = 0;
-}
-
-function MSG_510104() {
-}
-
-function MSG_110105() {
-	this.guild_id = 0;
-	this.role_id = 0;
-}
-
-function MSG_510105() {
 }
 
 function MSG_110201() {
@@ -321,14 +300,14 @@ function MSG_520100() {
 }
 
 function MSG_120101() {
-	this.item = new Item_Info();
+	this.item = new Item_Detail();
 }
 
 function MSG_520101() {
 }
 
 function MSG_120102() {
-	this.item = new Item_Info();
+	this.item = new Item_Detail();
 }
 
 function MSG_520102() {
@@ -407,14 +386,14 @@ function MSG_120304() {
 	this.hero_id = 0;
 	this.equip_index = 0;
 	this.on = 0;
-	this.equip_info = new Item_Info();
+	this.equip_info = new Item_Detail();
 }
 
 function MSG_520304() {
 	this.hero_id = 0;
 	this.equip_index = 0;
 	this.on = 0;
-	this.equip_info = new Item_Info();
+	this.equip_info = new Item_Detail();
 }
 
 function MSG_120305() {
@@ -504,19 +483,19 @@ function MSG_550103() {
 }
 
 function MSG_150104() {
-	this.offline_list = new Array();
+	this.rank_list = new Array();
 }
 
 function MSG_550104() {
-	this.offline_list = new Array();
+	this.rank_list = new Array();
 }
 
 function MSG_150105() {
-	this.rank_list = new Array();
+	this.offline_list = new Array();
 }
 
 function MSG_550105() {
-	this.rank_list = new Array();
+	this.offline_list = new Array();
 }
 
 function MSG_160000() {
@@ -539,7 +518,7 @@ function MSG_160102() {
 	this.game_id = 0;
 }
 
-function MSG_180001() {
+function MSG_170000() {
 	this.role_id = 0;
 	this.role_name = "";
 	this.account = "";
@@ -547,6 +526,11 @@ function MSG_180001() {
 	this.client_ip = "";
 	this.login_time = 0;
 	this.logout_time = 0;
+}
+
+function MSG_180000() {
+	this.role_name = "";
+	this.gold = 0;
 }
 
 function MSG_300001() {

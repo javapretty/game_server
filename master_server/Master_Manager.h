@@ -46,6 +46,7 @@ public:
 	int send_to_game(int game_cid, Block_Buffer &buf);
 	int send_to_db(Block_Buffer &buf);
 	int send_to_log(Block_Buffer &buf);
+	int send_to_http(int http_cid, Block_Buffer &buf);
 
 	/// 关闭客户端连接
 	int close_client(int gate_cid, int player_cid, int error_code);
@@ -63,6 +64,8 @@ public:
 	Block_Buffer* pop_master_game_data();
 	int push_master_db_data(Block_Buffer *buf);
 	Block_Buffer* pop_master_db_data();
+	int push_master_http_data(Block_Buffer *buf);
+	Block_Buffer* pop_master_http_data();
 	int push_drop_player_cid(int cid);
 	int pop_drop_player_cid(void);
 
@@ -111,10 +114,11 @@ private:
 	Block_Pool block_pool_;
 	Master_Player_Pool master_player_pool_;
 
-	Int_List tick_list_;								//定时器列表
+	Int_List tick_list_;									//定时器列表
 	Data_List master_gate_data_list_;		//gate-->master
 	Data_List master_game_data_list_;		//game-->master
 	Data_List master_db_data_list_;			//db-->master
+	Data_List master_http_data_list_;		//http-->master
 	Int_List drop_player_cid_list_;			//掉线的玩家cid列表
 
 	Master_Player_Gate_Cid_Map player_gate_cid_map_;
@@ -170,6 +174,14 @@ inline int Master_Manager::push_master_db_data(Block_Buffer *buf){
 
 inline Block_Buffer *Master_Manager::pop_master_db_data(void){
 	return master_db_data_list_.pop_front();
+}
+
+inline int Master_Manager::push_master_http_data(Block_Buffer *buf){
+	return master_http_data_list_.push_back(buf);
+}
+
+inline Block_Buffer *Master_Manager::pop_master_http_data(void){
+	return master_http_data_list_.pop_front();
 }
 
 inline int Master_Manager::push_drop_player_cid(int cid) {

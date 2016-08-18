@@ -17,6 +17,7 @@
 #include "Daemon.h"
 #include "Daemon_Server.h"
 #include "Server_Config.h"
+#include "Scene_Manager.h"
 
 Daemon_Server::Daemon_Server(void)
 : daemon_map_(64),
@@ -365,6 +366,7 @@ void Daemon_Server::run_master_server(void) {
 void Daemon_Server::run_game_server(int server_id) {
 	DAEMON_GAME->start_server(server_id);
 	DAEMON_GAME->start_client();
+	SCENE_MANAGER->load_scene();
 }
 
 void Daemon_Server::run_gate_server(int server_id) {

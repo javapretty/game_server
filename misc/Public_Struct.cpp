@@ -55,6 +55,7 @@ void Server_Conf::init_server_conf(void) {
 	login_gate_port = server_conf["login_server"]["gate_port"].asInt();
 	master_gate_port = server_conf["master_server"]["gate_port"].asInt();
 	master_game_port = server_conf["master_server"]["game_port"].asInt();
+	master_http_port = server_conf["master_server"]["http_port"].asInt();
 	for(uint i = 0; i < server_conf["game_server"].size(); i++){
 		Server_Detail server_info;
 		server_info.id = server_conf["game_server"][i]["id"].asInt();
@@ -71,7 +72,6 @@ void Server_Conf::init_server_conf(void) {
 		gate_list.push_back(server_info);
 	}
 }
-
 Position3D::Position3D():
 		x(0.f),
 		y(0.f),

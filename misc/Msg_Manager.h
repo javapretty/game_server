@@ -9,6 +9,7 @@
 #define MSG_MANAGER_H_
 
 #include "Msg_Struct.h"
+#include "Public_Struct.h"
 
 class Msg_Manager {
 public:

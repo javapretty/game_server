@@ -9,19 +9,20 @@ function Rank() {
 }
 
 Rank.prototype.load_data = function(obj) {
-	print('load rank, rank size:', obj.rank_list.length);	
+	print('load rank data, size:', obj.rank_list.length);	
 	for(var i = 0; i < obj.rank_list.length; i++) {
-		print('rank type:', obj.rank_list[i].rank_type, ' min_role_id:', obj.rank_list[i].min_role_id);	
-		this.rank_map.set(obj.rank_list[i].rank_type, obj.rank_list[i]);
+		var rank_info = obj.rank_list[i];
+		print('rank type:', rank_info.rank_type, ' min_role_id:', rank_info.min_role_id);	
+		this.rank_map.set(rank_info.rank_type, rank_info);
 	}
 }
 
 Rank.prototype.save_data = function() {
-	var msg = new MSG_150105();
+	var msg = new MSG_150104();
 	for (var value of this.rank_map.values()) {
   		msg.rank_list.push(value);
 	}
-	send_master_msg_to_db(Msg_MD.SYNC_MASTER_DB_SAVE_RANK, msg);
+	send_master_msg_to_db(Msg.SYNC_MASTER_DB_SAVE_RANK, msg);
 }
 
 Rank.prototype.fetch_rank_info = function(player, obj) {
@@ -40,7 +41,7 @@ Rank.prototype.fetch_rank_info = function(player, obj) {
 			break;
 		}
 	}
-	player.send_success_msg(Msg_MC.RES_FETCH_RANK, msg);
+	player.send_success_msg(Msg.RES_FETCH_RANK, msg);
 }
 
 Rank.prototype.get_rank_value = function(type, player) {
@@ -73,7 +74,7 @@ Rank.prototype.update_rank = function(type, player) {
 	var rank_value = this.get_rank_value(type, player);
 	var rank_member = rank_info.member_map.get(player.player_info.role_id);
 	if(rank_member == null) {
-		rank_member = new Rank_Member();
+		rank_member = new Rank_Member_Detail();
 		rank_member.role_id = player.player_info.role_id;
 		rank_member.role_name = player.player_info.role_name;
 		rank_member.value = rank_value;

@@ -94,10 +94,10 @@ function main() {
 }
 
 function process_game_gate_msg(obj) {
-	if (obj.msg_id == Msg_CG.REQ_FETCH_ROLE_INFO) {
+	if (obj.msg_id == Msg.REQ_FETCH_ROLE_INFO) {
 		fetch_role_info(obj);
 		return;
-	} else if (obj.msg_id == Msg_CG.REQ_CREATE_ROLE) { 
+	} else if (obj.msg_id == Msg.REQ_CREATE_ROLE) { 
 		create_role(obj);
 		return;
 	}
@@ -110,49 +110,49 @@ function process_game_gate_msg(obj) {
 	}
 	
 	switch(obj.msg_id) {
-	case Msg_Gate.SYNC_GATE_GAME_PLAYER_LOGOUT:
+	case Msg.SYNC_GATE_GAME_PLAYER_LOGOUT:
 		game_player.cplayer.link_close();
 		break;	
-	case Msg_CG.REQ_BUY_VITALITY:
+	case Msg.REQ_BUY_VITALITY:
 		game_player.buy_vitality();
 		break;	
-	case Msg_CG.REQ_FETCH_BAG_INFO:
+	case Msg.REQ_FETCH_BAG_INFO:
 		game_player.bag.fetch_bag_info();
 		break;
-	case Msg_CG.REQ_USE_ITEM:
+	case Msg.REQ_USE_ITEM:
 		game_player.bag.use_item(obj);
 		break;
-	case Msg_CG.REQ_SELL_ITEM:
+	case Msg.REQ_SELL_ITEM:
 		game_player.bag.sell_item(obj);
 		break
-	case Msg_CG.REQ_FETCH_MAIL_INFO:
+	case Msg.REQ_FETCH_MAIL_INFO:
 		game_player.mail.fetch_mail_info();
 		break;
-	case Msg_CG.REQ_PICKUP_MAIL:
+	case Msg.REQ_PICKUP_MAIL:
 		game_player.mail.pickup_mail(obj);
 		break;
-	case Msg_CG.REQ_DEL_MAIL:
+	case Msg.REQ_DEL_MAIL:
 		game_player.mail.delete_mail(obj);
 		break;
-	case Msg_CG.REQ_SEND_MAIL:
+	case Msg.REQ_SEND_MAIL:
 		game_player.mail.send_mail(obj);
 		break;
-	case Msg_CG.REQ_FETCH_HERO_INFO:
+	case Msg.REQ_FETCH_HERO_INFO:
 		game_player.hero.fetch_hero_info(obj);
 		break;
-	case Msg_CG.REQ_ADD_HERO_STAR:
+	case Msg.REQ_ADD_HERO_STAR:
 		game_player.hero.add_hero_star(obj);
 		break;
-	case Msg_CG.REQ_ADD_HERO_QUALITY:
+	case Msg.REQ_ADD_HERO_QUALITY:
 		game_player.hero.add_hero_quality(obj);
 		break;
-	case Msg_CG.REQ_ADD_EQUIP_LEVEL:
+	case Msg.REQ_ADD_EQUIP_LEVEL:
 		game_player.hero.add_equip_level(obj);
 		break;
-	case Msg_CG.REQ_EQUIP_ON_OFF:
+	case Msg.REQ_EQUIP_ON_OFF:
 		game_player.hero.equip_on_off(obj);
 		break;
-	case Msg_CG.REQ_ADD_SKILL_LEVEL:
+	case Msg.REQ_ADD_SKILL_LEVEL:
 		game_player.hero.add_skill_level(obj);
 		break;
 	case Msg_CG.REQ_MOVE_TO_POINT:
@@ -169,12 +169,12 @@ function process_game_gate_msg(obj) {
 
 function process_game_db_msg(obj) {	
 	switch(obj.msg_id){
-	case Msg_GD.SYNC_DB_GAME_LOAD_PLAYER:
-	case Msg_GD.SYNC_DB_GAME_CREATE_PLAYER: {
+	case Msg.SYNC_DB_GAME_LOAD_PLAYER:
+	case Msg.SYNC_DB_GAME_CREATE_PLAYER: {
 		process_loaded_player_data(obj);
 		break;
 	}
-	case Msg_GD.SYNC_DB_GAME_SAVE_PLAYER: {
+	case Msg.SYNC_DB_GAME_SAVE_PLAYER: {
 		logout_map.delete(obj.account);
 		break;
 	}
@@ -192,7 +192,7 @@ function process_game_master_msg(obj) {
 	}
 	
 	switch(obj.msg_id){
-	case Msg_GM.SYNC_MASTER_GAME_GUILD_INFO: {
+	case Msg.SYNC_MASTER_GAME_GUILD_INFO: {
 		game_player.set_guild_info(obj);
 		break;
 	}
@@ -222,7 +222,7 @@ function fetch_role_info(obj) {
 
 		var msg = new MSG_150001();
 		msg.account = obj.account;
-		send_game_msg_to_db(Msg_GD.SYNC_GAME_DB_LOAD_PLAYER, msg);
+		send_game_msg_to_db(Msg.SYNC_GAME_DB_LOAD_PLAYER, msg);
 	} else {
 		//玩家重复登录，获取信息
 		print('player login again, account:', obj.account);
@@ -252,7 +252,7 @@ function create_role(obj) {
 	msg.role_info.client_ip = obj.client_ip;
 	msg.role_info.gender = obj.gender;
 	msg.role_info.career = obj.career;
-	send_game_msg_to_db(Msg_GD.SYNC_GAME_DB_CREATE_PLAYER, msg);
+	send_game_msg_to_db(Msg.SYNC_GAME_DB_CREATE_PLAYER, msg);
 }
 
 function process_loaded_player_data(obj) {
@@ -275,12 +275,12 @@ function process_loaded_player_data(obj) {
 	switch(obj.status) {
 	//[角色登录]没有玩家数据, 提示创建新角色
 	case Role_Status.ROLE_NOT_EXIST:	{
-		send_game_msg_to_gate(gate_cid, player_cid, Msg_GC.RES_FETCH_ROLE_INFO, Error_Code.ERROR_ROLE_NOT_EXIST);
+		send_game_msg_to_gate(gate_cid, player_cid, Msg.RES_FETCH_ROLE_INFO, Error_Code.ERROR_ROLE_NOT_EXIST);
 		break;
 	}
 	//[创建角色]创建的角色名已存在
 	case Role_Status.ROLE_HAS_EXIST: {
-		send_game_msg_to_gate(gate_cid, player_cid, Msg_GC.RES_CREATE_ROLE, Error_Code.ERROR_ROLE_NAME_EXIST);
+		send_game_msg_to_gate(gate_cid, player_cid, Msg.RES_CREATE_ROLE, Error_Code.ERROR_ROLE_NAME_EXIST);
 		break;
 	}
 	//[创建角色]创建角色成功
