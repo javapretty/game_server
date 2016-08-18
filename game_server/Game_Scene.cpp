@@ -4,6 +4,7 @@
  */
 
 #include "Game_Scene.h"
+#include "Log.h"
 
 Game_Scene::Game_Scene(int type, SCENE_ID id):
 	scence_type_(type),
@@ -41,6 +42,7 @@ int Game_Scene::load_scene_map(){
 }
 
 int Game_Scene::on_enter_scene(Scene_Entity *entity){
+	//LOG_INFO("Player enter scene %d", scene_id_);
 	entities_map_[entity->entity_id()] = entity;
 	entity->scene(this);
 	aoi_manager_->on_enter_aoi(entity->aoi_entity());

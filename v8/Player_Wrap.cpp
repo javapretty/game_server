@@ -62,13 +62,22 @@ void enter_scene(const FunctionCallbackInfo<Value>& args) {
 	float z = args[3]->NumberValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	player->scene_entity()->pos().set_position(x, y, z);
 	Game_Scene *scene = SCENE_MANAGER->get_scene(scene_id);
-	if(scene != NULL) {
-		scene->on_enter_scene(player->scene_entity());
+	if(scene == NULL) {
+		LOG_ERROR("Scene %d not exist!", scene_id);
+		return;
 	}
+	scene->on_enter_scene(player->scene_entity());
 }
 
 void leave_scene(const FunctionCallbackInfo<Value>& args) {
-
+	Game_Player *player = unwrap_game_player(args.Holder());
+	if(!player) {
+		return;
+	}
+	Game_Scene *scene = player->scene_entity()->scene();
+	if(scene != NULL){
+			scene->on_leave_scene(player->scene_entity());
+	}
 }
 
 void move_to_point(const FunctionCallbackInfo<Value>& args) {
@@ -93,7 +102,7 @@ void move_to_point(const FunctionCallbackInfo<Value>& args) {
 
 void set_aoi_info(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 1) {
-		LOG_ERROR("move_to_point args error, length: %d\n", args.Length());
+		LOG_ERROR("set_aoi_info args error, length: %d\n", args.Length());
 		return;
 	}
 	Game_Player *player = unwrap_game_player(args.Holder());
