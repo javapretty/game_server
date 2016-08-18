@@ -194,6 +194,10 @@ function process_master_http_msg(obj) {
 	switch(obj.msg_id) {
 	case Msg.HTTP_MODIFY_PLAYR_GOLD: {
 		print('process_master_http_msg, msg_id:', obj.msg_id, " role_name:", obj.role_name, " gold:", obj.gold);
+		var msg = new MSG_180000();
+		msg.role_name = obj.role_name;
+		msg.gold = obj.gold;
+		send_master_msg_to_http(obj.cid, obj.msg_id, obj);
 		break;
 	}
 	default:

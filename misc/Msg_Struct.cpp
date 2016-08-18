@@ -13,7 +13,7 @@ Msg_Struct::Msg_Struct(Xml &xml, TiXmlNode *node) : Base_Struct(xml, node) {}
 
 Msg_Struct::~Msg_Struct() {}
 
-v8::Local<v8::Object> Msg_Struct::build_msg_object(Isolate* isolate, int cid, int msg_id, const Json::Value &value) {
+v8::Local<v8::Object> Msg_Struct::build_http_msg_object(Isolate* isolate, int cid, int msg_id, const Json::Value &value) {
 	EscapableHandleScope handle_scope(isolate);
 
 	Local<ObjectTemplate> localTemplate = ObjectTemplate::New(isolate);
@@ -27,38 +27,27 @@ v8::Local<v8::Object> Msg_Struct::build_msg_object(Isolate* isolate, int cid, in
 
 	for(std::vector<Field_Info>::const_iterator iter = field_vec().begin();
 			iter != field_vec().end(); iter++) {
-		Local<Value> js_value;
-		if(iter->field_type == "int8") {
-			int8_t val = value[iter->field_name].asInt();
-			js_value = Int32::New(isolate, val);
-		}
-		else if(iter->field_type == "int16") {
-			int16_t val = value[iter->field_name].asInt();
-			js_value = Int32::New(isolate, val);
-		}
-		else if(iter->field_type == "int32") {
+		Local<Value> js_value = Local<Value>();
+		if((iter->field_type == "int8" || iter->field_type == "int16"
+				|| iter->field_type == "int32") && value[iter->field_name].isInt()) {
 			int32_t val = value[iter->field_name].asInt();
 			js_value = Int32::New(isolate, val);
 		}
-		else if(iter->field_type == "int64") {
-			int64_t val = value[iter->field_name].asDouble();
-			js_value = Number::New(isolate, val);
-		}
-		else if(iter->field_type == "double") {
+		else if((iter->field_type == "int64" || iter->field_type == "double") &&
+				value[iter->field_name].isDouble()) {
 			double val = value[iter->field_name].asDouble();
 			js_value = Number::New(isolate, val);
 		}
-		else if(iter->field_type == "bool") {
+		else if(iter->field_type == "bool" && value[iter->field_name].isBool()) {
 			bool val = value[iter->field_name].asBool();
 			js_value = Boolean::New(isolate, val);
 		}
-		else if(iter->field_type == "string") {
+		else if(iter->field_type == "string" && value[iter->field_name].isString()) {
 			std::string val = value[iter->field_name].asString();
 			js_value = String::NewFromUtf8(isolate, val.c_str(), NewStringType::kNormal).ToLocalChecked();
 		}
 		else {
 			LOG_ERROR("Can not find the field_type:%s, struct_name:%s", iter->field_type.c_str(), struct_name().c_str());
-			return handle_scope.Escape(Local<Object>());
 		}
 
 		buf_obj->Set(isolate->GetCurrentContext(),
@@ -66,6 +55,58 @@ v8::Local<v8::Object> Msg_Struct::build_msg_object(Isolate* isolate, int cid, in
 				js_value).FromJust();
 	}
 	return handle_scope.Escape(buf_obj);
+}
+
+void Msg_Struct::build_http_msg_buffer(Isolate* isolate, v8::Local<v8::Object> object, std::string &str) {
+	std::stringstream stream;
+	for(std::vector<Field_Info>::const_iterator iter = field_vec().begin();
+			iter != field_vec().end(); iter++) {
+		stream.str("");
+		stream << "\"" << iter->field_name << "\":";
+		Local<Value> value = object->Get(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, iter->field_name.c_str(), NewStringType::kNormal).ToLocalChecked()).ToLocalChecked();
+		if(iter->field_type == "int8" || iter->field_type == "int16" ||
+				iter->field_type == "int32") {
+			int32_t val = 0;
+			if (value->IsInt32()) {
+				val = value->Int32Value(isolate->GetCurrentContext()).FromJust();
+			}
+			stream << val << ",";
+		}
+		else if(iter->field_type == "int64") {
+			int64_t val = 0;
+			if (value->IsNumber()) {
+				val = value->NumberValue(isolate->GetCurrentContext()).FromJust();
+			}
+			stream << val << ",";
+		}
+		else if(iter->field_type == "double") {
+			double val = 0;
+			if (value->IsNumber()) {
+				val = value->NumberValue(isolate->GetCurrentContext()).FromJust();
+			}
+			stream << val << ",";
+		}
+		else if(iter->field_type == "bool") {
+			bool val = 0;
+			if (value->IsBoolean()) {
+				val = value->BooleanValue(isolate->GetCurrentContext()).FromJust();
+			}
+			stream << val << ",";
+		}
+		else if(iter->field_type == "string") {
+			if (value->IsString()) {
+				String::Utf8Value str(value->ToString(isolate->GetCurrentContext()).ToLocalChecked());
+				stream << "\"" << ToCString(str) << "\",";
+			} else {
+				stream << "\"\",";
+			}
+		}
+		else {
+			LOG_ERROR("Can not find the field_type:%s, struct_name:%s", iter->field_type.c_str(), struct_name().c_str());
+		}
+
+		str += stream.str();
+	}
 }
 
 v8::Local<v8::Object> Msg_Struct::build_msg_object(Isolate* isolate, int cid, int player_cid, int msg_id, int status, Block_Buffer &buffer) {

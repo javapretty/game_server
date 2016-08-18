@@ -19,7 +19,9 @@ public:
 	Msg_Struct(Xml &xml, TiXmlNode *node);
 	virtual ~Msg_Struct();
 
-	v8::Local<v8::Object> build_msg_object(Isolate* isolate, int cid, int msg_id, const Json::Value &value);
+	v8::Local<v8::Object> build_http_msg_object(Isolate* isolate, int cid, int msg_id, const Json::Value &value);
+	void build_http_msg_buffer(Isolate* isolate, v8::Local<v8::Object> object, std::string &str);
+
 	v8::Local<v8::Object> build_msg_object(Isolate* isolate, int cid, int player_cid, int msg_id, int status, Block_Buffer &buffer);
 	void build_msg_buffer(Isolate* isolate, v8::Local<v8::Object> object, Block_Buffer &buffer);
 
