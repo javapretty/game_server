@@ -186,6 +186,21 @@ function process_master_game_msg(obj) {
 		master_player.load_player_data(obj.cid, obj.player_cid, obj.player_info);
 		break;
 	}
+	case Msg.SYNC_GAME_SCENE_ID: {
+		scene_game_map.set(obj.scene_id, obj.game_id);
+		break;
+	}
+	case Msg.SYNC_PLAYER_CHANGE_SCENE: {
+		var master_player = master_player_role_id_map.get(obj.role_id);
+		if(master_player == null) {
+			print("change scene error! player not exists!");
+			return;
+		}
+		var msg = new MSG_510300();
+		msg.game_id = scene_game_map.get(obj.target_scene);
+		master_player.send_succuss_msg(Msg.RES_PLAYER_CHANGE_SCENE, msg);
+		break;
+	}
 	default:
 		print('process_master_game_msg, msg_id: not exist', obj.msg_id);
 		break;
@@ -202,24 +217,8 @@ function process_master_http_msg(obj) {
 		send_master_msg_to_http(obj.cid, obj.msg_id, obj);
 		break;
 	}
-	case obj.msg_id == Msg.SYNC_GAME_SCENE_ID: {
-		scene_game_map.set(obj.scene_id, obj.game_id);
-		break;
-	}
-	case obj.msg_id == Msg.SYNC_PLAYER_CHANGE_SCENE: {
-		var master_player = master_player_role_id_map.get(obj.role_id);
-		if(master_player == null) {
-			print("change scene error! player not exists!");
-			return;
-		}
-		var msg = new MSG_510300();
-		msg.game_id = scene_game_map.get(obj.target_scene);
-		master_player.send_succuss_msg(Msg_MC.RES_PLAYER_CHANGE_SCENE, msg);
-		break;
-	}
 	default:
 		print('process_master_game_msg, msg_id: not exist', obj.msg_id);
 		break;
 	}
 }
-

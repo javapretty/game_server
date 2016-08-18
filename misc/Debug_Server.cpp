@@ -194,7 +194,7 @@ int Debug_Server::start(int argc, char *argv[]) {
 	GATE_LOGIN_CONNECTOR->thr_create();
 
 	/// Gate Game Connector
-	GATE_GAME_CONNECTOR_MANAGER->new_connector(game_gate_server.server_id, game_gate_server.server_ip, game_gate_server.server_port, server_conf_.connector_send_interval);
+	GATE_MANAGER->new_game_connector(game_gate_server.server_id, game_gate_server.server_ip, game_gate_server.server_port, server_conf_.connector_send_interval);
 
 	/// Gate Master Connector
 	GATE_MASTER_CONNECTOR->set(server_conf_.master_gate_server.server_ip, server_conf_.master_gate_server.server_port, server_conf_.connector_send_interval);

@@ -5,7 +5,7 @@
 
 #include "Common_Func.h"
 #include "Debug_Server.h"
-#include "Daemon.h"
+#include "Daemon_Server.h"
 #include "Server_Config.h"
 #include "Login_Manager.h"
 #include "Login_Server.h"
@@ -52,7 +52,7 @@ void Login_Manager::get_gate_ip(std::string &account, std::string &ip, int &port
 	Server_List gate_list;
 	int server_type = SERVER_CONFIG->server_misc()["server_type"].asInt();
 	if (server_type == MULTI_PROCESS) {
-		gate_list = DAEMON_LOGIN->server_conf().gate_list;
+		gate_list = DAEMON_SERVER->server_conf().gate_list;
 	} else if (server_type == MULTI_THREAD) {
 		gate_list = DEBUG_SERVER->server_conf().gate_list;
 	}

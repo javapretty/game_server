@@ -18,33 +18,6 @@ public:
 	virtual void process_list(void);
 };
 
-class Gate_Game_Connector_Manager {
-public:
-	typedef boost::unordered_map<int, Gate_Game_Connector *> GATE_GAME_MAP;
-
-	static Gate_Game_Connector_Manager *instance(void);
-
-	void new_connector(int server_id, std::string server_ip, int server_port, Time_Value &send_interval);
-	void free_cache();
-
-	void push_block(int cid, Block_Buffer *buffer);
-	int send_block(int cid, Block_Buffer &buf);
-
-	GATE_GAME_MAP &game_map(){return game_map_;}
-
-private:
-	Gate_Game_Connector_Manager();
-	~Gate_Game_Connector_Manager();
-	Gate_Game_Connector_Manager(const Gate_Game_Connector_Manager &);
-	const Gate_Game_Connector_Manager &operator=(const Gate_Game_Connector_Manager &);
-
-private:
-	static Gate_Game_Connector_Manager *instance_;
-	GATE_GAME_MAP game_map_;
-};
-
-#define GATE_GAME_CONNECTOR_MANAGER Gate_Game_Connector_Manager::instance()
-
 ////////////////////////////////////////////////////////////////////////
 
 class Gate_Login_Connector: public Connector {

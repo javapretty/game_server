@@ -14,13 +14,15 @@
 #include "Object_Pool.h"
 #include "Gate_Player.h"
 
-class Gate_Manager: public Thread {
-	struct Game_Server_Status {
-		int game_cid;
-		int game_server_id;
-		int plyaer_num;
-	};
+class Gate_Game_Connector;
+struct Gate_Game_Connector_Info {
+	Gate_Game_Connector *connector;
+	int game_cid;
+	int game_server_id;
+	int game_player_num;
+};
 
+class Gate_Manager: public Thread {
 public:
 	typedef Object_Pool<Block_Buffer, Thread_Mutex> Block_Pool;
 	typedef Object_Pool<Gate_Player, Spin_Lock> Gate_Player_Pool;
@@ -32,7 +34,7 @@ public:
 	typedef boost::unordered_map<int, Gate_Player *> Gate_Player_Cid_Map;
 	typedef boost::unordered_map<std::string, Gate_Player *> Gate_Player_Account_Map;
 	typedef boost::unordered_map<int, int> Msg_Count_Map;
-	typedef boost::unordered_map<int, Game_Server_Status *> Game_Status_Map;
+	typedef boost::unordered_map<int, Gate_Game_Connector_Info> Game_Connector_Map;
 
 public:
 	static Gate_Manager *instance(void);
@@ -98,9 +100,9 @@ public:
 	void inner_msg_count(Block_Buffer &buf);
 	void inner_msg_count(int msg_id);
 
-	int get_lowest_overload_game();
-	void add_new_game(int game_cid, int game_server_id);
-	int find_game_cid(int game_server_id);
+	void new_game_connector(int server_id, std::string server_ip, int server_port, Time_Value &send_interval);
+	int get_game_cid(int server_id);
+	int get_lowest_player_game_cid(void);
 
 private:
 	Gate_Manager(void);
@@ -135,7 +137,7 @@ private:
 	bool msg_count_onoff_;
 	int server_id_;
 	Msg_Count_Map inner_msg_count_map_; //内部消息统计
-	Game_Status_Map game_status_map_;
+	Game_Connector_Map game_connector_map_;
 };
 
 #define GATE_MANAGER Gate_Manager::instance()

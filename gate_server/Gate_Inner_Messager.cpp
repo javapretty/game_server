@@ -63,12 +63,6 @@ int Gate_Inner_Messager::process_game_block(Block_Buffer &buf) {
 
 	//玩家登录game成功，更新gate玩家信息，同步消息到master
 	if (msg_id == 520001 && status == 0) {
-		Gate_Player *player = GATE_MANAGER->find_cid_gate_player(player_cid);
-		if(player == NULL)
-			return -1;
-		if(!player->is_login())
-			return 0;
-		player->set_login();
 		//RES_FETCH_ROLE_INFO消息第一个字段是64位role_id
 		int read_idx = buf.get_read_idx();
 		int64_t role_id = buf.read_int64();
@@ -102,11 +96,11 @@ int Gate_Inner_Messager::process_master_block(Block_Buffer &buf) {
 	GATE_MANAGER->inner_msg_count(msg_id);
 
 	if(msg_id == 510300) { //切换场景消息
-		int32_t game_id = buf.read_int32();
+		int32_t game_server_id = buf.read_int32();
 		Gate_Player *player = GATE_MANAGER->find_cid_gate_player(player_cid);
 		if(player == NULL)
 			return -1;
-		int game_cid = GATE_MANAGER->find_game_cid(game_id);
+		int game_cid = GATE_MANAGER->get_game_cid(game_server_id);
 		player->set_game_cid(game_cid);
 		Block_Buffer buffer;
 		buffer.make_player_message(120001, 0, player_cid);
@@ -135,7 +129,7 @@ int Gate_Inner_Messager::process_success_login(int player_cid, std::string &acco
 	player->reset();
 	player->set_player_cid(player_cid);
 	player->set_account(account);
-	player->set_game_cid(GATE_MANAGER->get_lowest_overload_game());
+	player->set_game_cid(GATE_MANAGER->get_lowest_player_game_cid());
 	GATE_MANAGER->bind_cid_gate_player(player_cid, *player);
 	GATE_MANAGER->bind_account_gate_player(account, *player);
 

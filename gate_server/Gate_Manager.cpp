@@ -63,7 +63,13 @@ int Gate_Manager::send_to_game(int cid, Block_Buffer &buf) {
 		LOG_ERROR("game_cid = %d", cid);
 		return -1;
 	}
-	return GATE_GAME_CONNECTOR_MANAGER->send_block(cid, buf);
+	Game_Connector_Map::iterator iter = game_connector_map_.find(cid);
+	if(iter != game_connector_map_.end()) {
+		iter->second.connector->send_block(cid, buf);
+	} else {
+		LOG_ERROR("game_connector_map_ can not find game_cid = %d", cid);
+	}
+	return 0;
 }
 
 int Gate_Manager::send_to_login(Block_Buffer &buf) {
@@ -141,7 +147,12 @@ int Gate_Manager::process_list(void) {
 				LOG_ERROR("buf.read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
 				buf->reset();
 			}
-			GATE_GAME_CONNECTOR_MANAGER->push_block(cid, buf);
+			Game_Connector_Map::iterator iter = game_connector_map_.find(cid);
+			if(iter != game_connector_map_.end()) {
+				iter->second.connector->push_block(cid, buf);
+			} else {
+				LOG_ERROR("game_connector_map_ can not find game_cid = %d", cid);
+			}
 		}
 		//master-->gate  消息队列
 		if ((buf = gate_master_data_list_.pop_front()) != 0) {
@@ -326,8 +337,11 @@ void Gate_Manager::object_pool_size(void) {
 void Gate_Manager::free_cache(void) {
 	GATE_CLIENT_SERVER->free_cache();
 	GATE_LOGIN_CONNECTOR->free_cache();
-	GATE_GAME_CONNECTOR_MANAGER->free_cache();
 	GATE_MASTER_CONNECTOR->free_cache();
+	for (Game_Connector_Map::iterator iter = game_connector_map_.begin();
+			iter != game_connector_map_.end(); ++iter) {
+		iter->second.connector->free_cache();
+	}
 
 	block_pool_.shrink_all();
 	gate_player_pool_.shrink_all();
@@ -341,39 +355,44 @@ void Gate_Manager::print_msg_count(void) {
 	LOG_INFO("inner_msg_count_map_.size = %d\n%s\n", inner_msg_count_map_.size(), stream.str().c_str());
 }
 
-int Gate_Manager::get_lowest_overload_game() {
-	int min_num = 0x7fffffff;
-	Game_Server_Status *status, *temp;
-	for(Game_Status_Map::iterator iter = game_status_map_.begin();
-			iter != game_status_map_.end(); iter++){
-		temp = iter->second;
-		if(temp->plyaer_num <= min_num){
-			min_num = temp->plyaer_num;
-			status = temp;
+void Gate_Manager::new_game_connector(int server_id, std::string server_ip, int server_port, Time_Value &send_interval) {
+	Gate_Game_Connector *connector = new Gate_Game_Connector();
+	connector->set(server_ip, server_port, send_interval);
+	connector->init();
+	connector->start();
+	int cid = 0;
+	if ((cid = connector->connect_server()) < 2) {
+		LOG_FATAL("gate_game_connector fatal cid:%d,port:%d", cid, server_port);
+	}
+	connector->thr_create();
+	Gate_Game_Connector_Info connector_info;
+	connector_info.connector = connector;
+	connector_info.game_cid = cid;
+	connector_info.game_server_id = server_id;
+	connector_info.game_player_num = 0;
+	game_connector_map_.insert(std::make_pair(cid, connector_info));
+}
+
+int Gate_Manager::get_game_cid(int game_server_id) {
+	for(Game_Connector_Map::iterator iter = game_connector_map_.begin();
+			iter != game_connector_map_.end(); iter++) {
+		if(iter->second.game_server_id == game_server_id) {
+			return iter->second.game_cid;
 		}
-		status->plyaer_num++;
 	}
-	return status->game_cid;
+	return 0;
 }
 
-void Gate_Manager::add_new_game(int game_cid, int game_server_id) {
-	Game_Server_Status *status = new Game_Server_Status;
-	status->game_cid = game_cid;
-	status->game_server_id = game_server_id;
-	status->plyaer_num = 0;
-	game_status_map_[game_cid] = status;
-}
-
-int Gate_Manager::find_game_cid(int game_server_id) {
-	Game_Server_Status *status;
-	for(Game_Status_Map::iterator iter = game_status_map_.begin();
-			iter != game_status_map_.end(); iter++){
-		status = iter->second;
-		if(status->game_server_id == game_server_id)
-			break;
+int Gate_Manager::get_lowest_player_game_cid(void) {
+	int min_num = 0x7fffffff;
+	int game_cid = 0;
+	for(Game_Connector_Map::iterator iter = game_connector_map_.begin();
+			iter != game_connector_map_.end(); iter++) {
+		if(iter->second.game_player_num <= min_num) {
+			min_num = iter->second.game_player_num;
+			game_cid = iter->second.game_cid;
+		}
+		iter->second.game_player_num++;
 	}
-	if(status)
-		return status->game_cid;
-	else
-		return 0;
+	return game_cid;
 }
