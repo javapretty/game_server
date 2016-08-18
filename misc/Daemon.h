@@ -118,7 +118,7 @@ public:
 	static Daemon_Game *instance(void);
 	static void destroy(void);
 
-	void start_server(void);
+	void start_server(int id);
 	void start_client(void);
 
 private:
@@ -139,7 +139,7 @@ public:
 	static Daemon_Gate *instance(void);
 	static void destroy(void);
 
-	void start_server(void);
+	void start_server(int id);
 	void start_client(void);
 
 private:

@@ -321,20 +321,32 @@ void Daemon_Game::destroy(void) {
 	}
 }
 
-void Daemon_Game::start_server(void) {
+void Daemon_Game::start_server(int id) {
 	/// start log client
 	Log::instance()->set_log_type(LOG_GAME_SERVER);
 	server_conf_.init_server_conf();
 
+	Server_Detail info;
 	/// Game Gate Server
-	GAME_GATE_SERVER->set(server_conf_.game_gate_port, server_conf_.receive_timeout, server_conf_.server_send_interval);
+	for(Server_Conf::SERVER_LIST::iterator iter = server_conf_.game_list.begin();
+			iter != server_conf_.game_list.end(); iter++){
+		if((*iter).id == id){
+			info.id = (*iter).id;
+			info.ip = (*iter).ip;
+			info.port = (*iter).port;
+			break;
+		}
+	}
+	GAME_GATE_SERVER->set(info.port, server_conf_.receive_timeout, server_conf_.server_send_interval);
 	GAME_GATE_SERVER->init();
 	GAME_GATE_SERVER->start();
 	GAME_GATE_SERVER->thr_create();
-	LOG_DEBUG("game_gate_server listen at port:%d", server_conf_.game_gate_port);
+	LOG_DEBUG("game_gate_server listen at port:%d", info.port);
 
-	GAME_MANAGER->init();
+	GAME_MANAGER->init(id);
 	GAME_MANAGER->thr_create();
+
+	GAME_V8_MANAGER->thr_create();				//game server v8 engine
 
 	//延迟让服务器启动
 	Time_Value::sleep(server_conf_.server_sleep_time);
@@ -362,8 +374,6 @@ void Daemon_Game::start_client(void) {
 	}
 	GAME_MASTER_CONNECTOR->thr_create();
 
-	GAME_V8_MANAGER->thr_create();				//game server v8 engine
-
 	Daemon::loop();
 }
 
@@ -389,19 +399,29 @@ void Daemon_Gate::destroy(void) {
 	}
 }
 
-void Daemon_Gate::start_server(void) {
+void Daemon_Gate::start_server(int id) {
 	/// start log client
 	Log::instance()->set_log_type(LOG_GATE_SERVER);
 	server_conf_.init_server_conf();
-
+	Server_Detail info;
+	for(Server_Conf::SERVER_LIST::iterator iter = server_conf_.gate_list.begin();
+		iter != server_conf_.gate_list.end(); iter++){
+		if((*iter).id == id){
+			info.id = (*iter).id;
+			info.ip = (*iter).ip;
+			info.port = (*iter).port;
+			info.network_protocol = (*iter).network_protocol;
+			break;
+		}
+	}
 	/// Gate Client Server
-	GATE_CLIENT_SERVER->set(server_conf_.gate_client_port, server_conf_.receive_timeout, server_conf_.server_send_interval, server_conf_.gate_client_network_protocol);
+	GATE_CLIENT_SERVER->set(info.port, server_conf_.receive_timeout, server_conf_.server_send_interval, info.network_protocol);
 	GATE_CLIENT_SERVER->init();
 	GATE_CLIENT_SERVER->start();
 	GATE_CLIENT_SERVER->thr_create();
-	LOG_DEBUG("gate_client_server listen at port:%d", server_conf_.gate_client_port);
+	LOG_DEBUG("gate_client_server listen at port:%d", info.port);
 
-	GATE_MANAGER->init();
+	GATE_MANAGER->init(id);
 	GATE_MANAGER->thr_create();
 
 	//延迟让服务器启动
@@ -422,13 +442,10 @@ void Daemon_Gate::start_client(void) {
 	GATE_LOGIN_CONNECTOR->thr_create();
 
 	/// Gate Game Connector
-	GATE_GAME_CONNECTOR->set(server_conf_.server_ip, server_conf_.game_gate_port, server_conf_.connector_send_interval);
-	GATE_GAME_CONNECTOR->init();
-	GATE_GAME_CONNECTOR->start();
-	if ((cid = GATE_GAME_CONNECTOR->connect_server()) < 2) {
-		LOG_FATAL("gate_game_connector fatal cid:%d,port:%d", cid, server_conf_.game_gate_port);
+	for(Server_Conf::SERVER_LIST::iterator iter = server_conf_.game_list.begin();
+			iter != server_conf_.game_list.end(); iter++){
+		GATE_GAME_CONNECTOR_MANAGER->start_new_connector((*iter).id, (*iter).ip, (*iter).port, server_conf_.connector_send_interval);
 	}
-	GATE_GAME_CONNECTOR->thr_create();
 
 	/// Gate Master Connector
 	GATE_MASTER_CONNECTOR->set(server_conf_.server_ip, server_conf_.master_gate_port, server_conf_.connector_send_interval);

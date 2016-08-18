@@ -56,7 +56,55 @@ void Server_Conf::init_server_conf(void) {
 	master_gate_port = server_conf["master_server"]["gate_port"].asInt();
 	master_game_port = server_conf["master_server"]["game_port"].asInt();
 	master_http_port = server_conf["master_server"]["http_port"].asInt();
-	game_gate_port = server_conf["game_server"]["gate_port"].asInt();
-	gate_client_network_protocol = server_conf["gate_server"]["client_network_protocol"].asInt();
-	gate_client_port = server_conf["gate_server"]["client_port"].asInt();
+	for(uint i = 0; i < server_conf["game_server"].size(); i++){
+		Server_Detail server_info;
+		server_info.id = server_conf["game_server"][i]["id"].asInt();
+		server_info.ip = server_conf["game_server"][i]["ip"].asString();
+		server_info.port = server_conf["game_server"][i]["port"].asInt();
+		game_list.push_back(server_info);
+	}
+	for(uint i = 0; i < server_conf["gate_server"].size(); i++){
+		Server_Detail server_info;
+		server_info.id = server_conf["gate_server"][i]["id"].asInt();
+		server_info.ip = server_conf["gate_server"][i]["ip"].asString();
+		server_info.port = server_conf["gate_server"][i]["port"].asInt();
+		server_info.network_protocol = server_conf["gate_server"][i]["client_network_protocol"].asInt();
+		gate_list.push_back(server_info);
+	}
+}
+Position3D::Position3D():
+		x(0.f),
+		y(0.f),
+		z(0.f)
+{
+
+}
+
+Position3D::Position3D(float posx, float posy, float posz):
+		x(posx),
+		y(posy),
+		z(posz)
+{
+}
+
+Position3D::~Position3D(){
+
+}
+
+float Position3D::operator - (Position3D pos){
+		return (float)sqrt(pow(x - pos.x, 2) + pow(y - pos.y, 2) + pow(z - pos.z, 2));
+}
+
+void Position3D::operator = (Position3D pos){
+		x = pos.x;
+		y = pos.y;
+		z = pos.z;
+}
+
+void Position3D::set_position(float posx, float posy, float posz){
+		x = posx; y=posy; z=posz;
+}
+
+void Position3D::set_position(Position3D pos){
+	set_position(pos.x, pos.y, pos.z);
 }

@@ -13,6 +13,7 @@
 #include "Block_List.h"
 #include "Object_Pool.h"
 #include "Master_Player.h"
+#include "Public_Struct.h"
 
 class Master_Manager: public Thread {
 public:
@@ -28,6 +29,7 @@ public:
 	typedef boost::unordered_map<int, Master_Player* > Master_Player_Game_Cid_Map;
 	typedef boost::unordered_map<int64_t, Master_Player* > Master_Player_Role_Id_Map;
 	typedef boost::unordered_map<int, int> Msg_Count_Map;
+	//typedef boost::unordered_map<int>
 
 public:
 	static Master_Manager *instance(void);

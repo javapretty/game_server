@@ -118,6 +118,11 @@
 	  <vector type="Rank_Member_Detail" name="rank_list"/>
 	</MSG_510201>
 	
+	<MSG_510300>
+		<head msg_id="510300"/>
+		<arg type="int32" name="game_id"/>
+	</MSG_510300>
+	
 <!--Client与Game通信消息-->
 	<MSG_120001>
 		<!--获取角色信息-->
@@ -306,7 +311,27 @@
 	  <arg type="int32" name="hero_id"/>
 	  <arg type="int32" name="skill_id"/>
 	</MSG_520305>
+
+	<MSG_120400>
+		<head msg_id="120400"/>
+		<struct type="Position3D" name="pos"/>
+	</MSG_120400>
 	
+	<MSG_520400>
+		<head msg_id="520400"/>
+		<vector type="Position3D" name="aoi_pos"/>
+	</MSG_520400>
+	
+	<MSG_120401>
+		<head msg_id="120401"/>
+		<arg type="int32" name="target_scene"/>
+		<struct type="Position3D" name="pos"/>
+	</MSG_120401>
+
+	<MSG_520401>
+		<head msg_id="520401"/>
+	</MSG_520401>
+
 <!--Gate与Game与Master通信消息-->
 	<MSG_140100>
 		<head msg_id="140100"/>
@@ -430,6 +455,18 @@
     	<arg type="string" name="guild_name"/>
 	</MSG_160100>
 	
+	<MSG_160101> 		
+		<head msg_id="160101"/>
+		<arg type="int32" name="target_scene"/>
+		<arg type="int64" name="role_id"/>
+	</MSG_160101>
+	
+	<MSG_160102> 		
+		<head msg_id="160102"/>
+		<arg type="int32" name="scene_id"/>
+		<arg type="int32" name="game_id"/>
+	</MSG_160102>
+
 <!--Log_Message--> 
 	<MSG_170000>
 		<!--玩家登出日志-->

@@ -155,6 +155,12 @@ function process_game_gate_msg(obj) {
 	case Msg.REQ_ADD_SKILL_LEVEL:
 		game_player.hero.add_skill_level(obj);
 		break;
+	case Msg_CG.REQ_MOVE_TO_POINT:
+		game_player.move_to_point(obj);
+		break;
+	case Msg_CG.REQ_CHANGE_SCENE:
+		game_player.change_scene(obj);
+		break;
 	default:
 		print('process_game_gate_msg, msg_id: not exist', obj.msg_id);
 		break;

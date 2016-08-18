@@ -122,25 +122,26 @@ int Debug_Server::start(int argc, char *argv[]) {
 	MASTER_MANAGER->thr_create();
 
 	/// Game Gate Server
-	GAME_GATE_SERVER->set(server_conf_.game_gate_port, server_conf_.receive_timeout, server_conf_.server_send_interval);
+	Server_Conf::SERVER_LIST::iterator iter = server_conf_.game_list.begin();
+	GAME_GATE_SERVER->set((*iter).port, server_conf_.receive_timeout, server_conf_.server_send_interval);
 	GAME_GATE_SERVER->init();
 	GAME_GATE_SERVER->start();
 	GAME_GATE_SERVER->thr_create();
-	LOG_DEBUG("game_gate_server listen at port:%d", server_conf_.game_gate_port);
+	LOG_DEBUG("game_gate_server listen at port:%d", (*iter).port);
 
-	GAME_MANAGER->init();
+	GAME_MANAGER->init((*iter).id);
 	GAME_MANAGER->thr_create();
 
 	/// Gate Client Server
-	GATE_CLIENT_SERVER->set(server_conf_.gate_client_port, server_conf_.receive_timeout, server_conf_.server_send_interval, server_conf_.gate_client_network_protocol);
+	Server_Conf::SERVER_LIST::iterator gate_iter = server_conf_.gate_list.begin();
+	GATE_CLIENT_SERVER->set((*gate_iter).port, server_conf_.receive_timeout, server_conf_.server_send_interval, (*gate_iter).network_protocol);
 	GATE_CLIENT_SERVER->init();
 	GATE_CLIENT_SERVER->start();
 	GATE_CLIENT_SERVER->thr_create();
-	LOG_DEBUG("gate_client_server listen at port:%d", server_conf_.gate_client_port);
+	LOG_DEBUG("gate_client_server listen at port:%d", (*gate_iter).port);
 
-	GATE_MANAGER->init();
+	GATE_MANAGER->init((*iter).id);
 	GATE_MANAGER->thr_create();
-
 	//延迟让服务器启动
 	Time_Value::sleep(server_conf_.server_sleep_time);
 
@@ -193,13 +194,8 @@ int Debug_Server::start(int argc, char *argv[]) {
 	GATE_LOGIN_CONNECTOR->thr_create();
 
 	/// Gate Game Connector
-	GATE_GAME_CONNECTOR->set(server_conf_.server_ip, server_conf_.game_gate_port, server_conf_.connector_send_interval);
-	GATE_GAME_CONNECTOR->init();
-	GATE_GAME_CONNECTOR->start();
-	if ((cid = GATE_GAME_CONNECTOR->connect_server()) < 2) {
-		LOG_FATAL("gate_game_connector fatal cid:%d,port:%d", cid, server_conf_.game_gate_port);
-	}
-	GATE_GAME_CONNECTOR->thr_create();
+	Server_Conf::SERVER_LIST::iterator connector_iter = server_conf_.game_list.begin();
+	GATE_GAME_CONNECTOR_MANAGER->start_new_connector((*connector_iter).id, (*connector_iter).ip, (*connector_iter).port, server_conf_.connector_send_interval);
 
 	/// Gate Master Connector
 	GATE_MASTER_CONNECTOR->set(server_conf_.server_ip, server_conf_.master_gate_port, server_conf_.connector_send_interval);

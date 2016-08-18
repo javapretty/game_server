@@ -22,11 +22,30 @@
     	"game_port" : 7505,							//master服务器监听网关服连接的端口
     	"http_port" : 8080							//master服务器监听后台连接的端口
     },
-   "game_server" : {
-    	"gate_port" : 7506							//游戏服务器监听网关服连接的端口
-    },
-   "gate_server" : {
-   	"client_network_protocol" : 0,		//网络协议类型 0:TCP 1:UDP 2:WEBSOCKET
-    	"client_port" : 7507						//网关服务器监听客户端连接的端口
-    }
+   "game_server" : [
+		{
+			"id" : 1,
+			"ip" : "127.0.0.1",
+    		"port" : 7506							//游戏服务器监听网关服连接的端口
+		},
+		{
+			"id" : 2,
+			"ip" : "127.0.0.1",
+    		"port" : 7507							//游戏服务器监听网关服连接的端口
+		}
+	],
+   "gate_server" : [
+		{
+			"id" : 1,
+			"ip" : "127.0.0.1",
+    		"port" : 7510,							//游戏服务器监听网关服连接的端口
+   			"client_network_protocol" : 0		//网络协议类型 0:TCP 1:UDP 2:WEBSOCKET
+		},
+		{
+			"id" : 2,
+			"ip" : "127.0.0.1",
+    		"port" : 7511,							//游戏服务器监听网关服连接的端口
+   			"client_network_protocol" : 0		//网络协议类型 0:TCP 1:UDP 2:WEBSOCKET
+		}
+    ]
 }

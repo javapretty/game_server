@@ -19,6 +19,7 @@
 #include "Master_Manager.h"
 #include "Master_Timer.h"
 #include "Msg_Manager.h"
+#include "Scene_Manager.h"
 
 void register_game_timer(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 3) {
@@ -458,4 +459,14 @@ void master_close_client(const FunctionCallbackInfo<Value>& args) {
 	int player_cid = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int error_code = args[2]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	MASTER_MANAGER->close_client(gate_cid, player_cid, error_code);
+}
+
+void is_scene_in_process(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 1) {
+		LOG_ERROR("is_scene_in_process error, length: %d\n", args.Length());
+		return;
+	}
+	int scene_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	bool is_in = SCENE_MANAGER->has_scene(scene_id);
+	args.GetReturnValue().Set(is_in);
 }

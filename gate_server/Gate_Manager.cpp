@@ -17,7 +17,8 @@ Gate_Manager::Gate_Manager(void):
   player_account_map_(get_hash_table_size(12000)),
   server_status_(STATUS_NORMAL),
   verify_pack_onoff_(false),
-  msg_count_onoff_(true) { }
+  msg_count_onoff_(true),
+  server_id_(0) { }
 
 Gate_Manager::~Gate_Manager(void) { }
 
@@ -29,9 +30,9 @@ Gate_Manager *Gate_Manager::instance(void) {
 	return instance_;
 }
 
-int Gate_Manager::init(void) {
+int Gate_Manager::init(int id) {
 	tick_time_ = Time_Value::gettimeofday();
-
+	server_id_ = id;
 	GATE_INNER_MESSAGER;					/// 内部消息处理
 	GATE_CLIENT_MESSAGER;					/// 外部消息处理
 	GATE_TIMER->thr_create();
@@ -57,13 +58,12 @@ int Gate_Manager::send_to_client(int player_cid, Block_Buffer &buf) {
 	return GATE_CLIENT_SERVER->send_block(player_cid, buf);
 }
 
-int Gate_Manager::send_to_game(Block_Buffer &buf) {
-	int game_cid = GATE_GAME_CONNECTOR->get_cid();
-	if (game_cid < 2) {
-		LOG_ERROR("game_cid = %d", game_cid);
+int Gate_Manager::send_to_game(int cid, Block_Buffer &buf) {
+	if (cid < 2) {
+		LOG_ERROR("game_cid = %d", cid);
 		return -1;
 	}
-	return GATE_GAME_CONNECTOR->send_block(game_cid, buf);
+	return GATE_GAME_CONNECTOR_MANAGER->send_block(cid, buf);
 }
 
 int Gate_Manager::send_to_login(Block_Buffer &buf) {
@@ -141,7 +141,7 @@ int Gate_Manager::process_list(void) {
 				LOG_ERROR("buf.read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
 				buf->reset();
 			}
-			GATE_GAME_CONNECTOR->push_block(cid, buf);
+			GATE_GAME_CONNECTOR_MANAGER->push_block(cid, buf);
 		}
 		//master-->gate  消息队列
 		if ((buf = gate_master_data_list_.pop_front()) != 0) {
@@ -326,7 +326,7 @@ void Gate_Manager::object_pool_size(void) {
 void Gate_Manager::free_cache(void) {
 	GATE_CLIENT_SERVER->free_cache();
 	GATE_LOGIN_CONNECTOR->free_cache();
-	GATE_GAME_CONNECTOR->free_cache();
+	GATE_GAME_CONNECTOR_MANAGER->free_cache();
 	GATE_MASTER_CONNECTOR->free_cache();
 
 	block_pool_.shrink_all();
@@ -339,4 +339,41 @@ void Gate_Manager::print_msg_count(void) {
 		stream << (it->first) << "\t" << (it->second) << std::endl;
 	}
 	LOG_INFO("inner_msg_count_map_.size = %d\n%s\n", inner_msg_count_map_.size(), stream.str().c_str());
+}
+
+int Gate_Manager::get_lowest_overload_game() {
+	int min_num = 0x7fffffff;
+	Game_Server_Status *status, *temp;
+	for(Game_Status_Map::iterator iter = game_status_map_.begin();
+			iter != game_status_map_.end(); iter++){
+		temp = iter->second;
+		if(temp->palyer_num <= min_num){
+			min_num = temp->palyer_num;
+			status = temp;
+		}
+		status->palyer_num++;
+	}
+	return status->cid;
+}
+
+void Gate_Manager::add_new_game(int cid, int id) {
+	Game_Server_Status *status = new Game_Server_Status;
+	status->cid = cid;
+	status->game_id = id;
+	status->palyer_num = 0;
+	game_status_map_[cid] = status;
+}
+
+int Gate_Manager::find_game_cid(int game_id) {
+	Game_Server_Status *status;
+	for(Game_Status_Map::iterator iter = game_status_map_.begin();
+			iter != game_status_map_.end(); iter++){
+		status = iter->second;
+		if(status->game_id == game_id)
+			break;
+	}
+	if(status)
+		return status->cid;
+	else
+		return 0;
 }

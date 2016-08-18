@@ -99,7 +99,12 @@ Local<Context> Create_Context(Isolate* isolate) {
 
 	game_player_template->Set(String::NewFromUtf8(isolate, "link_close", NewStringType::kNormal).ToLocalChecked(),
 			                  FunctionTemplate::New(isolate, game_player_link_close)) ;
-
+	game_player_template->Set(String::NewFromUtf8(isolate, "enter_scene", NewStringType::kNormal).ToLocalChecked(),
+				                FunctionTemplate::New(isolate, enter_scene)) ;
+	game_player_template->Set(String::NewFromUtf8(isolate, "move_to_point", NewStringType::kNormal).ToLocalChecked(),
+				                FunctionTemplate::New(isolate, move_to_point)) ;
+	game_player_template->Set(String::NewFromUtf8(isolate, "set_aoi_info", NewStringType::kNormal).ToLocalChecked(),
+					                FunctionTemplate::New(isolate, set_aoi_info)) ;
 	_g_game_player_template.Reset(isolate, game_player_template);
 
 	//////////////////////////////////master_player相关函数////////////////////////////////

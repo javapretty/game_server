@@ -1,6 +1,17 @@
 <root>
 
 <!--自定义类型在此定义-->
+	<Aoi_Info>
+		<arg type="string" name="name"/>
+		<arg type="int32" name="level"/>
+	</Aoi_Info>
+
+	<Position3D>
+		<arg type="double" name="x"/>
+		<arg type="double" name="y"/>
+		<arg type="double" name="z"/>
+	</Position3D>
+	
 	<Cid_Info>
 		<arg type="int32" name="gate_cid"/>
 		<arg type="int32" name="player_cid"/>
@@ -124,6 +135,8 @@
 		<arg type="int32" name="charge_gold"/>
 		<arg type="int64" name="guild_id"/>
 		<arg type="string" name="guild_name"/>
+		<arg type="int32" name="last_scene"/>
+		<struct type="Position3D" name="last_pos"/>
 	</Game_Player_Info>
 	
 	<Hero_Info>

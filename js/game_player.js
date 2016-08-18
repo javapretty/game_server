@@ -32,7 +32,9 @@ Game_Player.prototype.load_player_data = function(gate_cid, player_cid, obj) {
 		game_close_client(gate_cid, player_cid, Error_Code.ERROR_CLIENT_PARAM);
 		return;
 	}
-	
+	this.cplayer.enter_scene(this.player_info.last_scene, this.player_info.last_pos.x, this.player_info.last_pos.y, this.player_info.last_pos.z);
+	this.cplayer.set_aoi_info();
+
 	this.sync_login_to_client();
 	this.sync_login_to_master();
 	game_player_cid_map.set(this.gate_cid * 10000 + this.player_cid, this);
@@ -76,9 +78,17 @@ Game_Player.prototype.tick = function(now) {
 	if(this.is_change){
 		if (now - this.sync_player_data_tick >= 15) {
 			this.sync_player_data_to_db(false);
+			this.set_aoi_info()
 			this.sync_player_data_tick = now;
 		}
 	}
+}
+
+Game_Player.prototype.set_aoi_info = function() {
+	var aoi_info = new Aoi_Info;
+	aoi_info.name = this.player_info.account_name;
+	aoi_info.name = this.player_info.level;
+	this.cplayer.set_aoi_info(aoi_info);
 }
 
 Game_Player.prototype.daily_refresh = function() {
@@ -215,3 +225,55 @@ Game_Player.prototype.set_guild_info = function(obj) {
 	print('set_guild_info, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, 
 	" guild_id:", this.player_info.guild_id, " guild_name:", this.player_info.guild_name);
 }
+
+Game_Player.prototype.sync_data_to_master = function() {
+	var msg = new MSG_165000();
+	msg.level = this.player_info.level;
+
+	var buf = pop_game_buffer();
+	msg.serialize(buf);
+	this.cplayer.sync_data_to_master(Msg_GM.SYNC_GAME_MASTER_PLAYER_INFO, buf);
+	push_game_buffer(buf);
+}
+
+Game_Player.prototype.add_hero_exp_test = function(buffer) {
+	print('add hero exp test, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
+	var msg = new MSG_120306();
+	msg.deserialize(buffer);
+	this.add_exp(msg.exp);
+	this.sync_data_to_master();
+}
+
+Game_Player.prototype.move_to_point = function(obj) {
+	print('move to point, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
+	this.cplayer.move_to_point(obj.pos.x, obj.pos.y, obj.pos.z);
+}
+
+Game_Player.prototype.change_scene = function(obj) {
+	print('change scene, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
+	if(is_scene_in_process(obj.target_scene)) {
+		this.cplayer.leave_scene();
+		this.cplayer.enter_scene(obj.target_scene, obj.pos.x, obj.pos.y, obj.pos.z);
+		this.cplayer.set_aoi_info();
+		var msg = new MSG_520401();
+		this.send_success_msg(Msg_GC.RES_CHANGE_SCENE, msg);
+	}
+	else {
+		this.player_info.last_scene = obj.target_scene;
+		this.player_info.last_pos = obj.pos;
+		
+		logout_map.set(this.player_info.account, this.player_info.logout_time);
+		game_player_cid_map.delete(this.gate_cid * 10000 + this.player_cid);
+		game_player_role_id_map.delete(this.player_info.role_id);
+		game_player_role_name_map.delete(this.player_info.role_name);
+		
+		this.sync_player_data_to_db(false);
+		this.cplayer.game_player_link_close();
+
+		var msg = new MSG_160101();
+		msg.target_scene = obj.target_scene;
+		msg.role_id = this.player_info.role_id;
+		send_game_msg_to_master(this.player_cid, Msg_GM.SYNC_PLAYER_CHANGE_SCENE, 0, msg);
+	}
+}
+

@@ -21,6 +21,7 @@ if (typeof Msg == "undefined") {
 	Msg.RES_GUILD_ALLOW_JOIN = 510104; //允许入帮(返回)
 	Msg.RES_GUILD_KICK_OUT = 510105; //踢出帮会(返回)
 	Msg.RES_FETCH_RANK = 510201; //拉取排行榜信息(返回)
+	Msg.RES_PLAYER_CHANGE_SCENE = 510300; //切换场景时通知客户端选择哪个game
 	Msg.REQ_FETCH_ROLE_INFO = 120001; //获取角色信息
 	Msg.REQ_CREATE_ROLE = 120002; //创建角色
 	Msg.REQ_BUY_VITALITY = 120003; //购买体力
@@ -37,6 +38,8 @@ if (typeof Msg == "undefined") {
 	Msg.REQ_ADD_EQUIP_LEVEL = 120303; //提高英雄装备等级
 	Msg.REQ_EQUIP_ON_OFF = 120304; //英雄装备穿脱
 	Msg.REQ_ADD_SKILL_LEVEL = 120305; //提高英雄技能等级
+	Msg.REQ_MOVE_TO_POINT = 120400; //移动到某点
+	Msg.REQ_CHANGE_SCENE = 120401; //切换场景
 	Msg.RES_FETCH_ROLE_INFO = 520001; //获取角色信息(返回)
 	Msg.RES_CREATE_ROLE = 520002; //创建角色(返回)
 	Msg.RES_BUY_VITALITY = 520003; //购买体力(返回)
@@ -53,6 +56,8 @@ if (typeof Msg == "undefined") {
 	Msg.RES_ADD_EQUIP_LEVEL = 520303; //提高英雄装备等级(返回)
 	Msg.RES_EQUIP_ON_OFF = 520304; //英雄装备穿脱(返回)
 	Msg.RES_ADD_SKILL_LEVEL = 520305; //提高英雄技能等级(返回)
+	Msg.RES_SYNC_AOI_INFO = 520400; //通知场景中AOI信息(返回)
+	Msg.RES_CHANGE_SCENE = 520401; //切换场景(返回)
 	Msg.SYNC_GATE_LOGIN_PLAYER_ACCOUNT = 140000; //gate校验玩家账户、session
 	Msg.SYNC_LOGIN_GATE_PLAYER_ACCOUNT = 140001; //login返回session校验结果
 	Msg.SYNC_GATE_GAME_PLAYER_LOGOUT = 140100; //gate同步玩家下线到game
@@ -76,6 +81,8 @@ if (typeof Msg == "undefined") {
 	Msg.SYNC_DB_MASTER_LOAD_OFFLINE = 550105; //加载离线信息
 	Msg.SYNC_GAME_MASTER_PLYAER_LOGIN = 160000; //game同步玩家上线到master
 	Msg.SYNC_MASTER_GAME_GUILD_INFO = 160100; //master通知game公会信息
+	Msg.SYNC_PLAYER_CHANGE_SCENE = 160101; //game通知master玩家请求切换其他game上的场景
+	Msg.SYNC_GAME_SCENE_ID = 160102; //通知master每个game上的场景信息
 	Msg.SYNC_LOG_LOGINOUT = 170000; //玩家登出日志
 	Msg.HTTP_MODIFY_PLAYR_GOLD = 180000; //后台修改玩家元宝
 	Msg.ACTIVE_DISCONNECT = 300000; //服务器主动断开连接

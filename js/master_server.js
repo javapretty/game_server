@@ -24,6 +24,8 @@ var master_player_game_cid_map = new Map();
 var master_player_role_id_map = new Map();
 //role_name---master_player
 var master_player_role_name_map = new Map();
+//scene_id--game_id
+var scene_game_map = new Map();
 
 //加载配置文件
 var config = new Config();
@@ -200,8 +202,24 @@ function process_master_http_msg(obj) {
 		send_master_msg_to_http(obj.cid, obj.msg_id, obj);
 		break;
 	}
+	case obj.msg_id == Msg.SYNC_GAME_SCENE_ID: {
+		scene_game_map.set(obj.scene_id, obj.game_id);
+		break;
+	}
+	case obj.msg_id == Msg.SYNC_PLAYER_CHANGE_SCENE: {
+		var master_player = master_player_role_id_map.get(obj.role_id);
+		if(master_player == null) {
+			print("change scene error! player not exists!");
+			return;
+		}
+		var msg = new MSG_510300();
+		msg.game_id = scene_game_map.get(obj.target_scene);
+		master_player.send_succuss_msg(Msg_MC.RES_PLAYER_CHANGE_SCENE, msg);
+		break;
+	}
 	default:
 		print('process_master_game_msg, msg_id: not exist', obj.msg_id);
 		break;
 	}
 }
+

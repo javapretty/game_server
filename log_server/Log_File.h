@@ -10,6 +10,7 @@
 
 #include "Time_Value.h"
 #include "boost/unordered_map.hpp"
+#include "Public_Struct.h"
 
 struct File_Info {
 	int type;

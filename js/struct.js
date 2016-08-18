@@ -1,4 +1,15 @@
 
+function Aoi_Info() {
+	this.name = "";
+	this.level = 0;
+}
+
+function Position3D() {
+	this.x = 0;
+	this.y = 0;
+	this.z = 0;
+}
+
 function Cid_Info() {
 	this.gate_cid = 0;
 	this.player_cid = 0;
@@ -119,6 +130,8 @@ function Game_Player_Info() {
 	this.charge_gold = 0;
 	this.guild_id = 0;
 	this.guild_name = "";
+	this.last_scene = 0;
+	this.last_pos = new Position3D();
 }
 
 function Hero_Info() {
@@ -247,6 +260,10 @@ function MSG_510201() {
 	this.rank_type = 0;
 	this.self_rank = 0;
 	this.rank_list = new Array();
+}
+
+function MSG_510300() {
+	this.game_id = 0;
 }
 
 function MSG_120001() {
@@ -389,6 +406,22 @@ function MSG_520305() {
 	this.skill_id = 0;
 }
 
+function MSG_120400() {
+	this.pos = new Position3D();
+}
+
+function MSG_520400() {
+	this.aoi_pos = new Array();
+}
+
+function MSG_120401() {
+	this.target_scene = 0;
+	this.pos = new Position3D();
+}
+
+function MSG_520401() {
+}
+
 function MSG_140100() {
 }
 
@@ -473,6 +506,16 @@ function MSG_160100() {
 	this.role_id = 0;
 	this.guild_id = 0;
 	this.guild_name = "";
+}
+
+function MSG_160101() {
+	this.target_scene = 0;
+	this.role_id = 0;
+}
+
+function MSG_160102() {
+	this.scene_id = 0;
+	this.game_id = 0;
 }
 
 function MSG_170000() {

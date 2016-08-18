@@ -66,7 +66,15 @@ typedef boost::unordered_map<int32_t, Base_Struct *> Struct_Id_Map;
 typedef boost::unordered_map<std::string, Base_Struct *> Struct_Name_Map;
 int load_struct(const char *path, Struct_Type struct_type, Struct_Id_Map &struct_id_map, Struct_Name_Map &struct_name_map);
 
+struct Server_Detail {
+	int id;
+	std::string ip;
+	int port;
+	int network_protocol;
+};
+
 struct Server_Conf {
+	typedef std::list<Server_Detail> SERVER_LIST;
 	Time_Value server_sleep_time;
 	Time_Value receive_timeout;
 	Time_Value server_send_interval;
@@ -81,9 +89,8 @@ struct Server_Conf {
 	int master_gate_port;
 	int master_game_port;
 	int master_http_port;
-	int game_gate_port;
-	int gate_client_network_protocol;
-	int gate_client_port;
+	SERVER_LIST game_list;
+	SERVER_LIST gate_list;
 
 	void init_server_conf(void);
 };
@@ -211,6 +218,20 @@ struct Login_Player_Info {
 		session.clear();
 		session_tick = 0;
 	}
+};
+
+struct Position3D {
+	Position3D();
+	Position3D(float posx, float posy, float posz);
+	~Position3D();
+	float operator - (Position3D pos);
+	void operator = (Position3D pos);
+	void set_position(float posx, float posy, float posz);
+	void set_position(Position3D pos);
+
+	float x;
+	float y;
+	float z;
 };
 
 #endif /* PUBLIC_STURCT_H_ */

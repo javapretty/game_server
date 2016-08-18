@@ -31,6 +31,7 @@ private:
    static Debug_Server *instance_;
    Epoll_Watcher *wait_watcher_;
    Server_Conf server_conf_;
+
 };
 
 #define DEBUG_SERVER Debug_Server::instance()
