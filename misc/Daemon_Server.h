@@ -16,8 +16,8 @@
 class Epoll_Watcher;
 class Daemon_Server {
 	struct Process_Info {
-		int type;
-		int id;
+		int server_type;
+		int server_id;
 	};
 	typedef boost::unordered_map<int, Process_Info> Int_Process_Map;
 	typedef boost::unordered_map<int, int> Int_Int_Map;
@@ -39,13 +39,13 @@ private:
 	int parse_cmd_arguments(int argc, char *argv[]);
 	void usage(void);
 
-	int fork_exec_args(const char *exec_str, int server_type, int id = 0);
+	int fork_exec_args(const char *exec_str, int server_type, int server_id = 0);
 	int fork_exec_log_server(void);
 	int fork_exec_db_server(void);
 	int fork_exec_login_server(void);
 	int fork_exec_master_server(void);
-	int fork_exec_game_server(int id);
-	int fork_exec_gate_server(int id);
+	int fork_exec_game_server(int server_id);
+	int fork_exec_gate_server(int server_id);
 
 	static void sigcld_handle(int signo);
 	void restart_process(int pid);
@@ -65,7 +65,6 @@ private:
 	static Daemon_Server *instance_;
 	static struct option long_options[];
 	std::string server_label_;
-
 
 	Int_Process_Map daemon_map_;
 	Int_Int_Map core_dump_num_;

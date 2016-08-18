@@ -37,18 +37,18 @@ Gate_Game_Connector_Manager *Gate_Game_Connector_Manager::instance(void) {
 	return instance_;
 }
 
-void Gate_Game_Connector_Manager::start_new_connector(int id, std::string ip, int port, Time_Value &send_interval) {
+void Gate_Game_Connector_Manager::new_connector(int server_id, std::string server_ip, int server_port, Time_Value &send_interval) {
 	Gate_Game_Connector *connector = new Gate_Game_Connector();
-	connector->set(ip, port, send_interval);
+	connector->set(server_ip, server_port, send_interval);
 	connector->init();
 	connector->start();
 	int cid = 0;
 	if ((cid = connector->connect_server()) < 2) {
-		LOG_FATAL("gate_game_connector fatal cid:%d,port:%d", cid, port);
+		LOG_FATAL("gate_game_connector fatal cid:%d,port:%d", cid, server_port);
 	}
 	connector->thr_create();
 	game_map_[cid] = connector;
-	GATE_MANAGER->add_new_game(cid, id);
+	GATE_MANAGER->add_new_game(cid, server_id);
 }
 
 void Gate_Game_Connector_Manager::free_cache() {

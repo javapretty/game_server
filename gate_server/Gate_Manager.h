@@ -16,10 +16,11 @@
 
 class Gate_Manager: public Thread {
 	struct Game_Server_Status {
-		int cid;
-		int game_id;
-		int palyer_num;
+		int game_cid;
+		int game_server_id;
+		int plyaer_num;
 	};
+
 public:
 	typedef Object_Pool<Block_Buffer, Thread_Mutex> Block_Pool;
 	typedef Object_Pool<Gate_Player, Spin_Lock> Gate_Player_Pool;
@@ -35,7 +36,7 @@ public:
 
 public:
 	static Gate_Manager *instance(void);
-	int init(int id);
+	int init(int server_id);
 	void run_handler(void);
 
 	inline int server_status(void) { return server_status_; }
@@ -98,8 +99,9 @@ public:
 	void inner_msg_count(int msg_id);
 
 	int get_lowest_overload_game();
-	void add_new_game(int cid, int id);
-	int find_game_cid(int game_id);
+	void add_new_game(int game_cid, int game_server_id);
+	int find_game_cid(int game_server_id);
+
 private:
 	Gate_Manager(void);
 	virtual ~Gate_Manager(void);

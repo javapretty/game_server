@@ -22,7 +22,6 @@ public:
 
 	typedef Block_List<Thread_Mutex> Data_List;
 	typedef std::list<Close_Info> Close_List;
-	typedef std::vector<Ip_Info> Ip_Vec;
 	typedef List<int, Thread_Mutex> Int_List;
 
 	typedef boost::unordered_map<int, Login_Player *> Login_Player_Cid_Map;
@@ -36,7 +35,6 @@ public:
 
 	inline int server_status(void) { return server_status_; }
 
-	int init_gate_ip(void);
 	void get_gate_ip(std::string &account, std::string &ip, int &port);
 
 	Login_Player *pop_login_player(void);
@@ -124,8 +122,6 @@ private:
 	/// 消息统计
 	bool msg_count_onoff_;
 	Msg_Count_Map inner_msg_count_map_;
-
-	Ip_Vec gate_ip_vec_;
 
 	Mysql_Conn* mysql_conn_;
 };

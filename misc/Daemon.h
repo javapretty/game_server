@@ -22,6 +22,8 @@ public:
 	virtual int handle_timeout(const Time_Value &tv);
 	virtual int start_log_client(void);
 
+	const Server_Conf &server_conf(void) { return server_conf_; }
+
 protected:
 	int type_;
 	Epoll_Watcher *watcher_;
@@ -118,7 +120,7 @@ public:
 	static Daemon_Game *instance(void);
 	static void destroy(void);
 
-	void start_server(int id);
+	void start_server(int server_id);
 	void start_client(void);
 
 private:

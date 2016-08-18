@@ -42,21 +42,5 @@
 		"password" : "123456",
 		"dbname" : "log",
 		"dbpoolname" : "log_pool"
-	},
-	//gate服务器列表
-	"gate_server_list" : {
-		"0" : {
-			"ip" : "127.0.0.1",
-			"port" : 7507
-        },
-        "1" : {
-			"ip" : "127.0.0.1",
-			"port" : 7507
-        },
-		"2" : {
-			"ip" : "127.0.0.1",
-			"port" : 7507
-		}
-    }
+	}
 }
-

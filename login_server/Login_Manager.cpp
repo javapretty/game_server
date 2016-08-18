@@ -4,6 +4,8 @@
  */
 
 #include "Common_Func.h"
+#include "Debug_Server.h"
+#include "Daemon.h"
 #include "Server_Config.h"
 #include "Login_Manager.h"
 #include "Login_Server.h"
@@ -37,8 +39,6 @@ int Login_Manager::init(void) {
 	LOGIN_CLIENT_MESSAGER;					/// 外部消息处理
 	LOGIN_TIMER->thr_create();
 	connect_mysql_db();
-	init_gate_ip();
-
 	return 0;
 }
 
@@ -46,29 +46,20 @@ void Login_Manager::run_handler(void) {
 	process_list();
 }
 
-int Login_Manager::init_gate_ip(void) {
-	const Json::Value &server_misc = SERVER_CONFIG->server_misc();
-	if (server_misc == Json::Value::null) {
-		LOG_FATAL("server_misc config error");
-		return -1;
-	}
-
-	Ip_Info ip_info;
-	for (Json::Value::iterator iter = server_misc["gate_server_list"].begin();
-			iter != server_misc["gate_server_list"].end(); ++iter) {
-		ip_info.ip = (*iter)["ip"].asString();
-		ip_info.port = (*iter)["port"].asInt();
-	}
-	gate_ip_vec_.push_back(ip_info);
-
-	return 0;
-}
-
 void Login_Manager::get_gate_ip(std::string &account, std::string &ip, int &port) {
 	int hash = elf_hash(account.c_str(), account.size());
-	int index = hash % (gate_ip_vec_.size());
-	ip = gate_ip_vec_[index].ip;
-	port = gate_ip_vec_[index].port;
+
+	Server_List gate_list;
+	int server_type = SERVER_CONFIG->server_misc()["server_type"].asInt();
+	if (server_type == MULTI_PROCESS) {
+		gate_list = DAEMON_LOGIN->server_conf().gate_list;
+	} else if (server_type == MULTI_THREAD) {
+		gate_list = DEBUG_SERVER->server_conf().gate_list;
+	}
+
+	int index = hash % (gate_list.size());
+	ip = gate_list[index].server_ip;
+	port = gate_list[index].server_port;
 }
 
 int Login_Manager::bind_account_login_player(std::string& account, Login_Player *player) {

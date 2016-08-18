@@ -47,31 +47,66 @@ void Server_Conf::init_server_conf(void) {
 	server_send_interval = Time_Value(0, server_conf["server_send_interval"].asInt());				//100us
 	connector_send_interval = Time_Value(0, server_conf["connector_send_interval"].asInt());	//100us
 
-	server_ip = server_conf["server_ip"].asString();
-	log_port = server_conf["log_server"]["port"].asInt();
-	db_port = server_conf["db_server"]["port"].asInt();
-	login_client_network_protocol = server_conf["login_server"]["client_network_protocol"].asInt();
-	login_client_port = server_conf["login_server"]["client_port"].asInt();
-	login_gate_port = server_conf["login_server"]["gate_port"].asInt();
-	master_gate_port = server_conf["master_server"]["gate_port"].asInt();
-	master_game_port = server_conf["master_server"]["game_port"].asInt();
-	master_http_port = server_conf["master_server"]["http_port"].asInt();
+	//log_server
+	log_server.server_id = server_conf["log_server"]["server_id"].asInt();
+	log_server.server_ip = server_conf["log_server"]["server_ip"].asString();
+	log_server.server_port = server_conf["log_server"]["server_port"].asInt();
+	log_server.network_protocol = server_conf["log_server"]["network_protocol"].asInt();
+
+	//db_server
+	db_server.server_id = server_conf["db_server"]["server_id"].asInt();
+	db_server.server_ip = server_conf["db_server"]["server_ip"].asString();
+	db_server.server_port = server_conf["db_server"]["server_port"].asInt();
+	db_server.network_protocol = server_conf["db_server"]["network_protocol"].asInt();
+
+	//login_server
+	login_client_server.server_id = server_conf["login_client_server"]["server_id"].asInt();
+	login_client_server.server_ip = server_conf["login_client_server"]["server_ip"].asString();
+	login_client_server.server_port = server_conf["login_client_server"]["server_port"].asInt();
+	login_client_server.network_protocol = server_conf["login_client_server"]["network_protocol"].asInt();
+
+	login_gate_server.server_id = server_conf["login_gate_server"]["server_id"].asInt();
+	login_gate_server.server_ip = server_conf["login_gate_server"]["server_ip"].asString();
+	login_gate_server.server_port = server_conf["login_gate_server"]["server_port"].asInt();
+	login_gate_server.network_protocol = server_conf["login_gate_server"]["network_protocol"].asInt();
+
+	//master_server
+	master_gate_server.server_id = server_conf["master_gate_server"]["server_id"].asInt();
+	master_gate_server.server_ip = server_conf["master_gate_server"]["server_ip"].asString();
+	master_gate_server.server_port = server_conf["master_gate_server"]["server_port"].asInt();
+	master_gate_server.network_protocol = server_conf["master_gate_server"]["network_protocol"].asInt();
+
+	master_game_server.server_id = server_conf["master_game_server"]["server_id"].asInt();
+	master_game_server.server_ip = server_conf["master_game_server"]["server_ip"].asString();
+	master_game_server.server_port = server_conf["master_game_server"]["server_port"].asInt();
+	master_game_server.network_protocol = server_conf["master_game_server"]["network_protocol"].asInt();
+
+	master_http_server.server_id = server_conf["master_http_server"]["server_id"].asInt();
+	master_http_server.server_ip = server_conf["master_http_server"]["server_ip"].asString();
+	master_http_server.server_port = server_conf["master_http_server"]["server_port"].asInt();
+	master_http_server.network_protocol = server_conf["master_http_server"]["network_protocol"].asInt();
+
+	//game_server
 	for(uint i = 0; i < server_conf["game_server"].size(); i++){
-		Server_Detail server_info;
-		server_info.id = server_conf["game_server"][i]["id"].asInt();
-		server_info.ip = server_conf["game_server"][i]["ip"].asString();
-		server_info.port = server_conf["game_server"][i]["port"].asInt();
-		game_list.push_back(server_info);
+		Server_Detail server_detail;
+		server_detail.server_id = server_conf["game_server"][i]["server_id"].asInt();
+		server_detail.server_ip = server_conf["game_server"][i]["server_ip"].asString();
+		server_detail.server_port = server_conf["game_server"][i]["server_port"].asInt();
+		server_detail.network_protocol = server_conf["game_server"][i]["network_protocol"].asInt();
+		game_list.push_back(server_detail);
 	}
+
+	//gate_server
 	for(uint i = 0; i < server_conf["gate_server"].size(); i++){
-		Server_Detail server_info;
-		server_info.id = server_conf["gate_server"][i]["id"].asInt();
-		server_info.ip = server_conf["gate_server"][i]["ip"].asString();
-		server_info.port = server_conf["gate_server"][i]["port"].asInt();
-		server_info.network_protocol = server_conf["gate_server"][i]["client_network_protocol"].asInt();
-		gate_list.push_back(server_info);
+		Server_Detail server_detail;
+		server_detail.server_id = server_conf["gate_server"][i]["server_id"].asInt();
+		server_detail.server_ip = server_conf["gate_server"][i]["server_ip"].asString();
+		server_detail.server_port = server_conf["gate_server"][i]["server_port"].asInt();
+		server_detail.network_protocol = server_conf["gate_server"][i]["network_protocol"].asInt();
+		gate_list.push_back(server_detail);
 	}
 }
+
 Position3D::Position3D():
 		x(0.f),
 		y(0.f),

@@ -37,7 +37,7 @@ enum Error_Code {
 	ERROR_DISCONNECT_RELOGIN				= 10009,				//账号在其它地方登陆
 };
 
-enum	 Role_Status {
+enum Role_Status {
 	ROLE_SUCCESS_LOAD 	= 0,		//加载成功
 	ROLE_SUCCESS_CREATE = 0,	//创建成功
 	ROLE_NOT_EXIST 			= 1,		//角色不存在
@@ -67,30 +67,28 @@ typedef boost::unordered_map<std::string, Base_Struct *> Struct_Name_Map;
 int load_struct(const char *path, Struct_Type struct_type, Struct_Id_Map &struct_id_map, Struct_Name_Map &struct_name_map);
 
 struct Server_Detail {
-	int id;
-	std::string ip;
-	int port;
+	int server_id;
+	std::string server_ip;
+	int server_port;
 	int network_protocol;
 };
 
+typedef std::vector<Server_Detail> Server_List;
 struct Server_Conf {
-	typedef std::list<Server_Detail> SERVER_LIST;
 	Time_Value server_sleep_time;
 	Time_Value receive_timeout;
 	Time_Value server_send_interval;
 	Time_Value connector_send_interval;
 
-	std::string server_ip;
-	int log_port;
-	int db_port;
-	int login_client_network_protocol;
-	int login_client_port;
-	int login_gate_port;
-	int master_gate_port;
-	int master_game_port;
-	int master_http_port;
-	SERVER_LIST game_list;
-	SERVER_LIST gate_list;
+	Server_Detail log_server;
+	Server_Detail db_server;
+	Server_Detail login_client_server;
+	Server_Detail login_gate_server;
+	Server_Detail master_gate_server;
+	Server_Detail master_game_server;
+	Server_Detail master_http_server;
+	Server_List game_list;
+	Server_List gate_list;
 
 	void init_server_conf(void);
 };
@@ -106,14 +104,6 @@ public:
 	inline bool operator()(V8_Timer_Handler *t1, V8_Timer_Handler *t2) {
 		return t1->next_tick > t2->next_tick;
 	}
-};
-
-struct Ip_Info {
-	std::string ip;
-	int32_t port;
-
-	Ip_Info(void): ip("127.0.0.1"), port(0) {}
-	Ip_Info(std::string &ip_, int port_): ip(ip_), port(port_) {}
 };
 
 struct Close_Info {

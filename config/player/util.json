@@ -2,11 +2,5 @@
 	"buy_vitality_gold" : [30,50,80,100],
 	"max_player_level" : 90,
 	"max_vip_level"	: 2,
-	"exchange_rate" : 50,
-	"daily_refresh_time" : 8,
-	"exchange_array" : [
-		{"gold" : 1, "copper" : 5},
-		{"gold" : 5, "copper" : 50},
-		{"gold" : 10, "copper" : 100}
-	]
+	"daily_refresh_time" : 8
 }
