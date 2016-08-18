@@ -7,6 +7,7 @@
 #include "Scene_Manager.h"
 #include "Game_Manager.h"
 #include "Aoi_Entity.h"
+#include "Server_Config.h"
 
 Scene_Entity::Scene_Entity(Game_Player *game_player):
 	entity_id_(1),
@@ -14,7 +15,7 @@ Scene_Entity::Scene_Entity(Game_Player *game_player):
 	pos_(0, 0, 0),
 	opos_(0, 0, 0),
 	scene_(0),
-	radius_(3),
+	radius_(SERVER_CONFIG->server_misc()["aoi_radius"].asInt()),
 	aoi_entity_(new Aoi_Entity(this)),
 	need_sync_(false),
 	extra_info_()

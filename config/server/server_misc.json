@@ -6,6 +6,7 @@
 	"agent_num" : 1,							//平台编号，比如37wan编号为1，4399为2，生成角色id,帮派id时候用
 	"server_num" : 1,							//服务器编号，比如1服编号为1，生成角色id,帮派id时候用
 	"aoi_broadcast_interval" : 10,				//aoi场景广播间隔，时间单位：毫秒
+	"aoi_radius" : 10,				//aoi范围单位
 	"game_db_struct_path" : "config/struct/game_struct.xml",
 	"log_db_struct_path" : "config/struct/log_struct.xml",
 	"msg_struct_path" : "config/struct/msg_struct.xml",			
@@ -47,16 +48,12 @@
 	"gate_server_list" : {
 		"0" : {
 			"ip" : "127.0.0.1",
-			"port" : 7507
+			"port" : 7510
         },
         "1" : {
 			"ip" : "127.0.0.1",
-			"port" : 7507
-        },
-		"2" : {
-			"ip" : "127.0.0.1",
-			"port" : 7507
-		}
+			"port" : 7511
+        }
     }
 }
 
