@@ -54,12 +54,6 @@
 			"server_ip" : "127.0.0.1",			//游戏服务器ip
     		"server_port" : 8400,					//游戏服务器监听网关服连接的端口
     		"network_protocol" : 0				//网络协议类型 0:TCP 1:UDP 2:WEBSOCKET
-		},
-		{
-			"server_id" : 2,							//服务器id
-			"server_ip" : "127.0.0.1",			//游戏服务器ip
-    		"server_port" : 8401,					//游戏服务器监听网关服连接的端口
-    		"network_protocol" : 0				//网络协议类型 0:TCP 1:UDP 2:WEBSOCKET
 		}
 	],
   "gate_server" : [

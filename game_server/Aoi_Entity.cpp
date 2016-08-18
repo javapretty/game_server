@@ -72,3 +72,23 @@ void Aoi_Entity::broadcast_aoi_info() {
 	entity_->game_player()->respond_success_result(520400, &buf);
 	set_sync(false);
 }
+
+ENTITY_ID Aoi_Entity::entity_id(){
+	return entity_->entity_id();
+}
+
+Position3D Aoi_Entity::pos(){
+	return entity_->pos();
+}
+
+Position3D Aoi_Entity::opos(){
+	return entity_->opos();
+}
+
+float Aoi_Entity::radius(){
+	return entity_->radius();
+}
+
+void Aoi_Entity::set_sync(bool flag){
+	entity_->set_sync(flag);
+}

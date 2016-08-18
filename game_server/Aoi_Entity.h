@@ -30,17 +30,17 @@ public:
 	void clear_aoi_map();
 	void broadcast_sync();
 	void broadcast_aoi_info();
+	ENTITY_ID entity_id();
+	Position3D pos();
+	Position3D opos();
+	float radius();
+	void set_sync(bool flag = true);
 
-	inline ENTITY_ID entity_id(){return entity_->entity_id();}
-	inline Position3D pos(){return entity_->pos();}
-	inline Position3D opos(){return entity_->opos();}
 	inline Scene_Entity *scene_entity(){return entity_;}
 	inline void x_pos(AOI_LIST::iterator iter){x_pos_ = iter;}
 	inline void y_pos(AOI_LIST::iterator iter){y_pos_ = iter;}
 	inline AOI_LIST::iterator x_pos(){return x_pos_;}
 	inline AOI_LIST::iterator y_pos(){return y_pos_;}
-	inline float radius(){return entity_->radius();}
-	inline void set_sync(bool flag = true){entity_->set_sync(flag);}
 private:
 	Scene_Entity *entity_;
 	AOI_LIST::iterator x_pos_;

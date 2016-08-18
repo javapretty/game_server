@@ -29,6 +29,7 @@
 #include "V8_Manager.h"
 #include "Daemon.h"
 #include "Daemon_Server.h"
+#include "Scene_Manager.h"
 
 
 Daemon::Daemon(int type) : type_(type) {
@@ -371,6 +372,8 @@ void Daemon_Game::start_client(void) {
 		LOG_FATAL("game_master_connector fatal cid:%d,port:%d", cid, server_conf_.master_game_server.server_port);
 	}
 	GAME_MASTER_CONNECTOR->thr_create();
+
+	SCENE_MANAGER->load_scene();
 
 	Daemon::loop();
 }

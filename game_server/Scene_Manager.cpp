@@ -29,6 +29,7 @@ Scene_Manager::~Scene_Manager(){
 }
 
 int Scene_Manager::load_scene() {
+	LOG_INFO("LOAD SCENE");
 	create_new_scene(1001);
 	return 0;
 }
@@ -36,6 +37,7 @@ int Scene_Manager::load_scene() {
 int Scene_Manager::create_new_scene(int type){
 	Game_Scene *scene = new Game_Scene(type, create_scene_id(type));
 	scenes_map_[scene->scene_id()] = scene;
+	LOG_INFO("new scene id %d", scene->scene_id());
 	Block_Buffer buffer;
 	buffer.make_player_message(160102, 0, 0);
 	buffer.write_int32(scene->scene_id());

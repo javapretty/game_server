@@ -27,7 +27,6 @@ int Aoi_Manager::on_move_aoi(Aoi_Entity *entity) {
 	update_list(entity, x_direct, 0);
 	update_list(entity, y_direct, 1);
 	update_aoi_map(entity);
-	entity->broadcast_sync();
 	return 0;
 }
 
@@ -71,7 +70,7 @@ void Aoi_Manager::insert_entity(Aoi_Entity *entity) {
 		}
 	}
 	y_list_.insert(pos, entity);
-	entity->x_pos(--pos);
+	entity->y_pos(--pos);
 }
 
 void Aoi_Manager::update_list(Aoi_Entity *entity, bool direct, int xy) {
@@ -119,8 +118,8 @@ void Aoi_Manager::update_list(Aoi_Entity *entity, bool direct, int xy) {
 	else if(xy == 1){
 		if(direct) {
 			if(iter != y_list_.begin()){
-				iter = --entity->x_pos();
-				y_list_.erase(entity->x_pos());
+				iter = --entity->y_pos();
+				y_list_.erase(entity->y_pos());
 				while(1){
 					if((*iter)->pos().y < entity->pos().y){
 						pos = ++iter;
@@ -133,13 +132,13 @@ void Aoi_Manager::update_list(Aoi_Entity *entity, bool direct, int xy) {
 					iter--;
 				}
 				y_list_.insert(pos, entity);
-				entity->x_pos(--pos);
+				entity->y_pos(--pos);
 			}
 		}
 		else {
 			if(iter != --y_list_.end()){
-				iter = ++entity->x_pos();
-				y_list_.erase(entity->x_pos());
+				iter = ++entity->y_pos();
+				y_list_.erase(entity->y_pos());
 				while(1){
 					if((*iter)->pos().y > entity->pos().y){
 						pos = iter;
@@ -152,7 +151,7 @@ void Aoi_Manager::update_list(Aoi_Entity *entity, bool direct, int xy) {
 					iter++;
 				}
 				y_list_.insert(pos, entity);
-				entity->x_pos(--pos);
+				entity->y_pos(--pos);
 			}
 		}
 	}
