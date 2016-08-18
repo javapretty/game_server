@@ -292,11 +292,11 @@ void pop_master_http_msg_object(const FunctionCallbackInfo<Value>& args) {
 	if (buf) {
 		int32_t http_cid = buf->read_int32();
 		std::string post_data = buf->read_string();
-		LOG_INFO("http post_data:%s", post_data.c_str());
-	  Json::Reader reader;
-	  Json::Value value;
-		if ( !reader.parse(post_data, value) ) {
-			LOG_ERROR("post_data:%s not json, cannot parse", post_data.c_str());
+		LOG_INFO("http post data:%s", post_data.c_str());
+		Json::Value value;
+	  Json::Reader reader(Json::Features::strictMode());
+		if ( !reader.parse(post_data, value) || !value["msg_id"].isInt()) {
+			LOG_ERROR("http post data:%s format error or msg_id not int", post_data.c_str());
 			args.GetReturnValue().SetNull();
 			return;
 		}
@@ -305,7 +305,7 @@ void pop_master_http_msg_object(const FunctionCallbackInfo<Value>& args) {
 		Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
 		if(iter != MSG_MANAGER->msg_struct_id_map().end()){
 			Msg_Struct *msg_struct  = dynamic_cast<Msg_Struct*>(iter->second);
-			args.GetReturnValue().Set(msg_struct->build_msg_object(args.GetIsolate(), http_cid, msg_id, value));
+			args.GetReturnValue().Set(msg_struct->build_http_msg_object(args.GetIsolate(), http_cid, msg_id, value));
 			MASTER_HTTP_SERVER->push_block(http_cid, buf);
 		} else {
 			args.GetReturnValue().SetNull();
@@ -378,14 +378,24 @@ void send_master_msg_to_log(const FunctionCallbackInfo<Value>& args) {
 void send_master_msg_to_http(const FunctionCallbackInfo<Value>& args) {
 	int http_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int msg_id = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	Block_Buffer buf;
-	buf.make_inner_message(msg_id);
+	std::string str_data = "{\"msg_id\":";
+	std::stringstream stream;
+	stream << msg_id << ",";
+	str_data += stream.str();
 	Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
 	if(iter != MSG_MANAGER->msg_struct_id_map().end()){
 		Msg_Struct *msg_struct  = dynamic_cast<Msg_Struct*>(iter->second);
-		msg_struct->build_msg_buffer(args.GetIsolate(), args[2]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked(), buf);
+		msg_struct->build_http_msg_buffer(args.GetIsolate(), args[2]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked(), str_data);
 	}
-	buf.finish_message();
+	str_data = str_data.substr(0, str_data.length()-1);
+	stream.str("");
+	stream << "}";
+	str_data += stream.str();
+	LOG_INFO("http response data:%s", str_data.c_str());
+
+	Block_Buffer buf;
+	buf.write_int32(http_cid);
+	buf.write_string(str_data);
 	MASTER_MANAGER->send_to_http(http_cid, buf);
 }
 

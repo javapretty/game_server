@@ -240,14 +240,6 @@ Game_Player.prototype.sync_data_to_master = function() {
 	push_game_buffer(buf);
 }
 
-Game_Player.prototype.add_hero_exp_test = function(buffer) {
-	print('add hero exp test, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
-	var msg = new MSG_120306();
-	msg.deserialize(buffer);
-	this.add_exp(msg.exp);
-	this.sync_data_to_master();
-}
-
 Game_Player.prototype.move_to_point = function(obj) {
 	print('move to point, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
 	this.cplayer.move_to_point(obj.pos.x, obj.pos.y, obj.pos.z);

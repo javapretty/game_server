@@ -28,10 +28,10 @@ Game_Manager *Game_Manager::instance(void) {
 	return instance_;
 }
 
-int Game_Manager::init(int id) {
-	GAME_TIMER->thr_create();			///定时器
+int Game_Manager::init(int server_id) {
+	server_id_ = server_id;
+	GAME_TIMER->thr_create();
 	MSG_MANAGER->init();
-	server_id_ = id;
 	return 0;
 }
 

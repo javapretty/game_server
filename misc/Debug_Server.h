@@ -21,6 +21,8 @@ public:
 	int start(int argc, char *argv[]);
 	virtual int handle_timeout(const Time_Value &tv) { return 0; }
 
+	const Server_Conf &server_conf(void) { return server_conf_; }
+
 private:
 	Debug_Server(void);
 	~Debug_Server(void);
@@ -31,7 +33,6 @@ private:
    static Debug_Server *instance_;
    Epoll_Watcher *wait_watcher_;
    Server_Conf server_conf_;
-
 };
 
 #define DEBUG_SERVER Debug_Server::instance()

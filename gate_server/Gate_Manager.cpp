@@ -30,11 +30,11 @@ Gate_Manager *Gate_Manager::instance(void) {
 	return instance_;
 }
 
-int Gate_Manager::init(int id) {
+int Gate_Manager::init(int server_id) {
 	tick_time_ = Time_Value::gettimeofday();
-	server_id_ = id;
-	GATE_INNER_MESSAGER;					/// 内部消息处理
-	GATE_CLIENT_MESSAGER;					/// 外部消息处理
+	server_id_ = server_id;
+	GATE_INNER_MESSAGER;
+	GATE_CLIENT_MESSAGER;
 	GATE_TIMER->thr_create();
 
 	{ /// 包验证开关
@@ -347,33 +347,33 @@ int Gate_Manager::get_lowest_overload_game() {
 	for(Game_Status_Map::iterator iter = game_status_map_.begin();
 			iter != game_status_map_.end(); iter++){
 		temp = iter->second;
-		if(temp->palyer_num <= min_num){
-			min_num = temp->palyer_num;
+		if(temp->plyaer_num <= min_num){
+			min_num = temp->plyaer_num;
 			status = temp;
 		}
-		status->palyer_num++;
+		status->plyaer_num++;
 	}
-	return status->cid;
+	return status->game_cid;
 }
 
-void Gate_Manager::add_new_game(int cid, int id) {
+void Gate_Manager::add_new_game(int game_cid, int game_server_id) {
 	Game_Server_Status *status = new Game_Server_Status;
-	status->cid = cid;
-	status->game_id = id;
-	status->palyer_num = 0;
-	game_status_map_[cid] = status;
+	status->game_cid = game_cid;
+	status->game_server_id = game_server_id;
+	status->plyaer_num = 0;
+	game_status_map_[game_cid] = status;
 }
 
-int Gate_Manager::find_game_cid(int game_id) {
+int Gate_Manager::find_game_cid(int game_server_id) {
 	Game_Server_Status *status;
 	for(Game_Status_Map::iterator iter = game_status_map_.begin();
 			iter != game_status_map_.end(); iter++){
 		status = iter->second;
-		if(status->game_id == game_id)
+		if(status->game_server_id == game_server_id)
 			break;
 	}
 	if(status)
-		return status->cid;
+		return status->game_cid;
 	else
 		return 0;
 }

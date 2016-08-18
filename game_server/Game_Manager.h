@@ -27,7 +27,7 @@ public:
 
 public:
 	static Game_Manager *instance(void);
-	int init(int id);
+	int init(int server_id);
 	void run_handler(void);
 
 	inline int server_status(void) { return server_status_; }
