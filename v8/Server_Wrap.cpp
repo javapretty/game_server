@@ -394,7 +394,6 @@ void send_master_msg_to_http(const FunctionCallbackInfo<Value>& args) {
 	LOG_INFO("http response data:%s", str_data.c_str());
 
 	Block_Buffer buf;
-	buf.write_int32(http_cid);
 	buf.write_string(str_data);
 	MASTER_MANAGER->send_to_http(http_cid, buf);
 }
