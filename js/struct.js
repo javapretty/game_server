@@ -4,7 +4,7 @@ function Aoi_Info() {
 	this.level = 0;
 }
 
-function Position3D() {
+function Position() {
 	this.x = 0;
 	this.y = 0;
 	this.z = 0;
@@ -130,8 +130,10 @@ function Game_Player_Info() {
 	this.charge_gold = 0;
 	this.guild_id = 0;
 	this.guild_name = "";
-	this.last_scene = 0;
-	this.last_pos = new Position3D();
+	this.scene_id = 0;
+	this.pos_x = 0;
+	this.pos_y = 0;
+	this.pos_z = 0;
 }
 
 function Hero_Info() {
@@ -407,7 +409,7 @@ function MSG_520305() {
 }
 
 function MSG_120400() {
-	this.pos = new Position3D();
+	this.pos = new Position();
 }
 
 function MSG_520400() {
@@ -416,7 +418,7 @@ function MSG_520400() {
 
 function MSG_120401() {
 	this.target_scene = 0;
-	this.pos = new Position3D();
+	this.pos = new Position();
 }
 
 function MSG_520401() {

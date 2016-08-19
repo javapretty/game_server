@@ -62,7 +62,7 @@ enum Struct_Type {
 	MSG_STRUCT = 4,						//消息结构体
 };
 
-typedef boost::unordered_map<int32_t, Base_Struct *> Struct_Id_Map;
+typedef boost::unordered_map<int, Base_Struct *> Struct_Id_Map;
 typedef boost::unordered_map<std::string, Base_Struct *> Struct_Name_Map;
 int load_struct(const char *path, Struct_Type struct_type, Struct_Id_Map &struct_id_map, Struct_Name_Map &struct_name_map);
 
@@ -185,8 +185,8 @@ struct Player_DB_Cache {
 	int64_t role_id;
 	std::string role_name;
 	std::string account;
-	int32_t agent_num;
-	int32_t server_num;
+	int agent_num;
+	int server_num;
 
 	Player_DB_Cache(void) { reset(); }
 	void reset(void) {
@@ -201,7 +201,7 @@ struct Player_DB_Cache {
 struct Login_Player_Info {
 	std::string account;
 	std::string gate_ip;
-	int32_t gate_port;
+	int gate_port;
 	std::string session;
 	int64_t session_tick;
 
@@ -215,18 +215,18 @@ struct Login_Player_Info {
 	}
 };
 
-struct Position3D {
-	Position3D();
-	Position3D(float posx, float posy, float posz);
-	~Position3D();
-	float operator - (Position3D pos);
-	void operator = (Position3D pos);
-	void set_position(float posx, float posy, float posz);
-	void set_position(Position3D pos);
+struct Position {
+	Position();
+	Position(int posx, int posy, int posz);
+	~Position();
+	float operator-(Position &pos);
+	void operator=(Position &pos);
+	void set_position(int posx, int posy, int posz);
+	void set_position(Position &pos);
 
-	float x;
-	float y;
-	float z;
+	int x;
+	int y;
+	int z;
 };
 
 #endif /* PUBLIC_STURCT_H_ */

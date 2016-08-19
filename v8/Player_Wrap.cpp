@@ -53,13 +53,9 @@ void enter_scene(const FunctionCallbackInfo<Value>& args) {
 		return;
 	}
 	int scene_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	if(scene_id == 0){
-
-		return;
-	}
-	float x = args[1]->NumberValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	float y = args[2]->NumberValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	float z = args[3]->NumberValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int x = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int y = args[2]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int z = args[3]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	player->scene_entity()->pos().set_position(x, y, z);
 	Game_Scene *scene = SCENE_MANAGER->get_scene(scene_id);
 	if(scene == NULL) {
@@ -90,13 +86,13 @@ void move_to_point(const FunctionCallbackInfo<Value>& args) {
 		return;
 	}
 
-	float x = args[0]->NumberValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	float y = args[1]->NumberValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	float z = args[2]->NumberValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int x = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int y = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int z = args[2]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 
 	Game_Scene *scene = player->scene_entity()->scene();
 	if(scene != NULL){
-		scene->on_move_scene(player->scene_entity(), Position3D(x,y,z));
+		scene->on_move_scene(player->scene_entity(), Position(x,y,z));
 	}
 }
 

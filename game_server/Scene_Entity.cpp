@@ -27,7 +27,7 @@ Scene_Entity::~Scene_Entity() {
 
 }
 
-int Scene_Entity::on_update_position(Position3D new_pos) {
+int Scene_Entity::on_update_position(Position new_pos) {
 	opos_ = pos_;
 	pos_ = new_pos;
 	return 0;

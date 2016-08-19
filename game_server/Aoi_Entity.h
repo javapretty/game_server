@@ -32,8 +32,8 @@ public:
 	void broadcast_aoi_info();
 
 	inline ENTITY_ID entity_id(){return entity_->entity_id();}
-	inline Position3D pos(){return entity_->pos();}
-	inline Position3D opos(){return entity_->opos();}
+	inline Position pos(){return entity_->pos();}
+	inline Position opos(){return entity_->opos();}
 	inline Scene_Entity *scene_entity(){return entity_;}
 	inline void x_pos(AOI_LIST::iterator iter){x_pos_ = iter;}
 	inline void y_pos(AOI_LIST::iterator iter){y_pos_ = iter;}

@@ -25,13 +25,13 @@ class Scene_Entity {
 public:
 	Scene_Entity(Game_Player *game_player);
 	~Scene_Entity();
-	int on_update_position(Position3D new_pos);
+	int on_update_position(Position new_pos);
 	void write_aoi_info(Block_Buffer &buffer);
 	void broadcast_aoi_info();
 
 	inline ENTITY_ID entity_id(){return entity_id_;}
-	inline Position3D pos(){return pos_;}
-	inline Position3D opos(){return opos_;}
+	inline Position pos(){return pos_;}
+	inline Position opos(){return opos_;}
 	inline void scene(Game_Scene *scene){scene_ = scene;}
 	inline Game_Scene *scene(){return scene_;}
 	inline float radius(){return radius_;}
@@ -43,7 +43,7 @@ public:
 private:
 	ENTITY_ID entity_id_;
 	Game_Player *player_;
-	Position3D pos_, opos_;
+	Position pos_, opos_;
 	Game_Scene *scene_;
 	float radius_;
 	Aoi_Entity *aoi_entity_;

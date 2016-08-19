@@ -314,18 +314,18 @@
 
 	<MSG_120400>
 		<head msg_id="120400"/>
-		<struct type="Position3D" name="pos"/>
+		<struct type="Position" name="pos"/>
 	</MSG_120400>
 	
 	<MSG_520400>
 		<head msg_id="520400"/>
-		<vector type="Position3D" name="aoi_pos"/>
+		<vector type="Position" name="aoi_pos"/>
 	</MSG_520400>
 	
 	<MSG_120401>
 		<head msg_id="120401"/>
 		<arg type="int32" name="target_scene"/>
-		<struct type="Position3D" name="pos"/>
+		<struct type="Position" name="pos"/>
 	</MSG_120401>
 
 	<MSG_520401>
