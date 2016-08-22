@@ -252,7 +252,7 @@ Game_Player.prototype.change_scene = function(obj) {
 		this.cplayer.enter_scene(obj.target_scene, obj.pos.x, obj.pos.y, obj.pos.z);
 		this.cplayer.set_aoi_info();
 		var msg = new MSG_520401();
-		this.send_success_msg(Msg_GC.RES_CHANGE_SCENE, msg);
+		this.send_success_msg(Msg.RES_CHANGE_SCENE, msg);
 	}
 	else {
 		this.player_info.scene_id = obj.target_scene;
