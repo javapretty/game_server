@@ -1,93 +1,76 @@
-ÒÔServerÎªÀý£¬½²½âÏÂÏûÏ¢Á÷³Ì£¬°üÀ¨¿Í»§¶ËÏûÏ¢--->·þÎñÆ÷£¬·þÎñÆ÷ÏûÏ¢--->¿Í»§¶ËÁ÷³Ì¡£
-¸ÃÀà°üÀ¨ËÄ¸öÏß³Ì£º
-accept_½ÓÊÜÁ¬½ÓÏß³Ì£¬
-receive_½ÓÊÕÊý¾ÝÏß³Ì£¬Ïß³ÌÄÚ¿ªÆôepoll_watch£¬¼àÌýEPOLLINÊÂ¼þ
-send_·¢ËÍÊý¾ÝÏß³Ì£¬Ïß³ÌÄÚ¿ªÆôepoll_watch£¬¼àÌýEPOLLOUTÊÂ¼þ
-pack_½â°üÏûÏ¢Ïß³Ì£¬
-°üº¬Á½¸öÊý¾Ý½á¹¹£¬ÓÃÀ´´¦ÀísvcÁ¬½Ó
-Object_Po0l<Server_Svc, Spin_Lock> svc_static_list_ 	´æ·ÅsvcµÄÁÐ±í£¬ËùÓÐclientµ½serverµÄÁ¬½Ó¶¼±£´æÔÚÕâÀï
-Svc_Static_List<Server_Svc *, Spin_Lock>  svc_pool_  	svcµÄÄÚ´æ¹ÜÀíÀà
+ä»¥Serverä¸ºä¾‹ï¼Œè®²è§£ä¸‹æ¶ˆæ¯æµç¨‹ï¼ŒåŒ…æ‹¬å®¢æˆ·ç«¯æ¶ˆæ¯--->æœåŠ¡å™¨ï¼ŒæœåŠ¡å™¨æ¶ˆæ¯--->å®¢æˆ·ç«¯
+è¯¥ç±»åŒ…æ‹¬ä¸‰ä¸ªçº¿ç¨‹ï¼š
+accept_æŽ¥å—è¿žæŽ¥çº¿ç¨‹ï¼Œ
+receive_æŽ¥æ”¶æ•°æ®çº¿ç¨‹ï¼Œçº¿ç¨‹å†…å¼€å¯epoll_watchï¼Œç›‘å¬EPOLLINäº‹ä»¶
+send_å‘é€æ•°æ®çº¿ç¨‹ï¼Œçº¿ç¨‹å†…å¼€å¯epoll_watchï¼Œç›‘å¬EPOLLOUTäº‹ä»¶
+åŒ…å«ä¸¤ä¸ªæ•°æ®ç»“æž„ï¼Œç”¨æ¥å¤„ç†svcè¿žæŽ¥
+Object_Po0l<Server_Svc, Spin_Lock> svc_static_list_ 	å­˜æ”¾svcçš„åˆ—è¡¨ï¼Œæ‰€æœ‰clientåˆ°serverçš„è¿žæŽ¥éƒ½ä¿å­˜åœ¨è¿™é‡Œ
+Svc_Static_List<Server_Svc *, Spin_Lock>  svc_pool_  	svcçš„å†…å­˜ç®¡ç†ç±»
 
-SocketÁ÷³Ì¼ò½é£º
-¿Í»§¶Ë£º
-Í¨¹ýsocketº¯Êý´´½¨socketfd£¬connect·þÎñÆ÷ip£¬port£¬Á¬½Ó³É¹¦ºó£¬¿ÉÍ¨¹ýsocketfd½øÐÐread/writeÓë·þÎñÆ÷½øÐÐÍ¨ÐÅ¡£
-·þÎñ¶Ë£º
-Í¨¹ýsocketº¯Êý´´½¨listenfd£¬bindÏàÓ¦µÄ¶Ë¿Ú/ip£¬È»ºólisten£¬µÈ´ýÓÐ¿Í»§¶ËÁ¬½Ó¡£
-µ±ÓÐ¿Í»§¶ËÁ¬½ÓÉÏÀ´Ê±ºò£¬Í¨¹ýaccept½ÓÊÜÁ¬½Ó£¬·µ»Ø¸öconnfd£¬È»ºó¿ÉÒÔÍ¨¹ýconnfd½øÐÐread/write£¬Óë¿Í»§¶Ë½øÐÐÍ¨ÐÅ¡£
+Socketæµç¨‹ç®€ä»‹ï¼š
+å®¢æˆ·ç«¯ï¼š
+é€šè¿‡socketå‡½æ•°åˆ›å»ºsocketfdï¼ŒconnectæœåŠ¡å™¨ipï¼Œportï¼Œè¿žæŽ¥æˆåŠŸåŽï¼Œå¯é€šè¿‡socketfdè¿›è¡Œread/writeä¸ŽæœåŠ¡å™¨è¿›è¡Œé€šä¿¡ã€‚
+æœåŠ¡ç«¯ï¼š
+é€šè¿‡socketå‡½æ•°åˆ›å»ºlistenfdï¼Œbindç›¸åº”çš„ç«¯å£/ipï¼Œç„¶åŽlistenï¼Œç­‰å¾…æœ‰å®¢æˆ·ç«¯è¿žæŽ¥ã€‚
+å½“æœ‰å®¢æˆ·ç«¯è¿žæŽ¥ä¸Šæ¥æ—¶å€™ï¼Œé€šè¿‡acceptæŽ¥å—è¿žæŽ¥ï¼Œè¿”å›žä¸ªconnfdï¼Œç„¶åŽå¯ä»¥é€šè¿‡connfdè¿›è¡Œread/writeï¼Œä¸Žå®¢æˆ·ç«¯è¿›è¡Œé€šä¿¡ã€‚
 
-ÏûÏ¢Á÷¶¯¹ý³Ì£º
-1¡¢½ÓÊÜÁ¬½Ó
-AcceptÏß³ÌÆô¶¯ºó£¬»áÔÚrun_handlerº¯ÊýÀïÃæµ÷ÓÃserver_listen½øÐÐ¼àÌýÁ¬½Ó£¬ÓÐ¿Í»§¶ËÁ¬½Óµ½´ïÊ±ºò£¬µ÷ÓÃserver_accept½ÓÊÜ¸ÃÁ¬½Ó£¬
-È»ºóµ÷ÓÃaccept_svc´¦ÀíÁ¬½ÓºóµÄsvc£¬½«svc´æµ½svc_static_list_ÀïÃæ£¬
-È»ºóµ÷ÓÃregister_recv_handler½«¸Ãsvc×¢²áµ½receiverÏß³ÌµÄepollÀïÃæ£¬
-µ÷ÓÃregister_send_handler½«¸Ãsvc×¢²áµ½senderÏß³ÌµÄepollÀïÃæ£¬µÈ´ý½ÓÊÜºÍ·¢ËÍÊý¾Ý¡£
-Á÷³ÌÈçÏÂ£º
+æ¶ˆæ¯æµåŠ¨è¿‡ç¨‹ï¼š
+1ã€æŽ¥å—è¿žæŽ¥
+Acceptçº¿ç¨‹å¯åŠ¨åŽï¼Œä¼šåœ¨run_handlerå‡½æ•°é‡Œé¢è°ƒç”¨server_listenè¿›è¡Œç›‘å¬è¿žæŽ¥ï¼Œæœ‰å®¢æˆ·ç«¯è¿žæŽ¥åˆ°è¾¾æ—¶å€™ï¼Œè°ƒç”¨server_acceptæŽ¥å—è¯¥è¿žæŽ¥ï¼Œ
+ç„¶åŽè°ƒç”¨accept_svcå¤„ç†è¿žæŽ¥åŽçš„svcï¼Œå°†svcå­˜åˆ°svc_static_list_é‡Œé¢ï¼Œ
+ç„¶åŽè°ƒç”¨register_recv_handlerå°†è¯¥svcæ³¨å†Œåˆ°receiverçº¿ç¨‹çš„epollé‡Œé¢ï¼Œ
+è°ƒç”¨register_send_handlerå°†è¯¥svcæ³¨å†Œåˆ°senderçº¿ç¨‹çš„epollé‡Œé¢ï¼Œç­‰å¾…æŽ¥å—å’Œå‘é€æ•°æ®ã€‚
+æµç¨‹å¦‚ä¸‹ï¼š
 Accept::thread_create->run_handler->server_listen->server_accept->
 Server_Accept::accept_svc->
 Svc_Static_List::record_svc->
 Server_Svc::register_recv_handler->register_send_handler
 
-2¡¢½ÓÊÕÊý¾Ý
-ReceiveÏß³ÌÀïÃæµÄepoll_watchÔÚ¼àÌýµ½EPOLLINÊÂ¼þºó£¬»á´¥·¢Event_HanderµÄhandle_inputÊÂ¼þ£¬
-ÒòÎªSvc¼Ì³ÐEvent_HandlerÀà£¬receiveµÄepoll¼àÌýÁË¸Ãsvc£¬»áµ÷ÓÃSvcµÄrecv_dataº¯Êý£¬
-´Ósocket»º³åÇø¶ÁÈ¡µ½µÄÊý¾ÝBlock_BufferÍ¨¹ýpush_recv_blockº¯Êý·Åµ½SvcÀàµÄrecv_block_list_ÀïÃæ
-È»ºóµ÷ÓÃrecv_handler½«¸ÃÁ¬½ÓµÄcid_Í¨¹ýpush_packing_cid·Åµ½PackerÏß³ÌµÄpacking_list_ÀïÃæ,¹©packerÏß³ÌÑ­»·´¦Àí
-Á÷³ÌÈçÏÂ£º
+2ã€æŽ¥æ”¶æ•°æ®
+Receiveçº¿ç¨‹é‡Œé¢çš„epoll_watchåœ¨ç›‘å¬åˆ°EPOLLINäº‹ä»¶åŽï¼Œä¼šè§¦å‘Event_Handerçš„handle_inputäº‹ä»¶ï¼Œ
+å› ä¸ºSvcç»§æ‰¿Event_Handlerç±»ï¼Œreceiveçš„epollç›‘å¬äº†è¯¥svcï¼Œä¼šè°ƒç”¨Svcçš„handle_inputå‡½æ•°ï¼Œ
+ä»Žsocketç¼“å†²åŒºè¯»å–åˆ°çš„æ•°æ®Block_Bufferé€šè¿‡push_recv_blockå‡½æ•°æ”¾åˆ°Svcç±»çš„recv_block_list_é‡Œé¢
+ç„¶åŽè°ƒç”¨Svc_Handlerçš„handler_packå‡½æ•°è¿›è¡Œè§£åŒ…ï¼Œæœ€åŽå°†bufferæ”¾åˆ°serverçš„block_list_
+æµç¨‹å¦‚ä¸‹ï¼š
 Server_Svc::register_recv_handler->
 Receive::register_svc->(reactor_->add(svc, Epoll_Watcher::EVENT_INPUT))
-Epoll_Watcher::watcher_loop->handle_input->
-Svc::revc_data->push_recv_block->recv_block_list_(¸Ã½á¹¹´æ´¢½ÓÊÕµ½µÄÊý¾ÝBlockBuffer)
-Server_Svc::recv_handler->
-Server_Packer::push_packing_cid->Stream_Packer::packing_list_(¸Ã½á¹¹´æ´¢½ÓÊÕµ½Êý¾ÝµÄcid)
+Epoll_Watcher::watcher_loop->Svc::handle_input->
+push_recv_block->recv_block_list_(è¯¥ç»“æž„å­˜å‚¨æŽ¥æ”¶åˆ°çš„æ•°æ®BlockBuffer)
+Svc_Hander->handle_pack->Server::block_list_
 
-3¡¢½â°üÊý¾Ý
-PackÏß³ÌÔÚ´´½¨ºó£¬ÔÚrun_handlerº¯ÊýÀïÃæÑ­»·µ÷ÓÃprocess_packing_list½øÐÐ½â°ü£¬
-´Ópacking_list_ÀïÃæÈ¡µ½×îÐÂµÄcid£¬ÕÒµ½¶ÔÓ¦µÄSvcÈ»ºóµ÷ÓÃsvcµÄpack_recv_data½øÐÐ½â°ü£¬Ñ­»·´Órecv_block_list_ÀïÃæÈ¡³ö°ü£¬
-È»ºó½øÐÐ´¦Àí£¬´¦ÀíÍê³ÉÍ¨¹ýpacked_data_handler·Åµ½ServerµÄblock_list_ÀïÃæ¡£
-Á÷³ÌÈçÏÂ£º
-Pack:thread_create->run_handler->process->process_packing_list->
-Svc::pack_recv_data->Svc::recv_block_list_(´ÓÕâ¸ö°üµÄÁÐ±íÖÐÑ­»·È¡³ö°ü½øÐÐ´¦Àí)
-Server_Pack::packed_data_handler->
-Server::block_list_
-
-4¡¢Êý¾Ý·Åµ½Âß¼­Ïß³Ì£¬½øÐÐÂß¼­´¦Àí
-ÒÔGame_Gate_ServerÎªÀý£¬ÔÚÆô¶¯Ê±ºò£¬»á¿ªÆôÒ»¸öÑ­»·£¬Ñ­»·´ÓServerµÄblock_list_ÖÐÈ¡Êý¾Ý£¬Í¨¹ý
-GAME_MANAGER->push_game_gate_data(buf)·Åµ½Game_ManagerµÄgame_gate_data_list_ÖÐ¡£
-Game_ManagerÏß³ÌÔÚ´´½¨ºó£¬Í¨¹ýrun_handlerµ÷ÓÃprocess_list½øÐÐÊý¾Ý´¦Àí£¬Ñ­»·´Ógame_gate_data_list_È¡³öBlock_Buffer£¬
-È»ºóµ÷ÓÃGame_Client_MessageµÄprocess_block½øÐÐÏûÏ¢´¦Àí£¬´ÓBlock_BufferÀïÃæ¶Á³ömsg_id£¬¸ù¾Ýmsg_id½øÐÐ²»Í¬µÄº¯ÊýÂß¼­´¦Àí¡£
-´¦Àí½á¹ûÍ¨¹ýgate·µ»Ø¸ø¿Í»§¶Ë,µ½´Ë£¬¿Í»§¶Ë·¢µ½·þÎñÆ÷µÄÏûÏ¢´¦ÀíÍê±Ï¡£
-Á÷³ÌÈçÏÂ£º
+3ã€æ•°æ®å¤„ç†
+ä»¥Game_Gate_Serverä¸ºä¾‹ï¼Œåœ¨å¯åŠ¨æ—¶å€™ï¼Œä¼šå¼€å¯ä¸€ä¸ªå¾ªçŽ¯ï¼Œå¾ªçŽ¯ä»ŽServerçš„block_list_ä¸­å–æ•°æ®ï¼Œé€šè¿‡
+GAME_MANAGER->push_game_gate_data(buf)æ”¾åˆ°Game_Managerçš„game_gate_data_list_ä¸­ã€‚
+ç„¶åŽjsè„šæœ¬çº¿ç¨‹å¯åŠ¨åŽï¼Œä¼šä¸æ–­çš„ä»Žgame_gate_data_list_é‡Œé¢popæ¶ˆæ¯è¿›è¡Œé€»è¾‘å¤„ç†
+æµç¨‹å¦‚ä¸‹ï¼š
 Game_Gate_Server:thread_create->run_handler->process_list->
 Game_Manager::push_game_gate_data
+game_server.js::pop_game_gate_msg_object->process_game_gate_msg
 
-Game_Manager::thread_create->run_handler->process_list->game_gate_data_list_.pop_front
-Game_Client_Messager::process_block->Âß¼­¹¦ÄÜ´¦Àí
-
-5¡¢·¢ËÍÊý¾Ý
-µ±ÓÐÊý¾ÝÐèÒª·¢ËÍ¸ø¿Í»§¶ËÊ±ºò£¬µ÷ÓÃGate_MangerÀïÃæµÄsend_to_client£¬È»ºó½«Êý¾Ý·¢ËÍ¸øsend_£¬
-´æµ½append_list_ÀïÃæ£¬µ±send_Ïß³ÌÀïÃæepoll¼àÌýµÄ¶¨Ê±Æ÷Ê±¼äµ½ÆÚÊ±ºò£¬»áµ÷ÓÃsendµÄhanlder_timeoutº¯Êý£¬
-¸Ãº¯ÊýÏÈµ÷ÓÃappend_send_block½«append_list_ÀïÃæµÄÊý¾Ý´«ËÍµ½svcµÄsend_block_list_ÀïÃæ£¬
-È»ºóÍ¨¹ýsvcµÄsend_data½«Êý¾Ý·¢ËÍµ½socket»º³åÇø£¬È»ºóÍ¨¹ýÍøÂç·¢ËÍ¸ø¿Í»§¶Ë¡£
-Á÷³ÌÈçÏÂ£º
+4ã€å‘é€æ•°æ®
+å½“æœ‰æ•°æ®éœ€è¦å‘é€ç»™å®¢æˆ·ç«¯æ—¶å€™ï¼Œè°ƒç”¨Gate_Mangeré‡Œé¢çš„send_to_clientï¼Œç„¶åŽå°†æ•°æ®å‘é€ç»™send_ï¼Œ
+å­˜åˆ°append_list_é‡Œé¢ï¼Œå½“send_çº¿ç¨‹é‡Œé¢epollç›‘å¬çš„å®šæ—¶å™¨æ—¶é—´åˆ°æœŸæ—¶å€™ï¼Œä¼šè°ƒç”¨sendçš„hanlder_timeoutå‡½æ•°ï¼Œ
+è¯¥å‡½æ•°å…ˆè°ƒç”¨append_send_blockå°†append_list_é‡Œé¢çš„æ•°æ®ä¼ é€åˆ°svcçš„send_block_list_é‡Œé¢ï¼Œ
+ç„¶åŽé€šè¿‡svcçš„handle_sendå°†æ•°æ®å‘é€åˆ°socketç¼“å†²åŒºï¼Œç„¶åŽé€šè¿‡ç½‘ç»œå‘é€ç»™å®¢æˆ·ç«¯ã€‚
+æµç¨‹å¦‚ä¸‹ï¼š
 Game_Manager::send_to_client->
 Send::push_data_block_with_len->
-Svc::append_list_(¸Ã½á¹¹´æ·Å´ý·¢ËÍµÄBlock_Buffer)
+Svc::append_list_(è¯¥ç»“æž„å­˜æ”¾å¾…å‘é€çš„Block_Buffer)
 
 Send:thread_create->run_handler->register_self_timer->
 Epoll_Watcher::watcher_loop->
 Send::handle_timeout->append_send_block->
-Svc::push_send_block->send_block_list_(Ñ­»·´ÓlistÖÐÈ¡³öÊý¾ÝÍ¨¹ýsocket·¢ËÍ)
-Svc::send_data
+Svc::push_send_block->send_block_list_(å¾ªçŽ¯ä»Žlistä¸­å–å‡ºæ•°æ®é€šè¿‡socketå‘é€)
+Svc::handle_send
 
-6¡¢Á¬½Ó¹Ø±ÕÁ÷³Ì
-ReceiveÀïÃæ×¢²áÁË¸öioÐÄÌø³¬Ê±ÊÂ¼þ£¬µ±epoll¼àÌýµ½¸ÃÊÂ¼þÊ±ºò£¬ËµÃ÷ÒÑ¾­ÎÞ·¨Á¬½Óµ½¿Í»§¶Ë£¬·þÎñÆ÷»áÖ÷¶¯¹Ø±Õ¸ÃÁ¬½Ó£¬
-Ê×ÏÈµ÷ÓÃepoll_watchÀïÃæµÄhandle_timeoutº¯Êý£¬È»ºóµ÷ÓÃµ½svcÀàÀïÃæµÄhandle_closeº¯Êý£¬
-È»ºóµ÷ÓÃServer_SvcÀïÃæµÄclose_handler£¬¸Ãº¯Êý»áÍ¨ÖªReceiveµôÏßµÄcid£¬·Åµ½drop_list_ÀïÃæ£¬
-ÔÚReceiveµÄepoll´¦Àídrop_list_Ê±ºò£¬ÓÖ»áÍ¨¹ýServer_ReceiveµÄdrop_handlerº¯ÊýÍ¨ÖªSend´¦ÀíµôÏß£¬
-·Åµ½SendµÄdrop_list_ÀïÃæ£¬Send³¬Ê±º¯Êý´¦ÀíÊ±ºò£¬ÓÖ»áÍ¨¹ýServer_SendµÄdrop_handlerº¯ÊýÍ¨ÖªPack´¦ÀíµôÏß£¬
-×îºóÔÚServer_PackµÄdrop_handlerÀïÃæ£¬»á»ØÊÕsvc£¬¹Ø±Õfd£¬Í¨ÖªGame_Manger£¬
-Í¨¹ýGame_MangerµÄprocess_drop_cidÈÃGame_PlayerµôÏß¡£
-Á÷³ÌÈçÏÂ£º
+5ã€è¿žæŽ¥å…³é—­æµç¨‹
+Receiveé‡Œé¢æ³¨å†Œäº†ä¸ªioå¿ƒè·³è¶…æ—¶äº‹ä»¶ï¼Œå½“epollç›‘å¬åˆ°è¯¥äº‹ä»¶æ—¶å€™ï¼Œè¯´æ˜Žå·²ç»æ— æ³•è¿žæŽ¥åˆ°å®¢æˆ·ç«¯ï¼ŒæœåŠ¡å™¨ä¼šä¸»åŠ¨å…³é—­è¯¥è¿žæŽ¥ï¼Œ
+é¦–å…ˆè°ƒç”¨epoll_watché‡Œé¢çš„handle_timeoutå‡½æ•°ï¼Œç„¶åŽè°ƒç”¨åˆ°svcç±»é‡Œé¢çš„handle_closeå‡½æ•°ï¼Œ
+ç„¶åŽè°ƒç”¨Server_Svcé‡Œé¢çš„close_handlerï¼Œè¯¥å‡½æ•°ä¼šé€šçŸ¥ReceiveæŽ‰çº¿çš„cidï¼Œæ”¾åˆ°drop_list_é‡Œé¢ï¼Œ
+åœ¨Receiveçš„epollå¤„ç†drop_list_æ—¶å€™ï¼Œåˆä¼šé€šè¿‡Server_Receiveçš„drop_handlerå‡½æ•°é€šçŸ¥Sendå¤„ç†æŽ‰çº¿ï¼Œ
+æ”¾åˆ°Sendçš„drop_list_é‡Œé¢ï¼ŒSendè¶…æ—¶å‡½æ•°å¤„ç†æ—¶å€™ï¼Œåœ¨Sendçš„drop_handleré‡Œé¢ï¼Œä¼šå›žæ”¶svcï¼Œå…³é—­fdï¼Œé€šçŸ¥Game_Mangerï¼Œ
+é€šè¿‡Game_Mangerçš„process_drop_cidè®©Game_PlayeræŽ‰çº¿ã€‚
+æµç¨‹å¦‚ä¸‹ï¼š
 Receive::init->Epoll_Watcher::WITH_IO_HEARTBEAT
 Epoll_Watcher::watch_loop->handle_timeout->
 svc:handle_close->
@@ -96,14 +79,11 @@ Receive::push_drop->drop_list->
 Server_Receive::drop_handler->
 Send::push_drop_->	
 Server_Send:drop_handler->
-Pack::push_drop->drop_list_
-Server_Pack::drop_handler->
 Game_Manager::push_drop_cid->drop_cid_list_->	
 Server::svc_static_list_-> erase_svc
 
-
-¹ØÓÚcid
-cidÊÇ·þÎñÆ÷Éú³ÉµÄÒ»¸öid,Ã¿¸ö¿Í»§¶ËÁ¬½Óµ½·þÎñÆ÷ºó£¬¶¼»áÉú³ÉÒ»¸öÎ¨Ò»µÄcid£¬ÓÃÀ´²éÕÒ¿Í»§¶ËµÄÁ¬½ÓSvc,
-cid±£´æÔÚsvcÀàÖÐ£¬ÔÚSvc::recv_dataÊ±ºò£¬½«cidÐ´Èëµ½BlockBufferµÄÍ·²¿       £¬È»ºóÏûÏ¢×é°ü£¬¶ªµ½Âß¼­²ã´¦Àí
-µ±·þÎñÆ÷ÐèÒªÏò¿Í»§¶Ë·¢ËÍÏûÏ¢Ê±ºò£¬ÔÚSvc::send_dataÖÐ£¬»á½«cidÈ¥µô£¬½«°üµÄÄÚÈÝ·¢¸ø¿Í»§¶Ë£¬ËùÒÔÔÚ¿Í»§¶Ë
-ºÍ·þÎñÆ÷µÄÍ¨ÐÅÏûÏ¢ÖÐ£¬ÊÇ²»´øcidµÄ    
+å…³äºŽcid
+cidæ˜¯æœåŠ¡å™¨ç”Ÿæˆçš„ä¸€ä¸ªid,æ¯ä¸ªå®¢æˆ·ç«¯è¿žæŽ¥åˆ°æœåŠ¡å™¨åŽï¼Œéƒ½ä¼šç”Ÿæˆä¸€ä¸ªå”¯ä¸€çš„cidï¼Œç”¨æ¥æŸ¥æ‰¾å®¢æˆ·ç«¯çš„è¿žæŽ¥Svc,
+cidä¿å­˜åœ¨svcç±»ä¸­ï¼Œåœ¨Svc::handle_inputæ—¶å€™ï¼Œå°†cidå†™å…¥åˆ°BlockBufferçš„å¤´éƒ¨ï¼Œç„¶åŽæ¶ˆæ¯ç»„åŒ…ï¼Œä¸¢åˆ°é€»è¾‘å±‚å¤„ç†
+å½“æœåŠ¡å™¨éœ€è¦å‘å®¢æˆ·ç«¯å‘é€æ¶ˆæ¯æ—¶å€™ï¼Œåœ¨Svc::handle_sendä¸­ï¼Œä¼šå°†cidåŽ»æŽ‰ï¼Œå°†åŒ…çš„å†…å®¹å‘ç»™å®¢æˆ·ç«¯ï¼Œæ‰€ä»¥åœ¨å®¢æˆ·ç«¯
+å’ŒæœåŠ¡å™¨çš„é€šä¿¡æ¶ˆæ¯ä¸­ï¼Œæ˜¯ä¸å¸¦cidçš„    
