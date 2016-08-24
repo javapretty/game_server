@@ -39,6 +39,5 @@ void Log_Timer::run_handler(void) {
 
 void Log_Timer::register_handler(void) {
 	Time_Value timeout_tv(0, 100 * 1000);
-	watcher_.add(&timer_handler_, Epoll_Watcher::EVENT_TIMEOUT, &timeout_tv);
+	watcher_.add(&timer_handler_, EVENT_TIMEOUT, &timeout_tv);
 }
-
