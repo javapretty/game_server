@@ -53,12 +53,14 @@ int Log_Manager::process_list(void) {
 
 	while (1) {
 		bool all_empty = true;
-		if (! block_list_.empty()) {
+		if ((buf = block_list_.pop_front()) != 0) {
 			all_empty = false;
-			buf = block_list_.front();
-			block_list_.pop_front();
-			cid = buf->peek_int32();
-			process_block(*buf);
+			if (buf->is_legal()) {
+				buf->peek_int32(cid);
+				process_block(*buf);
+			} else {
+				buf->reset();
+			}
 			LOG_SERVER->push_block(cid, buf);
 		}
 		if (! tick_list_.empty()) {
@@ -75,10 +77,14 @@ int Log_Manager::process_list(void) {
 }
 
 int Log_Manager::process_block(Block_Buffer &buf) {
-	/*int32_t cid*/ buf.read_int32();
-	/*int16_t len*/ buf.read_int16();
-	int32_t msg_id = buf.read_int32();
-	/*int32_t status*/ buf.read_int32();
+	int32_t cid = 0;
+	int16_t len = 0;
+	int32_t msg_id = 0;
+	int32_t status = 0;
+	buf.read_int32(cid);
+	buf.read_int16(len);
+	buf.read_int32(msg_id);
+	buf.read_int32(status);
 
 	switch (msg_id) {
 	case 999999: {

@@ -16,7 +16,8 @@ Log_Struct::~Log_Struct() {}
 void Log_Struct::save_data(Block_Buffer &buffer) {
 	std::string str_name;
 	std::string str_value;
-	int64_t key_index = buffer.peek_int64();
+	int64_t key_index = 0;
+	buffer.peek_int64(key_index);
 	for(std::vector<Field_Info>::const_iterator iter = field_vec().begin();
 			iter != field_vec().end(); iter++) {
 		if(iter->field_label == "arg") {
@@ -45,31 +46,38 @@ void Log_Struct::build_sql_arg(const Field_Info &field_info, Block_Buffer &buffe
 
 	stream.str("");
 	if(field_info.field_type == "int8") {
-		int8_t value = buffer.read_int8();
+		int8_t value = 0;
+		buffer.read_int8(value);
 		stream << value << "," ;
 	}
 	else if(field_info.field_type == "int16") {
-		int16_t value = buffer.read_int16();
+		int16_t value = 0;
+		buffer.read_int16(value);
 		stream << value << "," ;
 	}
 	else if(field_info.field_type == "int32") {
-		int32_t value = buffer.read_int32();
+		int32_t value = 0;
+		buffer.read_int32(value);
 		stream << value << "," ;
 	}
 	else if(field_info.field_type == "int64") {
-		int64_t value = buffer.read_int64();
+		int64_t value = 0;
+		buffer.read_int64(value);
 		stream << value << "," ;
 	}
 	else if(field_info.field_type == "double") {
-		double value = buffer.read_double();
+		double value = 0;
+		buffer.read_double(value);
 		stream << value << "," ;
 	}
 	else if(field_info.field_type == "bool") {
-		bool value = buffer.read_bool();
+		bool value = false;
+		buffer.read_bool(value);
 		stream << value << "," ;
 	}
 	else if(field_info.field_type == "string") {
-		std::string value = buffer.read_string();
+		std::string value = "";
+		buffer.read_string(value);
 		stream << "\'" << value << "\'" << "," ;
 	}
 	else {

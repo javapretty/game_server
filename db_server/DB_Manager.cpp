@@ -79,9 +79,12 @@ int DB_Manager::start(void) {
 
 int DB_Manager::push_data_block(Block_Buffer *buf) {
 	int read_idx = buf->get_read_idx();
-	/*int32_t cid*/ buf->read_int32();
-	/*int16_t len*/ buf->read_int16();
-	int32_t msg_id = buf->read_int32();
+	int32_t cid = 0;
+	int16_t len = 0;
+	int32_t msg_id = 0;
+	buf->read_int32(cid);
+	buf->read_int16(len);
+	buf->read_int32(msg_id);
 	buf->set_read_idx(read_idx);
 
 	switch (msg_id) {

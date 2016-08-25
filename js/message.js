@@ -1,14 +1,12 @@
 
 if (typeof Msg == "undefined") {
 	var Msg = {};
-	Msg.REQ_CLIENT_REGISTER = 100000; //注册
-	Msg.REQ_CLIENT_LOGIN = 100001; //登录
-	Msg.REQ_CONNECT_GATE = 100002; //客户端登录gate
-	Msg.REQ_HEARTBEAT = 100003; //心跳
-	Msg.RES_CLIENT_REGISTER = 500000; //注册(返回)
-	Msg.RES_CLIENT_LOGIN = 500001; //登录(返回)
-	Msg.RES_CONNECT_GATE = 500002; //客户端登录gate(返回)
-	Msg.RES_HEARTBEAT = 500003; //心跳(返回)
+	Msg.REQ_CONNECT_LOGIN = 100001; //客户端登录login
+	Msg.REQ_CONNECT_GATE = 100101; //客户端登录gate
+	Msg.REQ_SEND_HEARTBEAT = 100102; //发送心跳到gate
+	Msg.RES_CONNECT_LOGIN = 500001; //客户端登录login(返回)
+	Msg.RES_CONNECT_GATE = 500101; //客户端登录gate(返回)
+	Msg.RES_SEND_HEARTBEAT = 500102; //发送心跳到gate(返回)
 	Msg.REQ_SEND_CHAT_INFO = 110001; //发送世界聊天消息
 	Msg.REQ_CREATE_GUILD = 110101; //申请创建公会
 	Msg.REQ_DISSOVE_GUILD = 110102; //申请解散公会

@@ -16,7 +16,7 @@ public:
 	int process_gate_block(int cid, int msg_id, Block_Buffer &buf);
 
 	int connect_gate(int cid, Block_Buffer &buf);
-	int refresh_heartbeat(int cid, Block_Buffer &buf);
+	int send_heartbeat(int cid, Block_Buffer &buf);
 
 private:
 	Gate_Client_Messager(void);

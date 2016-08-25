@@ -175,42 +175,31 @@ function Offline_Info() {
 	this.guild_name = "";
 }
 
-function MSG_100000() {
-	this.account = "";
-	this.password = "";
-}
-
-function MSG_500000() {
-	this.ip = "";
-	this.port = 0;
-	this.session = "";
-}
-
 function MSG_100001() {
 	this.account = "";
 	this.password = "";
 }
 
 function MSG_500001() {
-	this.ip = "";
-	this.port = 0;
+	this.gate_ip = "";
+	this.gate_port = 0;
 	this.session = "";
 }
 
-function MSG_100002() {
+function MSG_100101() {
 	this.account = "";
 	this.session = "";
 }
 
-function MSG_500002() {
+function MSG_500101() {
 	this.account = "";
 }
 
-function MSG_100003() {
+function MSG_100102() {
 	this.client_time = 0;
 }
 
-function MSG_500003() {
+function MSG_500102() {
 	this.client_time = 0;
 	this.server_time = 0;
 }

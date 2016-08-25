@@ -53,14 +53,19 @@ int DB_Worker::process_data_block(Block_Buffer *buffer) {
 		return -1;
 	}
 
-	int32_t cid = buffer->read_int32();
-	/*int16_t len*/ buffer->read_int16();
-	int32_t msg_id = buffer->read_int32();
-	int32_t status = buffer->read_int32();
+	int32_t cid = 0;
+	int16_t len = 0;
+	int32_t msg_id = 0;
+	int32_t status = 0;
+	buffer->read_int32(cid);
+	buffer->read_int16(len);
+	buffer->read_int32(msg_id);
+	buffer->read_int32(status);
 
 	switch (msg_id) {
 	case SYNC_GAME_DB_LOAD_PLAYER: {
-		std::string account = buffer->read_string();
+		std::string account;
+		buffer->read_string(account);
 		process_load_player(cid, account);
 		break;
 	}
@@ -85,7 +90,8 @@ int DB_Worker::process_data_block(Block_Buffer *buffer) {
 		break;
 	}
 	case SYNC_MASTER_DB_DELETE_DATA: {
-		std::string struct_name = buffer->read_string();
+		std::string struct_name;
+		buffer->read_string(struct_name);
 		Struct_Name_Map::iterator iter = DB_MANAGER->db_struct_name_map().find(struct_name);
 		if(iter == DB_MANAGER->db_struct_name_map().end()){
 			LOG_ERROR("Can not find the struct_name: %s", struct_name.c_str());
@@ -115,12 +121,12 @@ int DB_Worker::process_create_player(int cid, Create_Role_Info &role_info) {
 	int64_t role_id = 0;
 	Block_Buffer buf;
 	if ((role_id = DB_MANAGER->create_player(role_info)) > 0) {
-		buf.make_inner_message(SYNC_DB_GAME_CREATE_PLAYER, ROLE_SUCCESS_CREATE);
+		buf.make_server_message(SYNC_DB_GAME_CREATE_PLAYER, ROLE_SUCCESS_CREATE);
 		buf.write_string(role_info.account);
 		//创建所有玩家表,构建登录消息buf
 		create_player_data(role_id, buf);
 	} else {
-		buf.make_inner_message(SYNC_DB_GAME_CREATE_PLAYER, ROLE_HAS_EXIST);
+		buf.make_server_message(SYNC_DB_GAME_CREATE_PLAYER, ROLE_HAS_EXIST);
 		buf.write_string(role_info.account);
 	}
 	buf.finish_message();
@@ -142,7 +148,7 @@ int DB_Worker::process_load_player(int cid, std::string &account) {
 	}
 
 	Block_Buffer buf;
-	buf.make_inner_message(SYNC_DB_GAME_LOAD_PLAYER, status);
+	buf.make_server_message(SYNC_DB_GAME_LOAD_PLAYER, status);
 	buf.write_string(account);
 	if (role_id > 0) {
 		load_player_data(role_id, buf);
@@ -154,14 +160,16 @@ int DB_Worker::process_load_player(int cid, std::string &account) {
 
 int DB_Worker::process_save_player(int cid, int status, Block_Buffer &buffer) {
 	//先把两个额外字段读出来，再保存玩家数据，防止buffer错乱
-	bool logout = buffer.read_bool();
-	std::string account = buffer.read_string();
+	bool logout;
+	std::string account;
+	buffer.read_bool(logout);
+	buffer.read_string(account);
 	if (logout) {
 		//离线保存
 		save_player_data(buffer);
 
 		Block_Buffer buf;
-		buf.make_inner_message(SYNC_DB_GAME_SAVE_PLAYER);
+		buf.make_server_message(SYNC_DB_GAME_SAVE_PLAYER, 0);
 		buf.write_string(account);
 		buf.finish_message();
 		DB_MANAGER->send_data_block(cid, buf);
@@ -174,7 +182,7 @@ int DB_Worker::process_save_player(int cid, int status, Block_Buffer &buffer) {
 
 int DB_Worker::process_create_guild(int cid, Create_Guild_Info &guild_info) {
 	Block_Buffer buf;
-	buf.make_inner_message(SYNC_DB_MASTER_CREATE_GUILD);
+	buf.make_server_message(SYNC_DB_MASTER_CREATE_GUILD, 0);
 	guild_info.guild_id = DB_MANAGER->create_guild(guild_info);
 	guild_info.serialize(buf);
 	buf.finish_message();
@@ -193,7 +201,7 @@ int DB_Worker::process_load_master(int cid) {
 		}
 
 		Block_Buffer buf;
-		buf.make_inner_message(it->second->msg_id() + 400000);
+		buf.make_server_message(it->second->msg_id() + 400000, 0);
 		it->second->load_data(0, buf);
 		buf.finish_message();
 		DB_MANAGER->send_data_block(cid, buf);

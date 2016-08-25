@@ -19,11 +19,16 @@ Gate_Inner_Messager *Gate_Inner_Messager::instance(void) {
 }
 
 int Gate_Inner_Messager::process_login_block(Block_Buffer &buf) {
-	/*int32_t gate_cid*/ buf.read_int32();
-	/*int16_t len*/ buf.read_int16();
-	int32_t msg_id = buf.read_int32();
-	int32_t status = buf.read_int32();
-	int32_t player_cid = buf.read_int32();
+	int32_t cid = 0;
+	int16_t len = 0;
+	int32_t msg_id = 0;
+	int32_t status = 0;
+	int32_t player_cid = 0;
+	buf.read_int32(cid);
+	buf.read_int16(len);
+	buf.read_int32(msg_id);
+	buf.read_int32(status);
+	buf.read_int32(player_cid);
 
 	Perf_Mon perf_mon(msg_id);
 	GATE_MANAGER->inner_msg_count(msg_id);
@@ -32,8 +37,8 @@ int Gate_Inner_Messager::process_login_block(Block_Buffer &buf) {
 		MSG_140001 msg;
 		msg.deserialize(buf);
 		Block_Buffer player_buf;
-		player_buf.make_inner_message(RES_CONNECT_GATE, status);
-		MSG_500002 player_msg;
+		player_buf.make_server_message(RES_CONNECT_GATE, status);
+		MSG_500101 player_msg;
 		player_msg.account = msg.account;
 		player_msg.serialize(player_buf);
 		player_buf.finish_message();
@@ -52,11 +57,16 @@ int Gate_Inner_Messager::process_login_block(Block_Buffer &buf) {
 }
 
 int Gate_Inner_Messager::process_game_block(Block_Buffer &buf) {
-	/*int32_t gate_cid*/ buf.read_int32();
-	/*int16_t len*/ buf.read_int16();
-	int32_t msg_id = buf.read_int32();
-	int32_t status = buf.read_int32();
-	int32_t player_cid = buf.read_int32();
+	int32_t cid = 0;
+	int16_t len = 0;
+	int32_t msg_id = 0;
+	int32_t status = 0;
+	int32_t player_cid = 0;
+	buf.read_int32(cid);
+	buf.read_int16(len);
+	buf.read_int32(msg_id);
+	buf.read_int32(status);
+	buf.read_int32(player_cid);
 
 	Perf_Mon perf_mon(msg_id);
 	GATE_MANAGER->inner_msg_count(msg_id);
@@ -65,7 +75,8 @@ int Gate_Inner_Messager::process_game_block(Block_Buffer &buf) {
 	if (msg_id == 520001 && status == 0) {
 		//RES_FETCH_ROLE_INFO消息第一个字段是64位role_id
 		int read_idx = buf.get_read_idx();
-		int64_t role_id = buf.read_int64();
+		int64_t role_id = 0;
+		buf.read_int64(role_id);
 		buf.set_read_idx(read_idx);
 
 		Block_Buffer master_buf;
@@ -78,7 +89,7 @@ int Gate_Inner_Messager::process_game_block(Block_Buffer &buf) {
 	}
 
 	Block_Buffer player_buf;
-	player_buf.make_inner_message(msg_id, status);
+	player_buf.make_server_message(msg_id, status);
 	player_buf.copy(&buf);
 	player_buf.finish_message();
 	GATE_MANAGER->send_to_client(player_cid, player_buf);
@@ -86,17 +97,23 @@ int Gate_Inner_Messager::process_game_block(Block_Buffer &buf) {
 }
 
 int Gate_Inner_Messager::process_master_block(Block_Buffer &buf) {
-	/*int32_t gate_cid*/ buf.read_int32();
-	/*int16_t len*/ buf.read_int16();
-	int32_t msg_id = buf.read_int32();
-	int32_t status = buf.read_int32();
-	int32_t player_cid = buf.read_int32();
+	int32_t cid = 0;
+	int16_t len = 0;
+	int32_t msg_id = 0;
+	int32_t status = 0;
+	int32_t player_cid = 0;
+	buf.read_int32(cid);
+	buf.read_int16(len);
+	buf.read_int32(msg_id);
+	buf.read_int32(status);
+	buf.read_int32(player_cid);
 
 	Perf_Mon perf_mon(msg_id);
 	GATE_MANAGER->inner_msg_count(msg_id);
 
 	if(msg_id == 510300) { //切换场景消息
-		int32_t game_server_id = buf.read_int32();
+		int32_t game_server_id = 0;
+		buf.read_int32(game_server_id);
 		Gate_Player *player = GATE_MANAGER->find_cid_gate_player(player_cid);
 		if(player == NULL)
 			return -1;
@@ -111,7 +128,7 @@ int Gate_Inner_Messager::process_master_block(Block_Buffer &buf) {
 	}
 
 	Block_Buffer player_buf;
-	player_buf.make_inner_message(msg_id, status);
+	player_buf.make_server_message(msg_id, status);
 	player_buf.copy(&buf);
 	player_buf.finish_message();
 	GATE_MANAGER->send_to_client(player_cid, player_buf);

@@ -5,7 +5,6 @@
  *      Author: zhangyalei
  */
 
-#include "Buffer_Wrap.h"
 #include "Player_Wrap.h"
 #include "Game_Manager.h"
 #include "Master_Manager.h"

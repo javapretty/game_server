@@ -27,14 +27,13 @@ enum Log_Server_Type {
 enum Error_Code {
 	ERROR_SERVER_INNER 							= 10000,				//服务器内部错误
 	ERROR_CLIENT_SESSION 						= 10001,				//session错误
-	ERROR_CONNECT_TIMEOUT 					= 10002,				//连接超时
+	ERROR_CONNECT_TIMEOUT 						= 10002,				//连接超时
 	ERROR_MSG_COUNT									= 10003,				//消息数量过多
 	ERROR_MSG_SERIAL 								= 10004,				//消息序列号错误
 	ERROR_MSG_TIME 									= 10005,				//消息时间错误
-	ERROR_REGISTER_VERIFY_FAIL				= 10006,				//注册验证失败
-	ERROR_LOGIN_VERIFY_FAIL					= 10007,				//登录验证失败
-	ERROR_DISCONNECT_SELF 					= 10008,				//服务重启中,稍候再试
-	ERROR_DISCONNECT_RELOGIN				= 10009,				//账号在其它地方登陆
+	ERROR_DISCONNECT_SELF 						= 10006,				//服务重启中,稍候再试
+	ERROR_DISCONNECT_RELOGIN				= 10007,				//账号在其它地方登陆
+	ERROR_LOGIN_FAIL									= 10008,				//登录失败
 };
 
 enum Role_Status {

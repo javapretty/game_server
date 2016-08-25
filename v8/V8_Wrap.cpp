@@ -9,7 +9,6 @@
 #include <stdlib.h>
 #include <string>
 #include "V8_Wrap.h"
-#include "Buffer_Wrap.h"
 #include "Player_Wrap.h"
 #include "Server_Wrap.h"
 #include "Time_Value.h"

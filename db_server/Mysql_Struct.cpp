@@ -142,7 +142,8 @@ void Mysql_Struct::load_data(int64_t key_index, Block_Buffer &buffer) {
 }
 
 void Mysql_Struct::save_data(Block_Buffer &buffer) {
-	int64_t key_index = buffer.peek_int64();
+	int64_t key_index = 0;
+	buffer.peek_int64(key_index);
 	LOG_INFO("table %s save key_index:%ld", table_name().c_str(), key_index);
 	if (key_index <= 0) {
 		return;
@@ -202,31 +203,38 @@ void Mysql_Struct::save_data(Block_Buffer &buffer) {
 
 		if(iter->field_label == "arg") {
 			if(iter->field_type == "int8") {
-				int8_t value = buffer.read_int8();
+				int8_t value = 0;
+				buffer.read_int8(value);
 				pstmt->setInt(param_index, value);
 			}
 			else if(iter->field_type == "int16") {
-				int16_t value = buffer.read_int16();
+				int16_t value = 0;
+				buffer.read_int16(value);
 				pstmt->setInt(param_index, value);
 			}
 			else if(iter->field_type == "int32") {
-				int32_t value = buffer.read_int32();
+				int32_t value = 0;
+				buffer.read_int32(value);
 				pstmt->setInt(param_index, value);
 			}
 			else if(iter->field_type == "int64") {
-				int64_t value = buffer.read_int64();
+				int64_t value = 0;
+				buffer.read_int64(value);
 				pstmt->setInt64(param_index, value);
 			}
 			else if(iter->field_type == "double") {
-				double value = buffer.read_double();
+				double value = 0;
+				buffer.read_double(value);
 				pstmt->setDouble(param_index, value);
 			}
 			else if(iter->field_type == "bool") {
-				bool value = buffer.read_bool();
+				bool value = false;
+				buffer.read_bool(value);
 				pstmt->setBoolean(param_index, value);
 			}
 			else if(iter->field_type == "string") {
-				std::string value = buffer.read_string();
+				std::string value = "";
+				buffer.read_string(value);
 				pstmt->setString(param_index, value);
 			}
 			else {
@@ -267,7 +275,8 @@ void Mysql_Struct::save_data(Block_Buffer &buffer) {
 }
 
 void Mysql_Struct::save_data_vector(Block_Buffer &buffer) {
-	uint16_t count = buffer.read_uint16();
+	uint16_t count = 0;
+	buffer.read_uint16(count);
 	LOG_INFO("table %s save size:%d", table_name().c_str(), count);
 	for(int i = 0; i < count; i++) {
 		save_data(buffer);
@@ -276,10 +285,12 @@ void Mysql_Struct::save_data_vector(Block_Buffer &buffer) {
 
 void Mysql_Struct::delete_data(Block_Buffer &buffer) {
 	char sql_str[128] = {0};
-	uint16_t count = buffer.read_uint16();
+	uint16_t count = 0;
+	buffer.read_uint16(count);
 	for(int i = 0; i < count; i++){
-		int64_t index = buffer.read_int64();
-		sprintf(sql_str, "delete from %s where %s=%ld", table_name().c_str(), index_name().c_str(), index);
+		int64_t key_index = 0;
+		buffer.read_int64(key_index);
+		sprintf(sql_str, "delete from %s where %s=%ld", table_name().c_str(), index_name().c_str(), key_index);
 		MYSQL_CONNECTION->execute(sql_str);
 	}
 }
@@ -424,7 +435,8 @@ int Mysql_Struct::build_len_arg(const Field_Info &field_info, Block_Buffer &buff
 	else if(field_info.field_type == "string") {
 		//std::string value = buffer.read_string();
 		//注意：string类型长度要用length计算,还要加上uint16_t类型的长度变量,不用read_string,减少memcpy调用次数
-		uint16_t str_len = buffer.peek_uint16();
+		uint16_t str_len = 0;
+		buffer.peek_uint16(str_len);
 		field_len = sizeof(uint16_t) + str_len;
 	}
 	else {
@@ -438,7 +450,8 @@ int Mysql_Struct::build_len_arg(const Field_Info &field_info, Block_Buffer &buff
 
 int Mysql_Struct::build_len_vector(const Field_Info &field_info, Block_Buffer &buffer) {
 	int field_len = sizeof(uint16_t);
-	uint16_t vec_size = buffer.read_uint16();
+	uint16_t vec_size = 0;
+	buffer.read_uint16(vec_size);
 	if(is_struct(field_info.field_type)) {
 		for(uint16_t i = 0; i < vec_size; ++i) {
 			field_len += build_len_struct(field_info, buffer);

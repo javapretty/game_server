@@ -1,22 +1,8 @@
 <root>
 
 <!--Client与Login通信消息-->
-	<MSG_100000>
-		<!--注册-->
-		<head msg_id="100000"/>
-	  <arg type="string" name="account"/>
-	  <arg type="string" name="password"/>
-	</MSG_100000>
-
-	<MSG_500000>
-		<head msg_id="500000"/>
-		<arg type="string" name="ip" desc="gate_ip"/>
-	  	<arg type="int32" name="port" desc="gate_port"/>
-	  <arg type="string" name="session"/>
-	</MSG_500000>
-
 	<MSG_100001>
-		<!--登录-->
+		<!--客户端登录login-->
 		<head msg_id="100001"/>
 	  <arg type="string" name="account"/>
 	  <arg type="string" name="password"/>
@@ -24,34 +10,34 @@
 
 	<MSG_500001>
 		<head msg_id="500001"/>
-   	<arg type="string" name="ip" desc="gate_ip"/>
-    	<arg type="int32" name="port" desc="gate_port"/>
+   	<arg type="string" name="gate_ip"/>
+    	<arg type="int32" name="gate_port"/>
     	<arg type="string" name="session"/>
 	</MSG_500001>
 
-	<MSG_100002>
+	<MSG_100101>
 		<!--客户端登录gate-->
-		<head msg_id="100002"/>
+		<head msg_id="100101"/>
     	<arg type="string" name="account"/>
     	<arg type="string" name="session" desc="登录验证的seesion"/>
-	</MSG_100002>
+	</MSG_100101>
 
-	<MSG_500002>
-		<head msg_id="500002"/>
+	<MSG_500101>
+		<head msg_id="500101"/>
     	<arg type="string" name="account"/>
-	</MSG_500002>
+	</MSG_500101>
 
-	<MSG_100003>
-		<!--心跳-->
-		<head msg_id="100003"/>
+	<MSG_100102>
+		<!--发送心跳到gate-->
+		<head msg_id="100102"/>
     	<arg type="int32" name="client_time"/>
-	</MSG_100003>
+	</MSG_100102>
 
-	<MSG_500003>
-		<head msg_id="500003"/>
+	<MSG_500102>
+		<head msg_id="500102"/>
 	  <arg type="int32" name="client_time"/>
 	  <arg type="int32" name="server_time"/>
-	</MSG_500003>
+	</MSG_500102>
 	
 <!--Client与Master通信消息-->
 	<MSG_110001>

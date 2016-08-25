@@ -14,11 +14,7 @@ public:
 	static Login_Client_Messager *instance(void);
 
 	int process_block(Block_Buffer &buf);
-
-	//注册
-	int client_register(int cid, int msg_id, Block_Buffer &buf);
-	//登录
-	int client_login(int cid, int msg_id, Block_Buffer &buf);
+	int connect_login(int cid, int msg_id, Block_Buffer &buf);
 
 private:
 	Login_Client_Messager(void);

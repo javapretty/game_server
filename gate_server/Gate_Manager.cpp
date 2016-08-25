@@ -117,7 +117,7 @@ int Gate_Manager::process_list(void) {
 		if ((buf = gate_client_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
-				cid = buf->peek_int32();
+				buf->peek_int32(cid);
 				GATE_CLIENT_MESSAGER->process_block(*buf);
 			} else {
 				LOG_ERROR("buf.read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
@@ -129,7 +129,7 @@ int Gate_Manager::process_list(void) {
 		if ((buf = gate_login_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
-				cid = buf->peek_int32();
+				buf->peek_int32(cid);
 				GATE_INNER_MESSAGER->process_login_block(*buf);
 			} else {
 				LOG_ERROR("buf.read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
@@ -141,7 +141,7 @@ int Gate_Manager::process_list(void) {
 		if ((buf = gate_game_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
-				cid = buf->peek_int32();
+				buf->peek_int32(cid);
 				GATE_INNER_MESSAGER->process_game_block(*buf);
 			} else {
 				LOG_ERROR("buf.read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
@@ -158,7 +158,7 @@ int Gate_Manager::process_list(void) {
 		if ((buf = gate_master_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
-				cid = buf->peek_int32();
+				buf->peek_int32(cid);
 				GATE_INNER_MESSAGER->process_master_block(*buf);
 			} else {
 				LOG_ERROR("buf.read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
@@ -190,7 +190,7 @@ int Gate_Manager::self_close_process(void) {
 	server_status_ = STATUS_CLOSING;
 
 	Block_Buffer buf;
-	buf.make_inner_message(ACTIVE_DISCONNECT, ERROR_DISCONNECT_SELF);
+	buf.make_server_message(ACTIVE_DISCONNECT, ERROR_DISCONNECT_SELF);
 	buf.finish_message();
 	for (Gate_Player_Cid_Map::iterator iter = player_cid_map_.begin(); iter != player_cid_map_.end(); ++iter) {
 		GATE_MANAGER->send_to_client(iter->first, buf);
