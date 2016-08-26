@@ -1,4 +1,5 @@
 {
+	"thinking_interval" : 1000,
 	"low_hp" : 30,
 	"low_mp" : 30
 }

@@ -77,11 +77,11 @@ ENTITY_ID Aoi_Entity::entity_id(){
 	return entity_->entity_id();
 }
 
-Position3D Aoi_Entity::pos(){
+Position Aoi_Entity::pos(){
 	return entity_->pos();
 }
 
-Position3D Aoi_Entity::opos(){
+Position Aoi_Entity::opos(){
 	return entity_->opos();
 }
 

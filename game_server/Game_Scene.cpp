@@ -48,7 +48,7 @@ int Game_Scene::on_enter_scene(Scene_Entity *entity){
 	return 0;
 }
 
-int Game_Scene::on_move_scene(Scene_Entity *entity, Position3D pos) {
+int Game_Scene::on_move_scene(Scene_Entity *entity, Position pos) {
 	if(!check_move(entity->pos(), pos)){
 
 		return -1;
@@ -65,7 +65,7 @@ int Game_Scene::on_leave_scene(Scene_Entity *entity) {
 	return 0;
 }
 
-bool Game_Scene::check_move(Position3D opos, Position3D pos) {
+bool Game_Scene::check_move(Position opos, Position pos) {
 	return map_[(int)pos.x][(int)pos.y] != 1;
 }
 

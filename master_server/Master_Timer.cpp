@@ -39,7 +39,7 @@ Epoll_Watcher &Master_Timer::watcher(void) {
 
 void Master_Timer::register_handler(void) {
 	Time_Value timeout_tv(0, 100 * 1000);
-	watcher_.add(&timer_handler_, Epoll_Watcher::EVENT_TIMEOUT, &timeout_tv);
+	watcher_.add(&timer_handler_, EVENT_TIMEOUT, &timeout_tv);
 }
 
 void Master_Timer::register_v8_handler(int timer_id, int internal, int first_tick_internal) {

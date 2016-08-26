@@ -30,8 +30,8 @@ Scene_Entity::~Scene_Entity() {
 void Scene_Entity::reset() {
 	entity_id_ = 0;
 	player_ = NULL;
-	pos_ = Position3D(0, 0, 0);
-	opos_ = Position3D(0, 0, 0);
+	pos_.reset();
+	opos_.reset();
 	scene_ =0;
 	radius_ =0;
 	if(aoi_entity_ != NULL) {
@@ -42,7 +42,7 @@ void Scene_Entity::reset() {
 	extra_info_.reset();
 }
 
-int Scene_Entity::on_update_position(Position3D new_pos) {
+int Scene_Entity::on_update_position(Position new_pos) {
 	opos_ = pos_;
 	pos_ = new_pos;
 	return 0;

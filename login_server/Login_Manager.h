@@ -88,7 +88,6 @@ public:
 	void inner_msg_count(int msg_id);
 
 	int connect_mysql_db();
-	int client_register(std::string& account, std::string& password);
 	int client_login(std::string& account, std::string& password);
 
 private:
@@ -162,7 +161,8 @@ inline void Login_Manager::inner_msg_count(Block_Buffer &buf) {
 		uint16_t read_idx_orig = buf.get_read_idx();
 
 		buf.set_read_idx(read_idx_orig + sizeof(int16_t));
-		int32_t msg_id = buf.read_int32();
+		int32_t msg_id = 0;
+		buf.read_int32(msg_id);
 		++(inner_msg_count_map_[static_cast<int>(msg_id)]);
 
 		buf.set_read_idx(read_idx_orig);

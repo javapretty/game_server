@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>  
+<html>  
+<head>  
+    <meta http-equiv="content-type" content="text/html" />  
+    <meta name="author" content="https://github.com/jice1001" />  
+    <title>websocket test</title>  
+    <script>
+		var socket;  
+		function Connect(){  
+			try{  
+				socket=new WebSocket('ws://127.0.0.1:8200');  
+			}catch(e){  
+				alert('error');  
+				return;  
+			}  
+			socket.onopen = sOpen;  
+			socket.onerror = sError;
+			socket.onmessage= sMessage;
+			socket.onclose= sClose;
+		}  
+		function sOpen(){
+			alert('connect success!');
+		}
+		function sError(e){
+			alert("error " + e);
+		}
+		function sMessage(msg){  
+			alert('server says:' + msg);  
+		}
+		function sClose(e){
+			alert("connect closed:" + e.code);
+		}  
+		function Send(){
+			socket.send(document.getElementById("msg").value);
+		} 
+		function Close(){
+			socket.close();
+		}  
+	</script>
+</head>  
+   
+<body>  
+<input id="msg" type="text">  
+<button id="connect" onclick="Connect();">Connect</button>  
+<button id="send" onclick="Send();">Send</button>  
+<button id="close" onclick="Close();">Close</button>
+
+</body>  
+   
+</html>  

@@ -35,29 +35,6 @@ struct Create_Guild_Info {
 	void reset(void);
 };
 
-struct MSG_100000 {
-	std::string account;
-	std::string password;
-
-	MSG_100000(void);
-	~MSG_100000();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-};
-
-struct MSG_500000 {
-	std::string ip;	//gate_ip
-	int32_t port;	//gate_port
-	std::string session;
-
-	MSG_500000(void);
-	~MSG_500000();
-	void serialize(Block_Buffer &buffer) const;
-	int deserialize(Block_Buffer &buffer);
-	void reset(void);
-};
-
 struct MSG_100001 {
 	std::string account;
 	std::string password;
@@ -70,8 +47,8 @@ struct MSG_100001 {
 };
 
 struct MSG_500001 {
-	std::string ip;	//gate_ip
-	int32_t port;	//gate_port
+	std::string gate_ip;
+	int32_t gate_port;
 	std::string session;
 
 	MSG_500001(void);
@@ -81,43 +58,43 @@ struct MSG_500001 {
 	void reset(void);
 };
 
-struct MSG_100002 {
+struct MSG_100101 {
 	std::string account;
 	std::string session;	//登录验证的seesion
 
-	MSG_100002(void);
-	~MSG_100002();
+	MSG_100101(void);
+	~MSG_100101();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 
-struct MSG_500002 {
+struct MSG_500101 {
 	std::string account;
 
-	MSG_500002(void);
-	~MSG_500002();
+	MSG_500101(void);
+	~MSG_500101();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 
-struct MSG_100003 {
+struct MSG_100102 {
 	int32_t client_time;
 
-	MSG_100003(void);
-	~MSG_100003();
+	MSG_100102(void);
+	~MSG_100102();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);
 };
 
-struct MSG_500003 {
+struct MSG_500102 {
 	int32_t client_time;
 	int32_t server_time;
 
-	MSG_500003(void);
-	~MSG_500003();
+	MSG_500102(void);
+	~MSG_500102();
 	void serialize(Block_Buffer &buffer) const;
 	int deserialize(Block_Buffer &buffer);
 	void reset(void);

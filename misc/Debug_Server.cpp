@@ -52,7 +52,7 @@ void Debug_Server::destroy(void) {
 int Debug_Server::init(int argc, char *argv[]) {
 	wait_watcher_ = new Epoll_Watcher();
 	Time_Value tv(3, 0);
-	wait_watcher_->add(this, Epoll_Watcher::EVENT_TIMEOUT, &tv);
+	wait_watcher_->add(this, EVENT_TIMEOUT, &tv);
 
 	server_conf_.init_server_conf();
 	return 0;

@@ -31,8 +31,8 @@ public:
 	void broadcast_sync();
 	void broadcast_aoi_info();
 	ENTITY_ID entity_id();
-	Position3D pos();
-	Position3D opos();
+	Position pos();
+	Position opos();
 	float radius();
 	void set_sync(bool flag = true);
 	void reset();

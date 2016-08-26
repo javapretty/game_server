@@ -27,14 +27,13 @@ enum Log_Server_Type {
 enum Error_Code {
 	ERROR_SERVER_INNER 							= 10000,				//服务器内部错误
 	ERROR_CLIENT_SESSION 						= 10001,				//session错误
-	ERROR_CONNECT_TIMEOUT 					= 10002,				//连接超时
+	ERROR_CONNECT_TIMEOUT 						= 10002,				//连接超时
 	ERROR_MSG_COUNT									= 10003,				//消息数量过多
 	ERROR_MSG_SERIAL 								= 10004,				//消息序列号错误
 	ERROR_MSG_TIME 									= 10005,				//消息时间错误
-	ERROR_REGISTER_VERIFY_FAIL				= 10006,				//注册验证失败
-	ERROR_LOGIN_VERIFY_FAIL					= 10007,				//登录验证失败
-	ERROR_DISCONNECT_SELF 					= 10008,				//服务重启中,稍候再试
-	ERROR_DISCONNECT_RELOGIN				= 10009,				//账号在其它地方登陆
+	ERROR_DISCONNECT_SELF 						= 10006,				//服务重启中,稍候再试
+	ERROR_DISCONNECT_RELOGIN				= 10007,				//账号在其它地方登陆
+	ERROR_LOGIN_FAIL									= 10008,				//登录失败
 };
 
 enum Role_Status {
@@ -62,7 +61,7 @@ enum Struct_Type {
 	MSG_STRUCT = 4,						//消息结构体
 };
 
-typedef boost::unordered_map<int32_t, Base_Struct *> Struct_Id_Map;
+typedef boost::unordered_map<int, Base_Struct *> Struct_Id_Map;
 typedef boost::unordered_map<std::string, Base_Struct *> Struct_Name_Map;
 int load_struct(const char *path, Struct_Type struct_type, Struct_Id_Map &struct_id_map, Struct_Name_Map &struct_name_map);
 
@@ -185,8 +184,8 @@ struct Player_DB_Cache {
 	int64_t role_id;
 	std::string role_name;
 	std::string account;
-	int32_t agent_num;
-	int32_t server_num;
+	int agent_num;
+	int server_num;
 
 	Player_DB_Cache(void) { reset(); }
 	void reset(void) {
@@ -201,7 +200,7 @@ struct Player_DB_Cache {
 struct Login_Player_Info {
 	std::string account;
 	std::string gate_ip;
-	int32_t gate_port;
+	int gate_port;
 	std::string session;
 	int64_t session_tick;
 
@@ -215,18 +214,19 @@ struct Login_Player_Info {
 	}
 };
 
-struct Position3D {
-	Position3D();
-	Position3D(float posx, float posy, float posz);
-	~Position3D();
-	float operator - (Position3D pos);
-	void operator = (Position3D pos);
-	void set_position(float posx, float posy, float posz);
-	void set_position(Position3D pos);
+struct Position {
+	Position();
+	Position(int posx, int posy, int posz);
+	~Position();
+	float operator-(Position &pos);
+	void operator=(Position &pos);
+	void set_position(int posx, int posy, int posz);
+	void set_position(Position &pos);
+	void reset();
 
-	float x;
-	float y;
-	float z;
+	int x;
+	int y;
+	int z;
 };
 
 #endif /* PUBLIC_STURCT_H_ */

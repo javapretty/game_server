@@ -124,9 +124,12 @@ int Log_File::logging_file(int log_type, int log_sub_type, std::string &log_str)
 }
 
 int Log_File::process_log_file_block(Block_Buffer &buf) {
-	int log_type = buf.read_int32();
-	int log_sub_type = buf.read_int32();
-	std::string log_str = buf.read_string();
+	int log_type = 0;
+	int log_sub_type = 0;
+	std::string log_str = "";
+	buf.read_int32(log_type);
+	buf.read_int32(log_sub_type);
+	buf.read_string(log_str);
 	logging_file(log_type, log_sub_type, log_str);
 	return 0;
 }

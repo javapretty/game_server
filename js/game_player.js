@@ -32,10 +32,10 @@ Game_Player.prototype.load_player_data = function(gate_cid, player_cid, obj) {
 		game_close_client(gate_cid, player_cid, Error_Code.ERROR_CLIENT_PARAM);
 		return;
 	}
-	if(this.player_info.last_scene == 0)
-		this.player_info.last_scene = 11001;
+	if(this.player_info.scene_id == 0)
+		this.player_info.scene_id = 11001;
 	print("JS READY TO ENTER SCENE");
-	this.cplayer.enter_scene(this.player_info.last_scene, this.player_info.last_pos.x, this.player_info.last_pos.y, this.player_info.last_pos.z);
+	this.cplayer.enter_scene(this.player_info.scene_id, this.player_info.pos_x, this.player_info.pos_y, this.player_info.pos_z);
 	this.set_aoi_info();
 
 	this.sync_login_to_client();
@@ -252,11 +252,13 @@ Game_Player.prototype.change_scene = function(obj) {
 		this.cplayer.enter_scene(obj.target_scene, obj.pos.x, obj.pos.y, obj.pos.z);
 		this.cplayer.set_aoi_info();
 		var msg = new MSG_520401();
-		this.send_success_msg(Msg_GC.RES_CHANGE_SCENE, msg);
+		this.send_success_msg(Msg.RES_CHANGE_SCENE, msg);
 	}
 	else {
-		this.player_info.last_scene = obj.target_scene;
-		this.player_info.last_pos = obj.pos;
+		this.player_info.scene_id = obj.target_scene;
+		this.player_info.pos_x = obj.pos.x;
+		this.player_info.pos_y = obj.pos.y;
+		this.player_info.pos_z = obj.pos.z;
 		
 		logout_map.set(this.player_info.account, this.player_info.logout_time);
 		game_player_cid_map.delete(this.gate_cid * 10000 + this.player_cid);

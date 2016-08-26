@@ -20,40 +20,46 @@ Gate_Client_Messager *Gate_Client_Messager::instance(void) {
 }
 
 int Gate_Client_Messager::process_block(Block_Buffer &buf) {
-	int32_t player_cid = buf.read_int32();
-	int16_t len = buf.read_int16();
-	int32_t serial_cipher = buf.read_int32();
-	int32_t msg_time_cipher = buf.read_int32();
-	int32_t msg_id = buf.read_int32();
-	int32_t  status = buf.read_int32();
+	int32_t cid = 0;
+	int16_t len = 0;
+	int32_t msg_id = 0;
+	int32_t status = 0;
+	int32_t serial_cipher = 0;
+	int32_t msg_time_cipher = 0;
+	buf.read_int32(cid);
+	buf.read_int16(len);
+	buf.read_int32(msg_id);
+	buf.read_int32(status);
+	buf.read_int32(serial_cipher);
+	buf.read_int32(msg_time_cipher);
 
 	if (msg_id >= CLIENT_GATE_MESSAGE_START && msg_id <= CLIENT_GATE_MESSAGE_END) {
-		return process_gate_block(player_cid, msg_id, buf);
+		return process_gate_block(cid, msg_id, buf);
 	}
 
 	Gate_Player *player = 0;
-	if ((player = GATE_MANAGER->find_cid_gate_player(player_cid)) == 0) {
-		LOG_ERROR("cannot find player_cid = %d msg_id = %d ", player_cid, msg_id);
-		return GATE_MANAGER->close_client(player_cid);
+	if ((player = GATE_MANAGER->find_cid_gate_player(cid)) == 0) {
+		LOG_ERROR("cannot find player_cid = %d msg_id = %d ", cid, msg_id);
+		return GATE_MANAGER->close_client(cid);
 	}
 
 	 /// 校验包, 用于防截包/自组包/重复发包
 	if (GATE_MANAGER->verify_pack()) {
 		int result = player->verify_msg_info(serial_cipher, msg_time_cipher);
 		if (result != 0) {
-			LOG_ERROR("msg verify error, player_cid:%d, len:%d, serial_cipher:%llu, msg_time_cipher:%llu, msg_id:%ld, status:%d", player_cid, len, serial_cipher, msg_time_cipher, msg_id, status);
+			LOG_ERROR("msg verify error, player_cid:%d, len:%d, serial_cipher:%d, msg_time_cipher:%d, msg_id:%d, status:%d", cid, len, serial_cipher, msg_time_cipher, msg_id, status);
 			Block_Buffer res_buf;
-			res_buf.make_inner_message(msg_id, result);
+			res_buf.make_server_message(msg_id, result);
 			res_buf.finish_message();
-			GATE_MANAGER->send_to_client(player_cid, res_buf);
-			return GATE_MANAGER->close_client(player_cid);
+			GATE_MANAGER->send_to_client(cid, res_buf);
+			return GATE_MANAGER->close_client(cid);
 		}
 	}
 
 	Perf_Mon perf_mon(msg_id);
 	Block_Buffer player_buf;
 	player_buf.reset();
-	player_buf.make_player_message(msg_id, status, player_cid);
+	player_buf.make_player_message(msg_id, status, cid);
 	player_buf.copy(&buf);
 	player_buf.finish_message();
 
@@ -77,8 +83,8 @@ int Gate_Client_Messager::process_gate_block(int cid, int msg_id, Block_Buffer &
 		connect_gate(cid, buf);
 		break;
 	}
-	case REQ_HEARTBEAT: {
-		refresh_heartbeat(cid, buf);
+	case REQ_SEND_HEARTBEAT: {
+		send_heartbeat(cid, buf);
 		break;
 	}
 	default:
@@ -88,7 +94,7 @@ int Gate_Client_Messager::process_gate_block(int cid, int msg_id, Block_Buffer &
 }
 
 int Gate_Client_Messager::connect_gate(int cid, Block_Buffer &buf) {
-	MSG_100002 msg;
+	MSG_100101 msg;
 	msg.deserialize(buf);
 
 	Gate_Player *player = 0;
@@ -109,7 +115,7 @@ int Gate_Client_Messager::connect_gate(int cid, Block_Buffer &buf) {
 	{
 		LOG_WARN("connect_gate, repeat connect, cid:%d, account:%s, session:%s", cid, msg.account.c_str(), msg.session.c_str());
 		Block_Buffer res_buf;
-		res_buf.make_inner_message(RES_CONNECT_GATE, ERROR_DISCONNECT_RELOGIN);
+		res_buf.make_server_message(RES_CONNECT_GATE, ERROR_DISCONNECT_RELOGIN);
 		res_buf.finish_message();
 		GATE_MANAGER->send_to_client(cid, res_buf);
 		GATE_MANAGER->close_client(cid);
@@ -118,14 +124,14 @@ int Gate_Client_Messager::connect_gate(int cid, Block_Buffer &buf) {
 	return 0;
 }
 
-int Gate_Client_Messager::refresh_heartbeat(int cid, Block_Buffer &buf) {
-	MSG_100003 msg;
+int Gate_Client_Messager::send_heartbeat(int cid, Block_Buffer &buf) {
+	MSG_100102 msg;
 	msg.deserialize(buf);
-	MSG_500003 res_msg;
+	MSG_500102 res_msg;
 	res_msg.client_time = msg.client_time;
 	res_msg.server_time = GATE_MANAGER->tick_time().sec();
 	Block_Buffer res_buf;
-	res_buf.make_inner_message(RES_HEARTBEAT);
+	res_buf.make_server_message(RES_SEND_HEARTBEAT, 0);
 	res_msg.serialize(res_buf);
 	res_buf.finish_message();
 	GATE_MANAGER->send_to_client(cid, res_buf);

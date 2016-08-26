@@ -139,7 +139,7 @@ int Login_Manager::self_close_process(void) {
 	server_status_ = STATUS_CLOSING;
 
 	Block_Buffer buf;
-	buf.make_inner_message(ACTIVE_DISCONNECT, ERROR_DISCONNECT_SELF);
+	buf.make_server_message(ACTIVE_DISCONNECT, ERROR_DISCONNECT_SELF);
 	buf.finish_message();
 	for (Login_Player_Cid_Map::iterator iter = player_cid_map_.begin(); iter != player_cid_map_.end(); ++iter) {
 		LOGIN_MANAGER->send_to_client(iter->first, buf);
@@ -179,7 +179,7 @@ int Login_Manager::process_list(void) {
 		if ((buf = login_client_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
-				cid = buf->peek_int32();
+				buf->peek_int32(cid);
 				LOGIN_CLIENT_MESSAGER->process_block(*buf);
 			} else {
 				LOG_ERROR("buf.read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
@@ -191,7 +191,7 @@ int Login_Manager::process_list(void) {
 		if ((buf = login_gate_data_list_.pop_front()) != 0) {
 			all_empty = false;
 			if (buf->is_legal()) {
-				cid = buf->peek_int32();
+				buf->peek_int32(cid);
 				LOGIN_INNER_MESSAGER->process_gate_block(*buf);
 			} else {
 				LOG_ERROR("buf.read_index = %ld, buf.write_index = %ld", buf->get_read_idx(), buf->get_write_idx());
@@ -326,34 +326,14 @@ int Login_Manager::connect_mysql_db() {
 	return 0;
 }
 
-int Login_Manager::client_register(std::string& account, std::string& password){
-	int ret = 0;
-	try {
-		std::string sql_query = "insert into account_info values (\'" + account + "\', \'" +  password +"\')";
-		ret = mysql_conn_->execute(sql_query.c_str());
-	} catch(sql::SQLException &e){
-		int err_code = e.getErrorCode();
-		LOG_ERROR("SQLException, MySQL Error Code = %d, SQLState = %s,%s, account = %s, password = %s",
-				err_code, e.getSQLState().c_str(), e.what(), account.c_str(), password.c_str());
-		ret = -1;
-	}
-
-	return ret;
-}
-
 int Login_Manager::client_login(std::string& account, std::string& password){
 	int ret = 0;
 	try {
-		std::string sql_query = "select count(1) from account_info where account = \'" + account + "\' and password = \'" + password + "\'";
-		sql::ResultSet* res = mysql_conn_->execute_query(sql_query.c_str());
-		int cnt = 0;
-		while (res->next()) {
-			cnt = res->getInt(1);
-		}
-		delete res;
-
-		if (cnt <= 0){
-			ret = -1;
+		std::string sql_query = "select account from account_info where account = \'" + account + "\' and password = \'" + password + "\'";
+		sql::ResultSet* result = mysql_conn_->execute_query(sql_query.c_str());
+		if (!result || result->rowsCount() <= 0) {
+			sql_query = "insert into account_info values (\'" + account + "\', \'" +  password +"\')";
+			ret = mysql_conn_->execute(sql_query.c_str());
 		}
 	} catch(sql::SQLException &e){
 		int err_code = e.getErrorCode();

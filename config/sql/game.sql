@@ -31,6 +31,10 @@ CREATE TABLE `role` (
   charge_gold int(11) NOT NULL default '0',
   guild_id bigint(20) NOT NULL default '0',
   guild_name varchar(120) NOT NULL default '',
+  scene_id int(11) NOT NULL default '0',
+  pos_x int(11) NOT NULL default '0',
+  pos_y int(11) NOT NULL default '0',
+  pos_z int(11) NOT NULL default '0',
   PRIMARY KEY (role_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

@@ -8,7 +8,6 @@
 #include "Log.h"
 #include "V8_Manager.h"
 #include "V8_Wrap.h"
-#include "Buffer_Wrap.h"
 #include "Server_Config.h"
 #include "Public_Struct.h"
 

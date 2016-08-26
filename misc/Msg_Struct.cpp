@@ -127,7 +127,8 @@ v8::Local<v8::Object> Msg_Struct::build_msg_object(Isolate* isolate, int cid, in
 			String::NewFromUtf8(isolate, "status", NewStringType::kNormal).ToLocalChecked(),
 			Int32::New(isolate, status)).FromJust();
 	if (msg_id == SYNC_DB_GAME_LOAD_PLAYER || msg_id == SYNC_DB_GAME_CREATE_PLAYER) {
-		std::string account = buffer.read_string();
+		std::string account = "";
+		buffer.read_string(account);
 		buf_obj->Set(isolate->GetCurrentContext(),
 				String::NewFromUtf8(isolate, "account", NewStringType::kNormal).ToLocalChecked(),
 				String::NewFromUtf8(isolate, account.c_str(), NewStringType::kNormal).ToLocalChecked()).FromJust();
@@ -190,31 +191,38 @@ v8::Local<v8::Value> Msg_Struct::build_object_arg(const Field_Info &field_info, 
 
 	Local<Value> value;
 	if(field_info.field_type == "int8") {
-		int8_t val = buffer.read_int8();
+		int8_t val = 0;
+		buffer.read_int8(val);
 		value = Int32::New(isolate, val);
 	}
 	else if(field_info.field_type == "int16") {
-		int16_t val = buffer.read_int16();
+		int16_t val = 0;
+		buffer.read_int16(val);
 		value = Int32::New(isolate, val);
 	}
 	else if(field_info.field_type == "int32") {
-		int32_t val = buffer.read_int32();
+		int32_t val = 0;
+		buffer.read_int32(val);
 		value = Int32::New(isolate, val);
 	}
 	else if(field_info.field_type == "int64") {
-		int64_t val = buffer.read_int64();
+		int64_t val = 0;
+		buffer.read_int64(val);
 		value = Number::New(isolate, val);
 	}
 	else if(field_info.field_type == "double") {
-		double val = buffer.read_double();
+		double val = 0;
+		buffer.read_double(val);
 		value = Number::New(isolate, val);
 	}
 	else if(field_info.field_type == "bool") {
-		bool val = buffer.read_bool();
+		bool val = false;
+		buffer.read_bool(val);
 		value = Boolean::New(isolate, val);
 	}
 	else if(field_info.field_type == "string") {
-		std::string val = buffer.read_string();
+		std::string val = "";
+		buffer.read_string(val);
 		value = String::NewFromUtf8(isolate, val.c_str(), NewStringType::kNormal).ToLocalChecked();
 	}
 	else {
@@ -227,7 +235,8 @@ v8::Local<v8::Value> Msg_Struct::build_object_arg(const Field_Info &field_info, 
 v8::Local<v8::Array> Msg_Struct::build_object_vector(const Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate) {
 	EscapableHandleScope handle_scope(isolate);
 
-	uint16_t vec_size = buffer.read_uint16();
+	uint16_t vec_size = 0;
+	buffer.read_uint16(vec_size);
 	Local<Array> array = Array::New(isolate, vec_size);
 	if(is_struct(field_info.field_type)) {
 		for(uint16_t i = 0; i < vec_size; ++i) {
@@ -248,7 +257,8 @@ v8::Local<v8::Array> Msg_Struct::build_object_vector(const Field_Info &field_inf
 v8::Local<v8::Map> Msg_Struct::build_object_map(const Field_Info &field_info, Block_Buffer &buffer, Isolate* isolate) {
 	EscapableHandleScope handle_scope(isolate);
 
-	uint16_t vec_size = buffer.read_uint16();
+	uint16_t vec_size = 0;
+	buffer.read_uint16(vec_size);
 	Local<Map> map = Map::New(isolate);
 	if(is_struct(field_info.field_type)) {
 		for(uint16_t i = 0; i < vec_size; ++i) {

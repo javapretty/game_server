@@ -7,7 +7,6 @@
 
 #include "json/json.h"
 #include "V8_Wrap.h"
-#include "Buffer_Wrap.h"
 #include "Player_Wrap.h"
 #include "Server_Wrap.h"
 #include "Game_Server.h"
@@ -43,11 +42,16 @@ void get_game_timer_id(const FunctionCallbackInfo<Value>& args) {
 void pop_game_gate_msg_object(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = GAME_MANAGER->pop_game_gate_data();
 	if (buf) {
-		int32_t gate_cid = buf->read_int32();
-		/*int16_t len =*/ buf->read_int16();
-		int32_t msg_id = buf->read_int32();
-		int32_t status = buf->read_int32();
-		int32_t player_cid = buf->read_int32();
+		int32_t gate_cid = 0;
+		int16_t len = 0;
+		int32_t msg_id = 0;
+		int32_t status = 0;
+		int32_t player_cid = 0;
+		buf->read_int32(gate_cid);
+		buf->read_int16(len);
+		buf->read_int32(msg_id);
+		buf->read_int32(status);
+		buf->read_int32(player_cid);
 
 		Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
 		if(iter != MSG_MANAGER->msg_struct_id_map().end()){
@@ -65,11 +69,16 @@ void pop_game_gate_msg_object(const FunctionCallbackInfo<Value>& args) {
 void pop_game_master_msg_object(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = GAME_MANAGER->pop_game_master_data();
 	if (buf) {
-		int32_t master_cid = buf->read_int32();
-		/*int16_t len =*/ buf->read_int16();
-		int32_t msg_id = buf->read_int32();
-		int32_t status = buf->read_int32();
-		int32_t player_cid = buf->read_int32();
+		int32_t master_cid = 0;
+		int16_t len = 0;
+		int32_t msg_id = 0;
+		int32_t status = 0;
+		int32_t player_cid = 0;
+		buf->read_int32(master_cid);
+		buf->read_int16(len);
+		buf->read_int32(msg_id);
+		buf->read_int32(status);
+		buf->read_int32(player_cid);
 
 		Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
 		if(iter != MSG_MANAGER->msg_struct_id_map().end()){
@@ -87,10 +96,14 @@ void pop_game_master_msg_object(const FunctionCallbackInfo<Value>& args) {
 void pop_game_db_msg_object(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = GAME_MANAGER->pop_game_db_data();
 	if (buf) {
-		int32_t db_cid = buf->read_int32();
-		/*int16_t len =*/ buf->read_int16();
-		int32_t msg_id = buf->read_int32();
-		int32_t status = buf->read_int32();
+		int32_t db_cid = 0;
+		int16_t len = 0;
+		int32_t msg_id = 0;
+		int32_t status = 0;
+		buf->read_int32(db_cid);
+		buf->read_int16(len);
+		buf->read_int32(msg_id);
+		buf->read_int32(status);
 
 		Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
 		if(iter != MSG_MANAGER->msg_struct_id_map().end()){
@@ -141,7 +154,7 @@ void send_game_msg_to_master(const FunctionCallbackInfo<Value>& args) {
 void send_game_msg_to_db(const FunctionCallbackInfo<Value>& args) {
 	int msg_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	Block_Buffer buf;
-	buf.make_inner_message(msg_id);
+	buf.make_server_message(msg_id, 0);
 	Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
 	if(iter != MSG_MANAGER->msg_struct_id_map().end()){
 		Msg_Struct *msg_struct  = dynamic_cast<Msg_Struct*>(iter->second);
@@ -154,7 +167,7 @@ void send_game_msg_to_db(const FunctionCallbackInfo<Value>& args) {
 void send_game_msg_to_log(const FunctionCallbackInfo<Value>& args) {
 	int msg_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	Block_Buffer buf;
-	buf.make_inner_message(msg_id);
+	buf.make_server_message(msg_id, 0);
 	Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
 	if(iter != MSG_MANAGER->msg_struct_id_map().end()){
 		Msg_Struct *msg_struct  = dynamic_cast<Msg_Struct*>(iter->second);
@@ -224,11 +237,16 @@ void get_master_timer_id(const FunctionCallbackInfo<Value>& args) {
 void pop_master_gate_msg_object(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = MASTER_MANAGER->pop_master_gate_data();
 	if (buf) {
-		int32_t gate_cid = buf->read_int32();
-		/*int16_t len =*/ buf->read_int16();
-		int32_t msg_id = buf->read_int32();
-		int32_t status = buf->read_int32();
-		int32_t player_cid = buf->read_int32();
+		int32_t gate_cid = 0;
+		int16_t len = 0;
+		int32_t msg_id = 0;
+		int32_t status = 0;
+		int32_t player_cid = 0;
+		buf->read_int32(gate_cid);
+		buf->read_int16(len);
+		buf->read_int32(msg_id);
+		buf->read_int32(status);
+		buf->read_int32(player_cid);
 
 		Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
 		if(iter != MSG_MANAGER->msg_struct_id_map().end()){
@@ -246,11 +264,16 @@ void pop_master_gate_msg_object(const FunctionCallbackInfo<Value>& args) {
 void pop_master_game_msg_object(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = MASTER_MANAGER->pop_master_game_data();
 	if (buf) {
-		int32_t game_cid = buf->read_int32();
-		/*int16_t len =*/ buf->read_int16();
-		int32_t msg_id = buf->read_int32();
-		int32_t status = buf->read_int32();
-		int32_t player_cid = buf->read_int32();
+		int32_t game_cid = 0;
+		int16_t len = 0;
+		int32_t msg_id = 0;
+		int32_t status = 0;
+		int32_t player_cid = 0;
+		buf->read_int32(game_cid);
+		buf->read_int16(len);
+		buf->read_int32(msg_id);
+		buf->read_int32(status);
+		buf->read_int32(player_cid);
 
 		Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
 		if(iter != MSG_MANAGER->msg_struct_id_map().end()){
@@ -268,10 +291,14 @@ void pop_master_game_msg_object(const FunctionCallbackInfo<Value>& args) {
 void pop_master_db_msg_object(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = MASTER_MANAGER->pop_master_db_data();
 	if (buf) {
-		int32_t db_cid = buf->read_int32();
-		/*int16_t len =*/ buf->read_int16();
-		int32_t msg_id = buf->read_int32();
-		int32_t status = buf->read_int32();
+		int32_t db_cid = 0;
+		int16_t len = 0;
+		int32_t msg_id = 0;
+		int32_t status = 0;
+		buf->read_int32(db_cid);
+		buf->read_int16(len);
+		buf->read_int32(msg_id);
+		buf->read_int32(status);
 
 		Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
 		if(iter != MSG_MANAGER->msg_struct_id_map().end()){
@@ -291,8 +318,10 @@ void pop_master_db_msg_object(const FunctionCallbackInfo<Value>& args) {
 void pop_master_http_msg_object(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = MASTER_MANAGER->pop_master_http_data();
 	if (buf) {
-		int32_t http_cid = buf->read_int32();
-		std::string post_data = buf->read_string();
+		int32_t http_cid = 0;
+		std::string post_data = "";
+		buf->read_int32(http_cid);
+		buf->read_string(post_data);
 		LOG_INFO("http post data:%s", post_data.c_str());
 		Json::Value value;
 	  Json::Reader reader(Json::Features::strictMode());
@@ -353,7 +382,7 @@ void send_master_msg_to_game(const FunctionCallbackInfo<Value>& args) {
 void send_master_msg_to_db(const FunctionCallbackInfo<Value>& args) {
 	int msg_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	Block_Buffer buf;
-	buf.make_inner_message(msg_id);
+	buf.make_server_message(msg_id, 0);
 	Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
 	if(iter != MSG_MANAGER->msg_struct_id_map().end()){
 		Msg_Struct *msg_struct  = dynamic_cast<Msg_Struct*>(iter->second);
@@ -366,7 +395,7 @@ void send_master_msg_to_db(const FunctionCallbackInfo<Value>& args) {
 void send_master_msg_to_log(const FunctionCallbackInfo<Value>& args) {
 	int msg_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	Block_Buffer buf;
-	buf.make_inner_message(msg_id);
+	buf.make_server_message(msg_id, 0);
 	Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
 	if(iter != MSG_MANAGER->msg_struct_id_map().end()){
 		Msg_Struct *msg_struct  = dynamic_cast<Msg_Struct*>(iter->second);
@@ -395,7 +424,6 @@ void send_master_msg_to_http(const FunctionCallbackInfo<Value>& args) {
 	LOG_INFO("http response data:%s", str_data.c_str());
 
 	Block_Buffer buf;
-	buf.write_int32(http_cid);
 	buf.write_string(str_data);
 	MASTER_MANAGER->send_to_http(http_cid, buf);
 }

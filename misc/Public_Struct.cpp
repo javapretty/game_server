@@ -107,39 +107,45 @@ void Server_Conf::init_server_conf(void) {
 	}
 }
 
-Position3D::Position3D():
-		x(0.f),
-		y(0.f),
-		z(0.f)
+Position::Position():
+		x(0),
+		y(0),
+		z(0)
 {
 
 }
 
-Position3D::Position3D(float posx, float posy, float posz):
+Position::Position(int posx, int posy, int posz):
 		x(posx),
 		y(posy),
 		z(posz)
 {
 }
 
-Position3D::~Position3D(){
+Position::~Position(){
 
 }
 
-float Position3D::operator - (Position3D pos){
+float Position::operator-(Position &pos){
 		return (float)sqrt(pow(x - pos.x, 2) + pow(y - pos.y, 2) + pow(z - pos.z, 2));
 }
 
-void Position3D::operator = (Position3D pos){
+void Position::operator=(Position &pos){
 		x = pos.x;
 		y = pos.y;
 		z = pos.z;
 }
 
-void Position3D::set_position(float posx, float posy, float posz){
-		x = posx; y=posy; z=posz;
+void Position::set_position(int posx, int posy, int posz){
+		x = posx;
+		y = posy;
+		z = posz;
 }
 
-void Position3D::set_position(Position3D pos){
+void Position::set_position(Position &pos){
 	set_position(pos.x, pos.y, pos.z);
+}
+
+void Position::reset() {
+	x = 0;y = 0;z = 0;
 }

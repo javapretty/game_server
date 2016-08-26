@@ -255,7 +255,7 @@ void Master_Manager::print_msg_count(void) {
 
 void Master_Manager::load_master_db_data(){
 	Block_Buffer buf;
-	buf.make_inner_message(SYNC_MASTER_DB_LOAD_DATA);
+	buf.make_server_message(SYNC_MASTER_DB_LOAD_DATA, 0);
 	buf.finish_message();
 	send_to_db(buf);
 }

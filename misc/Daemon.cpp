@@ -29,7 +29,6 @@
 #include "Daemon_Server.h"
 #include "Scene_Manager.h"
 
-
 Daemon::Daemon(int type) : type_(type) {
 	watcher_ = new Epoll_Watcher;
 }
@@ -38,7 +37,7 @@ Daemon::~Daemon(void) { }
 
 void Daemon::loop(void) {
 	Time_Value tv(3, 0);
-	watcher_->add(this, Epoll_Watcher::EVENT_TIMEOUT, &tv);
+	watcher_->add(this, EVENT_TIMEOUT, &tv);
 	watcher_->loop();
 }
 

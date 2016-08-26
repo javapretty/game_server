@@ -10,14 +10,13 @@
 
 #include "Log_File.h"
 #include "Thread.h"
-#include "Thread_Mutex.h"
 #include "List.h"
-#include "Block_Buffer.h"
+#include "Block_List.h"
 
 class Log_Manager: public Thread {
 public:
-	typedef List<Block_Buffer *, Thread_Mutex> Block_List;
-	typedef List<int, Thread_Mutex> Tick_List;
+	typedef Block_List<Thread_Mutex> Data_List;
+	typedef List<int, Thread_Mutex> Int_List;
 
 	static Log_Manager *instance(void);
 	int init(void);
@@ -37,8 +36,8 @@ private:
 
 private:
 	static Log_Manager *instance_;
-	Block_List block_list_;
-	Tick_List tick_list_;
+	Data_List block_list_;
+	Int_List tick_list_;
 
 	Log_File log_file_;
 };

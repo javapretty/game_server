@@ -4,7 +4,7 @@ function Aoi_Info() {
 	this.level = 0;
 }
 
-function Position3D() {
+function Position() {
 	this.x = 0;
 	this.y = 0;
 	this.z = 0;
@@ -130,8 +130,10 @@ function Game_Player_Info() {
 	this.charge_gold = 0;
 	this.guild_id = 0;
 	this.guild_name = "";
-	this.last_scene = 0;
-	this.last_pos = new Position3D();
+	this.scene_id = 0;
+	this.pos_x = 0;
+	this.pos_y = 0;
+	this.pos_z = 0;
 }
 
 function Hero_Info() {
@@ -173,42 +175,31 @@ function Offline_Info() {
 	this.guild_name = "";
 }
 
-function MSG_100000() {
-	this.account = "";
-	this.password = "";
-}
-
-function MSG_500000() {
-	this.ip = "";
-	this.port = 0;
-	this.session = "";
-}
-
 function MSG_100001() {
 	this.account = "";
 	this.password = "";
 }
 
 function MSG_500001() {
-	this.ip = "";
-	this.port = 0;
+	this.gate_ip = "";
+	this.gate_port = 0;
 	this.session = "";
 }
 
-function MSG_100002() {
+function MSG_100101() {
 	this.account = "";
 	this.session = "";
 }
 
-function MSG_500002() {
+function MSG_500101() {
 	this.account = "";
 }
 
-function MSG_100003() {
+function MSG_100102() {
 	this.client_time = 0;
 }
 
-function MSG_500003() {
+function MSG_500102() {
 	this.client_time = 0;
 	this.server_time = 0;
 }
@@ -407,7 +398,7 @@ function MSG_520305() {
 }
 
 function MSG_120400() {
-	this.pos = new Position3D();
+	this.pos = new Position();
 }
 
 function MSG_520400() {
@@ -416,7 +407,7 @@ function MSG_520400() {
 
 function MSG_120401() {
 	this.target_scene = 0;
-	this.pos = new Position3D();
+	this.pos = new Position();
 }
 
 function MSG_520401() {

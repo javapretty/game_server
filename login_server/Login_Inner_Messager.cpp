@@ -19,11 +19,16 @@ Login_Inner_Messager *Login_Inner_Messager::instance(void) {
 }
 
 int Login_Inner_Messager::process_gate_block(Block_Buffer &buf) {
-	int32_t gate_cid = buf.read_int32();
-	/*int16_t len*/ buf.read_int16();
-	int32_t msg_id = buf.read_int32();
-	/*int32_t status*/ buf.read_int32();
-	int32_t player_cid = buf.read_int32();
+	int32_t cid = 0;
+	int16_t len = 0;
+	int32_t msg_id = 0;
+	int32_t status = 0;
+	int32_t player_cid = 0;
+	buf.read_int32(cid);
+	buf.read_int16(len);
+	buf.read_int32(msg_id);
+	buf.read_int32(status);
+	buf.read_int32(player_cid);
 
 	Perf_Mon perf_mon(msg_id);
 	LOGIN_MANAGER->inner_msg_count(msg_id);
@@ -32,7 +37,7 @@ int Login_Inner_Messager::process_gate_block(Block_Buffer &buf) {
 	case SYNC_GATE_LOGIN_PLAYER_ACCOUNT:{
 		MSG_140000 msg;
 		if (msg.deserialize(buf) ==0){
-			gate_login_player_account(gate_cid, player_cid, msg);
+			gate_login_player_account(cid, player_cid, msg);
 		}
 		break;
 	}
@@ -67,4 +72,3 @@ int Login_Inner_Messager::gate_login_player_account(int gate_cid, int32_t player
 
 	return 0;
 }
-
