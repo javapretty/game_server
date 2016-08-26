@@ -15,6 +15,7 @@ require('game_player.js');
 require('hero.js');
 require('bag.js');
 require('mail.js');
+require('npc.js');
 
 //cid----game_player
 var game_player_cid_map = new Map();
@@ -26,10 +27,15 @@ var game_player_role_name_map = new Map();
 var login_map = new Map();
 //account---now_sec
 var logout_map = new Map();
-
+var npc_map = new Map();
 //加载配置文件
 var config = new Config();
 config.init();
+
+//-------------------------test用npc-----------------------
+var npc = new NPC(10);
+npc_map.set(npc.id, npc);
+
 
 //定时器管理器
 var timer = new Timer();

@@ -58,6 +58,9 @@ Local<Context> Create_Context(Isolate* isolate) {
 	global->Set(String::NewFromUtf8(isolate, "game_close_client", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, game_close_client));
 
+	global->Set(String::NewFromUtf8(isolate, "thinking_in_ai", NewStringType::kNormal).ToLocalChecked(),
+				FunctionTemplate::New(isolate, thinking_in_ai));
+
 	//////////////////////////////////MasterServer相关函数////////////////////////////////
 	global->Set(String::NewFromUtf8(isolate, "register_master_timer", NewStringType::kNormal).ToLocalChecked(),
 					FunctionTemplate::New(isolate, register_master_timer));

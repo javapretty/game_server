@@ -8,23 +8,38 @@
 #include "Game_Manager.h"
 #include "Aoi_Entity.h"
 #include "Server_Config.h"
+#include "Aoi_Manager.h"
 
-Scene_Entity::Scene_Entity(Game_Player *game_player):
-	entity_id_(1),
-	player_(game_player),
+Scene_Entity::Scene_Entity():
+	entity_id_(0),
+	player_(NULL),
 	pos_(0, 0, 0),
 	opos_(0, 0, 0),
 	scene_(0),
 	radius_(SERVER_CONFIG->server_misc()["aoi_radius"].asInt()),
-	aoi_entity_(new Aoi_Entity(this)),
+	aoi_entity_(0),
 	need_sync_(false),
 	extra_info_()
 {
-	entity_id_ = SCENE_MANAGER->get_next_id();
 }
 
 Scene_Entity::~Scene_Entity() {
 
+}
+
+void Scene_Entity::reset() {
+	entity_id_ = 0;
+	player_ = NULL;
+	pos_ = Position3D(0, 0, 0);
+	opos_ = Position3D(0, 0, 0);
+	scene_ =0;
+	radius_ =0;
+	if(aoi_entity_ != NULL) {
+		Aoi_Manager::reclaim_aoi_entity(aoi_entity_);
+		aoi_entity_= NULL;
+	}
+	need_sync_ = false;
+	extra_info_.reset();
 }
 
 int Scene_Entity::on_update_position(Position3D new_pos) {

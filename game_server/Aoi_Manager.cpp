@@ -16,6 +16,19 @@ Aoi_Manager::~Aoi_Manager(){
 
 }
 
+Aoi_Entity_Pool Aoi_Manager::aoi_entity_pool_;
+
+Aoi_Entity *Aoi_Manager::create_aoi_entity(Scene_Entity *entity) {
+	Aoi_Entity *aoi_entity = aoi_entity_pool_.pop();
+	aoi_entity->set_scene_entity(entity);
+	return aoi_entity;
+}
+
+void Aoi_Manager::reclaim_aoi_entity(Aoi_Entity *entity) {
+	entity->reset();
+	aoi_entity_pool_.push(entity);
+}
+
 int Aoi_Manager::on_enter_aoi(Aoi_Entity *entity){
 	insert_entity(entity);
 	return 0;

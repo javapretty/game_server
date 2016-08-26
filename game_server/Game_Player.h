@@ -26,6 +26,7 @@ public:
 	inline int gate_cid(void) { return gate_cid_; }
 	inline int player_cid(void) { return player_cid_; }
 	inline Scene_Entity *scene_entity(){return scene_entity_;}
+	inline void set_scene_entity(Scene_Entity *entity){scene_entity_ = entity;}
 
 	void reset(void);
 	int tick(Time_Value &now);

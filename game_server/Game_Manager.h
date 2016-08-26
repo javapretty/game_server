@@ -13,6 +13,7 @@
 #include "Block_List.h"
 #include "Object_Pool.h"
 #include "Game_Player.h"
+#include "Scene_Manager.h"
 
 class Game_Manager: public Thread {
 public:
@@ -121,7 +122,9 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////
 inline Game_Player *Game_Manager::pop_game_player(void) {
-	return game_player_pool_.pop();
+	Game_Player *player = game_player_pool_.pop();
+	player->set_scene_entity(SCENE_MANAGER->create_scene_entity(player));
+	return player;
 }
 
 inline int Game_Manager::push_game_player(Game_Player *player) {

@@ -78,4 +78,6 @@ void master_close_client(const FunctionCallbackInfo<Value>& args);
 
 void is_scene_in_process(const FunctionCallbackInfo<Value>& args);
 
+void thinking_in_ai(const FunctionCallbackInfo<Value>& args);
+
 #endif /* SERVER_WRAP_H_ */

@@ -76,3 +76,22 @@ bool Scene_Manager::has_scene(int scene_id) {
 	SCENES_MAP::iterator iter = scenes_map_.find(scene_id);
 	return iter != scenes_map_.end();
 }
+
+Scene_Entity *Scene_Manager::create_scene_entity(Game_Player *player) {
+	Scene_Entity *entity = scene_entity_pool_.pop();
+	entity->reset();
+	if(player){
+		entity->set_game_player(player);
+	}
+	else {
+
+	}
+	entity->set_entity_id(auto_allocated_id_++);
+	entity->set_aoi_entity(Aoi_Manager::create_aoi_entity(entity));
+	return entity;
+}
+
+void Scene_Manager::reclaim_scene_entity(Scene_Entity *entity) {
+	entity->reset();
+	scene_entity_pool_.push(entity);
+}

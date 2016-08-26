@@ -1,0 +1,17 @@
+<root>
+
+	<monster id="1000">
+		<select>
+			<sequence>
+				<condition type="co_low_hp"/>
+				<action type="act_recover_hp"/>
+			</sequence>
+			<sequence>
+				<condition type="co_low_mp"/>
+				<action type="act_recover_mp"/>
+			</sequence>
+		</select>
+	</monster>
+
+</root>
+

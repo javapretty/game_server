@@ -11,6 +11,7 @@ function Config() {
 	this.util_json = null;			//公共综合配置
 	this.vip_json = null;				//vip配置
 	this.recharge_json = null;		//充值相关配置
+	this.ai_json = null;		//ai相关配置
 	
 	this.init = function() {
 		try {
@@ -32,6 +33,8 @@ function Config() {
 			var recharge_str = read_json("config/vip/recharge.json");
 			this.recharge_json = JSON.parse(recharge_str);
 			
+			var ai_str = read_json("config/monster/ai_config.json");
+			this.ai_json = JSON.parse(ai_str);
 		} catch (err) {
 			print(err.message);
 		}

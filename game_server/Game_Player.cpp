@@ -5,12 +5,12 @@
 
 #include "Common_Func.h"
 #include "Game_Manager.h"
-#include "Scene_Entity.h"
+#include "Scene_Manager.h"
 
 Game_Player::Game_Player(void):
 	gate_cid_(0),
 	player_cid_(0),
-	scene_entity_(new Scene_Entity(this))
+	scene_entity_(0)
 {
 }
 
@@ -57,6 +57,10 @@ void Game_Player::reset(void) {
 	gate_cid_ = 0;
 	player_cid_ = 0;
 	recycle_tick_.reset();
+	if(scene_entity_ == NULL) {
+		SCENE_MANAGER->reclaim_scene_entity(scene_entity_);
+		scene_entity_ = 0;
+	}
 }
 
 int Game_Player::tick(Time_Value &now) {

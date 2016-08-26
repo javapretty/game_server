@@ -391,8 +391,8 @@ int Gate_Manager::get_lowest_player_game_cid(void) {
 		if(iter->second.game_player_num <= min_num) {
 			min_num = iter->second.game_player_num;
 			game_cid = iter->second.game_cid;
+			iter->second.game_player_num++;
 		}
-		iter->second.game_player_num++;
 	}
 	return game_cid;
 }

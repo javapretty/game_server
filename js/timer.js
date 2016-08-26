@@ -17,6 +17,8 @@ function Timer() {
 			this.register_game_timer(500, 0, this.game_player_handler);
 			//注册每日刷新定时器,时间间隔24h
 			this.register_game_timer(util.whole_day_msec, util.get_next_day_tick(config.util_json['daily_refresh_time']), this.game_daily_refresh_handler);
+			//AI定时器
+			this.register_game_timer(1000, 0, this.npc_ai_handler);
 		} else if (server_type == Server_Type.MASTER_SERVER) {
 			//注册玩家定时器，时间间隔500ms，每次到期遍历在线玩家进行处理
 			this.register_master_timer(500, 0, this.master_player_handler);
@@ -83,4 +85,11 @@ function Timer() {
 		rank_manager.save_data();
 		offline_manager.save_data_handler();
 	}
+
+	this.npc_ai_handler = function(){
+		for(var npc of npc_map.values()) {
+			thinking_in_ai(npc);
+		}
+	}
+
 }

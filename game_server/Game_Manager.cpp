@@ -11,6 +11,7 @@
 #include "Log_Connector.h"
 #include "Msg_Manager.h"
 #include "Scene_Manager.h"
+#include "AI_Manager.h"
 
 Game_Manager::Game_Manager(void):
   player_cid_map_(get_hash_table_size(12000)),
@@ -30,6 +31,7 @@ Game_Manager *Game_Manager::instance(void) {
 
 int Game_Manager::init(int server_id) {
 	server_id_ = server_id;
+	AI_MANAGER->init();
 	GAME_TIMER->thr_create();
 	MSG_MANAGER->init();
 	return 0;

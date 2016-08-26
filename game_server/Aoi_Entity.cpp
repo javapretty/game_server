@@ -6,8 +6,8 @@
 #include "Aoi_Entity.h"
 #include "Scene_Entity.h"
 
-Aoi_Entity::Aoi_Entity(Scene_Entity *entity):
-	entity_(entity),
+Aoi_Entity::Aoi_Entity():
+	entity_(),
 	x_pos_(),
 	y_pos_(),
 	aoi_map_()
@@ -91,4 +91,9 @@ float Aoi_Entity::radius(){
 
 void Aoi_Entity::set_sync(bool flag){
 	entity_->set_sync(flag);
+}
+
+void Aoi_Entity::reset() {
+	entity_ = NULL;
+	aoi_map_.clear();
 }

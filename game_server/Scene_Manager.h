@@ -12,6 +12,7 @@
 #include "Mutex_Guard.h"
 
 typedef boost::unordered_map<SCENE_ID, Game_Scene *> SCENES_MAP;
+typedef Object_Pool<Scene_Entity, Spin_Lock> Scene_Entity_Pool;
 
 class Scene_Manager {
 private:
@@ -21,16 +22,17 @@ public:
 	static Scene_Manager *instance();
 	int load_scene();
 	int create_new_scene(int type);
+	Scene_Entity *create_scene_entity(Game_Player *player);
+	void reclaim_scene_entity(Scene_Entity *entity);
 	Game_Scene *get_scene(SCENE_ID scene_id);
 	void tick(Time_Value now);
 	Thread_Mutex &lock();
 	bool has_scene(int scene_id);
-
-	inline ENTITY_ID get_next_id(){return auto_allocated_id_++;}
 private:
 	int create_scene_id(int type);
 private:
 	static Scene_Manager *instance_;
+	Scene_Entity_Pool scene_entity_pool_;
 	SCENES_MAP scenes_map_;
 	ENTITY_ID auto_allocated_id_;
 	int aoi_broadcast_interval_;

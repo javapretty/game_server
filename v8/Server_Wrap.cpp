@@ -20,6 +20,7 @@
 #include "Master_Timer.h"
 #include "Msg_Manager.h"
 #include "Scene_Manager.h"
+#include "AI_Manager.h"
 
 void register_game_timer(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 3) {
@@ -469,4 +470,14 @@ void is_scene_in_process(const FunctionCallbackInfo<Value>& args) {
 	int scene_id = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	bool is_in = SCENE_MANAGER->has_scene(scene_id);
 	args.GetReturnValue().Set(is_in);
+}
+
+void thinking_in_ai(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 1) {
+		LOG_ERROR("thinking in ai param error, length: %d\n", args.Length());
+		return;
+	}
+	Isolate *isolate = args.GetIsolate();
+	Local<Object> obj = args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+	AI_MANAGER->thinking(obj, isolate);
 }

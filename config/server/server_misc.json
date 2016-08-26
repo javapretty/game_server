@@ -12,6 +12,7 @@
 	"msg_struct_path" : "config/struct/msg_struct.xml",			
 	"game_server_path" : "js/game_server.js",
 	"master_server_path" : "js/master_server.js",
+	"ai_behavior_path" : "config/monster/ai_behavior.xml",
 	//mongodb游戏数据库配置
 	"mongodb_game" : {
 		"ip" : "127.0.0.1",
