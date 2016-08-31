@@ -14,7 +14,6 @@ tar -zxvf eclipse-cpp-mars-1-linux-gtk-x86_64.tar.gz
 yum install zlib-devel
 2、源码安装openssl
 cd /root
-wget https://www.openssl.org/source/openssl-1.0.1g.tar.gz
 tar -zxvf openssl-1.0.1g.tar.gz
 cd openssl-1.0.1g
 ./config shared zlib-dynamic
@@ -40,7 +39,13 @@ ldconfig
 执行命令查看openssl依赖库版本是否为1.0.1g：
 openssl version
 
-三、安装jsoncpp
+三、安装curl
+1、tar -zxf curl-7.50.1.tar.gz
+2、cd curl-7.50.1
+3、./configure --prefix=/usr/local/curl
+4、make && make install
+
+四、安装jsoncpp
 1、tar -jxvf jsoncpp-bin-0.5.0-release.tar.bz2
 2、cd jsoncpp-bin-0.5.0-release
 3、cp -rf include/json /usr/local/include
@@ -60,7 +65,7 @@ python $MYSCONS/script/scons platform=linux-gcc  编译生成相应的库
 cp libs/linux-gcc-4.8.3/libjson_linux-gcc-4.8.3_libmt.a /usr/local/lib  将json库拷贝到系统库文件
 cp libs/linux-gcc-4.8.3/libjson_linux-gcc-4.8.3_libmt.so /usr/local/lib
 
-四、安装mysql
+五、安装mysql
 1. 下载mysql的repo源
 wget http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
 2. 安装mysql-community-release-el7-5.noarch.rpm包
@@ -91,7 +96,7 @@ vim /etc/sysconfig/iptables
 systemctl restart firewalld.service
 这样从其它客户机也可以连接上mysql服务了。
 
-五、安装mongodb（安装到/root/mongodb）
+六、安装mongodb（安装到/root/mongodb）
 1、安装mongodb服务器
 tar -zxvf mongodb-bin-linux-x86_64-3.0.8.tar.gz
 mv mongodb-linux-x86_64-3.0.8 mongodb
@@ -126,7 +131,7 @@ yum install pcre-devel
 编译mongodb  scons --prefix=/usr/mongo --sharedclient install
 将在usr/mongo下生成bin, include, lib目录，lib下包括动态、静态mongoclient库。
 
-六、拷贝netlib库 mysql-connector库  v8库
+七、拷贝netlib库 mysql-connector库  v8库
 进入server/doc目录下面
 1、拷贝netlib
 tar -zxvf libnetlib.tar.gz

@@ -14,7 +14,6 @@
 4、所有宏定义，枚举类型大写，如果有多个单词，单词中间用下划线分开
 例如：REQ_FETCH_ROLE_INFO	=	120001,	//获取角色信息
 5、消息号,消息结构体定义必须成对出现
-//使用物品
 struct MSG_120001 {
 };
 struct MSG_520001 {
@@ -22,9 +21,18 @@ struct MSG_520001 {
 
 //Centos7查看版本
 cat /etc/os-release
-
 //显示进程占用
 top -H -p 进程号
-
 //统计工程目录下面代码行数
 find . -name "*.h" -o -name "*.cpp"|xargs cat|grep -v ^$|wc -l
+
+//linux抓包
+tcpdump tcp -i eth5 -s 0 -c 100 and src net 58.247.115.74 -w ./target.cap 然后使用wireshark分析
+(1)tcp: ip icmp arp rarp 和 tcp、udp、icmp这些选项等都要放到第一个参数的位置，用来过滤数据报的类型
+(2)-i eth1 : 只抓经过接口eth1的包
+(3)-t : 不显示时间戳
+(4)-s 0 : 抓取数据包时默认抓取长度为68字节。加上-S 0 后可以抓到完整的数据包
+(5)-c 100 : 只抓取100个数据包
+(6)dst port ! 22 : 不抓取目标端口是22的数据包
+(7)src net 192.168.1.0/24 : 数据包的源网络地址为192.168.1.0/24
+(8)-w ./target.cap : 保存成cap文件，方便用ethereal(即wireshark)分析

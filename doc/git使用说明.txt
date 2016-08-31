@@ -1,0 +1,52 @@
+linux生成sshkey方法
+1.ls -al ~/.ssh
+2.ssh-keygen -t rsa -b 4096 -C "784599938@qq.com"
+3.ssh-agent -s
+  eval $(ssh-agent -s)
+   ssh-add ~/.ssh/id_rsa
+4.cat /root/.ssh/id_rsa.pub  copy content to github
+5.ssh -T git@github.com
+
+将本地工作区代码还原为git服务器上面版本
+git checkout -- js/hero.js
+
+change your romote url from https to ssh:
+git remote set-url origin git@github.com:xxx/xxx.git
+git remote -v
+
+change your romote url from ssh to https:
+git remote set-url origin https://github.com/xxx/xxx.git
+git remote -v
+
+本地提交项目到github
+1、本地配置
+git config --global user.name 'zhangyalei'  
+git config --global user.email '784599938@qq.com'  
+2、新建Git项目并提交到Github
+mkdir testdir 
+cd testdir  
+touch README.md  
+git init #初始化一个本地库  
+git add README.md #添加文件到本地仓库  
+git rm README.md #本地倒库内删除  
+git commit -m "first commit" #提交到本地库并备注，此时变更仍在本地。  
+git commit -a  ##自动更新变化的文件，a可以理解为auto  
+git remote add xxx git@github.com:xxx/xxx.git  #增加一个远程服务器的别名。
+git remote add xxx https://github.com/xxx/xxx.git #增加一个远程服务器的别名。
+git remote rm xxx   ##删除远程版本库的别名  
+git push -u remotename master #将本地文件提交到Github的remoname版本库中。此时才更新了本地变更到github服务上。  
+
+分支版本操作
+1、创建和合并分支
+git branch #显示当前分支是master  
+git branch new-feature  #创建分支  
+git checkout new-feature  #切换到新分支  
+vi page_cache.inc.php  
+git add page_cache.inc.php  
+git commit -a -m "added initial version of page cache"  
+git push origin new-feature  ##把分支提交到远程服务器，只是把分支结构和内容提交到远程，并没有发生和主干的合并行为。  
+2、如果new-feature分支成熟了，觉得有必要合并进master
+git checkout master  #切换到新主干  
+git merge new-feature  ##把分支合并到主干  
+git branch #显示当前分支是master  
+git push  #此时主干中也合并了new-feature的代码  
