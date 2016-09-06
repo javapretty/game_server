@@ -18,7 +18,7 @@ public:
 	static Aoi_Entity *create_aoi_entity(Scene_Entity *entity);
 	static void reclaim_aoi_entity(Aoi_Entity *entity);
 	int on_enter_aoi(Aoi_Entity *entity);
-	int on_move_aoi(Aoi_Entity *entity);
+	int on_update_aoi(Aoi_Entity *entity);
 	int on_leave_aoi(Aoi_Entity *entity);
 
 private:

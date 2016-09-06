@@ -29,10 +29,10 @@ NPC.prototype.co_low_mp_handler = function() {
 }
 
 NPC.prototype.act_recover_hp_handler = function() {
-	print("npc ", this.id, " recover hp");
+	//print("npc ", this.id, " recover hp");
 }
 
 NPC.prototype.act_recover_mp_handler = function() {
-	print("npc ", this.id, " recover mp");
+	//print("npc ", this.id, " recover mp");
 }
 

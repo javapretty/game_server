@@ -48,13 +48,13 @@ int Game_Scene::on_enter_scene(Scene_Entity *entity){
 	return 0;
 }
 
-int Game_Scene::on_move_scene(Scene_Entity *entity, Position pos) {
-	if(!check_move(entity->pos(), pos)){
-
-		return -1;
-	}
-	entity->on_update_position(pos);
-	aoi_manager_->on_move_aoi(entity->aoi_entity());
+int Game_Scene::on_update_scene(Scene_Entity *entity) {
+//	if(!check_move(entity->pos(), pos)){
+//
+//		return -1;
+//	}
+	//entity->on_update_position();
+	aoi_manager_->on_update_aoi(entity->aoi_entity());
 	return 0;
 }
 
@@ -67,15 +67,4 @@ int Game_Scene::on_leave_scene(Scene_Entity *entity) {
 
 bool Game_Scene::check_move(Position opos, Position pos) {
 	return map_[(int)pos.x][(int)pos.y] != 1;
-}
-
-int Game_Scene::broadcast_aoi_info() {
-	for(ENTITIES_MAP::iterator iter = entities_map_.begin();
-			iter != entities_map_.end(); iter++){
-		Scene_Entity *entity = iter->second;
-		if(entity->need_sync()){
-			entity->broadcast_aoi_info();
-		}
-	}
-	return 0;
 }

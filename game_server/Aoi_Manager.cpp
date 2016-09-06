@@ -4,6 +4,7 @@
  */
 
 #include "Aoi_Manager.h"
+#include "Log.h"
 
 Aoi_Manager::Aoi_Manager():
 	x_list_(),
@@ -31,10 +32,11 @@ void Aoi_Manager::reclaim_aoi_entity(Aoi_Entity *entity) {
 
 int Aoi_Manager::on_enter_aoi(Aoi_Entity *entity){
 	insert_entity(entity);
+	update_aoi_map(entity);
 	return 0;
 }
 
-int Aoi_Manager::on_move_aoi(Aoi_Entity *entity) {
+int Aoi_Manager::on_update_aoi(Aoi_Entity *entity) {
 	bool x_direct = (entity->pos().x - entity->opos().x > 0 ? true : false);
 	bool y_direct = (entity->pos().y - entity->opos().y > 0 ? true : false);
 	update_list(entity, x_direct, 0);
@@ -51,35 +53,24 @@ int Aoi_Manager::on_leave_aoi(Aoi_Entity *entity){
 }
 
 void Aoi_Manager::insert_entity(Aoi_Entity *entity) {
-	AOI_MAP x_map;
 	AOI_LIST::iterator iter;
 	AOI_LIST::iterator pos = x_list_.end();
-	bool inserted = false;
 	for(iter = x_list_.begin(); iter != x_list_.end(); iter++){
 		float diff = (*iter)->pos().x - entity->pos().x;
-		if(abs(diff) <= entity->radius())
-			x_map[(*iter)->entity_id()] = (*iter);
-		if(!inserted && diff > 0){
+		if(diff > 0){
 			pos = iter;
-			inserted = true;
-			if(diff > entity->radius())
-				break;
+			break;
 		}
 	}
 	x_list_.insert(pos, entity);
 	entity->x_pos(--pos);
 
-	inserted = false;
 	pos = y_list_.end();
 	for(iter = y_list_.begin(); iter != y_list_.end(); iter++){
 		float diff = (*iter)->pos().y - entity->pos().y;
-		if(abs(diff) <= entity->radius() && x_map.find((*iter)->entity_id()) != x_map.end())
-			entity->add_aoi_entity(*iter);
-		if(!inserted && diff > 0){
+		if(diff > 0){
 			pos = iter;
-			inserted = true;
-			if(diff > entity->radius())
-				break;
+			break;
 		}
 	}
 	y_list_.insert(pos, entity);
@@ -89,6 +80,7 @@ void Aoi_Manager::insert_entity(Aoi_Entity *entity) {
 void Aoi_Manager::update_list(Aoi_Entity *entity, bool direct, int xy) {
 	AOI_LIST::iterator iter, pos;
 	if(xy == 0){
+		iter = entity->x_pos();
 		if(direct) {
 			if(iter != x_list_.begin()){
 				iter = --entity->x_pos();
@@ -129,6 +121,7 @@ void Aoi_Manager::update_list(Aoi_Entity *entity, bool direct, int xy) {
 		}
 	}
 	else if(xy == 1){
+		iter = entity->y_pos();
 		if(direct) {
 			if(iter != y_list_.begin()){
 				iter = --entity->y_pos();
@@ -180,7 +173,7 @@ void Aoi_Manager::update_aoi_map(Aoi_Entity *entity) {
 			break;
 		if((*iter)->pos().x - entity->pos().x > entity->radius())
 			break;
-		x_map[(*iter)->entity_id()] = entity;
+		x_map[(*iter)->entity_id()] = *iter;
 	}
 	iter = entity->x_pos();
 	while(1){
@@ -189,7 +182,7 @@ void Aoi_Manager::update_aoi_map(Aoi_Entity *entity) {
 		iter--;
 		if(entity->pos().x - (*iter)->pos().x > entity->radius())
 			break;
-		x_map[(*iter)->entity_id()] = entity;
+		x_map[(*iter)->entity_id()] = *iter;
 	}
 
 	iter = entity->y_pos();
@@ -200,7 +193,7 @@ void Aoi_Manager::update_aoi_map(Aoi_Entity *entity) {
 		if((*iter)->pos().y - entity->pos().y > entity->radius())
 			break;
 		if(x_map.find((*iter)->entity_id()) != x_map.end())
-			new_map[(*iter)->entity_id()] = entity;
+			new_map[(*iter)->entity_id()] = *iter;
 	}
 	iter = entity->y_pos();
 	while(1){
@@ -210,7 +203,7 @@ void Aoi_Manager::update_aoi_map(Aoi_Entity *entity) {
 		if(entity->pos().y - (*iter)->pos().y > entity->radius())
 			break;
 		if(x_map.find((*iter)->entity_id()) != x_map.end())
-			new_map[(*iter)->entity_id()] = entity;
+			new_map[(*iter)->entity_id()] = *iter;
 	}
 
 	entity->update_aoi_map(new_map);

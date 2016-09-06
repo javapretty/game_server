@@ -402,7 +402,9 @@ function MSG_120400() {
 }
 
 function MSG_520400() {
-	this.aoi_pos = new Array();
+	this.cid = 0;
+	this.role_name = "";
+	this.pos = new Position();
 }
 
 function MSG_120401() {
@@ -411,6 +413,10 @@ function MSG_120401() {
 }
 
 function MSG_520401() {
+}
+
+function MSG_520402() {
+	this.cid = 0;
 }
 
 function MSG_140100() {

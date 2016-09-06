@@ -54,8 +54,9 @@ if (typeof Msg == "undefined") {
 	Msg.RES_ADD_EQUIP_LEVEL = 520303; //提高英雄装备等级(返回)
 	Msg.RES_EQUIP_ON_OFF = 520304; //英雄装备穿脱(返回)
 	Msg.RES_ADD_SKILL_LEVEL = 520305; //提高英雄技能等级(返回)
-	Msg.RES_SYNC_AOI_INFO = 520400; //通知场景中AOI信息(返回)
+	Msg.RES_UPDATE_POSITION = 520400; //同步玩家位置(返回)
 	Msg.RES_CHANGE_SCENE = 520401; //切换场景(返回)
+	Msg.RES_LEAVE_SCENE = 520402; //玩家离开场景(返回)
 	Msg.SYNC_GATE_LOGIN_PLAYER_ACCOUNT = 140000; //gate校验玩家账户、session
 	Msg.SYNC_LOGIN_GATE_PLAYER_ACCOUNT = 140001; //login返回session校验结果
 	Msg.SYNC_GATE_GAME_PLAYER_LOGOUT = 140100; //gate同步玩家下线到game

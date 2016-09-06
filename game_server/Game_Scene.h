@@ -17,9 +17,8 @@ public:
 	~Game_Scene();
 	int load_scene_map();
 	int on_enter_scene(Scene_Entity *entity);
-	int on_move_scene(Scene_Entity *entity, Position pos);
+	int on_update_scene(Scene_Entity *entity);
 	int on_leave_scene(Scene_Entity *entity);
-	int broadcast_aoi_info();
 
 	inline SCENE_ID scene_id(){return scene_id_;}
 private:

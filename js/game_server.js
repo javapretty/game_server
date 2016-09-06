@@ -108,7 +108,7 @@ function process_game_gate_msg(obj) {
 		return;
 	}
 	
-	var cid = obj.cid * 10000 + obj.player_cid;
+	var cid = get_cid(obj.cid, obj.player_cid);
 	var game_player = game_player_cid_map.get(cid);
 	if (!game_player) {
 		print('process_game_gate_msg, game_player not exist, gate_cid:', obj.cid, ' player_cid:', obj.player_cid, ' msg_id:', obj.msg_id);

@@ -123,7 +123,6 @@ private:
 ////////////////////////////////////////////////////////////////////////////////
 inline Game_Player *Game_Manager::pop_game_player(void) {
 	Game_Player *player = game_player_pool_.pop();
-	player->set_scene_entity(SCENE_MANAGER->create_scene_entity(player));
 	return player;
 }
 

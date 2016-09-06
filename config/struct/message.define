@@ -96,8 +96,9 @@ enum Game_Client_Message {
 	RES_EQUIP_ON_OFF							=	520304,	//英雄装备穿脱(返回)
 	RES_ADD_SKILL_LEVEL						= 520305,	//提高英雄技能等级(返回)
 	
-	RES_SYNC_AOI_INFO							= 520400,	//通知场景中AOI信息(返回)
+	RES_UPDATE_POSITION							= 520400,	//同步玩家位置(返回)
 	RES_CHANGE_SCENE							= 520401,	//切换场景(返回)
+	RES_LEAVE_SCENE								= 520402,	//玩家离开场景(返回)
 };
 
 //内部消息命名说明：SYNC_源服务器名_目的服务器名_消息名

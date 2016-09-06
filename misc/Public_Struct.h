@@ -61,6 +61,10 @@ enum Struct_Type {
 	MSG_STRUCT = 4,						//消息结构体
 };
 
+#define GET_CID(G_,P_) ((G_) * 100000 + (P_))
+#define GET_GATE_CID(CID_) ((CID_) / 100000)
+#define GET_PLAYER_CID(CID_) ((CID_) % 100000)
+
 typedef boost::unordered_map<int, Base_Struct *> Struct_Id_Map;
 typedef boost::unordered_map<std::string, Base_Struct *> Struct_Name_Map;
 int load_struct(const char *path, Struct_Type struct_type, Struct_Id_Map &struct_id_map, Struct_Name_Map &struct_name_map);

@@ -305,7 +305,9 @@
 	
 	<MSG_520400>
 		<head msg_id="520400"/>
-		<vector type="Position" name="aoi_pos"/>
+		<arg type="int32" name="cid"/>
+		<arg type="string" name="role_name"/>
+		<struct type="Position" name="pos"/>
 	</MSG_520400>
 	
 	<MSG_120401>
@@ -317,6 +319,11 @@
 	<MSG_520401>
 		<head msg_id="520401"/>
 	</MSG_520401>
+	
+	<MSG_520402>
+		<head msg_id="520402"/>
+		<arg type="int32" name="cid"/>
+	</MSG_520402>
 
 <!--Gate与Game与Master通信消息-->
 	<MSG_140100>

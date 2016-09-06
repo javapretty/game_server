@@ -165,7 +165,6 @@ int Game_Manager::tick(void) {
 	server_info_tick(now);
 	object_pool_tick(now);
 	//LOG->show_msg_time(now);
-	SCENE_MANAGER->tick(now);
 	return 0;
 }
 

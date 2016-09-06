@@ -8,6 +8,7 @@
 #include "json/json.h"
 #include "V8_Wrap.h"
 #include "Player_Wrap.h"
+#include "Entity_Wrap.h"
 #include "Server_Wrap.h"
 #include "Game_Server.h"
 #include "Game_Connector.h"
@@ -191,11 +192,11 @@ void get_game_player_by_gate_cid(const FunctionCallbackInfo<Value>& args) {
 
 	int gate_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int player_cid = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	int cid = gate_cid * 10000 + player_cid;
+	int cid = GET_CID(gate_cid ,player_cid);
 	Game_Player *player = GAME_MANAGER->find_cid_game_player(cid);
 	if (!player) {
 		player = GAME_MANAGER->pop_game_player();
-		GAME_MANAGER->bind_cid_game_player(gate_cid * 10000 + player_cid, *player);
+		GAME_MANAGER->bind_cid_game_player(GET_CID(gate_cid ,player_cid), *player);
 	}
 
 	player->set_gate_cid(gate_cid, player_cid);
@@ -451,7 +452,7 @@ void get_master_player_by_gate_cid(const FunctionCallbackInfo<Value>& args) {
 
 	player->set_gate_cid(gate_cid, player_cid);
 	player->set_role_id(role_id);
-	MASTER_MANAGER->bind_gate_cid_master_player(gate_cid * 10000 + player_cid, *player);
+	MASTER_MANAGER->bind_gate_cid_master_player(GET_CID(gate_cid ,player_cid), *player);
 	args.GetReturnValue().Set(wrap_master_player(args.GetIsolate(), player));
 }
 
@@ -473,7 +474,7 @@ void get_master_player_by_game_cid(const FunctionCallbackInfo<Value>& args) {
 
 	player->set_game_cid(game_cid, player_cid);
 	player->set_role_id(role_id);
-	MASTER_MANAGER->bind_game_cid_master_player(game_cid * 10000 + player_cid, *player);
+	MASTER_MANAGER->bind_game_cid_master_player(GET_CID(game_cid ,player_cid), *player);
 	args.GetReturnValue().Set(wrap_master_player(args.GetIsolate(), player));
 }
 
@@ -508,4 +509,40 @@ void thinking_in_ai(const FunctionCallbackInfo<Value>& args) {
 	Isolate *isolate = args.GetIsolate();
 	Local<Object> obj = args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
 	AI_MANAGER->thinking(obj, isolate);
+}
+
+void get_scene_entity_by_gate_cid(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 2) {
+		LOG_ERROR("get_scene_entity_by_gate_cid args error, length: %d\n", args.Length());
+		args.GetReturnValue().SetNull();
+		return;
+	}
+
+	int gate_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int player_cid = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int cid = GET_CID(gate_cid, player_cid);
+	Scene_Entity *entity = SCENE_MANAGER->create_scene_entity(cid);
+	args.GetReturnValue().Set(wrap_scene_entity(args.GetIsolate(), entity));
+}
+
+void get_scene_entity_npc(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 0) {
+		LOG_ERROR("get_scene_entity_by_gate_cid args error, length: %d\n", args.Length());
+		args.GetReturnValue().SetNull();
+		return;
+	}
+	Scene_Entity *entity = SCENE_MANAGER->create_scene_entity(0);
+	args.GetReturnValue().Set(wrap_scene_entity(args.GetIsolate(), entity));
+}
+
+void get_cid_function(const FunctionCallbackInfo<Value>& args) {
+	if (args.Length() != 2) {
+		LOG_ERROR("get_cid_function args error, length: %d\n", args.Length());
+		args.GetReturnValue().SetNull();
+		return;
+	}
+	int gate_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+	int player_cid = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+
+	args.GetReturnValue().Set(GET_CID(gate_cid, player_cid));
 }

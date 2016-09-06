@@ -13,8 +13,6 @@
 #include "Public_Struct.h"
 #include "Scene_Entity.h"
 
-typedef int64_t ENTITY_ID;
-
 class Aoi_Entity;
 
 typedef std::list<Aoi_Entity *> AOI_LIST;
@@ -25,16 +23,13 @@ public:
 	Aoi_Entity();
 	~Aoi_Entity();
 	void update_aoi_map(AOI_MAP &new_map);
-	void add_aoi_entity(Aoi_Entity *entity);
-	void del_aoi_entity(Aoi_Entity *entity);
+	void add_aoi_entity(Aoi_Entity *entity, bool active);
+	void del_aoi_entity(Aoi_Entity *entity, bool active);
 	void clear_aoi_map();
-	void broadcast_sync();
-	void broadcast_aoi_info();
 	ENTITY_ID entity_id();
-	Position pos();
-	Position opos();
+	Position &pos();
+	Position &opos();
 	float radius();
-	void set_sync(bool flag = true);
 	void reset();
 
 	inline Scene_Entity *scene_entity(){return entity_;}
@@ -43,6 +38,7 @@ public:
 	inline void y_pos(AOI_LIST::iterator iter){y_pos_ = iter;}
 	inline AOI_LIST::iterator x_pos(){return x_pos_;}
 	inline AOI_LIST::iterator y_pos(){return y_pos_;}
+	inline AOI_MAP &aoi_map(){return aoi_map_;}
 private:
 	Scene_Entity *entity_;
 	AOI_LIST::iterator x_pos_;

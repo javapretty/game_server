@@ -13,7 +13,7 @@
 #include "Public_Struct.h"
 #include "Game_Player.h"
 
-typedef int64_t ENTITY_ID;
+typedef int32_t ENTITY_ID;
 
 class Aoi_Entity;
 class Scene_Entity;
@@ -26,33 +26,23 @@ public:
 	Scene_Entity();
 	~Scene_Entity();
 	int on_update_position(Position new_pos);
-	void write_aoi_info(Block_Buffer &buffer);
-	void broadcast_aoi_info();
 	void reset();
 
 	inline ENTITY_ID entity_id(){return entity_id_;}
-	inline Position pos(){return pos_;}
-	inline Position opos(){return opos_;}
+	inline void set_entity_id(ENTITY_ID entity_id){entity_id_ = entity_id;}
+	inline Position &pos(){return pos_;}
+	inline Position &opos(){return opos_;}
 	inline void scene(Game_Scene *scene){scene_ = scene;}
 	inline Game_Scene *scene(){return scene_;}
 	inline float radius(){return radius_;}
 	inline Aoi_Entity *aoi_entity(){return aoi_entity_;}
 	inline void set_aoi_entity(Aoi_Entity *entity){aoi_entity_ = entity;}
-	inline Block_Buffer &aoi_info(){return extra_info_;}
-	inline bool need_sync(){return need_sync_;}
-	inline void set_sync(bool flag){need_sync_ = flag;}
-	inline Game_Player *game_player(){return player_;}
-	inline void set_game_player(Game_Player *game_player){player_ = game_player;}
-	inline void set_entity_id(ENTITY_ID id){entity_id_ = id;}
 private:
 	ENTITY_ID entity_id_;
-	Game_Player *player_;
 	Position pos_, opos_;
 	Game_Scene *scene_;
 	float radius_;
 	Aoi_Entity *aoi_entity_;
-	bool need_sync_;
-	Block_Buffer extra_info_;
 };
 
 #endif

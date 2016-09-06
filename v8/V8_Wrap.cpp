@@ -10,12 +10,14 @@
 #include <string>
 #include "V8_Wrap.h"
 #include "Player_Wrap.h"
+#include "Entity_Wrap.h"
 #include "Server_Wrap.h"
 #include "Time_Value.h"
 #include "Log.h"
 
 Global<ObjectTemplate> _g_game_player_template;
 Global<ObjectTemplate> _g_master_player_template;
+Global<ObjectTemplate> _g_scene_entity_template;
 
 Local<Context> Create_Context(Isolate* isolate) {
 	Local<ObjectTemplate> global = ObjectTemplate::New(isolate);
@@ -56,6 +58,14 @@ Local<Context> Create_Context(Isolate* isolate) {
 			FunctionTemplate::New(isolate, get_game_player_by_gate_cid));
 	global->Set(String::NewFromUtf8(isolate, "game_close_client", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, game_close_client));
+
+	global->Set(String::NewFromUtf8(isolate, "get_cid", NewStringType::kNormal).ToLocalChecked(),
+				FunctionTemplate::New(isolate, get_cid_function));
+
+	global->Set(String::NewFromUtf8(isolate, "get_scene_entity_by_gate_cid", NewStringType::kNormal).ToLocalChecked(),
+					FunctionTemplate::New(isolate, get_scene_entity_by_gate_cid));
+	global->Set(String::NewFromUtf8(isolate, "get_scene_entity_npc", NewStringType::kNormal).ToLocalChecked(),
+					FunctionTemplate::New(isolate, get_scene_entity_npc));
 
 	global->Set(String::NewFromUtf8(isolate, "thinking_in_ai", NewStringType::kNormal).ToLocalChecked(),
 				FunctionTemplate::New(isolate, thinking_in_ai));
@@ -101,14 +111,7 @@ Local<Context> Create_Context(Isolate* isolate) {
 
 	game_player_template->Set(String::NewFromUtf8(isolate, "link_close", NewStringType::kNormal).ToLocalChecked(),
 			                  FunctionTemplate::New(isolate, game_player_link_close)) ;
-	game_player_template->Set(String::NewFromUtf8(isolate, "enter_scene", NewStringType::kNormal).ToLocalChecked(),
-				                FunctionTemplate::New(isolate, enter_scene)) ;
-	game_player_template->Set(String::NewFromUtf8(isolate, "leave_scene", NewStringType::kNormal).ToLocalChecked(),
-					               FunctionTemplate::New(isolate, leave_scene)) ;
-	game_player_template->Set(String::NewFromUtf8(isolate, "move_to_point", NewStringType::kNormal).ToLocalChecked(),
-				                FunctionTemplate::New(isolate, move_to_point)) ;
-	game_player_template->Set(String::NewFromUtf8(isolate, "set_aoi_info", NewStringType::kNormal).ToLocalChecked(),
-					                FunctionTemplate::New(isolate, set_aoi_info)) ;
+
 	_g_game_player_template.Reset(isolate, game_player_template);
 
 	//////////////////////////////////master_player相关函数////////////////////////////////
@@ -119,6 +122,38 @@ Local<Context> Create_Context(Isolate* isolate) {
 			                  FunctionTemplate::New(isolate, master_player_link_close)) ;
 
 	_g_master_player_template.Reset(isolate, master_player_template);
+
+	//////////////////////////////////scene_entity相关函数////////////////////////////////
+	Local<ObjectTemplate> scene_entity_template = ObjectTemplate::New(isolate);
+	scene_entity_template->SetInternalFieldCount(1);
+
+	scene_entity_template->SetAccessor(String::NewFromUtf8(isolate, "x", NewStringType::kInternalized).ToLocalChecked(),
+									get_entity_x,
+									set_entity_x);
+	scene_entity_template->SetAccessor(String::NewFromUtf8(isolate, "y", NewStringType::kInternalized).ToLocalChecked(),
+									get_entity_y,
+									set_entity_y);
+	scene_entity_template->SetAccessor(String::NewFromUtf8(isolate, "z", NewStringType::kInternalized).ToLocalChecked(),
+									get_entity_z,
+									set_entity_z);
+	scene_entity_template->SetAccessor(String::NewFromUtf8(isolate, "scene_id", NewStringType::kInternalized).ToLocalChecked(),
+									get_scene_id,
+									set_scene_id);
+	scene_entity_template->Set(String::NewFromUtf8(isolate, "enter_scene", NewStringType::kNormal).ToLocalChecked(),
+					                FunctionTemplate::New(isolate, enter_scene)) ;
+	scene_entity_template->Set(String::NewFromUtf8(isolate, "leave_scene", NewStringType::kNormal).ToLocalChecked(),
+						               FunctionTemplate::New(isolate, leave_scene)) ;
+	scene_entity_template->Set(String::NewFromUtf8(isolate, "update_position", NewStringType::kNormal).ToLocalChecked(),
+					                FunctionTemplate::New(isolate, update_position)) ;
+	scene_entity_template->Set(String::NewFromUtf8(isolate, "get_aoi_list", NewStringType::kNormal).ToLocalChecked(),
+						                FunctionTemplate::New(isolate, get_aoi_list)) ;
+	scene_entity_template->Set(String::NewFromUtf8(isolate, "broadcast_msg_to_all", NewStringType::kNormal).ToLocalChecked(),
+							              FunctionTemplate::New(isolate, broadcast_msg_to_all)) ;
+	scene_entity_template->Set(String::NewFromUtf8(isolate, "broadcast_msg_to_all_without_self", NewStringType::kNormal).ToLocalChecked(),
+							              FunctionTemplate::New(isolate, broadcast_msg_to_all_without_self)) ;
+	scene_entity_template->Set(String::NewFromUtf8(isolate, "reclaim", NewStringType::kNormal).ToLocalChecked(),
+							              FunctionTemplate::New(isolate, reclaim_scene_entity)) ;
+	_g_scene_entity_template.Reset(isolate, scene_entity_template);
 
 	return Context::New(isolate, NULL, global);
 }

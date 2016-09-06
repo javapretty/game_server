@@ -16,10 +16,7 @@ Scene_Manager *Scene_Manager::instance() {
 }
 
 Scene_Manager::Scene_Manager():
-		scenes_map_(),
-		auto_allocated_id_(0),
-		aoi_broadcast_interval_(SERVER_CONFIG->server_misc()["aoi_broadcast_interval"].asInt()),
-		last_sync_(0)
+		scenes_map_()
 {
 
 }
@@ -55,21 +52,17 @@ Game_Scene *Scene_Manager::get_scene(SCENE_ID scene_id){
 }
 
 void Scene_Manager::tick(Time_Value now) {
-	if(now - last_sync_ >= Time_Value(0, 1000 * aoi_broadcast_interval_)){
-		GUARD(Thread_Mutex, mon, lock_);
-		for(SCENES_MAP::iterator iter = scenes_map_.begin(); iter != scenes_map_.end(); iter++){
-			iter->second->broadcast_aoi_info();
-		}
-		last_sync_ = now;
-	}
+//	if(now - last_sync_ >= Time_Value(0, 1000 * aoi_broadcast_interval_)){
+//		GUARD(Thread_Mutex, mon, lock_);
+//		for(SCENES_MAP::iterator iter = scenes_map_.begin(); iter != scenes_map_.end(); iter++){
+//			iter->second->broadcast_aoi_info();
+//		}
+//		last_sync_ = now;
+//	}
 }
 
 int Scene_Manager::create_scene_id(int type) {
 	return GAME_MANAGER->server_id() * 10000 + type;
-}
-
-Thread_Mutex &Scene_Manager::lock() {
-	return lock_;
 }
 
 bool Scene_Manager::has_scene(int scene_id) {
@@ -77,21 +70,17 @@ bool Scene_Manager::has_scene(int scene_id) {
 	return iter != scenes_map_.end();
 }
 
-Scene_Entity *Scene_Manager::create_scene_entity(Game_Player *player) {
+Scene_Entity *Scene_Manager::create_scene_entity(ENTITY_ID entity_id) {
 	Scene_Entity *entity = scene_entity_pool_.pop();
 	entity->reset();
-	if(player){
-		entity->set_game_player(player);
-	}
-	else {
-
-	}
-	entity->set_entity_id(auto_allocated_id_++);
+	entity->set_entity_id(entity_id);
 	entity->set_aoi_entity(Aoi_Manager::create_aoi_entity(entity));
 	return entity;
 }
 
 void Scene_Manager::reclaim_scene_entity(Scene_Entity *entity) {
+	if(entity->scene())
+		entity->scene()->on_leave_scene(entity);
 	entity->reset();
 	scene_entity_pool_.push(entity);
 }
