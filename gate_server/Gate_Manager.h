@@ -12,6 +12,7 @@
 class Gate_Game_Connector;
 struct Gate_Game_Connector_Info {
 	Gate_Game_Connector *connector;
+	Server_Info connector_info;
 	int game_cid;
 	int game_server_id;
 	int game_player_num;
@@ -81,6 +82,8 @@ private:
 	Close_List close_list_; 							//其中的连接cid在n秒后投递到通信层关闭
 
 	Server_Info gate_client_server_info_;
+	Server_Info gate_login_connector_info_;
+	Server_Info gate_master_connector_info_;
 
 	Game_Connector_Map game_connector_map_;
 };

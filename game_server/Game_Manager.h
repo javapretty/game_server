@@ -69,6 +69,8 @@ private:
 	Int_List drop_player_cid_list_;			//掉线的玩家cid列表
 
 	Server_Info game_gate_server_info_;
+	Server_Info game_db_connector_info_;
+	Server_Info game_master_connector_info_;
 };
 
 #define GAME_MANAGER Game_Manager::instance()

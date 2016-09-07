@@ -198,7 +198,16 @@ int Gate_Manager::close_list_tick(Time_Value &now) {
 
 void Gate_Manager::get_server_info(void) {
 	gate_client_server_info_.reset();
+	gate_login_connector_info_.reset();
+	gate_master_connector_info_.reset();
 	GATE_CLIENT_SERVER->get_server_info(gate_client_server_info_);
+	GATE_LOGIN_CONNECTOR->get_server_info(gate_login_connector_info_);
+	GATE_MASTER_CONNECTOR->get_server_info(gate_master_connector_info_);
+	for (Game_Connector_Map::iterator iter = game_connector_map_.begin();
+			iter != game_connector_map_.end(); ++iter) {
+		iter->second.connector_info.reset();
+		iter->second.connector->get_server_info(iter->second.connector_info);
+	}
 }
 
 void Gate_Manager::free_cache(void) {

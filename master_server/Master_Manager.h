@@ -73,6 +73,8 @@ private:
 
 	Server_Info master_gate_server_info_;
 	Server_Info master_game_server_info_;
+	Server_Info master_http_server_info_;
+	Server_Info master_db_connector_info_;
 };
 
 #define MASTER_MANAGER Master_Manager::instance()

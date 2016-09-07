@@ -4,12 +4,12 @@
  */
 
 #include "Common_Func.h"
+#include "Log_Connector.h"
 #include "Server_Config.h"
 #include "Master_Manager.h"
 #include "Master_Timer.h"
 #include "Master_Server.h"
 #include "Master_Connector.h"
-#include "Log_Connector.h"
 #include "Msg_Manager.h"
 
 Master_Manager::Master_Manager(void): player_game_cid_map_(get_hash_table_size(12000)) { }
@@ -120,8 +120,12 @@ int Master_Manager::process_list(void) {
 void Master_Manager::get_server_info(void) {
 	master_gate_server_info_.reset();
 	master_game_server_info_.reset();
+	master_http_server_info_.reset();
+	master_db_connector_info_.reset();
 	MASTER_GATE_SERVER->get_server_info(master_gate_server_info_);
 	MASTER_GAME_SERVER->get_server_info(master_game_server_info_);
+	MASTER_HTTP_SERVER->get_server_info(master_http_server_info_);
+	MASTER_DB_CONNECTOR->get_server_info(master_db_connector_info_);
 }
 
 void Master_Manager::free_cache(void) {

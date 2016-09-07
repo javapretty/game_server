@@ -29,9 +29,6 @@ public:
 	int push_data_block(Block_Buffer *buf);
 	int send_data_block(int cid, Block_Buffer &buf);
 
-	void object_pool_size(void);
-	void free_pool_cache(void);
-
 	inline Struct_Id_Map& db_struct_id_map() { return db_struct_id_map_; }
 	inline Struct_Name_Map& db_struct_name_map() { return db_struct_name_map_; }
 	inline DB_Cache_Id_Map& db_cache_id_map() { return db_cache_id_map_; }
@@ -72,14 +69,5 @@ private:
 };
 
 #define DB_MANAGER DB_Manager::instance()
-
-////////////////////////////////////////////////////////////////////////////////
-inline void DB_Manager::object_pool_size(void) {
-	LOG_INFO("db_worker_pool_ free = %d, used = %d", db_worker_pool_.free_obj_list_size(), db_worker_pool_.used_obj_list_size());
-}
-
-inline void DB_Manager::free_pool_cache(void) {
-	db_worker_pool_.shrink_all();
-}
 
 #endif /* DB_MANAGER_H_ */

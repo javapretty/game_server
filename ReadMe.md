@@ -1,9 +1,9 @@
 服务器是异步非阻塞多进程架构，分为LoginServer，GateServer，GameServer，MasterServer，DBServer，LogServer。
-现将各个服务器大部分功能列出，供开发参考。
+下面是各个服务器功能简介。
 
 Robot:（测试机器人）
 1、实现注册登录流程
-2、实现客户端逻辑，测试服务器功能
+2、实现客户端功能逻辑
 
 LoginServer:
 客户端发送账号密码到LoginServer，LoginServer去AccountDb验证，验证失败断开连接，验证成功，则生成session，
@@ -15,11 +15,11 @@ GateServer:
 GameServer:
 1、创建角色，角色登录，从DbServer加载数据返回给client
 2、场景管理模块
-3、Player模块
-4、移动AOI模块
+4、AOI模块
 5、定时器管理模块
 6、怪物AI模块
-7、游戏逻辑
+7、C++消息转发到js层
+8、Player管理模块
 
 V8:
 V8管理模块，集成V8引擎，执行js代码，编写游戏逻辑

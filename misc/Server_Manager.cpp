@@ -6,6 +6,7 @@
  */
 
 #include "Common_Func.h"
+#include "Log_Connector.h"
 #include "Msg_Manager.h"
 #include "Server_Manager.h"
 
@@ -134,6 +135,7 @@ int Server_Manager::server_info_tick(Time_Value &now) {
 void Server_Manager::get_server_info(void) { }
 
 void Server_Manager::free_cache(void) {
+	LOG_CONNECTOR->free_cache();
 	block_pool_.shrink_all();
 }
 

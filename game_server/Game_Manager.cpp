@@ -119,7 +119,11 @@ void Game_Manager::process_drop_gate_cid(int gate_cid) {
 
 void Game_Manager::get_server_info(void) {
 	game_gate_server_info_.reset();
+	game_db_connector_info_.reset();
+	game_master_connector_info_.reset();
 	GAME_GATE_SERVER->get_server_info(game_gate_server_info_);
+	GAME_DB_CONNECTOR->get_server_info(game_db_connector_info_);
+	GAME_MASTER_CONNECTOR->get_server_info(game_master_connector_info_);
 }
 
 void Game_Manager::free_cache(void) {
