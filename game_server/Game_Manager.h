@@ -22,7 +22,6 @@ public:
 	typedef Block_List<Thread_Mutex> Data_List;
 	typedef List<int, Thread_Mutex> Int_List;
 
-	//cid = gate_cid * 10000 + player_cid
 	typedef boost::unordered_map<int, Game_Player* > Game_Player_Cid_Map;
 	typedef boost::unordered_map<int, int> Msg_Count_Map;
 
@@ -63,7 +62,6 @@ public:
 	int push_drop_player_cid(int cid);
 	int pop_drop_player_cid(void);
 
-	//cid = gate_cid * 10000 + player_cid
 	int bind_cid_game_player(int cid, Game_Player &player);
 	int unbind_cid_game_player(int cid);
 	Game_Player* find_cid_game_player(int cid);

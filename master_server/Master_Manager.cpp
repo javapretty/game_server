@@ -179,8 +179,8 @@ Master_Player *Master_Manager::find_role_id_master_player(int64_t role_id) {
 }
 
 int Master_Manager::unbind_master_player(Master_Player &player) {
-	player_gate_cid_map_.erase(player.gate_cid() * 10000 + player.player_cid());
-	player_game_cid_map_.erase(player.game_cid() * 10000 + player.player_cid());
+	player_gate_cid_map_.erase(GET_CID(player.gate_cid(), player.player_cid()));
+	player_game_cid_map_.erase(GET_CID(player.game_cid(), player.player_cid()));
 	player_role_id_map_.erase(player.role_id());
 	return 0;
 }

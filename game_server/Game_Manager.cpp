@@ -155,7 +155,7 @@ Game_Player* Game_Manager::find_cid_game_player(int cid) {
 }
 
 int Game_Manager::unbind_game_player(Game_Player &player) {
-	player_cid_map_.erase(player.gate_cid() * 10000 + player.player_cid());
+	player_cid_map_.erase(GET_CID(player.gate_cid(), player.player_cid()));
 	return 0;
 }
 

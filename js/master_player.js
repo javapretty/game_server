@@ -23,7 +23,7 @@ Master_Player.prototype.set_gate_cid = function(gate_cid, player_cid, role_id) {
 		return;
 	}
 	this.player_info.role_id = role_id;
-	master_player_gate_cid_map.set(this.gate_cid * 10000 + player_cid, this);
+	master_player_gate_cid_map.set(get_cid(gate_cid, player_cid), this);
 	master_player_role_id_map.set(role_id, this);
 }
 
@@ -35,7 +35,7 @@ Master_Player.prototype.load_player_data = function(game_cid, player_cid, player
 	
 	print('***************master_player load_data, role_id:', this.player_info.role_id, ' role_name:', this.player_info.role_name);
 	this.cplayer = get_master_player_by_game_cid(game_cid, player_cid, this.player_info.role_id);
-	master_player_game_cid_map.set(this.game_cid * 10000 + player_cid, this);
+	master_player_game_cid_map.set(get_cid(game_cid, player_cid), this);
 	master_player_role_id_map.set(this.player_info.role_id, this);
 	master_player_role_name_map.set(this.player_info.role_name, this);
 	
@@ -46,8 +46,8 @@ Master_Player.prototype.load_player_data = function(game_cid, player_cid, player
 //玩家离线，保存数据
 Master_Player.prototype.save_player_data = function() {
 	print('***************master_player save_data, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name);
-	master_player_gate_cid_map.delete(this.gate_cid * 10000 + this.player_cid);
-	master_player_game_cid_map.delete(this.game_cid * 10000 + this.player_cid);
+	master_player_gate_cid_map.delete(get_cid(this.gate_cid, this.player_cid));
+	master_player_game_cid_map.delete(get_cid(this.game_cid, this.player_cid));
 	master_player_role_id_map.delete(this.player_info.role_id);
 	master_player_role_name_map.delete(this.player_info.role_name);
 }

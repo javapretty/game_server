@@ -23,13 +23,12 @@ public:
 	typedef Block_List<Thread_Mutex> Data_List;
 	typedef List<int, Thread_Mutex> Int_List;
 
-	//cid = gate_cid * 10000 + player_cid
+	//cid = GET_CID(gate_cid, player_cid)
 	typedef boost::unordered_map<int, Master_Player* > Master_Player_Gate_Cid_Map;
-	//cid = game_cid * 10000 + player_cid
+	//cid = GET_CID(game_cid, player_cid)
 	typedef boost::unordered_map<int, Master_Player* > Master_Player_Game_Cid_Map;
 	typedef boost::unordered_map<int64_t, Master_Player* > Master_Player_Role_Id_Map;
 	typedef boost::unordered_map<int, int> Msg_Count_Map;
-	//typedef boost::unordered_map<int>
 
 public:
 	static Master_Manager *instance(void);
@@ -69,12 +68,10 @@ public:
 	int push_drop_player_cid(int cid);
 	int pop_drop_player_cid(void);
 
-	//cid = gate_cid * 10000 + player_cid
 	int bind_gate_cid_master_player(int cid, Master_Player &player);
 	int unbind_gate_cid_master_player(int cid);
 	Master_Player *find_gate_cid_master_player(int cid);
 
-	//cid = game_cid * 10000 + player_cid
 	int bind_game_cid_master_player(int cid, Master_Player &player);
 	int unbind_game_cid_master_player(int cid);
 	Master_Player *find_game_cid_master_player(int cid);

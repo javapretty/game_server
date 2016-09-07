@@ -70,7 +70,7 @@ int Master_Player::link_close() {
 
 	recycle_tick_.set(Recycle_Tick::RECYCLE);
 
-	int cid = gate_cid_ * 10000 + player_cid_;
+	int cid = GET_CID(gate_cid_, player_cid_);
 	MASTER_MANAGER->push_drop_player_cid(cid);
 	return 0;
 }

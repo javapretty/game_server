@@ -16,9 +16,9 @@ require('guild.js');
 require('rank.js');
 require('offline.js');
 
-//cid----master_player  cid = gate_cid * 10000 + player_cid
+//cid----master_player  cid = get_cid(gate_cid, player_cid)
 var master_player_gate_cid_map = new Map();
-//cid----master_player  cid = game_cid * 10000 + player_cid
+//cid----master_player  cid = get_cid(game_cid, player_cid)
 var master_player_game_cid_map = new Map();
 //role_id---master_player
 var master_player_role_id_map = new Map();
@@ -118,7 +118,7 @@ function process_master_gate_msg(obj) {
 		return;
 	}
 	
-	var cid = obj.cid * 10000 + obj.player_cid;
+	var cid = get_cid(obj.cid, obj.player_cid);
 	var master_player = master_player_gate_cid_map.get(cid);
 	if (!master_player) {
 		print('master_player not exist, gate_cid:', obj.cid, ' player_cid:', obj.player_cid, ' msg_id:', obj.msg_id);
