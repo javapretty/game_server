@@ -255,7 +255,7 @@ Gate_Player *Gate_Manager::find_account_gate_player(std::string& account){
 }
 
 int Gate_Manager::unbind_gate_player(Gate_Player &player) {
-	player_cid_map_.erase(player.get_player_cid());
+	player_cid_map_.erase(player.player_cid());
 	player_account_map_.erase(player.get_account());
 	return 0;
 }

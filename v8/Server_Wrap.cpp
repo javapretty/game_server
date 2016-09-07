@@ -199,7 +199,8 @@ void get_game_player_by_gate_cid(const FunctionCallbackInfo<Value>& args) {
 		GAME_MANAGER->bind_cid_game_player(GET_CID(gate_cid ,player_cid), *player);
 	}
 
-	player->set_gate_cid(gate_cid, player_cid);
+	player->set_gate_cid(gate_cid);
+	player->set_player_cid(player_cid);
 	args.GetReturnValue().Set(wrap_game_player(args.GetIsolate(), player));
 }
 
@@ -450,7 +451,8 @@ void get_master_player_by_gate_cid(const FunctionCallbackInfo<Value>& args) {
 		MASTER_MANAGER->bind_role_id_master_player(role_id, *player);
 	}
 
-	player->set_gate_cid(gate_cid, player_cid);
+	player->set_gate_cid(gate_cid);
+	player->set_player_cid(player_cid);
 	player->set_role_id(role_id);
 	MASTER_MANAGER->bind_gate_cid_master_player(GET_CID(gate_cid ,player_cid), *player);
 	args.GetReturnValue().Set(wrap_master_player(args.GetIsolate(), player));
@@ -472,7 +474,8 @@ void get_master_player_by_game_cid(const FunctionCallbackInfo<Value>& args) {
 		MASTER_MANAGER->bind_role_id_master_player(role_id, *player);
 	}
 
-	player->set_game_cid(game_cid, player_cid);
+	player->set_game_cid(game_cid);
+	player->set_player_cid(player_cid);
 	player->set_role_id(role_id);
 	MASTER_MANAGER->bind_game_cid_master_player(GET_CID(game_cid ,player_cid), *player);
 	args.GetReturnValue().Set(wrap_master_player(args.GetIsolate(), player));

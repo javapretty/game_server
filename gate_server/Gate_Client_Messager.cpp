@@ -66,7 +66,7 @@ int Gate_Client_Messager::process_block(Block_Buffer &buf) {
 	if (msg_id >= CLIENT_MASTER_MESSAGE_START && msg_id <= CLIENT_MASTER_MESSAGE_END) {
 		GATE_MANAGER->send_to_master(player_buf);
 	} else if (msg_id >= CLIENT_GAME_MESSAGE_START && msg_id <= CLIENT_GAME_MESSAGE_END) {
-		GATE_MANAGER->send_to_game(player->get_game_cid(), player_buf);
+		GATE_MANAGER->send_to_game(player->game_cid(), player_buf);
 	}
 	else {
 		LOG_ERROR("msg_id:%d error", msg_id);

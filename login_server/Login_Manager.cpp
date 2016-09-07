@@ -104,7 +104,7 @@ Login_Player *Login_Manager::find_cid_login_player(int cid) {
 
 int Login_Manager::unbind_login_player(Login_Player &player) {
 	player_account_map_.erase(player.login_player_info().account);
-	player_cid_map_.erase(player.get_cid());
+	player_cid_map_.erase(player.player_cid());
 	return 0;
 }
 
@@ -267,8 +267,8 @@ int Login_Manager::player_tick(Time_Value &now) {
 	for (Login_Player_Account_Map::iterator it = t_accouont_map.begin(); it != t_accouont_map.end(); ++it) {
 		if (it->second){
 			if (now.sec() - it->second->login_player_info().session_tick > 10) {
-				LOG_INFO("client drop from login, cid:%d, account:%s", it->second->get_cid(), it->second->login_player_info().account.c_str());
-				LOGIN_CLIENT_SERVER->receive().push_drop(it->second->get_cid());	//断开客户端与login的连接
+				LOG_INFO("client drop from login, cid:%d, account:%s", it->second->player_cid(), it->second->login_player_info().account.c_str());
+				LOGIN_CLIENT_SERVER->receive().push_drop(it->second->player_cid());	//断开客户端与login的连接
 				it->second->link_close();
 			}
 			it->second->tick(now);

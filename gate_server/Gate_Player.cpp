@@ -6,19 +6,9 @@
 #include "Gate_Manager.h"
 #include "Common_Func.h"
 
-Gate_Player::Gate_Player(void) :
-	player_cid_(0),
-	game_cid_(0) { }
+Gate_Player::Gate_Player(void) { }
 
 Gate_Player::~Gate_Player(void) { }
-
-void Gate_Player::reset(void) {
-	player_cid_ = 0;
-	game_cid_ = 0;
-	account_.clear();
-	msg_info_.reset();
-	recycle_tick_.reset();
-}
 
 int Gate_Player::tick(Time_Value &now) {
 	if (recycle_tick_.status == Recycle_Tick::RECYCLE && now > recycle_tick_.recycle_tick) {
@@ -30,21 +20,24 @@ int Gate_Player::tick(Time_Value &now) {
 	return 0;
 }
 
-int Gate_Player::link_close() {
-	if (recycle_tick_.status == Recycle_Tick::RECYCLE)
-		return 0;
+void Gate_Player::reset(void) {
+	Player::reset();
+	account_.clear();
+	msg_info_.reset();
+}
 
-	recycle_tick_.set(Recycle_Tick::RECYCLE);
+int Gate_Player::link_close() {
+	if (Player::link_close() < 0) return -1;
 
 	//gate同步玩家下线到game
 	Block_Buffer game_buf;
-	game_buf.make_player_message(SYNC_GATE_GAME_PLAYER_LOGOUT, 0, player_cid_);
+	game_buf.make_player_message(SYNC_GATE_GAME_PLAYER_LOGOUT, 0, player_cid());
 	game_buf.finish_message();
-	GATE_MANAGER->send_to_game(game_cid_, game_buf);
+	GATE_MANAGER->send_to_game(game_cid(), game_buf);
 
 	//gate同步玩家下线到master
 	Block_Buffer master_buf;
-	master_buf.make_player_message(SYNC_GATE_MASTER_PLAYER_LOGOUT, 0, player_cid_);
+	master_buf.make_player_message(SYNC_GATE_MASTER_PLAYER_LOGOUT, 0, player_cid());
 	master_buf.finish_message();
 	GATE_MANAGER->send_to_master(master_buf);
 

@@ -77,7 +77,7 @@ int Login_Client_Messager::connect_login(int cid, int msg_id, Block_Buffer &buf)
 		}
 
 		player->reset();
-		player->set_cid(cid);
+		player->set_player_cid(cid);
 		Login_Player_Info player_info;
 		player_info.session_tick = Time_Value::gettimeofday().sec();
 		player_info.account = msg.account;
