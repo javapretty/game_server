@@ -1,8 +1,8 @@
 /*
  * Master_Connector.cpp
  *
- *  Created on: 2016年5月9日
- *      Author: lijunliang
+ *  Created on: Jan 13, 2016
+ *      Author: zhangyalei
  */
 
 #include "Master_Connector.h"

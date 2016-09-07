@@ -3,7 +3,6 @@
  *      Author: zhangyalei
  */
 
-
 #ifndef GATE_CLIENT_MESSAGER_H_
 #define GATE_CLIENT_MESSAGER_H_
 

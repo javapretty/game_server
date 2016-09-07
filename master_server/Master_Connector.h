@@ -1,8 +1,8 @@
 /*
  * Master_Connector.h
  *
- *  Created on: 2016年5月9日
- *      Author: lijunliang
+ *  Created on: Jan 13, 2016
+ *      Author: zhangyalei
  */
 
 #ifndef MASTER_CONNECTOR_H_

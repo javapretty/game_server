@@ -1,7 +1,7 @@
 /*
  * Player_Wrap.h
  *
- *  Created on: 2016年2月20日
+ *  Created on: Feb 20, 2016
  *      Author: zhangyalei
  */
 

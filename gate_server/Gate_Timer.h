@@ -3,7 +3,6 @@
  *      Author: zhangyalei
  */
 
-
 #ifndef GATE_TIMER_H_
 #define GATE_TIMER_H_
 

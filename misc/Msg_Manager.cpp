@@ -1,7 +1,7 @@
 /*
  * Msg_Manager.cpp
  *
- *  Created on: 2016年8月4日
+ *  Created on: Aug 4, 2016
  *      Author: zhangyalei
  */
 

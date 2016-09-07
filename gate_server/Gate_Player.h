@@ -3,7 +3,6 @@
  *      Author: zhangyalei
  */
 
-
 #ifndef GATE_PLAYER_H_
 #define GATE_PLAYER_H_
 

@@ -1,7 +1,7 @@
 /*
  * Login_Player.h
  *
- *  Created on: 2016年1月21日
+ *  Created on: Jan 21, 2016
  *      Author: zhangyalei
  */
 

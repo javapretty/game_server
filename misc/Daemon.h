@@ -1,7 +1,7 @@
 /*
  * Daemon.h
  *
- *  Created on: 2016年3月26日
+ *  Created on: Mar 26, 2016
  *      Author: zhangyalei
  */
 

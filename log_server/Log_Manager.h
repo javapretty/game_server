@@ -1,7 +1,7 @@
 /*
  * Log_Manager.h
  *
- *  Created on: 2016年3月1日
+ *  Created on: Mar 1, 2016
  *      Author: zhangyalei
  */
 

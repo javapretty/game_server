@@ -1,16 +1,15 @@
 /*
  * Log_Timer.h
  *
- *  Created on: 2016年3月1日
+ *  Created on: Mar 1, 2016
  *      Author: zhangyalei
  */
 
-#ifndef LOG_SERVER_TIMER_H_
-#define LOG_SERVER_TIMER_H_
+#ifndef LOG_TIMER_H_
+#define LOG_TIMER_H_
 
 #include "Thread.h"
 #include "Epoll_Watcher.h"
-#include "Block_Buffer.h"
 
 class Log_Timer_Handler: public Event_Handler {
 public:
@@ -36,4 +35,4 @@ private:
 
 #define LOG_TIMER Log_Timer::instance()
 
-#endif /* LOG_SERVER_TIMER_H_ */
+#endif /* LOG_TIMER_H_ */

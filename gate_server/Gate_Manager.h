@@ -3,7 +3,6 @@
  *      Author: zhangyalei
  */
 
-
 #ifndef GATE_MANAGER_H_
 #define GATE_MANAGER_H_
 

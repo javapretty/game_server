@@ -1,7 +1,7 @@
 /*
  * Inner_Msg.cpp
  *
- *  Created on: 2016年8月2日
+ *  Created on: Aug 2, 2016
  *      Author: zhangyalei
  */
 

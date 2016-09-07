@@ -1,11 +1,12 @@
-/** 
-* This file was auto-generated. Please Do not edit
-*
-* [Version 1.4]
-*/
+/*
+ * Message.h
+ *
+ *  Created on: Aug 2, 2016
+ *      Author: zhangyalei
+ */
 
-#ifndef __Message__H
-#define __Message__H
+#ifndef MESSAGE_H_
+#define MESSAGE_H_
 
 enum Message_Bound {
 	CLIENT_GATE_MESSAGE_START 	= 100000,
@@ -62,4 +63,4 @@ enum Active_Message {
 	ACTIVE_DISCONNECT = 300000, //服务器主动断开连接
 };
 
-#endif
+#endif /* MESSAGE_H_ */

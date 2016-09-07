@@ -1,8 +1,7 @@
 /*
- *  Created on: Dec 16, 2015
+ *  Created on: Dec 21, 2015
  *      Author: zhangyalei
  */
-
 
 #ifndef PUBLIC_STURCT_H_
 #define PUBLIC_STURCT_H_

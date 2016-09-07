@@ -1,7 +1,7 @@
 /*
  * Log_File.cpp
  *
- *  Created on: 2016年3月1日
+ *  Created on: Mar 1, 2016
  *      Author: zhangyalei
  */
 
@@ -11,7 +11,6 @@
 #include <errno.h>
 #include <sstream>
 #include "Log.h"
-#include "Block_Buffer.h"
 #include "Log_File.h"
 #include "Public_Struct.h"
 

@@ -1,7 +1,7 @@
 /*
  * Log_Struct.cpp
  *
- *  Created on: 2016年7月28日
+ *  Created on: Jul 28, 2016
  *      Author: zhangyalei
  */
 

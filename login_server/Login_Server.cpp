@@ -1,7 +1,7 @@
 /*
  * Login_Server.cpp
  *
- *  Created on: 2016年1月13日
+ *  Created on: Jan 13, 2016
  *      Author: zhangyalei
  */
 

@@ -1,15 +1,13 @@
 /*
- *  Created on: Dec 16, 2015
+ *  Created on: Dec 21, 2015
  *      Author: zhangyalei
  */
-
 
 #ifndef LOGIN_TIMER_H_
 #define LOGIN_TIMER_H_
 
 #include "Thread.h"
 #include "Epoll_Watcher.h"
-#include "Block_Buffer.h"
 
 class Login_Timer_Handler: public Event_Handler {
 public:
