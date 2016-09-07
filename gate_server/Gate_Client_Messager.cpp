@@ -33,12 +33,13 @@ int Gate_Client_Messager::process_block(Block_Buffer &buf) {
 	buf.read_int32(serial_cipher);
 	buf.read_int32(msg_time_cipher);
 
+	GATE_MANAGER->add_msg_count(msg_id);
 	if (msg_id >= CLIENT_GATE_MESSAGE_START && msg_id <= CLIENT_GATE_MESSAGE_END) {
 		return process_gate_block(cid, msg_id, buf);
 	}
 
-	Gate_Player *player = 0;
-	if ((player = GATE_MANAGER->find_cid_gate_player(cid)) == 0) {
+	Gate_Player *player = dynamic_cast<Gate_Player*>(GATE_MANAGER->find_cid_player(cid));
+	if (!player) {
 		LOG_ERROR("cannot find player_cid = %d msg_id = %d ", cid, msg_id);
 		return GATE_MANAGER->close_client(cid);
 	}
@@ -56,7 +57,6 @@ int Gate_Client_Messager::process_block(Block_Buffer &buf) {
 		}
 	}
 
-	Perf_Mon perf_mon(msg_id);
 	Block_Buffer player_buf;
 	player_buf.reset();
 	player_buf.make_player_message(msg_id, status, cid);
@@ -76,7 +76,6 @@ int Gate_Client_Messager::process_block(Block_Buffer &buf) {
 }
 
 int Gate_Client_Messager::process_gate_block(int cid, int msg_id, Block_Buffer &buf) {
-	Perf_Mon perf_mon(msg_id);
 	int ret = 0;
 	switch (msg_id) {
 	case REQ_CONNECT_GATE: {
@@ -97,9 +96,9 @@ int Gate_Client_Messager::connect_gate(int cid, Block_Buffer &buf) {
 	MSG_100101 msg;
 	msg.deserialize(buf);
 
-	Gate_Player *player = 0;
+	Gate_Player *player = dynamic_cast<Gate_Player*>(GATE_MANAGER->find_account_player(msg.account));
 	//校验是否重复登录
-	if((player = GATE_MANAGER->find_account_gate_player(msg.account) )== 0) {
+	if(!player) {
 		MSG_140000 login_msg;
 		login_msg.account = msg.account;
 		login_msg.session = msg.session;

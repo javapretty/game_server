@@ -13,8 +13,8 @@ public:
 	Game_Player(void);
 	virtual ~Game_Player(void);
 
-	int tick(Time_Value &now);
-	virtual int link_close(void);
+	virtual int tick(Time_Value &now);
+	virtual int link_close(bool server_close = false);
 };
 
 #endif /* GAME_PLAYER_H_ */

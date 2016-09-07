@@ -30,9 +30,7 @@ int Login_Inner_Messager::process_gate_block(Block_Buffer &buf) {
 	buf.read_int32(status);
 	buf.read_int32(player_cid);
 
-	Perf_Mon perf_mon(msg_id);
-	LOGIN_MANAGER->inner_msg_count(msg_id);
-
+	LOGIN_MANAGER->add_msg_count(msg_id);
 	switch (msg_id) {
 	case SYNC_GATE_LOGIN_PLAYER_ACCOUNT:{
 		MSG_140000 msg;
@@ -50,12 +48,10 @@ int Login_Inner_Messager::process_gate_block(Block_Buffer &buf) {
 
 int Login_Inner_Messager::gate_login_player_account(int gate_cid, int32_t player_cid, MSG_140000& msg) {
 	Block_Buffer gate_buf;
-
-	Login_Player *player = 0;
-	if ((player = LOGIN_MANAGER->find_account_login_player(msg.account)) != 0
-			&& player->login_player_info().session == msg.session
-			&& player->login_player_info().gate_ip == msg.gate_ip
-			&& player->login_player_info().gate_port == msg.gate_port) {
+	Login_Player *player = dynamic_cast<Login_Player*>(LOGIN_MANAGER->find_account_player(msg.account));
+	if (player && player->session_info().session == msg.session
+			&& player->session_info().gate_ip == msg.gate_ip
+			&& player->session_info().gate_port == msg.gate_port) {
 		//验证玩家session成功，关闭玩家与login的连接，开启玩家与gate的连接
 		gate_buf.make_player_message(SYNC_LOGIN_GATE_PLAYER_ACCOUNT, 0, player_cid);
 		LOGIN_MANAGER->close_client(player->player_cid());

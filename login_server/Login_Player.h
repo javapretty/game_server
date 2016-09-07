@@ -15,15 +15,15 @@ public:
 	Login_Player(void);
 	virtual ~Login_Player(void);
 
-	void set_player_info(const Login_Player_Info &player_info) { player_info_ = player_info; }
-	Login_Player_Info const &login_player_info(void) { return player_info_; }
+	inline void set_session_info(const Session_Info &session_info) { session_info_ = session_info; }
+	inline const Session_Info &session_info(void) { return session_info_; }
 
-	int tick(Time_Value &now);
 	virtual void reset(void);
-	virtual int link_close(void);
+	virtual int tick(Time_Value &now);
+	virtual int link_close(bool server_close = false);
 
 private:
-	Login_Player_Info player_info_;
+	Session_Info session_info_;
 };
 
 #endif /* LOGIN_PLAYER_H_ */

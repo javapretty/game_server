@@ -24,16 +24,25 @@ public:
 	inline void set_player_cid(int player_cid) { player_cid_ = player_cid; }
 	inline int player_cid(void) { return player_cid_; }
 
+	inline void set_role_id(int64_t role_id) { role_id_ = role_id; }
+	inline int64_t role_id(void) { return role_id_; }
+
+	inline void set_account(std::string &account) { account_ = account; }
+	inline std::string account(void) { return account_; }
+
 	virtual void reset(void);
-	virtual int link_close(void);
+	virtual int tick(Time_Value &now);
+	virtual int link_close(bool server_close = false);
 
 protected:
 	Recycle_Tick recycle_tick_;
 
 private:
-	int gate_cid_;				//gate连接game的cid
-	int game_cid_;				//game连接master的cid
-	int player_cid_;			//player连接gate的cid
+	int gate_cid_;					//gate连接game的cid
+	int game_cid_;					//game连接master的cid
+	int player_cid_;				//player连接gate的cid
+	int64_t role_id_;			//player role_id
+	std::string account_;	//player account
 };
 
 #endif /* PLAYER_H_ */

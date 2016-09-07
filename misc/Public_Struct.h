@@ -143,26 +143,6 @@ struct Msg_Info {
 	}
 };
 
-struct Tick_Info {
-	const Time_Value server_info_interval_tick;
-	Time_Value server_info_last_tick;
-
-	const Time_Value player_interval_tick; /// Game_Player定时器间隔
-	Time_Value player_last_tick;
-
-	const Time_Value object_pool_interval_tick;
-	Time_Value object_pool_last_tick;
-
-	Tick_Info(void)
-	: server_info_interval_tick(Time_Value(300, 0)),
-	  server_info_last_tick(Time_Value::zero),
-	  player_interval_tick(Time_Value(0, 500 * 1000)),
-	  player_last_tick(Time_Value::zero),
-	  object_pool_interval_tick(300, 0),
-	  object_pool_last_tick(Time_Value::zero)
-	{ }
-};
-
 struct Recycle_Tick {
 	enum {
 		NON_RECYCLE,	/// 非回收状态
@@ -201,20 +181,18 @@ struct Player_DB_Cache {
 	}
 };
 
-struct Login_Player_Info {
-	std::string account;
+struct Session_Info {
+	std::string session;
+	Time_Value session_tick;
 	std::string gate_ip;
 	int gate_port;
-	std::string session;
-	int64_t session_tick;
 
-	Login_Player_Info(void) { reset(); }
+	Session_Info(void) { reset(); }
 	void reset(void) {
-		account.clear();
+		session.clear();
+		session_tick = Time_Value::zero;
 		gate_ip.clear();
 		gate_port = 0;
-		session.clear();
-		session_tick = 0;
 	}
 };
 

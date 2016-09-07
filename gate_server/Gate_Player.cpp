@@ -10,24 +10,31 @@ Gate_Player::Gate_Player(void) { }
 
 Gate_Player::~Gate_Player(void) { }
 
+void Gate_Player::reset(void) {
+	Player::reset();
+	msg_info_.reset();
+}
+
 int Gate_Player::tick(Time_Value &now) {
 	if (recycle_tick_.status == Recycle_Tick::RECYCLE && now > recycle_tick_.recycle_tick) {
-		GATE_MANAGER->unbind_gate_player(*this);
+		GATE_MANAGER->unbind_player(*this);
 		reset();
-		GATE_MANAGER->push_gate_player(this);
+		GATE_MANAGER->push_player(this);
 	}
 
 	return 0;
 }
 
-void Gate_Player::reset(void) {
-	Player::reset();
-	account_.clear();
-	msg_info_.reset();
-}
-
-int Gate_Player::link_close() {
+int Gate_Player::link_close(bool server_close) {
 	if (Player::link_close() < 0) return -1;
+
+	//服务器主动关闭，通知客户端
+	if (server_close) {
+		Block_Buffer buf;
+		buf.make_server_message(ACTIVE_DISCONNECT, ERROR_DISCONNECT_SELF);
+		buf.finish_message();
+		GATE_MANAGER->send_to_client(player_cid(), buf);
+	}
 
 	//gate同步玩家下线到game
 	Block_Buffer game_buf;
@@ -46,7 +53,7 @@ int Gate_Player::link_close() {
 
 int Gate_Player::verify_msg_info(uint32_t serial_cipher, uint32_t msg_time_cipher) {
 	if (! msg_info_.is_inited) {
-		msg_info_.hash_key = elf_hash(account_.c_str(), account_.length());
+		msg_info_.hash_key = elf_hash(account().c_str(), account().length());
 	}
 	uint32_t serial = serial_cipher ^ msg_info_.hash_key;
 	uint32_t msg_time = msg_time_cipher ^ serial_cipher;

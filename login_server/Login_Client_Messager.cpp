@@ -33,7 +33,7 @@ int Login_Client_Messager::process_block(Block_Buffer &buf) {
 	buf.read_int32(serial_cipher);
 	buf.read_int32(msg_time_cipher);
 
-	Perf_Mon perf_mon(msg_id);
+	LOGIN_MANAGER->add_msg_count(msg_id);
 	switch (msg_id) {
 	case REQ_CONNECT_LOGIN:{
 			connect_login(cid, msg_id, buf);
@@ -51,7 +51,7 @@ int Login_Client_Messager::process_block(Block_Buffer &buf) {
 int Login_Client_Messager::connect_login(int cid, int msg_id, Block_Buffer &buf){
 	MSG_100001 msg;
 	msg.deserialize(buf);
-	Login_Player *player = LOGIN_MANAGER->find_account_login_player(msg.account);
+	Login_Player *player = dynamic_cast<Login_Player*>(LOGIN_MANAGER->find_account_player(msg.account));
 	if (!player) {
 		int status = LOGIN_MANAGER->client_login(msg.account, msg.password);
 		if (status < 0) {
@@ -70,7 +70,7 @@ int Login_Client_Messager::connect_login(int cid, int msg_id, Block_Buffer &buf)
 		LOGIN_MANAGER->get_gate_ip(msg.account, res_msg.gate_ip, res_msg.gate_port);
 		make_session(msg.account, res_msg.session);
 
-		player = LOGIN_MANAGER->pop_login_player();
+		player = LOGIN_MANAGER->pop_player();
 		if (!player) {
 			LOG_ERROR("login_player_pool_ pop error");
 			return -1;
@@ -78,15 +78,15 @@ int Login_Client_Messager::connect_login(int cid, int msg_id, Block_Buffer &buf)
 
 		player->reset();
 		player->set_player_cid(cid);
-		Login_Player_Info player_info;
-		player_info.session_tick = Time_Value::gettimeofday().sec();
-		player_info.account = msg.account;
-		player_info.gate_ip = res_msg.gate_ip;
-		player_info.gate_port = res_msg.gate_port;
-		player_info.session = res_msg.session;
-		player->set_player_info(player_info);
-		LOGIN_MANAGER->bind_cid_login_player(cid, player);
-		LOGIN_MANAGER->bind_account_login_player(msg.account, player);
+		player->set_account(msg.account);
+		Session_Info session_info;
+		session_info.session = res_msg.session;
+		session_info.session_tick = Time_Value::gettimeofday();
+		session_info.gate_ip = res_msg.gate_ip;
+		session_info.gate_port = res_msg.gate_port;
+		player->set_session_info(session_info);
+		LOGIN_MANAGER->bind_cid_player(cid, player);
+		LOGIN_MANAGER->bind_account_player(msg.account, player);
 
 		Block_Buffer res_buf;
 		res_buf.make_server_message(RES_CONNECT_LOGIN, 0);

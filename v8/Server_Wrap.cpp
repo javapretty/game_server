@@ -54,6 +54,7 @@ void pop_game_gate_msg_object(const FunctionCallbackInfo<Value>& args) {
 		buf->read_int32(status);
 		buf->read_int32(player_cid);
 
+		GAME_MANAGER->add_msg_count(msg_id);
 		Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
 		if(iter != MSG_MANAGER->msg_struct_id_map().end()){
 			Msg_Struct *msg_struct  = dynamic_cast<Msg_Struct*>(iter->second);
@@ -81,6 +82,7 @@ void pop_game_master_msg_object(const FunctionCallbackInfo<Value>& args) {
 		buf->read_int32(status);
 		buf->read_int32(player_cid);
 
+		GAME_MANAGER->add_msg_count(msg_id);
 		Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
 		if(iter != MSG_MANAGER->msg_struct_id_map().end()){
 			Msg_Struct *msg_struct  = dynamic_cast<Msg_Struct*>(iter->second);
@@ -106,6 +108,7 @@ void pop_game_db_msg_object(const FunctionCallbackInfo<Value>& args) {
 		buf->read_int32(msg_id);
 		buf->read_int32(status);
 
+		GAME_MANAGER->add_msg_count(msg_id);
 		Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
 		if(iter != MSG_MANAGER->msg_struct_id_map().end()){
 			Msg_Struct *msg_struct  = dynamic_cast<Msg_Struct*>(iter->second);
@@ -193,10 +196,10 @@ void get_game_player_by_gate_cid(const FunctionCallbackInfo<Value>& args) {
 	int gate_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int player_cid = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int cid = GET_CID(gate_cid ,player_cid);
-	Game_Player *player = GAME_MANAGER->find_cid_game_player(cid);
+	Game_Player *player = dynamic_cast<Game_Player*>(GAME_MANAGER->find_cid_player(cid));
 	if (!player) {
-		player = GAME_MANAGER->pop_game_player();
-		GAME_MANAGER->bind_cid_game_player(GET_CID(gate_cid ,player_cid), *player);
+		player = GAME_MANAGER->pop_player();
+		GAME_MANAGER->bind_cid_player(cid, player);
 	}
 
 	player->set_gate_cid(gate_cid);
@@ -250,6 +253,7 @@ void pop_master_gate_msg_object(const FunctionCallbackInfo<Value>& args) {
 		buf->read_int32(status);
 		buf->read_int32(player_cid);
 
+		MASTER_MANAGER->add_msg_count(msg_id);
 		Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
 		if(iter != MSG_MANAGER->msg_struct_id_map().end()){
 			Msg_Struct *msg_struct  = dynamic_cast<Msg_Struct*>(iter->second);
@@ -277,6 +281,7 @@ void pop_master_game_msg_object(const FunctionCallbackInfo<Value>& args) {
 		buf->read_int32(status);
 		buf->read_int32(player_cid);
 
+		MASTER_MANAGER->add_msg_count(msg_id);
 		Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
 		if(iter != MSG_MANAGER->msg_struct_id_map().end()){
 			Msg_Struct *msg_struct  = dynamic_cast<Msg_Struct*>(iter->second);
@@ -302,6 +307,7 @@ void pop_master_db_msg_object(const FunctionCallbackInfo<Value>& args) {
 		buf->read_int32(msg_id);
 		buf->read_int32(status);
 
+		MASTER_MANAGER->add_msg_count(msg_id);
 		Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
 		if(iter != MSG_MANAGER->msg_struct_id_map().end()){
 			Msg_Struct *msg_struct  = dynamic_cast<Msg_Struct*>(iter->second);
@@ -334,6 +340,7 @@ void pop_master_http_msg_object(const FunctionCallbackInfo<Value>& args) {
 		}
 
 		int msg_id = value["msg_id"].asInt();
+		MASTER_MANAGER->add_msg_count(msg_id);
 		Struct_Id_Map::iterator iter = MSG_MANAGER->msg_struct_id_map().find(msg_id);
 		if(iter != MSG_MANAGER->msg_struct_id_map().end()){
 			Msg_Struct *msg_struct  = dynamic_cast<Msg_Struct*>(iter->second);
@@ -445,16 +452,16 @@ void get_master_player_by_gate_cid(const FunctionCallbackInfo<Value>& args) {
 	int gate_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int player_cid = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int64_t role_id = args[2]->IntegerValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	Master_Player *player = MASTER_MANAGER->find_role_id_master_player(role_id);
+	Master_Player *player = dynamic_cast<Master_Player*>(MASTER_MANAGER->find_role_id_player(role_id));
 	if (!player) {
-		player = MASTER_MANAGER->pop_master_player();
-		MASTER_MANAGER->bind_role_id_master_player(role_id, *player);
+		player = MASTER_MANAGER->pop_player();
+		MASTER_MANAGER->bind_role_id_player(role_id, player);
 	}
 
 	player->set_gate_cid(gate_cid);
 	player->set_player_cid(player_cid);
 	player->set_role_id(role_id);
-	MASTER_MANAGER->bind_gate_cid_master_player(GET_CID(gate_cid ,player_cid), *player);
+	MASTER_MANAGER->bind_cid_player(GET_CID(gate_cid ,player_cid), player);
 	args.GetReturnValue().Set(wrap_master_player(args.GetIsolate(), player));
 }
 
@@ -468,16 +475,16 @@ void get_master_player_by_game_cid(const FunctionCallbackInfo<Value>& args) {
 	int game_cid = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int player_cid = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
 	int64_t role_id = args[2]->IntegerValue(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
-	Master_Player *player = MASTER_MANAGER->find_role_id_master_player(role_id);
+	Master_Player *player = dynamic_cast<Master_Player*>(MASTER_MANAGER->find_role_id_player(role_id));
 	if (!player) {
-		player = MASTER_MANAGER->pop_master_player();
-		MASTER_MANAGER->bind_role_id_master_player(role_id, *player);
+		player = MASTER_MANAGER->pop_player();
+		MASTER_MANAGER->bind_role_id_player(role_id, player);
 	}
 
 	player->set_game_cid(game_cid);
 	player->set_player_cid(player_cid);
 	player->set_role_id(role_id);
-	MASTER_MANAGER->bind_game_cid_master_player(GET_CID(game_cid ,player_cid), *player);
+	MASTER_MANAGER->bind_game_cid_player(GET_CID(game_cid ,player_cid), player);
 	args.GetReturnValue().Set(wrap_master_player(args.GetIsolate(), player));
 }
 

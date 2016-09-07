@@ -30,9 +30,7 @@ int Gate_Inner_Messager::process_login_block(Block_Buffer &buf) {
 	buf.read_int32(status);
 	buf.read_int32(player_cid);
 
-	Perf_Mon perf_mon(msg_id);
-	GATE_MANAGER->inner_msg_count(msg_id);
-
+	GATE_MANAGER->add_msg_count(msg_id);
 	if (msg_id == SYNC_LOGIN_GATE_PLAYER_ACCOUNT) {
 		MSG_140001 msg;
 		msg.deserialize(buf);
@@ -68,9 +66,7 @@ int Gate_Inner_Messager::process_game_block(Block_Buffer &buf) {
 	buf.read_int32(status);
 	buf.read_int32(player_cid);
 
-	Perf_Mon perf_mon(msg_id);
-	GATE_MANAGER->inner_msg_count(msg_id);
-
+	GATE_MANAGER->add_msg_count(msg_id);
 	//玩家登录game成功，更新gate玩家信息，同步消息到master
 	if (msg_id == 520001 && status == 0) {
 		//RES_FETCH_ROLE_INFO消息第一个字段是64位role_id
@@ -108,20 +104,18 @@ int Gate_Inner_Messager::process_master_block(Block_Buffer &buf) {
 	buf.read_int32(status);
 	buf.read_int32(player_cid);
 
-	Perf_Mon perf_mon(msg_id);
-	GATE_MANAGER->inner_msg_count(msg_id);
-
+	GATE_MANAGER->add_msg_count(msg_id);
 	if(msg_id == 510300) { //切换场景消息
 		int32_t game_server_id = 0;
 		buf.read_int32(game_server_id);
-		Gate_Player *player = GATE_MANAGER->find_cid_gate_player(player_cid);
-		if(player == NULL)
+		Gate_Player *player = dynamic_cast<Gate_Player*>(GATE_MANAGER->find_cid_player(player_cid));
+		if(!player)
 			return -1;
 		int game_cid = GATE_MANAGER->get_game_cid(game_server_id);
 		player->set_game_cid(game_cid);
 		Block_Buffer buffer;
 		buffer.make_player_message(120001, 0, player_cid);
-		buffer.write_string(player->get_account());
+		buffer.write_string(player->account());
 		buffer.finish_message();
 		GATE_MANAGER->send_to_game(game_cid, buffer);
 		return 0;
@@ -137,9 +131,9 @@ int Gate_Inner_Messager::process_master_block(Block_Buffer &buf) {
 }
 
 int Gate_Inner_Messager::process_success_login(int player_cid, std::string &account) {
-	Gate_Player *player = GATE_MANAGER->pop_gate_player();
+	Gate_Player *player = GATE_MANAGER->pop_player();
 	if (! player) {
-		LOG_ERROR("game_player_pool_ pop error");
+		LOG_ERROR("player_pool_ pop error");
 		return -1;
 	}
 
@@ -147,8 +141,8 @@ int Gate_Inner_Messager::process_success_login(int player_cid, std::string &acco
 	player->set_player_cid(player_cid);
 	player->set_account(account);
 	player->set_game_cid(GATE_MANAGER->get_lowest_player_game_cid());
-	GATE_MANAGER->bind_cid_gate_player(player_cid, *player);
-	GATE_MANAGER->bind_account_gate_player(account, *player);
+	GATE_MANAGER->bind_cid_player(player_cid, player);
+	GATE_MANAGER->bind_account_player(account, player);
 
 	return 0;
 }
