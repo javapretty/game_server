@@ -250,6 +250,7 @@ void get_scene_id(Local<String> property, const PropertyCallbackInfo<Value>& arg
 	int scene_id = entity->scene()->scene_id();
 	args.GetReturnValue().Set(scene_id);
 }
+
 void set_scene_id(Local<String> property, Local<Value> value, const PropertyCallbackInfo<void>& args) {
 	LOG_ERROR("Can't set entity's scene_id!");
 }

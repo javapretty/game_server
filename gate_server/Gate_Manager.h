@@ -25,11 +25,17 @@ public:
 	static Gate_Manager *instance(void);
 	int init(int server_id);
 
-	inline bool verify_pack(void) { return verify_pack_onoff_; }
+	inline bool verify_pack(void) { return verify_pack_; }
+	inline bool server_id(void) { return server_id_; }
+
 	Gate_Player *pop_player(void) { return player_pool_.pop(); }
 	int push_player(Gate_Player *player) { return player_pool_.push(player); }
 
 	virtual int unbind_player(Player &player);
+	virtual int free_cache(void);
+	virtual int close_list_tick(Time_Value &now);
+	virtual void get_server_info(void);
+	virtual void print_server_info(void);
 
 	//发送数据
 	int send_to_client(int player_cid, Block_Buffer &buf);
@@ -50,11 +56,6 @@ public:
 	int push_gate_game_data(Block_Buffer *buf);
 	int push_gate_master_data(Block_Buffer *buf);
 
-	virtual int close_list_tick(Time_Value &now);
-	virtual void get_server_info(void);
-	virtual void free_cache(void);
-	virtual void print_object_pool(void);
-
 	void get_server_ip_port(int player_cid, std::string &ip, int &port);
 	void new_game_connector(int server_id, std::string server_ip, int server_port, Time_Value &send_interval);
 	int get_game_cid(int server_id);
@@ -70,7 +71,7 @@ private:
 	static Gate_Manager *instance_;
 
 	int server_id_;
-	bool verify_pack_onoff_;
+	bool verify_pack_;
 	Player_Pool player_pool_;
 
 	Int_List drop_cid_list_;							//掉线玩家列表

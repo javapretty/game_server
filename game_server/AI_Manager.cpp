@@ -3,9 +3,9 @@
  *      Author: lijunliang
  */
 
+#include "Xml.h"
 #include "AI_Manager.h"
 #include "Scene_Entity.h"
-#include "Xml.h"
 #include "Server_Config.h"
 
 AI_Manager* AI_Manager::instance_ = NULL;

@@ -3,8 +3,8 @@
  *      Author: lijunliang
  */
 
-#include "Aoi_Manager.h"
 #include "Log.h"
+#include "Aoi_Manager.h"
 
 Aoi_Manager::Aoi_Manager():
 	x_list_(),

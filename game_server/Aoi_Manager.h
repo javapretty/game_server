@@ -6,8 +6,8 @@
 #ifndef AOI_MANAGER_H_
 #define AOI_MANAGER_H_
 
-#include <Aoi_Entity.h>
-#include <Object_Pool.h>
+#include "Object_Pool.h"
+#include "Aoi_Entity.h"
 
 typedef Object_Pool<Aoi_Entity, Spin_Lock> Aoi_Entity_Pool;
 

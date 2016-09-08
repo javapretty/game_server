@@ -8,6 +8,7 @@
 #ifndef SERVER_MANAGER_H_
 #define SERVER_MANAGER_H_
 
+#include "Common_Func.h"
 #include "Log.h"
 #include "Thread.h"
 #include "List.h"
@@ -31,14 +32,12 @@ public:
 	Server_Manager(void);
 	virtual ~Server_Manager(void);
 
-	void run_handler(void);
+	int init_data(int server_id, std::string server_name);
+	virtual void run_handler(void);
 	virtual int process_list(void);
 
 	//主动关闭处理
 	int self_close_process(void);
-
-	inline void set_server_name(std::string server_name) { server_name_ = server_name; }
-	inline int server_status(void) { return server_status_; }
 
 	int bind_cid_player(int cid, Player *player);
 	Player* find_cid_player(int cid);
@@ -50,21 +49,23 @@ public:
 	Player* find_account_player(std::string &account);
 
 	virtual int unbind_player(Player &player);
+	virtual int free_cache(void);
 
-	/// 定时器处理
+	//定时器处理
 	int tick(void);
 	inline const Time_Value &tick_time(void) { return tick_time_; }
 	virtual int close_list_tick(Time_Value &now);			//处理关闭连接定时器
 	virtual int player_tick(Time_Value &now);					//玩家定时器
 	virtual int server_info_tick(Time_Value &now);			//收集服务器信息定时器
 
+	//服务器信息收集
 	virtual void get_server_info(void);
-	virtual void free_cache(void);
-	virtual void print_object_pool(void);
+	virtual void print_server_info(void);
 
+	//消息数量统计
 	void print_msg_count(void);
 	inline void add_msg_count(int msg_id) {
-		if (msg_count_onoff_) {
+		if (msg_count_) {
 			++(msg_count_map_[msg_id]);
 		}
 	}
@@ -78,13 +79,14 @@ private:
 	Player_RoleId_Map player_role_id_map_;
 	Player_Account_Map player_account_map_;
 
-	std::string server_name_;
+	int server_id_;
 	int server_status_;
+	std::string server_name_;
 	Time_Value last_player_tick_;
 	Time_Value last_server_info_tick_;
 	Time_Value tick_time_;
 
-	bool msg_count_onoff_;
+	bool msg_count_;
 	Msg_Count_Map msg_count_map_;
 };
 

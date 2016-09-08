@@ -3,7 +3,6 @@
  *      Author: zhangyalei
  */
 
-#include "Common_Func.h"
 #include "Log_Connector.h"
 #include "Server_Config.h"
 #include "Master_Manager.h"
@@ -25,7 +24,7 @@ Master_Manager *Master_Manager::instance(void) {
 }
 
 int Master_Manager::init(void) {
-	set_server_name("Master_Server");
+	init_data(0, "Master_Server");
 	MASTER_TIMER->thr_create();
 	MSG_MANAGER->init();
 	return 0;
@@ -49,6 +48,32 @@ int Master_Manager::unbind_player(Player &player) {
 	player_cid_map_.erase(GET_CID(player.gate_cid(), player.player_cid()));
 	player_game_cid_map_.erase(GET_CID(player.game_cid(), player.player_cid()));
 	return 0;
+}
+
+int Master_Manager::free_cache(void) {
+	Server_Manager::free_cache();
+	player_pool_.shrink_all();
+	MASTER_GATE_SERVER->free_cache();
+	MASTER_GAME_SERVER->free_cache();
+	MASTER_HTTP_SERVER->free_cache();
+	MASTER_DB_CONNECTOR->free_cache();
+	return 0;
+}
+
+void Master_Manager::get_server_info(void) {
+	master_gate_server_info_.reset();
+	master_game_server_info_.reset();
+	master_http_server_info_.reset();
+	master_db_connector_info_.reset();
+	MASTER_GATE_SERVER->get_server_info(master_gate_server_info_);
+	MASTER_GAME_SERVER->get_server_info(master_game_server_info_);
+	MASTER_HTTP_SERVER->get_server_info(master_http_server_info_);
+	MASTER_DB_CONNECTOR->get_server_info(master_db_connector_info_);
+}
+
+void Master_Manager::print_server_info(void) {
+	Server_Manager::print_server_info();
+	LOG_INFO("Master_Server player_pool_ free = %d, used = %d", player_pool_.free_obj_list_size(), player_pool_.used_obj_list_size());
 }
 
 int Master_Manager::send_to_gate(int gate_cid, Block_Buffer &buf) {
@@ -115,31 +140,6 @@ int Master_Manager::process_list(void) {
 			Time_Value::sleep(Time_Value(0,100));
 	}
 	return 0;
-}
-
-void Master_Manager::get_server_info(void) {
-	master_gate_server_info_.reset();
-	master_game_server_info_.reset();
-	master_http_server_info_.reset();
-	master_db_connector_info_.reset();
-	MASTER_GATE_SERVER->get_server_info(master_gate_server_info_);
-	MASTER_GAME_SERVER->get_server_info(master_game_server_info_);
-	MASTER_HTTP_SERVER->get_server_info(master_http_server_info_);
-	MASTER_DB_CONNECTOR->get_server_info(master_db_connector_info_);
-}
-
-void Master_Manager::free_cache(void) {
-	Server_Manager::free_cache();
-	player_pool_.shrink_all();
-	MASTER_GATE_SERVER->free_cache();
-	MASTER_GAME_SERVER->free_cache();
-	MASTER_HTTP_SERVER->free_cache();
-	MASTER_DB_CONNECTOR->free_cache();
-}
-
-void Master_Manager::print_object_pool(void) {
-	Server_Manager::print_object_pool();
-	LOG_INFO("Master_Server player_pool_ free = %d, used = %d", player_pool_.free_obj_list_size(), player_pool_.used_obj_list_size());
 }
 
 void Master_Manager::load_master_db_data(){

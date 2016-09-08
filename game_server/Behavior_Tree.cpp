@@ -3,8 +3,8 @@
  *      Author: lijunliang
  */
 
-#include "Behavior_Tree.h"
 #include "Log.h"
+#include "Behavior_Tree.h"
 
 AI_Action::AI_Action(std::string action):
 	action_name_(action) {

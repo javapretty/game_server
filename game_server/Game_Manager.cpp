@@ -3,14 +3,12 @@
  *      Author: zhangyalei
  */
 
-#include "Common_Func.h"
 #include "Game_Timer.h"
 #include "Game_Manager.h"
 #include "Game_Server.h"
 #include "Game_Connector.h"
 #include "Log_Connector.h"
 #include "Msg_Manager.h"
-#include "Scene_Manager.h"
 #include "AI_Manager.h"
 
 Game_Manager::Game_Manager(void):
@@ -27,8 +25,8 @@ Game_Manager *Game_Manager::instance(void) {
 }
 
 int Game_Manager::init(int server_id) {
+	init_data(server_id, "Game_Server");
 	server_id_ = server_id;
-	set_server_name("Game_Server");
 	AI_MANAGER->init();
 	GAME_TIMER->thr_create();
 	MSG_MANAGER->init();
@@ -39,6 +37,29 @@ int Game_Manager::unbind_player(Player &player) {
 	Server_Manager::unbind_player(player);
 	player_cid_map_.erase(GET_CID(player.gate_cid(), player.player_cid()));
 	return 0;
+}
+
+int Game_Manager::free_cache(void) {
+	Server_Manager::free_cache();
+	player_pool_.shrink_all();
+	GAME_GATE_SERVER->free_cache();
+	GAME_DB_CONNECTOR->free_cache();
+	GAME_MASTER_CONNECTOR->free_cache();
+	return 0;
+}
+
+void Game_Manager::get_server_info(void) {
+	game_gate_server_info_.reset();
+	game_db_connector_info_.reset();
+	game_master_connector_info_.reset();
+	GAME_GATE_SERVER->get_server_info(game_gate_server_info_);
+	GAME_DB_CONNECTOR->get_server_info(game_db_connector_info_);
+	GAME_MASTER_CONNECTOR->get_server_info(game_master_connector_info_);
+}
+
+void Game_Manager::print_server_info(void) {
+	Server_Manager::print_server_info();
+	LOG_INFO("Game_Server server_id:%d player_pool_ free = %d, used = %d", server_id_, player_pool_.free_obj_list_size(), player_pool_.used_obj_list_size());
 }
 
 int Game_Manager::send_to_gate(int gate_cid, Block_Buffer &buf) {
@@ -115,26 +136,4 @@ void Game_Manager::process_drop_gate_cid(int gate_cid) {
 			player_cid_map_.erase(iter++);
 		}
 	}
-}
-
-void Game_Manager::get_server_info(void) {
-	game_gate_server_info_.reset();
-	game_db_connector_info_.reset();
-	game_master_connector_info_.reset();
-	GAME_GATE_SERVER->get_server_info(game_gate_server_info_);
-	GAME_DB_CONNECTOR->get_server_info(game_db_connector_info_);
-	GAME_MASTER_CONNECTOR->get_server_info(game_master_connector_info_);
-}
-
-void Game_Manager::free_cache(void) {
-	Server_Manager::free_cache();
-	player_pool_.shrink_all();
-	GAME_GATE_SERVER->free_cache();
-	GAME_DB_CONNECTOR->free_cache();
-	GAME_MASTER_CONNECTOR->free_cache();
-}
-
-void Game_Manager::print_object_pool(void) {
-	Server_Manager::print_object_pool();
-	LOG_INFO("Game_Server player_pool_ free = %d, used = %d", player_pool_.free_obj_list_size(), player_pool_.used_obj_list_size());
 }

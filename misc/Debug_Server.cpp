@@ -6,7 +6,6 @@
  */
 
 #include <unistd.h>
-#include "Lib_Log.h"
 #include "Epoll_Watcher.h"
 #include "Server_Config.h"
 #include "DB_Server.h"

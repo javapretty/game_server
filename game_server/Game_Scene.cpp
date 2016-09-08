@@ -3,8 +3,8 @@
  *      Author: lijunliang
  */
 
-#include "Game_Scene.h"
 #include "Log.h"
+#include "Game_Scene.h"
 
 Game_Scene::Game_Scene(int type, SCENE_ID id):
 	scence_type_(type),

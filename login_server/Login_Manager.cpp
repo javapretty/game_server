@@ -3,7 +3,6 @@
  *      Author: zhangyalei
  */
 
-#include "Common_Func.h"
 #include "Debug_Server.h"
 #include "Daemon_Server.h"
 #include "Server_Config.h"
@@ -29,7 +28,7 @@ Login_Manager *Login_Manager::instance(void) {
 }
 
 int Login_Manager::init(void) {
-	set_server_name("Login_Server");
+	init_data(0, "Login_Server");
 	LOGIN_INNER_MESSAGER;
 	LOGIN_CLIENT_MESSAGER;
 	LOGIN_TIMER->thr_create();
@@ -41,6 +40,40 @@ int Login_Manager::unbind_player(Player &player) {
 	Server_Manager::unbind_player(player);
 	player_cid_map_.erase(player.player_cid());
 	return 0;
+}
+
+int Login_Manager::free_cache(void) {
+	Server_Manager::free_cache();
+	player_pool_.shrink_all();
+	LOGIN_CLIENT_SERVER->free_cache();
+	LOGIN_GATE_SERVER->free_cache();
+	return 0;
+}
+
+int Login_Manager::close_list_tick(Time_Value &now) {
+	Close_Info info;
+	while (! close_list_.empty()) {
+		info = close_list_.front();
+		if (now - info.timestamp > Time_Value(2, 0)) {
+			close_list_.pop_front();
+			LOGIN_CLIENT_SERVER->receive().push_drop(info.cid);
+		} else {
+			break;
+		}
+	}
+	return 0;
+}
+
+void Login_Manager::get_server_info(void) {
+	login_gate_server_info_.reset();
+	login_client_server_info_.reset();
+	LOGIN_GATE_SERVER->get_server_info(login_gate_server_info_);
+	LOGIN_CLIENT_SERVER->get_server_info(login_client_server_info_);
+}
+
+void Login_Manager::print_server_info(void) {
+	Server_Manager::print_server_info();
+	LOG_INFO("Login_Server player_pool_ free = %d, used = %d", player_pool_.free_obj_list_size(), player_pool_.used_obj_list_size());
 }
 
 int Login_Manager::send_to_client(int player_cid, Block_Buffer &buf) {
@@ -125,39 +158,6 @@ void Login_Manager::process_drop_cid(int cid) {
 	if (player) {
 		player->link_close();
 	}
-}
-
-int Login_Manager::close_list_tick(Time_Value &now) {
-	Close_Info info;
-	while (! close_list_.empty()) {
-		info = close_list_.front();
-		if (now - info.timestamp > Time_Value(2, 0)) {
-			close_list_.pop_front();
-			LOGIN_CLIENT_SERVER->receive().push_drop(info.cid);
-		} else {
-			break;
-		}
-	}
-	return 0;
-}
-
-void Login_Manager::get_server_info(void) {
-	login_gate_server_info_.reset();
-	login_client_server_info_.reset();
-	LOGIN_GATE_SERVER->get_server_info(login_gate_server_info_);
-	LOGIN_CLIENT_SERVER->get_server_info(login_client_server_info_);
-}
-
-void Login_Manager::free_cache(void) {
-	Server_Manager::free_cache();
-	player_pool_.shrink_all();
-	LOGIN_CLIENT_SERVER->free_cache();
-	LOGIN_GATE_SERVER->free_cache();
-}
-
-void Login_Manager::print_object_pool(void) {
-	Server_Manager::print_object_pool();
-	LOG_INFO("Login_Server player_pool_ free = %d, used = %d", player_pool_.free_obj_list_size(), player_pool_.used_obj_list_size());
 }
 
 int Login_Manager::connect_mysql_db() {

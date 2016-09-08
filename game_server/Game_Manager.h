@@ -8,7 +8,6 @@
 
 #include "Server_Manager.h"
 #include "Game_Player.h"
-#include "Scene_Manager.h"
 
 class Game_Manager: public Server_Manager {
 	typedef Object_Pool<Game_Player, Spin_Lock> Player_Pool;
@@ -21,6 +20,9 @@ public:
 	inline int push_player(Game_Player *player) { return  player_pool_.push(player); }
 
 	virtual int unbind_player(Player &player);
+	virtual int free_cache(void);
+	virtual void get_server_info(void);
+	virtual void print_server_info(void);
 
 	//发送数据
 	int send_to_gate(int gate_cid, Block_Buffer &buf);
@@ -44,10 +46,6 @@ public:
 	Block_Buffer* pop_game_master_data(void);
 	int push_drop_player_cid(int cid);
 	int pop_drop_player_cid(void);
-
-	virtual void get_server_info(void);
-	virtual void free_cache(void);
-	virtual void print_object_pool(void);
 
 private:
 	Game_Manager(void);

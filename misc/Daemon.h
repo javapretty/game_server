@@ -138,7 +138,7 @@ public:
 	static Daemon_Gate *instance(void);
 	static void destroy(void);
 
-	void start_server(int id);
+	void start_server(int server_id);
 	void start_client(void);
 
 private:

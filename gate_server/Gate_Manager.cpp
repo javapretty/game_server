@@ -3,7 +3,6 @@
  *      Author: zhangyalei
  */
 
-#include "Common_Func.h"
 #include "Server_Config.h"
 #include "Gate_Server.h"
 #include "Gate_Connector.h"
@@ -14,7 +13,7 @@
 
 Gate_Manager::Gate_Manager(void):
 	server_id_(0),
-  verify_pack_onoff_(false) { }
+  verify_pack_(false) { }
 
 Gate_Manager::~Gate_Manager(void) { }
 
@@ -27,15 +26,15 @@ Gate_Manager *Gate_Manager::instance(void) {
 }
 
 int Gate_Manager::init(int server_id) {
+	init_data(server_id, "Gate_Server");
 	server_id_ = server_id;
-	set_server_name("Gate_Server");
 	GATE_INNER_MESSAGER;
 	GATE_CLIENT_MESSAGER;
 	GATE_TIMER->thr_create();
 
-	const Json::Value &server_conf = SERVER_CONFIG->server_conf();
-	if (server_conf["verify_pack"].asInt()) {
-		verify_pack_onoff_ = true;
+	const Json::Value &server_misc = SERVER_CONFIG->server_misc();
+	if (server_misc["verify_pack"].asInt()) {
+		verify_pack_ = true;
 	}
 	return 0;
 }
@@ -44,6 +43,52 @@ int Gate_Manager::unbind_player(Player &player) {
 	Server_Manager::unbind_player(player);
 	player_cid_map_.erase(player.player_cid());
 	return 0;
+}
+
+int Gate_Manager::free_cache(void) {
+	Server_Manager::free_cache();
+	player_pool_.shrink_all();
+	GATE_CLIENT_SERVER->free_cache();
+	GATE_LOGIN_CONNECTOR->free_cache();
+	GATE_MASTER_CONNECTOR->free_cache();
+	for (Game_Connector_Map::iterator iter = game_connector_map_.begin();
+			iter != game_connector_map_.end(); ++iter) {
+		iter->second.connector->free_cache();
+	}
+	return 0;
+}
+
+int Gate_Manager::close_list_tick(Time_Value &now) {
+	Close_Info info;
+	while (! close_list_.empty()) {
+		info = close_list_.front();
+		if (now - info.timestamp > Time_Value(2, 0)) {
+			close_list_.pop_front();
+			GATE_CLIENT_SERVER->receive().push_drop(info.cid);
+		} else {
+			break;
+		}
+	}
+	return 0;
+}
+
+void Gate_Manager::get_server_info(void) {
+	gate_client_server_info_.reset();
+	gate_login_connector_info_.reset();
+	gate_master_connector_info_.reset();
+	GATE_CLIENT_SERVER->get_server_info(gate_client_server_info_);
+	GATE_LOGIN_CONNECTOR->get_server_info(gate_login_connector_info_);
+	GATE_MASTER_CONNECTOR->get_server_info(gate_master_connector_info_);
+	for (Game_Connector_Map::iterator iter = game_connector_map_.begin();
+			iter != game_connector_map_.end(); ++iter) {
+		iter->second.connector_info.reset();
+		iter->second.connector->get_server_info(iter->second.connector_info);
+	}
+}
+
+void Gate_Manager::print_server_info(void) {
+	Server_Manager::print_server_info();
+	LOG_INFO("Gate_Server server_id:%d player_pool_ free = %d, used = %d", server_id_, player_pool_.free_obj_list_size(), player_pool_.used_obj_list_size());
 }
 
 int Gate_Manager::send_to_client(int player_cid, Block_Buffer &buf) {
@@ -180,51 +225,6 @@ void Gate_Manager::process_drop_cid(int cid) {
 	if (player) {
 		player->link_close();
 	}
-}
-
-int Gate_Manager::close_list_tick(Time_Value &now) {
-	Close_Info info;
-	while (! close_list_.empty()) {
-		info = close_list_.front();
-		if (now - info.timestamp > Time_Value(2, 0)) {
-			close_list_.pop_front();
-			GATE_CLIENT_SERVER->receive().push_drop(info.cid);
-		} else {
-			break;
-		}
-	}
-	return 0;
-}
-
-void Gate_Manager::get_server_info(void) {
-	gate_client_server_info_.reset();
-	gate_login_connector_info_.reset();
-	gate_master_connector_info_.reset();
-	GATE_CLIENT_SERVER->get_server_info(gate_client_server_info_);
-	GATE_LOGIN_CONNECTOR->get_server_info(gate_login_connector_info_);
-	GATE_MASTER_CONNECTOR->get_server_info(gate_master_connector_info_);
-	for (Game_Connector_Map::iterator iter = game_connector_map_.begin();
-			iter != game_connector_map_.end(); ++iter) {
-		iter->second.connector_info.reset();
-		iter->second.connector->get_server_info(iter->second.connector_info);
-	}
-}
-
-void Gate_Manager::free_cache(void) {
-	Server_Manager::free_cache();
-	player_pool_.shrink_all();
-	GATE_CLIENT_SERVER->free_cache();
-	GATE_LOGIN_CONNECTOR->free_cache();
-	GATE_MASTER_CONNECTOR->free_cache();
-	for (Game_Connector_Map::iterator iter = game_connector_map_.begin();
-			iter != game_connector_map_.end(); ++iter) {
-		iter->second.connector->free_cache();
-	}
-}
-
-void Gate_Manager::print_object_pool(void) {
-	Server_Manager::print_object_pool();
-	LOG_INFO("Gate_Server player_pool_ free = %d, used = %d", player_pool_.free_obj_list_size(), player_pool_.used_obj_list_size());
 }
 
 void Gate_Manager::get_server_ip_port(int player_cid, std::string &ip, int &port) {

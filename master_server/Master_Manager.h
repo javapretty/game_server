@@ -20,7 +20,11 @@ public:
 
 	int bind_game_cid_player(int cid, Player *player);
 	Player *find_game_cid_player(int cid);
+
 	virtual int unbind_player(Player &player);
+	virtual int free_cache(void);
+	virtual void get_server_info(void);
+	virtual void print_server_info(void);
 
 	//发送数据
 	int send_to_gate(int gate_cid, Block_Buffer &buf);
@@ -45,10 +49,6 @@ public:
 	Block_Buffer* pop_master_http_data();
 	int push_drop_player_cid(int cid);
 	int pop_drop_player_cid(void);
-
-	virtual void get_server_info(void);
-	virtual void free_cache(void);
-	virtual void print_object_pool(void);
 
 	void load_master_db_data();
 

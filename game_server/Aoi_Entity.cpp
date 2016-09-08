@@ -3,9 +3,9 @@
  *      Author: lijunliang
  */
 
+#include "Log.h"
 #include "Aoi_Entity.h"
 #include "Scene_Entity.h"
-#include "Log.h"
 
 Aoi_Entity::Aoi_Entity():
 	entity_(),

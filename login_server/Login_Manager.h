@@ -20,6 +20,10 @@ public:
 	inline int push_player(Login_Player *player) { return player_pool_.push(player); }
 
 	virtual int unbind_player(Player &player);
+	virtual int free_cache(void);
+	virtual int close_list_tick(Time_Value &now);
+	virtual void get_server_info(void);
+	virtual void print_server_info(void);
 
 	//发送数据
 	int send_to_client(int player_cid, Block_Buffer &buf);
@@ -35,11 +39,6 @@ public:
 	int push_tick(int x);
 	int push_login_client_data(Block_Buffer *buf);
 	int push_login_gate_data(Block_Buffer *buf);
-
-	virtual int close_list_tick(Time_Value &now);
-	virtual void get_server_info(void);
-	virtual void free_cache(void);
-	virtual void print_object_pool(void);
 
 	int connect_mysql_db();
 	int client_login(std::string& account, std::string& password);

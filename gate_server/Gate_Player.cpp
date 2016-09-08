@@ -4,7 +4,6 @@
  */
 
 #include "Gate_Manager.h"
-#include "Common_Func.h"
 
 Gate_Player::Gate_Player(void) { }
 

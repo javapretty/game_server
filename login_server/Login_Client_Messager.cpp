@@ -3,7 +3,6 @@
  *      Author: zhangyalei
  */
 
-#include "Common_Func.h"
 #include "Login_Client_Messager.h"
 #include "Login_Manager.h"
 

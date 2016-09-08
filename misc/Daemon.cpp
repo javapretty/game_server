@@ -398,7 +398,7 @@ void Daemon_Gate::destroy(void) {
 	}
 }
 
-void Daemon_Gate::start_server(int id) {
+void Daemon_Gate::start_server(int server_id) {
 	Log::instance()->set_log_type(LOG_GATE_SERVER);
 
 	Server_Conf server_conf = DAEMON_SERVER->server_conf();
@@ -406,7 +406,7 @@ void Daemon_Gate::start_server(int id) {
 	Server_Detail server_detail;
 	for(Server_List::iterator iter = server_conf.gate_list.begin();
 		iter != server_conf.gate_list.end(); iter++){
-		if((*iter).server_id == id){
+		if((*iter).server_id == server_id){
 			server_detail = *iter;
 			break;
 		}
@@ -417,7 +417,7 @@ void Daemon_Gate::start_server(int id) {
 	GATE_CLIENT_SERVER->thr_create();
 	LOG_DEBUG("gate_client_server listen at port:%d", server_detail.server_port);
 
-	GATE_MANAGER->init(id);
+	GATE_MANAGER->init(server_id);
 	GATE_MANAGER->thr_create();
 
 	//延迟让服务器启动

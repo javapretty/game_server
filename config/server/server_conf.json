@@ -1,7 +1,6 @@
 {
 	"lib_log_switcher" : 0,						//网络库日志开关,1表示写入磁盘文件
   "server_log_switcher" : 0,					//服务器日志开关,1表示写入磁盘文件
-	"verify_pack" : 1,								//是否开启数据包安全验证
 	"receive_timeout" : 300,					//服务器与客户端心跳等待最大时间 单位:s
 	"server_send_interval" : 100,			//服务器定时发送数据时间 单位:us
 	"connector_send_interval" : 100,		//内部服务器定时发送数据时间 单位:us

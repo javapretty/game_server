@@ -5,22 +5,35 @@
  *      Author: zhangyalei
  */
 
+#include "Log.h"
 #include "Common_Func.h"
 #include "Log_Connector.h"
 #include "Msg_Manager.h"
+#include "Server_Config.h"
 #include "Server_Manager.h"
 
 Server_Manager::Server_Manager(void):
   player_cid_map_(get_hash_table_size(12000)),
   player_role_id_map_(get_hash_table_size(12000)),
   player_account_map_(get_hash_table_size(12000)),
+  server_id_(0),
 	server_status_(STATUS_NORMAL),
 	last_player_tick_(Time_Value::zero),
 	last_server_info_tick_(Time_Value::zero),
 	tick_time_(Time_Value::zero),
-  msg_count_onoff_(true) { }
+  msg_count_(false) { }
 
 Server_Manager::~Server_Manager(void) {}
+
+int Server_Manager::init_data(int server_id, std::string server_name) {
+	server_id_ = server_id;
+	server_name_ = server_name;
+	const Json::Value &server_misc = SERVER_CONFIG->server_misc();
+	if (server_misc["verify_pack"].asInt()) {
+		msg_count_ = true;
+	}
+	return 0;
+}
 
 void Server_Manager::run_handler(void) {
 	process_list();
@@ -31,6 +44,7 @@ int Server_Manager::process_list(void) {
 }
 
 int Server_Manager::self_close_process(void) {
+	LOG_INFO("%s server_id:%d self close", server_name_.c_str(), server_id_);
 	server_status_ = STATUS_CLOSING;
 
 	//关闭客户端连接
@@ -41,7 +55,6 @@ int Server_Manager::self_close_process(void) {
 	int i = 0;
 	while (++i < 60) {
 		sleep(1);
-		LOG_INFO("%s player count:%d", server_name_.c_str(), player_cid_map_.size());
 		if (player_cid_map_.size() == 0)
 			break;
 	}
@@ -94,6 +107,12 @@ int Server_Manager::unbind_player(Player &player) {
 	return 0;
 }
 
+int Server_Manager::free_cache(void) {
+	LOG_CONNECTOR->free_cache();
+	block_pool_.shrink_all();
+	return 0;
+}
+
 int Server_Manager::tick(void) {
 	Time_Value now(Time_Value::gettimeofday());
 	tick_time_ = now;
@@ -127,20 +146,16 @@ int Server_Manager::server_info_tick(Time_Value &now) {
 	last_server_info_tick_ = now;
 
 	get_server_info();
-	print_object_pool();
+	print_server_info();
 	print_msg_count();
 	return 0;
 }
 
 void Server_Manager::get_server_info(void) { }
 
-void Server_Manager::free_cache(void) {
-	LOG_CONNECTOR->free_cache();
-	block_pool_.shrink_all();
-}
-
-void Server_Manager::print_object_pool(void) {
-	LOG_INFO("%s block_pool_ free = %d, used = %d", server_name_.c_str(), block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
+void Server_Manager::print_server_info(void) {
+	LOG_INFO("%s server_id:%d player count:%d", server_name_.c_str(), server_id_, player_cid_map_.size());
+	LOG_INFO("%s server_id:%d block_pool_ free = %d, used = %d", server_name_.c_str(), server_id_, block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
 }
 
 void Server_Manager::print_msg_count(void) {
@@ -148,5 +163,5 @@ void Server_Manager::print_msg_count(void) {
 	for (Msg_Count_Map::iterator it = msg_count_map_.begin(); it != msg_count_map_.end(); ++it) {
 		stream << (it->first) << "\t" << (it->second) << std::endl;
 	}
-	LOG_INFO("%s msg count=%d content=%s", server_name_.c_str(), msg_count_map_.size(), stream.str().c_str());
+	LOG_INFO("%s server_id:%d msg_count:%d content:%s", server_name_.c_str(), server_id_, msg_count_map_.size(), stream.str().c_str());
 }
