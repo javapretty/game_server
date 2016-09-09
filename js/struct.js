@@ -211,7 +211,7 @@ function MSG_110001() {
 }
 
 function MSG_510001() {
-	this.chatype = 0;
+	this.chat_type = 0;
 	this.chat_content = "";
 	this.role_name = "";
 	this.gender = 0;
@@ -251,10 +251,6 @@ function MSG_510201() {
 	this.rank_type = 0;
 	this.self_rank = 0;
 	this.rank_list = new Array();
-}
-
-function MSG_510300() {
-	this.game_id = 0;
 }
 
 function MSG_120001() {
@@ -415,10 +411,6 @@ function MSG_120401() {
 function MSG_520401() {
 }
 
-function MSG_520402() {
-	this.cid = 0;
-}
-
 function MSG_140100() {
 }
 
@@ -427,6 +419,10 @@ function MSG_140200() {
 
 function MSG_140201() {
 	this.role_id = 0;
+}
+
+function MSG_140202() {
+	this.game_server_id = 0;
 }
 
 function MSG_150001() {
@@ -496,23 +492,23 @@ function MSG_550105() {
 }
 
 function MSG_160000() {
+	this.scene_id = 0;
+	this.game_id = 0;
+}
+
+function MSG_160001() {
 	this.player_info = new Master_Player_Info();
+}
+
+function MSG_160002() {
+	this.target_scene = 0;
+	this.role_id = 0;
 }
 
 function MSG_160100() {
 	this.role_id = 0;
 	this.guild_id = 0;
 	this.guild_name = "";
-}
-
-function MSG_160101() {
-	this.target_scene = 0;
-	this.role_id = 0;
-}
-
-function MSG_160102() {
-	this.scene_id = 0;
-	this.game_id = 0;
 }
 
 function MSG_170000() {
@@ -538,6 +534,10 @@ function MSG_300001() {
 function MSG_300002() {
 	this.vip_level = 0;
 	this.vip_exp = 0;
+}
+
+function MSG_300003() {
+	this.cid = 0;
 }
 
 function MSG_300100() {

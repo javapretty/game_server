@@ -50,7 +50,7 @@
 
 	<MSG_510001>
 		<head msg_id="510001"/>
-	  <arg type="int8" name="chatype"/>
+	  <arg type="int8" name="chat_type"/>
 	  <arg type="string" name="chat_content"/>
 	  <arg type="string" name="role_name"/>
 	  <arg type="int32" name="gender"/>
@@ -103,11 +103,6 @@
 		<arg type="int32" name="self_rank"/>
 	  <vector type="Rank_Member_Detail" name="rank_list"/>
 	</MSG_510201>
-	
-	<MSG_510300>
-		<head msg_id="510300"/>
-		<arg type="int32" name="game_id"/>
-	</MSG_510300>
 	
 <!--Client与Game通信消息-->
 	<MSG_120001>
@@ -319,11 +314,6 @@
 	<MSG_520401>
 		<head msg_id="520401"/>
 	</MSG_520401>
-	
-	<MSG_520402>
-		<head msg_id="520402"/>
-		<arg type="int32" name="cid"/>
-	</MSG_520402>
 
 <!--Gate与Game与Master通信消息-->
 	<MSG_140100>
@@ -338,6 +328,11 @@
 		<head msg_id="140201"/>
 		<arg type="int64" name="role_id"/>
 	</MSG_140201>
+	
+	<MSG_140202>
+		<head msg_id="140202"/>
+		<arg type="int32" name="game_server_id"/>
+	</MSG_140202>
 	
 <!--Game与DB通信消息-->
 	<MSG_150001>
@@ -434,12 +429,26 @@
 	</MSG_550105>
 
 <!--Game与Master通信消息-->
-	<MSG_160000>
-		<!--玩家上线game通知master-->
+	<MSG_160000> 
+		<!--game通知master场景信息-->		
 		<head msg_id="160000"/>
-    	<struct type="Master_Player_Info" name="player_info"/>
+		<arg type="int32" name="scene_id"/>
+		<arg type="int32" name="game_id"/>
 	</MSG_160000>
-
+	
+	<MSG_160001>
+		<!--玩家上线game通知master-->
+		<head msg_id="160001"/>
+    	<struct type="Master_Player_Info" name="player_info"/>
+	</MSG_160001>
+	
+	<MSG_160002>
+		<!--game通知master玩家切换场景--> 		
+		<head msg_id="160002"/>
+		<arg type="int32" name="target_scene"/>
+		<arg type="int64" name="role_id"/>
+	</MSG_160002>
+	
 	<MSG_160100> 		
 		<!--master通知game设置公会信息-->
 		<head msg_id="160100"/>
@@ -447,18 +456,6 @@
     	<arg type="int64" name="guild_id"/>
     	<arg type="string" name="guild_name"/>
 	</MSG_160100>
-	
-	<MSG_160101> 		
-		<head msg_id="160101"/>
-		<arg type="int32" name="target_scene"/>
-		<arg type="int64" name="role_id"/>
-	</MSG_160101>
-	
-	<MSG_160102> 		
-		<head msg_id="160102"/>
-		<arg type="int32" name="scene_id"/>
-		<arg type="int32" name="game_id"/>
-	</MSG_160102>
 
 <!--Log_Message--> 
 	<MSG_170000>
@@ -496,6 +493,12 @@
     	<arg type="int32" name="vip_exp"/>
 	</MSG_300002>
 
+	<MSG_300003>
+		<!--玩家离开场景-->
+		<head msg_id="300003"/>
+		<arg type="int32" name="cid"/>
+	</MSG_300003>
+	
 	<MSG_300100>
 		<!--金钱更新-->
 		<head msg_id="300100"/>

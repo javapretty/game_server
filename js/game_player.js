@@ -124,7 +124,7 @@ Game_Player.prototype.sync_login_to_client = function() {
 }
 
 Game_Player.prototype.sync_login_to_master = function() {
-	var msg = new MSG_160000();
+	var msg = new MSG_160001();
 	msg.player_info.role_id = this.player_info.role_id;
 	msg.player_info.account = this.player_info.account;
 	msg.player_info.role_name = this.player_info.role_name;
@@ -234,7 +234,7 @@ Game_Player.prototype.sync_data_to_master = function() {
 
 	var buf = pop_game_buffer();
 	msg.serialize(buf);
-	this.cplayer.sync_data_to_master(Msg_GM.SYNC_GAME_MASTER_PLAYER_INFO, buf);
+	this.cplayer.sync_data_to_master(Msg.SYNC_GAME_MASTER_PLAYER_INFO, buf);
 	push_game_buffer(buf);
 }
 
@@ -272,10 +272,10 @@ Game_Player.prototype.enter_scene = function(scene_id, x, y, z) {
 Game_Player.prototype.leave_scene = function(scene_id, x, y, z) {
 	print('leave scene, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
 	
-	var msg = new MSG_520402();
+	var msg = new MSG_300003();
 	msg.cid = get_cid(this.gate_cid, this.player_cid);
 	var aoi_list = this.centity.get_aoi_list();
-	this.centity.broadcast_msg_to_all_without_self(aoi_list, Msg.RES_LEAVE_SCENE, msg);
+	this.centity.broadcast_msg_to_all_without_self(aoi_list, Msg.ACTIVE_LEAVE_SCENE, msg);
 	this.centity.leave_scene();
 }
 
@@ -288,10 +288,10 @@ Game_Player.prototype.change_scene = function(obj) {
 		this.send_success_msg(Msg.RES_CHANGE_SCENE, msg);
 	}
 	else {
-		var msg = new MSG_160101();
+		var msg = new MSG_160002();
 		msg.target_scene = obj.target_scene;
 		msg.role_id = this.player_info.role_id;
-		send_game_msg_to_master(this.player_cid, Msg_GM.SYNC_PLAYER_CHANGE_SCENE, 0, msg);
+		send_game_msg_to_master(this.player_cid, Msg.SYNC_GAME_MASTER_PLAYER_CHANGE_SCENE, 0, msg);
 		
 		this.save_player_data();
 	}

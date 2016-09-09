@@ -47,7 +47,6 @@ enum Master_Client_Message {
 	RES_GUILD_ALLOW_JOIN  				= 510104,  //允许入帮(返回)
 	RES_GUILD_KICK_OUT  					= 510105,  //踢出帮会(返回)
 	RES_FETCH_RANK  							= 510201,  //拉取排行榜信息(返回)
-	RES_PLAYER_CHANGE_SCENE				= 510300,  //切换场景时通知客户端选择哪个game
 };
 
 enum Client_Game_Message {
@@ -96,18 +95,18 @@ enum Game_Client_Message {
 	RES_EQUIP_ON_OFF							=	520304,	//英雄装备穿脱(返回)
 	RES_ADD_SKILL_LEVEL						= 520305,	//提高英雄技能等级(返回)
 	
-	RES_UPDATE_POSITION							= 520400,	//同步玩家位置(返回)
+	RES_UPDATE_POSITION						= 520400,	//同步玩家位置(返回)
 	RES_CHANGE_SCENE							= 520401,	//切换场景(返回)
-	RES_LEAVE_SCENE								= 520402,	//玩家离开场景(返回)
 };
 
 //内部消息命名说明：SYNC_源服务器名_目的服务器名_消息名
 enum Gate_Message {
-	SYNC_GATE_LOGIN_PLAYER_ACCOUNT     = 140000,  //gate校验玩家账户、session
-	SYNC_LOGIN_GATE_PLAYER_ACCOUNT     = 140001,  //login返回session校验结果
-	SYNC_GATE_GAME_PLAYER_LOGOUT 			= 	140100,	//gate同步玩家下线到game
-	SYNC_GATE_MASTER_PLAYER_LOGOUT			=	140200,	//gate同步玩家下线到master
-	SYNC_GATE_MASTER_PLAYER_LOGIN			=	140201,	//gate同步玩家上线到master
+	SYNC_GATE_LOGIN_PLAYER_ACCOUNT     	= 140000,  //gate向login校验玩家session
+	SYNC_LOGIN_GATE_PLAYER_ACCOUNT     	= 140001,  //login返回gate校验session结果
+	SYNC_GATE_GAME_PLAYER_LOGOUT 				= 	140100,	//gate通知玩家下线到game
+	SYNC_GATE_MASTER_PLAYER_LOGOUT				=	140200,	//gate通知玩家下线到master
+	SYNC_GATE_MASTER_PLAYER_LOGIN				=	140201,	//gate通知玩家上线到master
+	SYNC_MASTER_GATE_PLAYER_CHANGE_SCENE =	140202,	//master通知gate玩家改变场景 
 };
 
 enum Game_DB_Message {
@@ -135,10 +134,11 @@ enum Master_DB_Message {
 };
 
 enum Game_Master_Message {
-	SYNC_GAME_MASTER_PLYAER_LOGIN			=	160000,	//game同步玩家上线到master
-	SYNC_MASTER_GAME_GUILD_INFO        = 160100,  //master通知game公会信息
-	SYNC_PLAYER_CHANGE_SCENE			= 160101, //game通知master玩家请求切换其他game上的场景
-	SYNC_GAME_SCENE_ID					= 160102, //通知master每个game上的场景信息
+	SYNC_GAME_MASTER_SCENE_INFO					= 160000, 	//game通知master场景信息
+	SYNC_GAME_MASTER_PLYAER_LOGIN				=	160001,	//game同步玩家上线到master
+	SYNC_GAME_MASTER_PLAYER_CHANGE_SCENE	= 160002, 	//game通知master玩家切换场景
+	
+	SYNC_MASTER_GAME_GUILD_INFO        	= 160100,  //master通知game公会信息
 };
 
 enum LOG_Message {
@@ -153,6 +153,7 @@ enum Active_Message{
 	ACTIVE_DISCONNECT 								=	300000,	//服务器主动断开连接
 	ACTIVE_PLAYER_INFO								=	300001,	//更新玩家信息
 	ACTIVE_VIP_INFO										=	300002,	//更新vip信息
+	ACTIVE_LEAVE_SCENE								= 300003,	//玩家离开场景
 
 	ACTIVE_MONEY_INFO 								= 300100,	//金钱更新
 	ACTIVE_ITEM_INFO 									= 300101,	//物品信息更新

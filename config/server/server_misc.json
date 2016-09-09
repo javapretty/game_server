@@ -4,10 +4,9 @@
 	"server_label" : "test",			//服务器标签，ps查询进程时候区分用
 	"verify_pack" : 1,						//是否开启数据包安全验证
 	"msg_count" : 1,							//是否开启消息统计
-	"game_open_time" : 1381370400,	//游戏开服时间,unix时间戳
-	"agent_num" : 1,							//平台编号，比如37wan编号为1，4399为2，生成角色id,帮派id时候用
+	"agent_num" : 1,							//平台编号，比如37wan编号为1，生成角色id,帮派id时候用
 	"server_num" : 1,							//服务器编号，比如1服编号为1，生成角色id,帮派id时候用
-	"aoi_radius" : 10,				//aoi范围单位
+	"aoi_radius" : 10,						//aoi范围单位
 	"game_db_struct_path" : "config/struct/game_struct.xml",
 	"log_db_struct_path" : "config/struct/log_struct.xml",
 	"msg_struct_path" : "config/struct/msg_struct.xml",			

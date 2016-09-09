@@ -68,7 +68,7 @@ int Gate_Inner_Messager::process_game_block(Block_Buffer &buf) {
 
 	GATE_MANAGER->add_msg_count(msg_id);
 	//玩家登录game成功，更新gate玩家信息，同步消息到master
-	if (msg_id == 520001 && status == 0) {
+	if (msg_id == RES_FETCH_ROLE_INFO && status == 0) {
 		//RES_FETCH_ROLE_INFO消息第一个字段是64位role_id
 		int read_idx = buf.get_read_idx();
 		int64_t role_id = 0;
@@ -105,7 +105,8 @@ int Gate_Inner_Messager::process_master_block(Block_Buffer &buf) {
 	buf.read_int32(player_cid);
 
 	GATE_MANAGER->add_msg_count(msg_id);
-	if(msg_id == 510300) { //切换场景消息
+	//切换场景
+	if(msg_id == SYNC_MASTER_GATE_PLAYER_CHANGE_SCENE) {
 		int32_t game_server_id = 0;
 		buf.read_int32(game_server_id);
 		Gate_Player *player = dynamic_cast<Gate_Player*>(GATE_MANAGER->find_cid_player(player_cid));
@@ -114,7 +115,7 @@ int Gate_Inner_Messager::process_master_block(Block_Buffer &buf) {
 		int game_cid = GATE_MANAGER->get_game_cid(game_server_id);
 		player->set_game_cid(game_cid);
 		Block_Buffer buffer;
-		buffer.make_player_message(120001, 0, player_cid);
+		buffer.make_player_message(REQ_FETCH_ROLE_INFO, 0, player_cid);
 		buffer.write_string(player->account());
 		buffer.finish_message();
 		GATE_MANAGER->send_to_game(game_cid, buffer);

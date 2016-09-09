@@ -36,7 +36,7 @@ int Scene_Manager::create_new_scene(int type){
 	scenes_map_[scene->scene_id()] = scene;
 	LOG_INFO("new scene id %d", scene->scene_id());
 	Block_Buffer buffer;
-	buffer.make_player_message(160102, 0, 0);
+	buffer.make_player_message(SYNC_GAME_MASTER_SCENE_INFO, 0, 0);
 	buffer.write_int32(scene->scene_id());
 	buffer.write_int32(GAME_MANAGER->server_id());
 	buffer.finish_message();
