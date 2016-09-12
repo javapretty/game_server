@@ -32,23 +32,21 @@ int Gate_Inner_Messager::process_login_block(Block_Buffer &buf) {
 
 	GATE_MANAGER->add_msg_count(msg_id);
 	if (msg_id == SYNC_LOGIN_GATE_PLAYER_ACCOUNT) {
-		MSG_140001 msg;
-		msg.deserialize(buf);
-		Block_Buffer player_buf;
-		player_buf.make_server_message(RES_CONNECT_GATE, status);
-		MSG_500101 player_msg;
-		player_msg.account = msg.account;
-		player_msg.serialize(player_buf);
-		player_buf.finish_message();
-		GATE_MANAGER->send_to_client(player_cid, player_buf);
-
 		if (status == 0) {
 			//玩家成功登录
+			MSG_140001 msg;
+			msg.deserialize(buf);
+			Block_Buffer player_buf;
+			player_buf.make_server_message(RES_CONNECT_GATE, status);
+			MSG_500101 player_msg;
+			player_msg.account = msg.account;
+			player_msg.serialize(player_buf);
+			player_buf.finish_message();
+			GATE_MANAGER->send_to_client(player_cid, player_buf);
+
 			process_success_login(player_cid, msg.account);
-		}
-		else
-		{
-			GATE_MANAGER->close_client(player_cid);
+		} else {
+			GATE_MANAGER->close_client(0, player_cid, status);
 		}
 	}
 	return 0;
@@ -81,7 +79,7 @@ int Gate_Inner_Messager::process_game_block(Block_Buffer &buf) {
 		master_buf.finish_message();
 		GATE_MANAGER->send_to_master(master_buf);
 	} else if (msg_id == ACTIVE_DISCONNECT) {
-		return GATE_MANAGER->close_client(player_cid);
+		return GATE_MANAGER->close_client(0, player_cid, status);
 	}
 
 	Block_Buffer player_buf;
@@ -120,6 +118,8 @@ int Gate_Inner_Messager::process_master_block(Block_Buffer &buf) {
 		buffer.finish_message();
 		GATE_MANAGER->send_to_game(game_cid, buffer);
 		return 0;
+	} else if (msg_id == ACTIVE_DISCONNECT) {
+		return GATE_MANAGER->close_client(0, player_cid, status);
 	}
 
 	Block_Buffer player_buf;

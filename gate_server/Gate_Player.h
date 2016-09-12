@@ -14,8 +14,6 @@ public:
 	virtual ~Gate_Player(void);
 
 	virtual void reset(void);
-	virtual int tick(Time_Value &now);
-	virtual int link_close(bool server_close = false);
 
 	///验证包序列和时间戳 返回0为验证通过, -1操作过于频繁, -2包序号错, -3包时间戳错
 	int verify_msg_info(uint32_t serial_cipher, uint32_t msg_time_cipher);

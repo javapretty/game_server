@@ -39,9 +39,49 @@ int Gate_Manager::init(int server_id) {
 	return 0;
 }
 
-int Gate_Manager::unbind_player(Player &player) {
-	Server_Manager::unbind_player(player);
-	player_cid_map_.erase(player.player_cid());
+int Gate_Manager::close_client(int gate_cid, int player_cid, int error_code) {
+	if (Server_Manager::close_client(gate_cid, player_cid, error_code) < 0) return -1;
+
+	Gate_Player *player = dynamic_cast<Gate_Player*>(find_cid_player(player_cid));
+	if (player) {
+		//gate同步玩家下线到game
+		Block_Buffer game_buf;
+		game_buf.make_player_message(SYNC_GATE_GAME_PLAYER_LOGOUT, 0, player_cid);
+		game_buf.finish_message();
+		GATE_MANAGER->send_to_game(player->game_cid(), game_buf);
+
+		//gate同步玩家下线到master
+		Block_Buffer master_buf;
+		master_buf.make_player_message(SYNC_GATE_MASTER_PLAYER_LOGOUT, 0, player_cid);
+		master_buf.finish_message();
+		GATE_MANAGER->send_to_master(master_buf);
+	}
+
+	if (error_code != 0) {
+		//客户端主动断开连接不通知客户端，其他情况通知
+		Block_Buffer buf;
+		buf.make_server_message(ACTIVE_DISCONNECT, error_code);
+		buf.finish_message();
+		send_to_client(player_cid, buf);
+	}
+	return 0;
+}
+
+int Gate_Manager::recycle_player(int gate_cid, int player_cid) {
+	Server_Manager::recycle_player(gate_cid, player_cid);
+	//断开服务器与客户端的通信层连接
+	GATE_CLIENT_SERVER->receive().push_drop(player_cid);
+
+	Gate_Player *player = dynamic_cast<Gate_Player*>(find_cid_player(player_cid));
+	if (!player) {
+		return -1;
+	}
+
+	player_cid_map_.erase(player->player_cid());
+	player_role_id_map_.erase(player->role_id());
+	player_account_map_.erase(player->account());
+	player->reset();
+	push_player(player);
 	return 0;
 }
 
@@ -54,20 +94,6 @@ int Gate_Manager::free_cache(void) {
 	for (Game_Connector_Map::iterator iter = game_connector_map_.begin();
 			iter != game_connector_map_.end(); ++iter) {
 		iter->second.connector->free_cache();
-	}
-	return 0;
-}
-
-int Gate_Manager::close_list_tick(Time_Value &now) {
-	Close_Info info;
-	while (! close_list_.empty()) {
-		info = close_list_.front();
-		if (now - info.timestamp > Time_Value(2, 0)) {
-			close_list_.pop_front();
-			GATE_CLIENT_SERVER->receive().push_drop(info.cid);
-		} else {
-			break;
-		}
 	}
 	return 0;
 }
@@ -129,16 +155,6 @@ int Gate_Manager::send_to_master(Block_Buffer &buf) {
 		return -1;
 	}
 	return GATE_MASTER_CONNECTOR->send_block(master_cid, buf);
-}
-
-int Gate_Manager::close_client(int player_cid) {
-	if (player_cid >= 2) {
-		Close_Info info(player_cid, tick_time());
-		close_list_.push_back(info);
-	} else {
-		LOG_ERROR("close_client, player_cid < 2");
-	}
-	return 0;
 }
 
 int Gate_Manager::process_list(void) {
@@ -221,10 +237,7 @@ int Gate_Manager::process_list(void) {
 }
 
 void Gate_Manager::process_drop_cid(int cid) {
-	Gate_Player *player = dynamic_cast<Gate_Player*>(GATE_MANAGER->find_cid_player(cid));
-	if (player) {
-		player->link_close();
-	}
+	close_client(0, cid, 0);
 }
 
 void Gate_Manager::get_server_ip_port(int player_cid, std::string &ip, int &port) {

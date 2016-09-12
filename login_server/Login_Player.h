@@ -20,7 +20,6 @@ public:
 
 	virtual void reset(void);
 	virtual int tick(Time_Value &now);
-	virtual int link_close(bool server_close = false);
 
 private:
 	Session_Info session_info_;

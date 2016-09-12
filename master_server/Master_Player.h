@@ -12,9 +12,6 @@ class Master_Player : public Player {
 public:
 	Master_Player(void);
 	virtual ~Master_Player(void);
-
-	virtual int tick(Time_Value &now);
-	virtual int link_close(bool server_close = false);
 };
 
 #endif /* MASTER_PLAYER_H_ */

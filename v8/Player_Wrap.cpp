@@ -39,7 +39,7 @@ void game_player_link_close(const FunctionCallbackInfo<Value>& args) {
 		return;
 	}
 
-	player->link_close();
+	GAME_MANAGER->close_client(player->gate_cid(), player->player_cid(), 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,5 +68,5 @@ void master_player_link_close(const FunctionCallbackInfo<Value>& args) {
 		return;
 	}
 
-	player->link_close();
+	MASTER_MANAGER->close_client(player->gate_cid(), player->player_cid(), 0);
 }

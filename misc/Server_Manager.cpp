@@ -18,9 +18,10 @@ Server_Manager::Server_Manager(void):
   player_account_map_(get_hash_table_size(12000)),
   server_id_(0),
 	server_status_(STATUS_NORMAL),
-	last_player_tick_(Time_Value::zero),
-	last_server_info_tick_(Time_Value::zero),
+	server_start_time_(Time_Value::zero),
 	tick_time_(Time_Value::zero),
+	player_tick_(Time_Value::zero),
+	server_info_tick_(Time_Value::zero),
   msg_count_(false) { }
 
 Server_Manager::~Server_Manager(void) {}
@@ -28,6 +29,7 @@ Server_Manager::~Server_Manager(void) {}
 int Server_Manager::init_data(int server_id, std::string server_name) {
 	server_id_ = server_id;
 	server_name_ = server_name;
+	server_start_time_ = Time_Value::gettimeofday();
 	const Json::Value &server_misc = SERVER_CONFIG->server_misc();
 	if (server_misc["verify_pack"].asInt()) {
 		msg_count_ = true;
@@ -40,25 +42,6 @@ void Server_Manager::run_handler(void) {
 }
 
 int Server_Manager::process_list(void) {
-	return 0;
-}
-
-int Server_Manager::self_close_process(void) {
-	LOG_INFO("%s server_id:%d self close", server_name_.c_str(), server_id_);
-	server_status_ = STATUS_CLOSING;
-
-	//关闭客户端连接
-	for (Player_Cid_Map::iterator iter = player_cid_map_.begin(); iter != player_cid_map_.end(); ++iter) {
-		iter->second->link_close(true);
-	}
-
-	int i = 0;
-	while (++i < 60) {
-		sleep(1);
-		if (player_cid_map_.size() == 0)
-			break;
-	}
-
 	return 0;
 }
 
@@ -101,9 +84,38 @@ Player* Server_Manager::find_account_player(std::string &account) {
 		return 0;
 }
 
-int Server_Manager::unbind_player(Player &player) {
-	player_role_id_map_.erase(player.role_id());
-	player_account_map_.erase(player.account());
+int Server_Manager::self_close_process(void) {
+	LOG_INFO("%s server_id:%d self close", server_name_.c_str(), server_id_);
+	server_status_ = STATUS_CLOSING;
+
+	//关闭客户端连接
+	for (Player_Cid_Map::iterator iter = player_cid_map_.begin(); iter != player_cid_map_.end(); ++iter) {
+		close_client(iter->second->gate_cid(), iter->second->player_cid(), ERROR_DISCONNECT_SELF);
+	}
+
+	int i = 0;
+	while (++i < 60) {
+		sleep(1);
+		if (player_cid_map_.size() == 0)
+			break;
+	}
+
+	return 0;
+}
+
+int Server_Manager::close_client(int gate_cid, int player_cid, int error_code) {
+	if (player_cid < 2) {
+		LOG_ERROR("close_client, player_cid = %d", player_cid);
+		return -1;
+	}
+
+	Close_Info close_info(gate_cid, player_cid, tick_time());
+	close_list_.push_back(close_info);
+	return 0;
+}
+
+int Server_Manager::recycle_player(int gate_cid, int player_cid) {
+	LOG_INFO("%s recycle_player, server_id:%d gate_cid:%d, player_cid:%d", server_name_.c_str(), server_id_, gate_cid, player_cid);
 	return 0;
 }
 
@@ -123,13 +135,24 @@ int Server_Manager::tick(void) {
 }
 
 int Server_Manager::close_list_tick(Time_Value &now) {
+	Close_Info close_info;
+	while (! close_list_.empty()) {
+		close_info = close_list_.front();
+		if (now - close_info.timestamp > Time_Value(2, 0)) {
+			close_list_.pop_front();
+			recycle_player(close_info.gate_cid, close_info.player_cid);
+		} else {
+			break;
+		}
+	}
+
 	return 0;
 }
 
 int Server_Manager::player_tick(Time_Value &now) {
-	if (now - last_player_tick_ < Time_Value(0, 500 * 1000))
+	if (now - player_tick_ < Time_Value(0, 500 * 1000))
 		return 0;
-	last_player_tick_ = now;
+	player_tick_ = now;
 
 	//因为Player::tick()里有改变player_cid_map_的操作, 直接在其上使用迭代器导致迭代器失效core
 	Player_Cid_Map t_player_map(player_cid_map_);
@@ -141,9 +164,9 @@ int Server_Manager::player_tick(Time_Value &now) {
 }
 
 int Server_Manager::server_info_tick(Time_Value &now) {
-	if (now - last_server_info_tick_ < Time_Value(300, 0))
+	if (now - server_info_tick_ < Time_Value(300, 0))
 		return 0;
-	last_server_info_tick_ = now;
+	server_info_tick_ = now;
 
 	get_server_info();
 	print_server_info();

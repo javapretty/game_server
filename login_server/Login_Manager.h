@@ -19,18 +19,15 @@ public:
 	inline Login_Player *pop_player(void) { return player_pool_.pop(); }
 	inline int push_player(Login_Player *player) { return player_pool_.push(player); }
 
-	virtual int unbind_player(Player &player);
+	virtual int close_client(int gate_cid, int player_cid, int error_code);
+	virtual int recycle_player(int gate_cid, int player_cid);
 	virtual int free_cache(void);
-	virtual int close_list_tick(Time_Value &now);
 	virtual void get_server_info(void);
 	virtual void print_server_info(void);
 
 	//发送数据
 	int send_to_client(int player_cid, Block_Buffer &buf);
 	int send_to_gate(int gate_cid, Block_Buffer &buf);
-
-	//关闭连接
-	int close_client(int player_cid);
 
 	//消息处理
 	int process_list();

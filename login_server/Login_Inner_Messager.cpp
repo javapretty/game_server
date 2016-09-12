@@ -54,7 +54,7 @@ int Login_Inner_Messager::gate_login_player_account(int gate_cid, int32_t player
 			&& player->session_info().gate_port == msg.gate_port) {
 		//验证玩家session成功，关闭玩家与login的连接，开启玩家与gate的连接
 		gate_buf.make_player_message(SYNC_LOGIN_GATE_PLAYER_ACCOUNT, 0, player_cid);
-		LOGIN_MANAGER->close_client(player->player_cid());
+		LOGIN_MANAGER->close_client(0, player->player_cid(), ERROR_SESSION_SUCCESS);
 	} else {
 		LOG_DEBUG("login check session error, session:%s, account:%s, gate_ip:%s, gate_port:%d, gate_cid:%d, player_cid:%d",
 				msg.session.c_str(), msg.account.c_str(), msg.gate_ip.c_str(), msg.gate_port, gate_cid, player_cid);

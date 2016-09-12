@@ -22,12 +22,11 @@ Game_Gate_Server *Game_Gate_Server::instance(void) {
 
 void Game_Gate_Server::process_list(void) {
 	Block_Buffer *buf = 0;
-	int cid = 0;
 	while (1) {
 		bool all_empty = true;
 		if (!drop_cid_list_.empty()) {
 			all_empty = false;
-			cid = drop_cid_list_.pop_front();
+			int cid = drop_cid_list_.pop_front();
 			GAME_MANAGER->push_drop_gate_cid(cid);
 		}
 		if (!block_list_.empty()) {

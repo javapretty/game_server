@@ -55,11 +55,7 @@ int Login_Client_Messager::connect_login(int cid, int msg_id, Block_Buffer &buf)
 		int status = LOGIN_MANAGER->client_login(msg.account, msg.password);
 		if (status < 0) {
 			LOG_ERROR("connect login fail, account:%s, password:%d, status:%d", msg.account.c_str(), msg.password.c_str(), status);
-			Block_Buffer res_buf;
-			res_buf.make_server_message(RES_CONNECT_LOGIN, ERROR_LOGIN_FAIL);
-			res_buf.finish_message();
-			LOGIN_MANAGER->send_to_client(cid, res_buf);
-			LOGIN_MANAGER->close_client(cid);
+			LOGIN_MANAGER->close_client(0, cid, ERROR_LOGIN_FAIL);
 			return -1;
 		}
 
@@ -99,11 +95,7 @@ int Login_Client_Messager::connect_login(int cid, int msg_id, Block_Buffer &buf)
 	else
 	{//fail
 		LOG_ERROR("connect login, player have login, account:%s, password:%d", msg.account.c_str(), msg.password.c_str());
-		Block_Buffer res_buf;
-		res_buf.make_server_message(RES_CONNECT_LOGIN, ERROR_LOGIN_FAIL);
-		res_buf.finish_message();
-		LOGIN_MANAGER->send_to_client(cid, res_buf);
-		LOGIN_MANAGER->close_client(cid);
+		LOGIN_MANAGER->close_client(0, cid, ERROR_LOGIN_FAIL);
 	}
 	return 0;
 }

@@ -19,7 +19,8 @@ public:
 	inline Game_Player *pop_player(void) { return player_pool_.pop(); }
 	inline int push_player(Game_Player *player) { return  player_pool_.push(player); }
 
-	virtual int unbind_player(Player &player);
+	virtual int close_client(int gate_cid, int player_cid, int error_code);
+	virtual int recycle_player(int gate_cid, int player_cid);
 	virtual int free_cache(void);
 	virtual void get_server_info(void);
 	virtual void print_server_info(void);
@@ -30,13 +31,10 @@ public:
 	int send_to_db(Block_Buffer &buf);
 	int send_to_log(Block_Buffer &buf);
 
-	//关闭客户端连接
-	int close_client(int gate_cid, int player_cid, int error_code);
-
 	//消息处理
 	int process_list();
-	void process_drop_gate_cid(int gate_cid);
-	void push_drop_gate_cid(int cid);
+	int process_drop_gate_cid(int gate_cid);
+	int push_drop_gate_cid(int gate_cid);
 	int push_tick(int x);
 	int push_game_gate_data(Block_Buffer *buf);
 	Block_Buffer* pop_game_gate_data();
@@ -59,8 +57,8 @@ private:
 	int server_id_;
 	Player_Pool player_pool_;
 
-	Int_List drop_gate_cid_list_;				//掉线gate_cid列表,让通过该gate连接到game的所有玩家掉线
-	Int_List tick_list_;								//定时器列表
+	Int_List drop_gate_cid_list_;				//掉线gate_cid列表，让通过该gate连接到game的所有玩家掉线
+	Int_List tick_list_;									//定时器列表
 	Data_List game_gate_data_list_;			//gate--game
 	Data_List game_db_data_list_;				//db-->game
 	Data_List game_master_data_list_;		//master-->game
@@ -74,8 +72,9 @@ private:
 #define GAME_MANAGER Game_Manager::instance()
 
 ////////////////////////////////////////////////////////////////////////////////
-inline void Game_Manager::push_drop_gate_cid(int cid) {
-	drop_gate_cid_list_.push_back(cid);
+inline int Game_Manager::push_drop_gate_cid(int gate_cid) {
+	drop_gate_cid_list_.push_back(gate_cid);
+	return 0;
 }
 
 inline int Game_Manager::push_tick(int x) {

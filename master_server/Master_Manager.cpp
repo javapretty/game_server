@@ -43,10 +43,37 @@ Player* Master_Manager::find_game_cid_player(int cid) {
 		return 0;
 }
 
-int Master_Manager::unbind_player(Player &player) {
-	Server_Manager::unbind_player(player);
-	player_cid_map_.erase(GET_CID(player.gate_cid(), player.player_cid()));
-	player_game_cid_map_.erase(GET_CID(player.game_cid(), player.player_cid()));
+int Master_Manager::close_client(int gate_cid, int player_cid, int error_code) {
+	if (Server_Manager::close_client(gate_cid, player_cid, error_code) < 0) return -1;
+
+	//将玩家cid投放到js层
+	push_drop_player_cid(GET_CID(gate_cid, player_cid));
+
+	if (error_code != 0) {
+		//gate与master断开连接不通知客户端，其他情况通知
+		Block_Buffer buf;
+		buf.make_player_message(ACTIVE_DISCONNECT, error_code, player_cid);
+		buf.finish_message();
+		send_to_gate(gate_cid, buf);
+	}
+	return 0;
+}
+
+int Master_Manager::recycle_player(int gate_cid, int player_cid) {
+	Server_Manager::recycle_player(gate_cid, player_cid);
+
+	int cid = GET_CID(gate_cid, player_cid);
+	Master_Player *player = dynamic_cast<Master_Player*>(find_cid_player(cid));
+	if (!player) {
+		return -1;
+	}
+
+	player_cid_map_.erase(cid);
+	player_game_cid_map_.erase(GET_CID(player->game_cid(), player->player_cid()));
+	player_role_id_map_.erase(player->role_id());
+	player_account_map_.erase(player->account());
+	player->reset();
+	push_player(player);
 	return 0;
 }
 
@@ -118,17 +145,16 @@ int Master_Manager::send_to_http(int http_cid, Block_Buffer &buf) {
 	return MASTER_HTTP_SERVER->send_block(http_cid, buf);
 }
 
-int Master_Manager::close_client(int gate_cid, int player_cid, int error_code) {
-	Block_Buffer buf;
-	buf.make_player_message(ACTIVE_DISCONNECT, error_code, player_cid);
-	buf.finish_message();
-	return send_to_gate(gate_cid, buf);
-}
-
 int Master_Manager::process_list(void) {
 	while (1) {
 		bool all_empty = true;
 
+		//掉线gate列表
+		if (! drop_gate_cid_list_.empty()) {
+			all_empty = false;
+			int gate_cid = drop_gate_cid_list_.pop_front();
+			process_drop_gate_cid(gate_cid);
+		}
 		//定时器列表
 		if (! tick_list_.empty()) {
 			all_empty = false;
@@ -138,6 +164,17 @@ int Master_Manager::process_list(void) {
 
 		if (all_empty)
 			Time_Value::sleep(Time_Value(0,100));
+	}
+	return 0;
+}
+
+int Master_Manager::process_drop_gate_cid(int gate_cid) {
+	for (Player_Cid_Map::iterator iter = player_cid_map_.begin(); iter != player_cid_map_.end(); ) {
+		if (iter->second->gate_cid() == gate_cid) {
+			//gate断开与master的连接，master上所有通过该gate连接进来的玩家数据回收
+			close_client(gate_cid, iter->second->player_cid(), 0);
+			player_cid_map_.erase(iter++);
+		}
 	}
 	return 0;
 }

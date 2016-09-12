@@ -23,10 +23,18 @@ Master_Gate_Server *Master_Gate_Server::instance(void) {
 void Master_Gate_Server::process_list(void) {
 	Block_Buffer *buf = 0;
 	while (1) {
+		bool all_empty = true;
+		if (!drop_cid_list_.empty()) {
+			all_empty = false;
+			int cid = drop_cid_list_.pop_front();
+			MASTER_MANAGER->push_drop_gate_cid(cid);
+		}
 		if (!block_list_.empty()) {
+			all_empty = false;
 			buf = block_list_.pop_front();
 			MASTER_MANAGER->push_master_gate_data(buf);
-		} else {
+		}
+		if (all_empty) {
 			//没有数据时候延迟
 			Time_Value::sleep(Time_Value(0,100));
 		}

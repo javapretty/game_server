@@ -33,6 +33,9 @@ enum Error_Code {
 	ERROR_DISCONNECT_SELF 						= 10006,				//服务重启中,稍候再试
 	ERROR_DISCONNECT_RELOGIN				= 10007,				//账号在其它地方登陆
 	ERROR_LOGIN_FAIL									= 10008,				//登录失败
+	ERROR_NOT_LOGIN									=	10009,				//玩家未登录
+	ERROR_SESSION_TIMEOUT						=	10010,				//session到期
+	ERROR_SESSION_SUCCESS						=	10011,				//login验证session成功，断开连接
 };
 
 enum Role_Status {
@@ -115,11 +118,12 @@ public:
 };
 
 struct Close_Info {
-	int cid;
+	int gate_cid;
+	int player_cid;
 	Time_Value timestamp;
 
-	Close_Info(void) : cid(-1), timestamp(Time_Value::zero) { }
-	Close_Info(int cid_, const Time_Value &timestamp_): cid(cid_), timestamp(timestamp_) { }
+	Close_Info(void) : gate_cid(-1), player_cid(-1), timestamp(Time_Value::zero) { }
+	Close_Info(int gate_cid_, int player_cid_, const Time_Value &timestamp_): gate_cid(gate_cid_), player_cid(player_cid_), timestamp(timestamp_) { }
 };
 
 struct Msg_Info {
@@ -140,27 +144,6 @@ struct Msg_Info {
 		msg_timestamp = Time_Value::zero;
 		msg_interval_count_ = 0;
 		msg_interval_timestamp = Time_Value::zero;
-	}
-};
-
-struct Recycle_Tick {
-	enum {
-		NON_RECYCLE,	/// 非回收状态
-		RECYCLE,		/// 回收状态
-	};
-
-	int status;
-	Time_Value recycle_tick;
-
-	Recycle_Tick(void): status(NON_RECYCLE) {}
-
-	void reset(void) {
-		set(NON_RECYCLE);
-	}
-
-	void set(int s) {
-		status = s;
-		recycle_tick = Time_Value::gettimeofday() + Time_Value(2, 0);
 	}
 };
 

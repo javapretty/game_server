@@ -32,10 +32,6 @@ public:
 
 	virtual void reset(void);
 	virtual int tick(Time_Value &now);
-	virtual int link_close(bool server_close = false);
-
-protected:
-	Recycle_Tick recycle_tick_;
 
 private:
 	int gate_cid_;					//gate连接game的cid
