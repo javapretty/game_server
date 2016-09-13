@@ -19,7 +19,7 @@ public:
 	typedef List<int, Thread_Mutex> Int_List;
 
 	static Log_Manager *instance(void);
-	int init(void);
+	int init(int server_id);
 	void run_handler(void);
 
 	int push_data_block(Block_Buffer *buf);

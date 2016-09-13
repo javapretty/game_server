@@ -26,7 +26,6 @@ public:
 	int init(int server_id);
 
 	inline bool verify_pack(void) { return verify_pack_; }
-	inline bool server_id(void) { return server_id_; }
 
 	Gate_Player *pop_player(void) { return player_pool_.pop(); }
 	int push_player(Gate_Player *player) { return player_pool_.push(player); }
@@ -67,7 +66,6 @@ private:
 private:
 	static Gate_Manager *instance_;
 
-	int server_id_;
 	bool verify_pack_;
 	Player_Pool player_pool_;
 
@@ -77,7 +75,6 @@ private:
 	Data_List gate_login_data_list_;				//login-->gate
 	Data_List gate_game_data_list_;				//game-->gate
 	Data_List gate_master_data_list_;			//master-->gate
-	Close_List close_list_; 							//其中的连接cid在n秒后投递到通信层关闭
 
 	Server_Info gate_client_server_info_;
 	Server_Info gate_login_connector_info_;

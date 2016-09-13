@@ -41,7 +41,7 @@ void DB_Manager::destroy(void) {
 	}
 }
 
-int DB_Manager::init(void) {
+int DB_Manager::init(int server_id) {
 	const Json::Value &server_misc = SERVER_CONFIG->server_misc();
 	if (server_misc == Json::Value::null) {
 		LOG_FATAL("db init, server_misc null");

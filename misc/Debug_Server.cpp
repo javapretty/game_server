@@ -64,9 +64,9 @@ int Debug_Server::start(int argc, char *argv[]) {
 	LOG_SERVER->init();
 	LOG_SERVER->start();
 	LOG_SERVER->thr_create();
-	LOG_DEBUG("log_server listen at port:%d", server_conf_.log_server.server_port);
+	LOG_INFO("log_server server_id:%d listen at port:%d", server_conf_.log_server.server_id, server_conf_.log_server.server_port);
 
-	LOG_MANAGER->init();
+	LOG_MANAGER->init(server_conf_.log_server.server_id);
 	LOG_MANAGER->thr_create();
 
 	//DB_Server
@@ -74,9 +74,9 @@ int Debug_Server::start(int argc, char *argv[]) {
 	DB_SERVER->init();
 	DB_SERVER->start();
 	DB_SERVER->thr_create();
-	LOG_DEBUG("db_server listen at port:%d", server_conf_.db_server.server_port);
+	LOG_INFO("db_server server_id:%d listen at port:%d", server_conf_.db_server.server_id, server_conf_.db_server.server_port);
 
-	DB_MANAGER->init();
+	DB_MANAGER->init(server_conf_.db_server.server_id);
 	DB_MANAGER->start();
 
 	/// Login Client Server
@@ -84,16 +84,16 @@ int Debug_Server::start(int argc, char *argv[]) {
 	LOGIN_CLIENT_SERVER->init();
 	LOGIN_CLIENT_SERVER->start();
 	LOGIN_CLIENT_SERVER->thr_create();
-	LOG_DEBUG("login_client_server listen at port:%d", server_conf_.login_client_server.server_port);
+	LOG_INFO("login_client_server server_id:%d listen at port:%d", server_conf_.login_client_server.server_id, server_conf_.login_client_server.server_port);
 
 	/// Login Gate Server
 	LOGIN_GATE_SERVER->set(server_conf_.login_gate_server.server_port, server_conf_.receive_timeout, server_conf_.server_send_interval, server_conf_.login_gate_server.network_protocol);
 	LOGIN_GATE_SERVER->init();
 	LOGIN_GATE_SERVER->start();
 	LOGIN_GATE_SERVER->thr_create();
-	LOG_DEBUG("login_gate_server listen at port:%d", server_conf_.login_gate_server.server_port);
+	LOG_INFO("login_gate_server server_id:%d listen at port:%d", server_conf_.login_gate_server.server_id, server_conf_.login_gate_server.server_port);
 
-	LOGIN_MANAGER->init();
+	LOGIN_MANAGER->init(server_conf_.login_client_server.server_id);
 	LOGIN_MANAGER->thr_create();
 
 	/// Master Gate Server
@@ -101,23 +101,23 @@ int Debug_Server::start(int argc, char *argv[]) {
 	MASTER_GATE_SERVER->init();
 	MASTER_GATE_SERVER->start();
 	MASTER_GATE_SERVER->thr_create();
-	LOG_DEBUG("master_gate_server listen at port:%d", server_conf_.master_gate_server.server_port);
+	LOG_INFO("master_gate_server server_id:%d listen at port:%d", server_conf_.master_gate_server.server_id, server_conf_.master_gate_server.server_port);
 
 	/// Master Game Server
 	MASTER_GAME_SERVER->set(server_conf_.master_game_server.server_port, server_conf_.receive_timeout, server_conf_.server_send_interval, server_conf_.master_game_server.network_protocol);
 	MASTER_GAME_SERVER->init();
 	MASTER_GAME_SERVER->start();
 	MASTER_GAME_SERVER->thr_create();
-	LOG_DEBUG("master_game_server listen at port:%d", server_conf_.master_game_server.server_port);
+	LOG_INFO("master_game_server server_id:%d listen at port:%d", server_conf_.master_game_server.server_id, server_conf_.master_game_server.server_port);
 
 	/// Master Http Server
 	MASTER_HTTP_SERVER->set(server_conf_.master_http_server.server_port, server_conf_.receive_timeout, server_conf_.server_send_interval, server_conf_.master_http_server.network_protocol);
 	MASTER_HTTP_SERVER->init();
 	MASTER_HTTP_SERVER->start();
 	MASTER_HTTP_SERVER->thr_create();
-	LOG_DEBUG("master_http_server listen at port:%d", server_conf_.master_http_server.server_port);
+	LOG_INFO("master_http_server server_id:%d listen at port:%d", server_conf_.master_http_server.server_id, server_conf_.master_http_server.server_port);
 
-	MASTER_MANAGER->init();
+	MASTER_MANAGER->init(server_conf_.master_gate_server.server_id);
 	MASTER_MANAGER->thr_create();
 
 	/// Game Gate Server
@@ -126,7 +126,7 @@ int Debug_Server::start(int argc, char *argv[]) {
 	GAME_GATE_SERVER->init();
 	GAME_GATE_SERVER->start();
 	GAME_GATE_SERVER->thr_create();
-	LOG_DEBUG("game_gate_server listen at port:%d", game_gate_server.server_port);
+	LOG_INFO("game_gate_server server_id:%d listen at port:%d", game_gate_server.server_id, game_gate_server.server_port);
 
 	GAME_MANAGER->init(game_gate_server.server_id);
 	GAME_MANAGER->thr_create();
@@ -137,7 +137,7 @@ int Debug_Server::start(int argc, char *argv[]) {
 	GATE_CLIENT_SERVER->init();
 	GATE_CLIENT_SERVER->start();
 	GATE_CLIENT_SERVER->thr_create();
-	LOG_DEBUG("gate_client_server listen at port:%d", gate_client_server.server_port);
+	LOG_INFO("gate_client_server server_id:%d listen at port:%d", gate_client_server.server_id, gate_client_server.server_port);
 
 	GATE_MANAGER->init(gate_client_server.server_id);
 	GATE_MANAGER->thr_create();

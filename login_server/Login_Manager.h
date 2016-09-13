@@ -14,7 +14,7 @@ class Login_Manager: public Server_Manager {
 	typedef Object_Pool<Login_Player, Spin_Lock> Player_Pool;
 public:
 	static Login_Manager *instance(void);
-	int init(void);
+	int init(int server_id);
 
 	inline Login_Player *pop_player(void) { return player_pool_.pop(); }
 	inline int push_player(Login_Player *player) { return player_pool_.push(player); }
@@ -55,7 +55,6 @@ private:
 	Int_List tick_list_;										//定时器列表
 	Data_List login_client_data_list_;		//client-->login
 	Data_List login_gate_data_list_;			//login-->connector
-	Close_List close_list_; 							// 其中的连接cid在n秒后投递到通信层关闭
 
 	Server_Info login_client_server_info_;
 	Server_Info login_gate_server_info_;

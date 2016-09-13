@@ -105,7 +105,7 @@ void Daemon_Log::destroy(void) {
 	}
 }
 
-void Daemon_Log::start_server(void) {
+void Daemon_Log::start_server(int server_id) {
 	Log::instance()->set_log_type(LOG_LOG_SERVER);
 
 	Server_Conf server_conf = DAEMON_SERVER->server_conf();
@@ -114,9 +114,9 @@ void Daemon_Log::start_server(void) {
 	LOG_SERVER->init();
 	LOG_SERVER->start();
 	LOG_SERVER->thr_create();
-	LOG_DEBUG("log_server listen at port:%d", server_conf.log_server.server_port);
+	LOG_INFO("log_server server_id:%d listen at port:%d", server_conf.log_server.server_id, server_conf.log_server.server_port);
 
-	LOG_MANAGER->init();
+	LOG_MANAGER->init(server_id);
 	LOG_MANAGER->thr_create();
 
 	//延迟让服务器启动
@@ -150,7 +150,7 @@ void Daemon_DB::destroy(void) {
 	}
 }
 
-void Daemon_DB::start_server(void) {
+void Daemon_DB::start_server(int server_id) {
 	Log::instance()->set_log_type(LOG_DB_SERVER);
 
 	Server_Conf server_conf = DAEMON_SERVER->server_conf();
@@ -159,9 +159,9 @@ void Daemon_DB::start_server(void) {
 	DB_SERVER->init();
 	DB_SERVER->start();
 	DB_SERVER->thr_create();
-	LOG_DEBUG("db_server listen at port:%d", server_conf.db_server.server_port);
+	LOG_INFO("db_server server_id:%d listen at port:%d", server_conf.db_server.server_id, server_conf.db_server.server_port);
 
-	DB_MANAGER->init();
+	DB_MANAGER->init(server_id);
 	DB_MANAGER->start();
 
 	//延迟让服务器启动
@@ -195,7 +195,7 @@ void Daemon_Login::destroy(void) {
 	}
 }
 
-void Daemon_Login::start_server(void) {
+void Daemon_Login::start_server(int server_id) {
 	Log::instance()->set_log_type(LOG_LOGIN_SERVER);
 
 	Server_Conf server_conf = DAEMON_SERVER->server_conf();
@@ -204,16 +204,16 @@ void Daemon_Login::start_server(void) {
 	LOGIN_CLIENT_SERVER->init();
 	LOGIN_CLIENT_SERVER->start();
 	LOGIN_CLIENT_SERVER->thr_create();
-	LOG_DEBUG("login_client_server listen at port:%d", server_conf.login_client_server.server_port);
+	LOG_INFO("login_client_server server_id:%d listen at port:%d", server_conf.login_client_server.server_id, server_conf.login_client_server.server_port);
 
 	/// Login Gate Server
 	LOGIN_GATE_SERVER->set(server_conf.login_gate_server.server_port, server_conf.receive_timeout, server_conf.server_send_interval, server_conf.login_gate_server.network_protocol);
 	LOGIN_GATE_SERVER->init();
 	LOGIN_GATE_SERVER->start();
 	LOGIN_GATE_SERVER->thr_create();
-	LOG_DEBUG("login_gate_server listen at port:%d", server_conf.login_gate_server.server_port);
+	LOG_INFO("login_gate_server server_id:%d listen at port:%d", server_conf.login_gate_server.server_id, server_conf.login_gate_server.server_port);
 
-	LOGIN_MANAGER->init();
+	LOGIN_MANAGER->init(server_id);
 	LOGIN_MANAGER->thr_create();
 
 	//延迟让服务器启动
@@ -247,7 +247,7 @@ void Daemon_Master::destroy(void) {
 	}
 }
 
-void Daemon_Master::start_server(void) {
+void Daemon_Master::start_server(int server_id) {
 	Log::instance()->set_log_type(LOG_MASTER_SERVER);
 
 	Server_Conf server_conf = DAEMON_SERVER->server_conf();
@@ -256,23 +256,23 @@ void Daemon_Master::start_server(void) {
 	MASTER_GATE_SERVER->init();
 	MASTER_GATE_SERVER->start();
 	MASTER_GATE_SERVER->thr_create();
-	LOG_DEBUG("master_gate_server listen at port:%d", server_conf.master_gate_server.server_port);
+	LOG_INFO("master_gate_server server_id:%d listen at port:%d", server_conf.master_gate_server.server_id, server_conf.master_gate_server.server_port);
 
 	/// Master Game Server
 	MASTER_GAME_SERVER->set(server_conf.master_game_server.server_port, server_conf.receive_timeout, server_conf.server_send_interval, server_conf.master_game_server.network_protocol);
 	MASTER_GAME_SERVER->init();
 	MASTER_GAME_SERVER->start();
 	MASTER_GAME_SERVER->thr_create();
-	LOG_DEBUG("master_game_server listen at port:%d", server_conf.master_game_server.server_port);
+	LOG_INFO("master_game_server server_id:%d listen at port:%d", server_conf.master_game_server.server_id, server_conf.master_game_server.server_port);
 
 	/// Master Http Server
 	MASTER_HTTP_SERVER->set(server_conf.master_http_server.server_port, server_conf.receive_timeout, server_conf.server_send_interval, server_conf.master_http_server.network_protocol);
 	MASTER_HTTP_SERVER->init();
 	MASTER_HTTP_SERVER->start();
 	MASTER_HTTP_SERVER->thr_create();
-	LOG_DEBUG("master_http_server listen at port:%d", server_conf.master_http_server.server_port);
+	LOG_INFO("master_http_server server_id:%d listen at port:%d", server_conf.master_http_server.server_id, server_conf.master_http_server.server_port);
 
-	MASTER_MANAGER->init();
+	MASTER_MANAGER->init(server_id);
 	MASTER_MANAGER->thr_create();
 
 	//延迟让服务器启动
@@ -337,7 +337,7 @@ void Daemon_Game::start_server(int server_id) {
 	GAME_GATE_SERVER->init();
 	GAME_GATE_SERVER->start();
 	GAME_GATE_SERVER->thr_create();
-	LOG_DEBUG("game_gate_server listen at port:%d", server_detail.server_port);
+	LOG_INFO("game_gate_server server_id:%d listen at port:%d", server_detail.server_id, server_detail.server_port);
 
 	GAME_MANAGER->init(server_id);
 	GAME_MANAGER->thr_create();
@@ -415,7 +415,7 @@ void Daemon_Gate::start_server(int server_id) {
 	GATE_CLIENT_SERVER->init();
 	GATE_CLIENT_SERVER->start();
 	GATE_CLIENT_SERVER->thr_create();
-	LOG_DEBUG("gate_client_server listen at port:%d", server_detail.server_port);
+	LOG_INFO("gate_client_server server_id:%d listen at port:%d", server_detail.server_id, server_detail.server_port);
 
 	GATE_MANAGER->init(server_id);
 	GATE_MANAGER->thr_create();

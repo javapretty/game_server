@@ -22,7 +22,7 @@ Log_Manager *Log_Manager::instance(void) {
 	return instance_;
 }
 
-int Log_Manager::init(void) {
+int Log_Manager::init(int server_id) {
 	LOG_DB->init();
 	LOG_TIMER->thr_create();
 

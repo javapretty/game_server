@@ -128,16 +128,16 @@ int Daemon_Server::parse_cmd_arguments(int argc, char *argv[]) {
 		run_daemon_server();
 
 	if (switch_log_server)
-		run_log_server();
+		run_log_server(server_id);
 
 	if (switch_db_server)
-		run_db_server();
+		run_db_server(server_id);
 
 	if (switch_login_server)
-		run_login_server();
+		run_login_server(server_id);
 
 	if (switch_master_server)
-		run_master_server();
+		run_master_server(server_id);
 
 	if (switch_game_server)
 		run_game_server(server_id);
@@ -148,14 +148,16 @@ int Daemon_Server::parse_cmd_arguments(int argc, char *argv[]) {
 	return 0;
 }
 
-int Daemon_Server::fork_exec_args(const char *exec_str, int server_type, int server_id) {
-	LOG_INFO("exec_str = [%s], server_type = %d", exec_str, server_type);
+int Daemon_Server::fork_exec_args(const char *server_name, int server_type, int server_id) {
+	std::stringstream execname_stream;
+	execname_stream << exec_name_ << server_name <<" --server_id=" << server_id << " --label=" << server_label_;
+	LOG_INFO("exec_str=[%s], server_id=%d", execname_stream.str().c_str(), server_id);
 
 	std::vector<std::string> exec_str_tok;
-	std::istringstream exec_str_stream(exec_str);
+	std::istringstream exec_str_stream(execname_stream.str().c_str());
 	std::copy(std::istream_iterator<std::string>(exec_str_stream), std::istream_iterator<std::string>(), std::back_inserter(exec_str_tok));
 	if (exec_str_tok.empty()) {
-		LOG_FATAL("exec_str = %s", exec_str);
+		LOG_FATAL("exec_str = %s", execname_stream.str().c_str());
 	}
 
 	const char *pathname = (*exec_str_tok.begin()).c_str();
@@ -181,48 +183,6 @@ int Daemon_Server::fork_exec_args(const char *exec_str, int server_type, int ser
 	}
 
 	return pid;
-}
-
-int Daemon_Server::fork_exec_log_server(void) {
-	std::stringstream execname_stream;
-	execname_stream << exec_name_ << " --log " << "--label=" << server_label_;
-	fork_exec_args(execname_stream.str().c_str(), LOG_LOG_SERVER);
-	return 0;
-}
-
-int Daemon_Server::fork_exec_db_server(void) {
-	std::stringstream execname_stream;
-	execname_stream << exec_name_ << " --db " << "--label=" << server_label_;
-	fork_exec_args(execname_stream.str().c_str(), LOG_DB_SERVER);
-	return 0;
-}
-
-int Daemon_Server::fork_exec_login_server(void){
-	std::stringstream execname_stream;
-	execname_stream << exec_name_ << " --login " <<"--label=" << server_label_;
-	fork_exec_args(execname_stream.str().c_str(), LOG_LOGIN_SERVER);
-	return 0;
-}
-
-int Daemon_Server::fork_exec_master_server(void) {
-	std::stringstream execname_stream;
-	execname_stream << exec_name_ << " --master " << "--label=" << server_label_;
-	fork_exec_args(execname_stream.str().c_str(), LOG_MASTER_SERVER);
-	return 0;
-}
-
-int Daemon_Server::fork_exec_game_server(int server_id) {
-	std::stringstream execname_stream;
-	execname_stream << exec_name_ << " --game" <<" --server_id=" << server_id << " --label=" << server_label_;
-	fork_exec_args(execname_stream.str().c_str(), LOG_GAME_SERVER, server_id);
-	return 0;
-}
-
-int Daemon_Server::fork_exec_gate_server(int server_id) {
-	std::stringstream execname_stream;
-	execname_stream << exec_name_ << " --gate" <<" --server_id=" << server_id << " --label=" << server_label_;
-	fork_exec_args(execname_stream.str().c_str(), LOG_GATE_SERVER, server_id);
-	return 0;
 }
 
 void Daemon_Server::sigcld_handle(int signo) {
@@ -256,27 +216,27 @@ void Daemon_Server::restart_process(int pid) {
 
 	switch (iter->second.server_type) {
 	case LOG_LOG_SERVER: {
-		fork_exec_log_server();
+		fork_exec_args(" --log", LOG_LOG_SERVER, server_conf_.log_server.server_id);
 		break;
 	}
 	case LOG_DB_SERVER: {
-		fork_exec_db_server();
+		fork_exec_args(" --db", LOG_DB_SERVER, server_conf_.db_server.server_id);
 		break;
 	}
 	case LOG_LOGIN_SERVER: {
-		fork_exec_db_server();
+		fork_exec_args(" --login", LOG_LOGIN_SERVER, server_conf_.login_client_server.server_id);
 		break;
 	}
 	case LOG_MASTER_SERVER: {
-		fork_exec_master_server();
+		fork_exec_args(" --master", LOG_MASTER_SERVER, server_conf_.master_gate_server.server_id);
 		break;
 	}
 	case LOG_GAME_SERVER: {
-		fork_exec_game_server(iter->second.server_id);
+		fork_exec_args(" --game", LOG_GAME_SERVER, iter->second.server_id);
 		break;
 	}
 	case LOG_GATE_SERVER: {
-		fork_exec_gate_server(iter->second.server_id);
+		fork_exec_args(" --gate", LOG_GATE_SERVER, iter->second.server_id);
 		break;
 	}
 	default: {
@@ -306,47 +266,47 @@ void Daemon_Server::run_daemon_server(void) {
 	//record_pid_file();
 
 	//start log server
-	fork_exec_log_server();
+	fork_exec_args(" --log", LOG_LOG_SERVER, server_conf_.log_server.server_id);
 
 	//start db server
-	fork_exec_db_server();
+	fork_exec_args(" --db", LOG_DB_SERVER, server_conf_.db_server.server_id);
 
 	//start login server
-	fork_exec_login_server();
+	fork_exec_args(" --login", LOG_LOGIN_SERVER, server_conf_.login_client_server.server_id);
 
 	//start master server
-	fork_exec_master_server();
+	fork_exec_args(" --master", LOG_MASTER_SERVER, server_conf_.master_gate_server.server_id);
 
 	//start game server
 	for(Server_List::iterator iter = server_conf_.game_list.begin();
 			iter != server_conf_.game_list.end(); iter++) {
-		fork_exec_game_server((*iter).server_id);
+		fork_exec_args(" --game", LOG_GAME_SERVER, iter->server_id);
 	}
 
 	//start gate_server
 	for(Server_List::iterator iter = server_conf_.gate_list.begin();
 			iter != server_conf_.gate_list.end(); iter++) {
-		fork_exec_gate_server((*iter).server_id);
+		fork_exec_args(" --gate", LOG_GATE_SERVER, iter->server_id);
 	}
 }
 
-void Daemon_Server::run_log_server(void) {
-	DAEMON_LOG->start_server();
+void Daemon_Server::run_log_server(int server_id) {
+	DAEMON_LOG->start_server(server_id);
 	DAEMON_LOG->start_client();
 }
 
-void Daemon_Server::run_db_server(void) {
-	DAEMON_DB->start_server();
+void Daemon_Server::run_db_server(int server_id) {
+	DAEMON_DB->start_server(server_id);
 	DAEMON_DB->start_client();
 }
 
-void Daemon_Server::run_login_server(void) {
-	DAEMON_LOGIN->start_server();
+void Daemon_Server::run_login_server(int server_id) {
+	DAEMON_LOGIN->start_server(server_id);
 	DAEMON_LOGIN->start_client();
 }
 
-void Daemon_Server::run_master_server(void) {
-	DAEMON_MASTER->start_server();
+void Daemon_Server::run_master_server(int server_id) {
+	DAEMON_MASTER->start_server(server_id);
 	DAEMON_MASTER->start_client();
 }
 

@@ -11,8 +11,7 @@
 #include "Msg_Manager.h"
 #include "AI_Manager.h"
 
-Game_Manager::Game_Manager(void):
-  server_id_(0) { }
+Game_Manager::Game_Manager(void) {}
 
 Game_Manager::~Game_Manager(void) {}
 
@@ -26,7 +25,6 @@ Game_Manager *Game_Manager::instance(void) {
 
 int Game_Manager::init(int server_id) {
 	init_data(server_id, "Game_Server");
-	server_id_ = server_id;
 	AI_MANAGER->init();
 	GAME_TIMER->thr_create();
 	MSG_MANAGER->init();
@@ -86,7 +84,7 @@ void Game_Manager::get_server_info(void) {
 
 void Game_Manager::print_server_info(void) {
 	Server_Manager::print_server_info();
-	LOG_INFO("Game_Server server_id:%d player_pool_ free = %d, used = %d", server_id_, player_pool_.free_obj_list_size(), player_pool_.used_obj_list_size());
+	LOG_INFO("Game_Server server_id:%d player_pool_ free = %d, used = %d", server_id(), player_pool_.free_obj_list_size(), player_pool_.used_obj_list_size());
 }
 
 int Game_Manager::send_to_gate(int gate_cid, Block_Buffer &buf) {

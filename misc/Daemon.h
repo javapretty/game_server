@@ -33,7 +33,7 @@ public:
 	static Daemon_Log *instance(void);
 	static void destroy(void);
 
-	void start_server(void);
+	void start_server(int server_id);
 	void start_client(void);
 
 private:
@@ -54,7 +54,7 @@ public:
 	static Daemon_DB *instance(void);
 	static void destroy(void);
 
-	void start_server(void);
+	void start_server(int server_id);
 	void start_client(void);
 
 private:
@@ -75,7 +75,7 @@ public:
 	static Daemon_Login *instance(void);
 	static void destroy(void);
 
-	void start_server(void);
+	void start_server(int server_id);
 	void start_client(void);
 
 private:
@@ -96,7 +96,7 @@ public:
 	static Daemon_Master *instance(void);
 	static void destroy(void);
 
-	void start_server(void);
+	void start_server(int server_id);
 	void start_client(void);
 
 private:

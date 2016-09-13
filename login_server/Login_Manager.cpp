@@ -27,8 +27,8 @@ Login_Manager *Login_Manager::instance(void) {
 	return instance_;
 }
 
-int Login_Manager::init(void) {
-	init_data(0, "Login_Server");
+int Login_Manager::init(int server_id) {
+	init_data(server_id, "Login_Server");
 	LOGIN_INNER_MESSAGER;
 	LOGIN_CLIENT_MESSAGER;
 	LOGIN_TIMER->thr_create();

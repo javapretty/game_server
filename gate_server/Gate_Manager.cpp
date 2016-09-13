@@ -12,7 +12,6 @@
 #include "Gate_Manager.h"
 
 Gate_Manager::Gate_Manager(void):
-	server_id_(0),
   verify_pack_(false) { }
 
 Gate_Manager::~Gate_Manager(void) { }
@@ -27,7 +26,6 @@ Gate_Manager *Gate_Manager::instance(void) {
 
 int Gate_Manager::init(int server_id) {
 	init_data(server_id, "Gate_Server");
-	server_id_ = server_id;
 	GATE_INNER_MESSAGER;
 	GATE_CLIENT_MESSAGER;
 	GATE_TIMER->thr_create();
@@ -114,7 +112,7 @@ void Gate_Manager::get_server_info(void) {
 
 void Gate_Manager::print_server_info(void) {
 	Server_Manager::print_server_info();
-	LOG_INFO("Gate_Server server_id:%d player_pool_ free = %d, used = %d", server_id_, player_pool_.free_obj_list_size(), player_pool_.used_obj_list_size());
+	LOG_INFO("Gate_Server server_id:%d player_pool_ free = %d, used = %d", server_id(), player_pool_.free_obj_list_size(), player_pool_.used_obj_list_size());
 }
 
 int Gate_Manager::send_to_client(int player_cid, Block_Buffer &buf) {

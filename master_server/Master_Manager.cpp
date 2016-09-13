@@ -23,8 +23,8 @@ Master_Manager *Master_Manager::instance(void) {
 	return instance_;
 }
 
-int Master_Manager::init(void) {
-	init_data(0, "Master_Server");
+int Master_Manager::init(int server_id) {
+	init_data(server_id, "Master_Server");
 	MASTER_TIMER->thr_create();
 	MSG_MANAGER->init();
 	return 0;

@@ -46,6 +46,8 @@ public:
 	virtual ~Server_Manager(void);
 
 	int init_data(int server_id, std::string server_name);
+	int server_id(void) { return server_id_; }
+
 	virtual void run_handler(void);
 	virtual int process_list(void);
 
@@ -92,7 +94,7 @@ protected:
 
 private:
 	Block_Pool block_pool_;
-	Close_List close_list_; 							//其中的连接cid在2秒后投递到通信层关闭
+	Close_List close_list_; 					//其中的连接cid在2秒后投递到通信层关闭
 
 	int server_id_;										//服务器id
 	int server_status_;								//服务器状态

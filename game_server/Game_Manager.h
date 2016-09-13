@@ -15,7 +15,6 @@ public:
 	static Game_Manager *instance(void);
 	int init(int server_id);
 
-	inline int server_id() { return server_id_; }
 	inline Game_Player *pop_player(void) { return player_pool_.pop(); }
 	inline int push_player(Game_Player *player) { return  player_pool_.push(player); }
 
@@ -54,7 +53,6 @@ private:
 private:
 	static Game_Manager *instance_;
 
-	int server_id_;
 	Player_Pool player_pool_;
 
 	Int_List drop_gate_cid_list_;				//掉线gate_cid列表，让通过该gate连接到game的所有玩家掉线

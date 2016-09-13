@@ -13,7 +13,7 @@ class Master_Manager: public Server_Manager {
 	typedef Object_Pool<Master_Player, Spin_Lock> Player_Pool;
 public:
 	static Master_Manager *instance(void);
-	int init(void);
+	int init(int server_id);
 
 	inline Master_Player *pop_player(void) { return player_pool_.pop(); }
 	inline int push_player(Master_Player *player) { return player_pool_.push(player); }

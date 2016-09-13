@@ -23,7 +23,7 @@ public:
 	static DB_Manager *instance(void);
 	static void destroy(void);
 
-	int init(void);
+	int init(int server_id);
 	int start(void);
 
 	int push_data_block(Block_Buffer *buf);
