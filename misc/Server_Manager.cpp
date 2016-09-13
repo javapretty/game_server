@@ -22,7 +22,9 @@ Server_Manager::Server_Manager(void):
 	tick_time_(Time_Value::zero),
 	player_tick_(Time_Value::zero),
 	server_info_tick_(Time_Value::zero),
-  msg_count_(false) { }
+  msg_count_(false),
+  total_recv_bytes(0),
+  total_send_bytes(0) { }
 
 Server_Manager::~Server_Manager(void) {}
 
@@ -164,13 +166,13 @@ int Server_Manager::player_tick(Time_Value &now) {
 }
 
 int Server_Manager::server_info_tick(Time_Value &now) {
-	if (now - server_info_tick_ < Time_Value(300, 0))
+	if (now - server_info_tick_ < Time_Value(30, 0))
 		return 0;
 	server_info_tick_ = now;
 
 	get_server_info();
 	print_server_info();
-	print_msg_count();
+	print_msg_info();
 	return 0;
 }
 
@@ -181,10 +183,11 @@ void Server_Manager::print_server_info(void) {
 	LOG_INFO("%s server_id:%d block_pool_ free = %d, used = %d", server_name_.c_str(), server_id_, block_pool_.free_obj_list_size(), block_pool_.used_obj_list_size());
 }
 
-void Server_Manager::print_msg_count(void) {
+void Server_Manager::print_msg_info(void) {
 	std::stringstream stream;
 	for (Msg_Count_Map::iterator it = msg_count_map_.begin(); it != msg_count_map_.end(); ++it) {
 		stream << (it->first) << "\t" << (it->second) << std::endl;
 	}
-	LOG_INFO("%s server_id:%d msg_count:%d content:%s", server_name_.c_str(), server_id_, msg_count_map_.size(), stream.str().c_str());
+	LOG_INFO("%s server_id:%d total_recv_bytes:%d total_send_bytes:%d msg_count:%d %s",
+			server_name_.c_str(), server_id_, total_recv_bytes, total_send_bytes, msg_count_map_.size(), stream.str().c_str());
 }

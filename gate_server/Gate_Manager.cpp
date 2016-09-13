@@ -120,6 +120,7 @@ int Gate_Manager::send_to_client(int player_cid, Block_Buffer &buf) {
 		LOG_ERROR("player_cid = %d", player_cid);
 		return -1;
 	}
+	add_send_bytes(buf.readable_bytes());
 	return GATE_CLIENT_SERVER->send_block(player_cid, buf);
 }
 
@@ -130,6 +131,7 @@ int Gate_Manager::send_to_game(int cid, Block_Buffer &buf) {
 	}
 	Game_Connector_Map::iterator iter = game_connector_map_.find(cid);
 	if(iter != game_connector_map_.end()) {
+		add_send_bytes(buf.readable_bytes());
 		iter->second.connector->send_block(cid, buf);
 	} else {
 		LOG_ERROR("game_connector_map_ can not find game_cid = %d", cid);
@@ -143,6 +145,7 @@ int Gate_Manager::send_to_login(Block_Buffer &buf) {
 		LOG_ERROR("login_cid = %d", login_cid);
 		return -1;
 	}
+	add_send_bytes(buf.readable_bytes());
 	return GATE_LOGIN_CONNECTOR->send_block(login_cid, buf);
 }
 
@@ -152,6 +155,7 @@ int Gate_Manager::send_to_master(Block_Buffer &buf) {
 		LOG_ERROR("master_cid = %d", master_cid);
 		return -1;
 	}
+	add_send_bytes(buf.readable_bytes());
 	return GATE_MASTER_CONNECTOR->send_block(master_cid, buf);
 }
 

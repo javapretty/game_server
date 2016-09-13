@@ -92,6 +92,7 @@ int Login_Manager::send_to_client(int player_cid, Block_Buffer &buf) {
 		LOG_ERROR("player_cid = %d", player_cid);
 		return -1;
 	}
+	add_send_bytes(buf.readable_bytes());
 	return LOGIN_CLIENT_SERVER->send_block(player_cid, buf);
 }
 
@@ -100,7 +101,7 @@ int Login_Manager::send_to_gate(int gate_cid, Block_Buffer &buf){
 		LOG_ERROR("gate_cid = %d", gate_cid);
 		return -1;
 	}
-
+	add_send_bytes(buf.readable_bytes());
 	return LOGIN_GATE_SERVER->send_block(gate_cid, buf);
 }
 

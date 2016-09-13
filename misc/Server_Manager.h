@@ -79,11 +79,21 @@ public:
 	virtual void get_server_info(void);
 	virtual void print_server_info(void);
 
-	//消息数量统计
-	void print_msg_count(void);
+	//消息统计
+	void print_msg_info(void);
 	inline void add_msg_count(int msg_id) {
 		if (msg_count_) {
 			++(msg_count_map_[msg_id]);
+		}
+	}
+	inline void add_recv_bytes(int bytes) {
+		if (msg_count_) {
+			total_recv_bytes += bytes;
+		}
+	}
+	inline void add_send_bytes(int bytes) {
+		if (msg_count_) {
+			total_send_bytes += bytes;
 		}
 	}
 
@@ -94,18 +104,20 @@ protected:
 
 private:
 	Block_Pool block_pool_;
-	Close_List close_list_; 					//其中的连接cid在2秒后投递到通信层关闭
+	Close_List close_list_; 				//连接cid在2秒后投递到通信层关闭
 
-	int server_id_;										//服务器id
-	int server_status_;								//服务器状态
-	std::string server_name_;					//服务器名字
-	Time_Value server_start_time_;		//服务器开始时间
-	Time_Value tick_time_;							//服务器tick时间
+	int server_id_;									//服务器id
+	int server_status_;							//服务器状态
+	std::string server_name_;				//服务器名字
+	Time_Value server_start_time_;	//服务器开始时间
+	Time_Value tick_time_;						//服务器tick时间
 	Time_Value player_tick_;
 	Time_Value server_info_tick_;
 
 	bool msg_count_;
 	Msg_Count_Map msg_count_map_;
+	int total_recv_bytes;						//总共接收的字节
+	int total_send_bytes;						//总共发送的字节
 };
 
 #endif /* SERVER_MANAGER_H_ */

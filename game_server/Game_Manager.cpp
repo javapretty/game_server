@@ -92,6 +92,7 @@ int Game_Manager::send_to_gate(int gate_cid, Block_Buffer &buf) {
 		LOG_ERROR("gate_cid = %d", gate_cid);
 		return -1;
 	}
+	add_send_bytes(buf.readable_bytes());
 	return GAME_GATE_SERVER->send_block(gate_cid, buf);
 }
 
@@ -101,6 +102,7 @@ int Game_Manager::send_to_master(Block_Buffer &buf) {
 		LOG_ERROR("master_cid = %d", master_cid);
 		return -1;
 	}
+	add_send_bytes(buf.readable_bytes());
 	return GAME_MASTER_CONNECTOR->send_block(master_cid, buf);
 }
 
@@ -110,6 +112,7 @@ int Game_Manager::send_to_db(Block_Buffer &buf) {
 		LOG_ERROR("db_cid = %d", db_cid);
 		return -1;
 	}
+	add_send_bytes(buf.readable_bytes());
 	return GAME_DB_CONNECTOR->send_block(db_cid, buf);
 }
 
@@ -119,6 +122,7 @@ int Game_Manager::send_to_log(Block_Buffer &buf) {
 		LOG_ERROR("db_cid = %d", log_cid);
 		return -1;
 	}
+	add_send_bytes(buf.readable_bytes());
 	return LOG_CONNECTOR->send_block(log_cid, buf);
 }
 

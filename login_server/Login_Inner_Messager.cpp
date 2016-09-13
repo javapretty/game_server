@@ -19,6 +19,8 @@ Login_Inner_Messager *Login_Inner_Messager::instance(void) {
 }
 
 int Login_Inner_Messager::process_gate_block(Block_Buffer &buf) {
+	LOGIN_MANAGER->add_recv_bytes(buf.readable_bytes());
+
 	int32_t cid = 0;
 	int16_t len = 0;
 	int32_t msg_id = 0;

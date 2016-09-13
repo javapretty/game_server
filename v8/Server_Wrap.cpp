@@ -43,6 +43,8 @@ void get_game_timer_id(const FunctionCallbackInfo<Value>& args) {
 void pop_game_gate_msg_object(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = GAME_MANAGER->pop_game_gate_data();
 	if (buf) {
+		GAME_MANAGER->add_recv_bytes(buf->readable_bytes());
+
 		int32_t gate_cid = 0;
 		int16_t len = 0;
 		int32_t msg_id = 0;
@@ -71,6 +73,8 @@ void pop_game_gate_msg_object(const FunctionCallbackInfo<Value>& args) {
 void pop_game_master_msg_object(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = GAME_MANAGER->pop_game_master_data();
 	if (buf) {
+		GAME_MANAGER->add_recv_bytes(buf->readable_bytes());
+
 		int32_t master_cid = 0;
 		int16_t len = 0;
 		int32_t msg_id = 0;
@@ -99,6 +103,8 @@ void pop_game_master_msg_object(const FunctionCallbackInfo<Value>& args) {
 void pop_game_db_msg_object(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = GAME_MANAGER->pop_game_db_data();
 	if (buf) {
+		GAME_MANAGER->add_recv_bytes(buf->readable_bytes());
+
 		int32_t db_cid = 0;
 		int16_t len = 0;
 		int32_t msg_id = 0;
@@ -242,6 +248,8 @@ void get_master_timer_id(const FunctionCallbackInfo<Value>& args) {
 void pop_master_gate_msg_object(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = MASTER_MANAGER->pop_master_gate_data();
 	if (buf) {
+		MASTER_MANAGER->add_recv_bytes(buf->readable_bytes());
+
 		int32_t gate_cid = 0;
 		int16_t len = 0;
 		int32_t msg_id = 0;
@@ -270,6 +278,8 @@ void pop_master_gate_msg_object(const FunctionCallbackInfo<Value>& args) {
 void pop_master_game_msg_object(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = MASTER_MANAGER->pop_master_game_data();
 	if (buf) {
+		MASTER_MANAGER->add_recv_bytes(buf->readable_bytes());
+
 		int32_t game_cid = 0;
 		int16_t len = 0;
 		int32_t msg_id = 0;
@@ -298,6 +308,8 @@ void pop_master_game_msg_object(const FunctionCallbackInfo<Value>& args) {
 void pop_master_db_msg_object(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = MASTER_MANAGER->pop_master_db_data();
 	if (buf) {
+		MASTER_MANAGER->add_recv_bytes(buf->readable_bytes());
+
 		int32_t db_cid = 0;
 		int16_t len = 0;
 		int32_t msg_id = 0;
@@ -326,6 +338,8 @@ void pop_master_db_msg_object(const FunctionCallbackInfo<Value>& args) {
 void pop_master_http_msg_object(const FunctionCallbackInfo<Value>& args) {
 	Block_Buffer *buf = MASTER_MANAGER->pop_master_http_data();
 	if (buf) {
+		MASTER_MANAGER->add_recv_bytes(buf->readable_bytes());
+
 		int32_t http_cid = 0;
 		std::string post_data = "";
 		buf->read_int32(http_cid);
