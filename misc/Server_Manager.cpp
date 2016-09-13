@@ -156,9 +156,7 @@ int Server_Manager::player_tick(Time_Value &now) {
 		return 0;
 	player_tick_ = now;
 
-	//因为Player::tick()里有改变player_cid_map_的操作, 直接在其上使用迭代器导致迭代器失效core
-	Player_Cid_Map t_player_map(player_cid_map_);
-	for (Player_Cid_Map::iterator iter = t_player_map.begin(); iter!= t_player_map.end(); ++iter) {
+	for (Player_Cid_Map::iterator iter = player_cid_map_.begin(); iter!= player_cid_map_.end(); ++iter) {
 		if (iter->second)
 			iter->second->tick(now);
 	}
@@ -166,7 +164,7 @@ int Server_Manager::player_tick(Time_Value &now) {
 }
 
 int Server_Manager::server_info_tick(Time_Value &now) {
-	if (now - server_info_tick_ < Time_Value(30, 0))
+	if (now - server_info_tick_ < Time_Value(300, 0))
 		return 0;
 	server_info_tick_ = now;
 
