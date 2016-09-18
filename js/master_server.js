@@ -127,7 +127,7 @@ function process_master_gate_msg(obj) {
 	
 	switch(obj.msg_id) {
 	case Msg.SYNC_GATE_MASTER_PLAYER_LOGOUT:
-		master_player.cplayer.link_close();
+		master_close_client(master_player.gate_cid, master_player.player_cid, 0);
 		break;
 	case Msg.REQ_SEND_CHAT_INFO:
 		master_player.send_chat_info(obj);

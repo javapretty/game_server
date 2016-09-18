@@ -9,14 +9,11 @@
 #include <stdlib.h>
 #include <string>
 #include "V8_Wrap.h"
-#include "Player_Wrap.h"
 #include "Entity_Wrap.h"
 #include "Server_Wrap.h"
 #include "Time_Value.h"
 #include "Log.h"
 
-Global<ObjectTemplate> _g_game_player_template;
-Global<ObjectTemplate> _g_master_player_template;
 Global<ObjectTemplate> _g_scene_entity_template;
 
 Local<Context> Create_Context(Isolate* isolate) {
@@ -54,8 +51,8 @@ Local<Context> Create_Context(Isolate* isolate) {
 
 	global->Set(String::NewFromUtf8(isolate, "get_drop_game_player_cid", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, get_drop_game_player_cid));
-	global->Set(String::NewFromUtf8(isolate, "get_game_player_by_gate_cid", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, get_game_player_by_gate_cid));
+	global->Set(String::NewFromUtf8(isolate, "set_game_player_gate_cid", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, set_game_player_gate_cid));
 	global->Set(String::NewFromUtf8(isolate, "game_close_client", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, game_close_client));
 
@@ -98,30 +95,12 @@ Local<Context> Create_Context(Isolate* isolate) {
 
 	global->Set(String::NewFromUtf8(isolate, "get_drop_master_player_cid", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, get_drop_master_player_cid));
-	global->Set(String::NewFromUtf8(isolate, "get_master_player_by_gate_cid", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, get_master_player_by_gate_cid));
-	global->Set(String::NewFromUtf8(isolate, "get_master_player_by_game_cid", NewStringType::kNormal).ToLocalChecked(),
-			FunctionTemplate::New(isolate, get_master_player_by_game_cid));
+	global->Set(String::NewFromUtf8(isolate, "set_master_player_gate_cid", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, set_master_player_gate_cid));
+	global->Set(String::NewFromUtf8(isolate, "set_master_player_game_cid", NewStringType::kNormal).ToLocalChecked(),
+			FunctionTemplate::New(isolate, set_master_player_game_cid));
 	global->Set(String::NewFromUtf8(isolate, "master_close_client", NewStringType::kNormal).ToLocalChecked(),
 			FunctionTemplate::New(isolate, master_close_client));
-
-	//////////////////////////////////game_player相关函数////////////////////////////////
-	Local<ObjectTemplate> game_player_template = ObjectTemplate::New(isolate);
-	game_player_template->SetInternalFieldCount(1);
-
-	game_player_template->Set(String::NewFromUtf8(isolate, "link_close", NewStringType::kNormal).ToLocalChecked(),
-			                  FunctionTemplate::New(isolate, game_player_link_close)) ;
-
-	_g_game_player_template.Reset(isolate, game_player_template);
-
-	//////////////////////////////////master_player相关函数////////////////////////////////
-	Local<ObjectTemplate> master_player_template = ObjectTemplate::New(isolate);
-	master_player_template->SetInternalFieldCount(1);
-
-	master_player_template->Set(String::NewFromUtf8(isolate, "link_close", NewStringType::kNormal).ToLocalChecked(),
-			                  FunctionTemplate::New(isolate, master_player_link_close)) ;
-
-	_g_master_player_template.Reset(isolate, master_player_template);
 
 	//////////////////////////////////scene_entity相关函数////////////////////////////////
 	Local<ObjectTemplate> scene_entity_template = ObjectTemplate::New(isolate);

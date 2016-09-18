@@ -36,8 +36,8 @@ void send_game_msg_to_log(const FunctionCallbackInfo<Value>& args);
 
 //函数说明：获取下线玩家的cid		参数：无	返回值：cid值
 void get_drop_game_player_cid(const FunctionCallbackInfo<Value>& args);
-//函数说明：通过gate_cid获取game_player对象  	参数：1.gate_cid 2.player_cid	返回值：game_player对象
-void get_game_player_by_gate_cid(const FunctionCallbackInfo<Value>& args);
+//函数说明：设置game_player gate_cid  	参数：1.gate_cid 2.player_cid	返回值：无
+void set_game_player_gate_cid(const FunctionCallbackInfo<Value>& args);
 //函数说明：game_server关闭客户端连接  	参数：1.gate_cid 2.player_cid 3,error_code	返回值：无
 void game_close_client(const FunctionCallbackInfo<Value>& args);
 
@@ -69,10 +69,10 @@ void send_master_msg_to_http(const FunctionCallbackInfo<Value>& args);
 
 //函数说明：获取下线玩家的cid		参数：无	返回值：cid值
 void get_drop_master_player_cid(const FunctionCallbackInfo<Value>& args);
-//函数说明：通过gate_cid获取master_player对象  	参数：1,gate_cid 2,player_cid	返回值：master_player对象
-void get_master_player_by_gate_cid(const FunctionCallbackInfo<Value>& args);
-//函数说明：通过game_cid获取master_player对象  	参数：1,game_cid 2,player_cid	返回值：master_player对象
-void get_master_player_by_game_cid(const FunctionCallbackInfo<Value>& args);
+//函数说明：通过gate_cid获取master_player对象  	参数：1,gate_cid 2,player_cid	返回值：无
+void set_master_player_gate_cid(const FunctionCallbackInfo<Value>& args);
+//函数说明：通过game_cid获取master_player对象  	参数：1,game_cid 2,player_cid	返回值：无
+void set_master_player_game_cid(const FunctionCallbackInfo<Value>& args);
 //函数说明：master_server关闭客户端连接  	参数：1,gate_cid 2,player_cid 3,error_code	返回值：无
 void master_close_client(const FunctionCallbackInfo<Value>& args);
 

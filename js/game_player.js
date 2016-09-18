@@ -8,7 +8,6 @@ function Game_Player() {
 	this.sync_player_data_tick = util.now_sec();
 	this.gate_cid = 0;
 	this.player_cid = 0;
-	this.cplayer = null;
 	this.centity = null;
 	this.is_change = false;
 	this.player_info = new Game_Player_Info();
@@ -27,15 +26,10 @@ Game_Player.prototype.load_player_data = function(gate_cid, player_cid, obj) {
 	this.bag.load_data(this, obj);
 	this.mail.load_data(this, obj);
 
-	this.cplayer = get_game_player_by_gate_cid(gate_cid, player_cid);
-	if(this.cplayer == null) {
-		print('get game_player null, role_id:', this.player_info.role_id, ' role_name:', this.player_info.role_name);
-		game_close_client(gate_cid, player_cid, Error_Code.ERROR_CLIENT_PARAM);
-		return;
-	}
+	//设置game_player gate_cid
+	set_game_player_gate_cid(gate_cid, player_cid);
 	this.centity = get_scene_entity_by_gate_cid(gate_cid, player_cid);
-	if(this.player_info.scene_id == 0)
-		this.player_info.scene_id = 11001;
+	if(this.player_info.scene_id == 0) this.player_info.scene_id = 11001;
 	this.enter_scene(this.player_info.scene_id, this.player_info.pos_x, this.player_info.pos_y, this.player_info.pos_z);
 	
 	this.sync_login_to_client();
@@ -226,16 +220,6 @@ Game_Player.prototype.set_guild_info = function(obj) {
 	this.set_data_change();
 	print('set_guild_info, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, 
 	" guild_id:", this.player_info.guild_id, " guild_name:", this.player_info.guild_name);
-}
-
-Game_Player.prototype.sync_data_to_master = function() {
-	var msg = new MSG_165000();
-	msg.level = this.player_info.level;
-
-	var buf = pop_game_buffer();
-	msg.serialize(buf);
-	this.cplayer.sync_data_to_master(Msg.SYNC_GAME_MASTER_PLAYER_INFO, buf);
-	push_game_buffer(buf);
 }
 
 Game_Player.prototype.move_to_point = function(obj) {

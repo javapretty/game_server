@@ -7,7 +7,6 @@
 
 #include "json/json.h"
 #include "V8_Wrap.h"
-#include "Player_Wrap.h"
 #include "Entity_Wrap.h"
 #include "Server_Wrap.h"
 #include "Game_Server.h"
@@ -192,10 +191,9 @@ void get_drop_game_player_cid(const FunctionCallbackInfo<Value>& args) {
 	args.GetReturnValue().Set(cid);
 }
 
-void get_game_player_by_gate_cid(const FunctionCallbackInfo<Value>& args) {
+void set_game_player_gate_cid(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 2) {
-		LOG_ERROR("get_game_player_by_gate_cid args error, length: %d\n", args.Length());
-		args.GetReturnValue().SetNull();
+		LOG_ERROR("set_game_player_gate_cid args error, length: %d\n", args.Length());
 		return;
 	}
 
@@ -210,7 +208,6 @@ void get_game_player_by_gate_cid(const FunctionCallbackInfo<Value>& args) {
 
 	player->set_gate_cid(gate_cid);
 	player->set_player_cid(player_cid);
-	args.GetReturnValue().Set(wrap_game_player(args.GetIsolate(), player));
 }
 
 void game_close_client(const FunctionCallbackInfo<Value>& args) {
@@ -456,10 +453,9 @@ void get_drop_master_player_cid(const FunctionCallbackInfo<Value>& args) {
 	args.GetReturnValue().Set(cid);
 }
 
-void get_master_player_by_gate_cid(const FunctionCallbackInfo<Value>& args) {
+void set_master_player_gate_cid(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 3) {
-		LOG_ERROR("get_master_player_by_gate_cid args error, length: %d\n", args.Length());
-		args.GetReturnValue().SetNull();
+		LOG_ERROR("set_master_player_gate_cid args error, length: %d\n", args.Length());
 		return;
 	}
 
@@ -476,13 +472,11 @@ void get_master_player_by_gate_cid(const FunctionCallbackInfo<Value>& args) {
 	player->set_player_cid(player_cid);
 	player->set_role_id(role_id);
 	MASTER_MANAGER->bind_cid_player(GET_CID(gate_cid ,player_cid), player);
-	args.GetReturnValue().Set(wrap_master_player(args.GetIsolate(), player));
 }
 
-void get_master_player_by_game_cid(const FunctionCallbackInfo<Value>& args) {
+void set_master_player_game_cid(const FunctionCallbackInfo<Value>& args) {
 	if (args.Length() != 3) {
-		LOG_ERROR("get_master_player_by_game_cid args error, length: %d\n", args.Length());
-		args.GetReturnValue().SetNull();
+		LOG_ERROR("set_master_player_game_cid args error, length: %d\n", args.Length());
 		return;
 	}
 
@@ -499,7 +493,6 @@ void get_master_player_by_game_cid(const FunctionCallbackInfo<Value>& args) {
 	player->set_player_cid(player_cid);
 	player->set_role_id(role_id);
 	MASTER_MANAGER->bind_game_cid_player(GET_CID(game_cid ,player_cid), player);
-	args.GetReturnValue().Set(wrap_master_player(args.GetIsolate(), player));
 }
 
 void master_close_client(const FunctionCallbackInfo<Value>& args) {

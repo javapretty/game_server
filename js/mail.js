@@ -129,16 +129,12 @@ Mail.prototype.send_mail_inner = function(receiver_id, mail_detail) {
 
 		//邮件数量超过100，删除最后一封
 		if (mail_info.mail_map.size() > 100) {
-		mail_info.mail_map.pop_front();
+			mail_info.mail_map.pop_front();
 		}
 
-		var msg_active = new MSG_300200();
-		msg_active.mail_info.push(mail_detail);
-		var buf = pop_game_buffer();
-		msg_active.serialize(buf);
-		receiver.cplayer.respond_success_result(Msg.ACTIVE_MAIL_INFO, buf);
-		push_game_buffer(buf);
-		
+		var msg = new MSG_300200();
+		msg.mail_info.push(mail_detail);
+		receiver.send_success_msg(Msg.RES_BUY_VITALITY, msg);
 		receiver.set_data_change();
 	}
 }

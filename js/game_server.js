@@ -117,7 +117,7 @@ function process_game_gate_msg(obj) {
 	
 	switch(obj.msg_id) {
 	case Msg.SYNC_GATE_GAME_PLAYER_LOGOUT:
-		game_player.cplayer.link_close();
+		game_close_client(game_player.gate_cid, game_player.player_cid, 0);
 		break;	
 	case Msg.REQ_BUY_VITALITY:
 		game_player.buy_vitality();
