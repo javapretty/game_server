@@ -2,6 +2,8 @@
 	"server_type" : 1,						//服务器架构类型 1：多进程 2：多线程
 	"db_type" : 1,								//数据库类型 1：mongodb 2:mysql
 	"server_label" : "test",			//服务器标签，ps查询进程时候区分用
+	"lib_log_switcher" : 0,				//网络库日志开关,1表示写入磁盘文件
+  "server_log_switcher" : 0,			//服务器日志开关,1表示写入磁盘文件
 	"verify_pack" : 1,						//是否开启数据包安全验证
 	"msg_count" : 1,							//是否开启消息统计
 	"agent_num" : 1,							//平台编号，比如37wan编号为1，生成角色id,帮派id时候用

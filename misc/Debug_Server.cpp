@@ -54,6 +54,9 @@ int Debug_Server::init(int argc, char *argv[]) {
 	wait_watcher_->add(this, EVENT_TIMEOUT, &tv);
 
 	server_conf_.init_server_conf();
+	const Json::Value server_misc = SERVER_CONFIG->server_misc();
+	Lib_Log::instance()->set_file_switcher(server_misc["lib_log_switcher"].asInt());
+	Log::instance()->set_file_switcher(server_misc["server_log_switcher"].asInt());
 	return 0;
 }
 

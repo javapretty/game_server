@@ -6,7 +6,6 @@
 
 function Config() {
 	this.item_json = null;			//道具配置
-	this.hero_json = null;			//英雄配置
 	this.level_json = null;			//玩家等级相关配置
 	this.util_json = null;			//公共综合配置
 	this.vip_json = null;				//vip配置
@@ -17,9 +16,6 @@ function Config() {
 		try {
 			var item_str = read_json("config/bag/item.json");
 			this.item_json = JSON.parse(item_str);
-			
-			var hero_str = read_json("config/hero/hero.json");
-			this.hero_json = JSON.parse(hero_str);
 			
 			var level_str = read_json("config/player/level.json");
 			this.level_json = JSON.parse(level_str);

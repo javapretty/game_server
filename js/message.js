@@ -21,7 +21,6 @@ if (typeof Msg == "undefined") {
 	Msg.RES_FETCH_RANK = 510201; //拉取排行榜信息(返回)
 	Msg.REQ_FETCH_ROLE_INFO = 120001; //获取角色信息
 	Msg.REQ_CREATE_ROLE = 120002; //创建角色
-	Msg.REQ_BUY_VITALITY = 120003; //购买体力
 	Msg.REQ_FETCH_BAG_INFO = 120100; //获取背包信息
 	Msg.REQ_USE_ITEM = 120101; //使用物品
 	Msg.REQ_SELL_ITEM = 120102; //出售物品
@@ -29,17 +28,10 @@ if (typeof Msg == "undefined") {
 	Msg.REQ_PICKUP_MAIL = 120201; //收取附件和金钱
 	Msg.REQ_DEL_MAIL = 120202; //删除邮件
 	Msg.REQ_SEND_MAIL = 120203; //发送邮件
-	Msg.REQ_FETCH_HERO_INFO = 120300; //获取英雄信息
-	Msg.REQ_ADD_HERO_STAR = 120301; //提高英雄星级
-	Msg.REQ_ADD_HERO_QUALITY = 120302; //提高英雄品质
-	Msg.REQ_ADD_EQUIP_LEVEL = 120303; //提高英雄装备等级
-	Msg.REQ_EQUIP_ON_OFF = 120304; //英雄装备穿脱
-	Msg.REQ_ADD_SKILL_LEVEL = 120305; //提高英雄技能等级
-	Msg.REQ_MOVE_TO_POINT = 120400; //移动到某点
-	Msg.REQ_CHANGE_SCENE = 120401; //切换场景
+	Msg.REQ_MOVE_TO_POINT = 120300; //移动到某点
+	Msg.REQ_CHANGE_SCENE = 120301; //切换场景
 	Msg.RES_FETCH_ROLE_INFO = 520001; //获取角色信息(返回)
 	Msg.RES_CREATE_ROLE = 520002; //创建角色(返回)
-	Msg.RES_BUY_VITALITY = 520003; //购买体力(返回)
 	Msg.RES_FETCH_BAG_INFO = 520100; //获取背包信息(返回)
 	Msg.RES_USE_ITEM = 520101; //使用物品(返回)
 	Msg.RES_SELL_ITEM = 520102; //出售物品(返回)
@@ -47,14 +39,8 @@ if (typeof Msg == "undefined") {
 	Msg.RES_PICKUP_MAIL = 520201; //收取附件(返回)
 	Msg.RES_DEL_MAIL = 520202; //删除邮件(返回)
 	Msg.RES_SEND_MAIL = 520203; //发送邮件(返回)
-	Msg.RES_FETCH_HERO_INFO = 520300; //获取英雄信息(返回)
-	Msg.RES_ADD_HERO_STAR = 520301; //提高英雄星级(返回)
-	Msg.RES_ADD_HERO_QUALITY = 520302; //提高英雄品质(返回)
-	Msg.RES_ADD_EQUIP_LEVEL = 520303; //提高英雄装备等级(返回)
-	Msg.RES_EQUIP_ON_OFF = 520304; //英雄装备穿脱(返回)
-	Msg.RES_ADD_SKILL_LEVEL = 520305; //提高英雄技能等级(返回)
-	Msg.RES_UPDATE_POSITION = 520400; //同步玩家位置(返回)
-	Msg.RES_CHANGE_SCENE = 520401; //切换场景(返回)
+	Msg.RES_UPDATE_POSITION = 520300; //同步玩家位置(返回)
+	Msg.RES_CHANGE_SCENE = 520301; //切换场景(返回)
 	Msg.SYNC_GATE_LOGIN_PLAYER_ACCOUNT = 140000; //gate向login校验玩家session
 	Msg.SYNC_LOGIN_GATE_PLAYER_ACCOUNT = 140001; //login返回gate校验session结果
 	Msg.SYNC_GATE_GAME_PLAYER_LOGOUT = 140100; //gate通知玩家下线到game
@@ -90,5 +76,4 @@ if (typeof Msg == "undefined") {
 	Msg.ACTIVE_MONEY_INFO = 300100; //金钱更新
 	Msg.ACTIVE_ITEM_INFO = 300101; //物品信息更新
 	Msg.ACTIVE_MAIL_INFO = 300200; //邮件信息更新
-	Msg.ACTIVE_PROPERTY_INFO = 300300; //英雄属性信息更新
 }

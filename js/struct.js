@@ -36,35 +36,15 @@ function Role_Info() {
 	this.exp = 0;
 	this.gender = 0;
 	this.career = 0;
-	this.vitality = 0;
-	this.buy_vitality_times = 0;
 	this.vip_level = 0;
 	this.vip_exp = 0;
 	this.charge_gold = 0;
 }
 
-function Hero_Detail() {
-	this.hero_id = 0;
-	this.level = 0;
-	this.exp = 0;
-	this.star = 0;
-	this.quality = 0;
-	this.energy = 0;
-	this.skill_info = new Array();
-	this.equip_info = new Array();
-	this.property_info = new Array();
-}
-
 function Item_Detail() {
 	this.item_id = 0;
 	this.amount = 0;
-	this.level = 0;
-	this.exp = 0;
-}
-
-function Property_Detail() {
-	this.type = 0;
-	this.name = 0;
+	this.bind_type = 0;
 }
 
 function Mail_Detail() {
@@ -104,7 +84,6 @@ function Master_Player_Info() {
 
 function Player_Data() {
 	this.player_info = new Game_Player_Info();
-	this.hero_info = new Hero_Info();
 	this.bag_info = new Bag_Info();
 	this.mail_info = new Mail_Info();
 }
@@ -123,8 +102,6 @@ function Game_Player_Info() {
 	this.create_time = 0;
 	this.login_time = 0;
 	this.logout_time = 0;
-	this.vitality = 0;
-	this.buy_vitality_times = 0;
 	this.vip_level = 0;
 	this.vip_exp = 0;
 	this.charge_gold = 0;
@@ -134,11 +111,6 @@ function Game_Player_Info() {
 	this.pos_x = 0;
 	this.pos_y = 0;
 	this.pos_z = 0;
-}
-
-function Hero_Info() {
-	this.role_id = 0;
-	this.hero_map = new Map();
 }
 
 function Bag_Info() {
@@ -272,13 +244,6 @@ function MSG_520002() {
 	this.role_id = 0;
 }
 
-function MSG_120003() {
-}
-
-function MSG_520003() {
-	this.vitality = 0;
-}
-
 function MSG_120100() {
 }
 
@@ -332,83 +297,21 @@ function MSG_520203() {
 }
 
 function MSG_120300() {
-}
-
-function MSG_520300() {
-	this.hero_info = new Array();
-}
-
-function MSG_120301() {
-	this.hero_id = 0;
-}
-
-function MSG_520301() {
-	this.hero_id = 0;
-	this.star = 0;
-}
-
-function MSG_120302() {
-	this.hero_id = 0;
-}
-
-function MSG_520302() {
-	this.hero_id = 0;
-	this.quality = 0;
-}
-
-function MSG_120303() {
-	this.hero_id = 0;
-	this.equip_index = 0;
-	this.item_info = new Array();
-}
-
-function MSG_520303() {
-	this.hero_id = 0;
-	this.equip_index = 0;
-	this.equip_level = 0;
-	this.equip_exp = 0;
-}
-
-function MSG_120304() {
-	this.hero_id = 0;
-	this.equip_index = 0;
-	this.on = 0;
-	this.equip_info = new Item_Detail();
-}
-
-function MSG_520304() {
-	this.hero_id = 0;
-	this.equip_index = 0;
-	this.on = 0;
-	this.equip_info = new Item_Detail();
-}
-
-function MSG_120305() {
-	this.hero_id = 0;
-	this.skill_id = 0;
-}
-
-function MSG_520305() {
-	this.hero_id = 0;
-	this.skill_id = 0;
-}
-
-function MSG_120400() {
 	this.pos = new Position();
 }
 
-function MSG_520400() {
+function MSG_520300() {
 	this.cid = 0;
 	this.role_name = "";
 	this.pos = new Position();
 }
 
-function MSG_120401() {
+function MSG_120301() {
 	this.target_scene = 0;
 	this.pos = new Position();
 }
 
-function MSG_520401() {
+function MSG_520301() {
 }
 
 function MSG_140100() {
@@ -551,8 +454,4 @@ function MSG_300101() {
 
 function MSG_300200() {
 	this.mail_info = new Array();
-}
-
-function MSG_300300() {
-	this.property_info = new Array();
 }

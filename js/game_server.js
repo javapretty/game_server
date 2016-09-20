@@ -12,7 +12,6 @@ require('config.js');
 require('util.js');
 require('timer.js');
 require('game_player.js');
-require('hero.js');
 require('bag.js');
 require('mail.js');
 require('npc.js');
@@ -32,10 +31,9 @@ var npc_map = new Map();
 var config = new Config();
 config.init();
 
-//-------------------------test用npc-----------------------
+//test用npc
 var npc = new NPC(10);
 npc_map.set(npc.id, npc);
-
 
 //定时器管理器
 var timer = new Timer();
@@ -119,9 +117,6 @@ function process_game_gate_msg(obj) {
 	case Msg.SYNC_GATE_GAME_PLAYER_LOGOUT:
 		game_close_client(game_player.gate_cid, game_player.player_cid, 0);
 		break;	
-	case Msg.REQ_BUY_VITALITY:
-		game_player.buy_vitality();
-		break;	
 	case Msg.REQ_FETCH_BAG_INFO:
 		game_player.bag.fetch_bag_info();
 		break;
@@ -142,24 +137,6 @@ function process_game_gate_msg(obj) {
 		break;
 	case Msg.REQ_SEND_MAIL:
 		game_player.mail.send_mail(obj);
-		break;
-	case Msg.REQ_FETCH_HERO_INFO:
-		game_player.hero.fetch_hero_info(obj);
-		break;
-	case Msg.REQ_ADD_HERO_STAR:
-		game_player.hero.add_hero_star(obj);
-		break;
-	case Msg.REQ_ADD_HERO_QUALITY:
-		game_player.hero.add_hero_quality(obj);
-		break;
-	case Msg.REQ_ADD_EQUIP_LEVEL:
-		game_player.hero.add_equip_level(obj);
-		break;
-	case Msg.REQ_EQUIP_ON_OFF:
-		game_player.hero.equip_on_off(obj);
-		break;
-	case Msg.REQ_ADD_SKILL_LEVEL:
-		game_player.hero.add_skill_level(obj);
 		break;
 	case Msg.REQ_MOVE_TO_POINT:
 		game_player.move_to_point(obj);

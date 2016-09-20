@@ -1,22 +1,11 @@
 {
 	"1" : {
-  		"level_exp" : 25,
-  		"max_vitality" : 60
+  		"level_exp" : 25
   	},
     "2" : {
-  		"level_exp" : 50,
-  		"max_vitality" : 60
+  		"level_exp" : 50
   	},
     "3" : {
-  		"level_exp" : 100,
-  		"max_vitality" : 60
-  	},
-    "4" : {
-  		"level_exp" : 150,
-  		"max_vitality" : 60
-  	},
-    "5" : {
-  		"level_exp" : 250,
-  		"max_vitality" : 60
+  		"level_exp" : 100
   	}
 }

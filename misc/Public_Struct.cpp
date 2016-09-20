@@ -39,8 +39,6 @@ int load_struct(const char *path, Struct_Type struct_type, Struct_Id_Map &struct
 
 void Server_Conf::init_server_conf(void) {
 	const Json::Value &server_conf = SERVER_CONFIG->server_conf();
-	Lib_Log::instance()->set_file_switcher(server_conf["lib_log_switcher"].asInt());
-	Log::instance()->set_file_switcher(server_conf["server_log_switcher"].asInt());
 
 	server_sleep_time = Time_Value(1, 0);					//1s
 	receive_timeout = Time_Value(server_conf["receive_timeout"].asInt(), 0);	//900s

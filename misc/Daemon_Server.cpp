@@ -52,8 +52,12 @@ int Daemon_Server::init(int argc, char *argv[]) {
 	if ((wait_watcher_ = new Epoll_Watcher) == 0) {
 		LOG_FATAL("new Epoll_Watcher fatal");
 	}
-	server_label_ = SERVER_CONFIG->server_misc()["server_label"].asString();
 	server_conf_.init_server_conf();
+
+	const Json::Value server_misc = SERVER_CONFIG->server_misc();
+	Lib_Log::instance()->set_file_switcher(server_misc["lib_log_switcher"].asInt());
+	Log::instance()->set_file_switcher(server_misc["server_log_switcher"].asInt());
+	server_label_ = server_misc["server_label"].asString();
 	return 0;
 }
 

@@ -130,16 +130,6 @@
     	<arg type="int64" name="role_id"/>
 	</MSG_520002>
 
-	<MSG_120003>
-		<!--购买体力-->
-		<head msg_id="120003"/>
-	</MSG_120003>
-
-	<MSG_520003>
-		<head msg_id="520003"/>
-    	<arg type="int32" name="vitality"/>
-	</MSG_520003>
-
 	<MSG_120100>
 		<!--获取背包信息-->
 		<head msg_id="120100"/>
@@ -214,106 +204,26 @@
 	</MSG_520203>
 
 	<MSG_120300>
-		<!--获取英雄信息-->
 		<head msg_id="120300"/>
+		<struct type="Position" name="pos"/>
 	</MSG_120300>
-
+	
 	<MSG_520300>
 		<head msg_id="520300"/>
-	  <vector type="Hero_Detail" name="hero_info"/>
+		<arg type="int32" name="cid"/>
+		<arg type="string" name="role_name"/>
+		<struct type="Position" name="pos"/>
 	</MSG_520300>
-
+	
 	<MSG_120301>
-		<!--提高英雄星级-->
 		<head msg_id="120301"/>
-	  <arg type="int32" name="hero_id"/>
+		<arg type="int32" name="target_scene"/>
+		<struct type="Position" name="pos"/>
 	</MSG_120301>
 
 	<MSG_520301>
 		<head msg_id="520301"/>
-	  <arg type="int32" name="hero_id"/>
-	  <arg type="int32" name="star" desc="英雄星级"/>
 	</MSG_520301>
-
-	<MSG_120302>
-		<!--提高英雄品质-->
-		<head msg_id="120302"/>
-	  <arg type="int32" name="hero_id"/>
-	</MSG_120302>
-
-	<MSG_520302>
-		<head msg_id="520302"/>
-	  <arg type="int32" name="hero_id"/>
-	  <arg type="int32" name="quality" desc="英雄品质等级"/>
-	</MSG_520302>
-
-	<MSG_120303>
-		<!--提高英雄装备等级-->
-		<head msg_id="120303"/>
-	  <arg type="int32" name="hero_id"/>
-	  <arg type="int32" name="equip_index" desc="装备位置索引"/>
-	  <vector type="Item_Detail" name="item_info" desc="喂掉的装备列表"/>
-	</MSG_120303>
-
-	<MSG_520303>
-		<head msg_id="520303"/>
-	  <arg type="int32" name="hero_id"/>
-	  <arg type="int32" name="equip_index"/>
-	  <arg type="int32" name="equip_level"/>
-	  <arg type="int32" name="equip_exp"/>
-	</MSG_520303>
-
-	<MSG_120304>
-		<!--英雄装备穿脱-->
-		<head msg_id="120304"/>
-	  <arg type="int32" name="hero_id"/>
-	  <arg type="int32" name="equip_index" desc="装备位置索引"/>
-	  <arg type="bool" name="on" desc="true表示穿，false表示脱"/>
-	  <struct type="Item_Detail" name="equip_info" desc="装备信息"/>
-	</MSG_120304>
-
-	<MSG_520304>
-		<head msg_id="520304"/>
-	  <arg type="int32" name="hero_id"/>
-	  <arg type="int32" name="equip_index" desc="装备位置索引"/>
-	  <arg type="bool" name="on" desc="true表示穿，false表示脱"/>
-	  <struct type="Item_Detail" name="equip_info" desc="装备信息"/>
-	</MSG_520304>
-
-	<MSG_120305>
-		<!--提高英雄技能等级-->
-		<head msg_id="120305"/>
-	  <arg type="int32" name="hero_id"/>
-	  <arg type="int32" name="skill_id"/>
-	</MSG_120305>
-
-	<MSG_520305>
-		<head msg_id="520305"/>
-	  <arg type="int32" name="hero_id"/>
-	  <arg type="int32" name="skill_id"/>
-	</MSG_520305>
-
-	<MSG_120400>
-		<head msg_id="120400"/>
-		<struct type="Position" name="pos"/>
-	</MSG_120400>
-	
-	<MSG_520400>
-		<head msg_id="520400"/>
-		<arg type="int32" name="cid"/>
-		<arg type="string" name="role_name"/>
-		<struct type="Position" name="pos"/>
-	</MSG_520400>
-	
-	<MSG_120401>
-		<head msg_id="120401"/>
-		<arg type="int32" name="target_scene"/>
-		<struct type="Position" name="pos"/>
-	</MSG_120401>
-
-	<MSG_520401>
-		<head msg_id="520401"/>
-	</MSG_520401>
 
 <!--Gate与Game与Master通信消息-->
 	<MSG_140100>
@@ -518,10 +428,4 @@
     	<vector type="Mail_Detail" name="mail_info"/>
 	</MSG_300200>
 
-	<MSG_300300>
-		<!--英雄属性信息更新-->
-		<head msg_id="300300"/>
-    	<vector type="Property_Detail" name="property_info"/>
-	</MSG_300300>
-	
 </root>

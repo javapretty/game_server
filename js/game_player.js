@@ -11,7 +11,6 @@ function Game_Player() {
 	this.centity = null;
 	this.is_change = false;
 	this.player_info = new Game_Player_Info();
-	this.hero = new Hero();
 	this.bag = new Bag();
 	this.mail = new Mail();
 }
@@ -22,7 +21,6 @@ Game_Player.prototype.load_player_data = function(gate_cid, player_cid, obj) {
 	this.gate_cid = gate_cid;
 	this.player_cid = player_cid; 
 	this.player_info = obj.player_data.player_info;
-	this.hero.load_data(this, obj);
 	this.bag.load_data(this, obj);
 	this.mail.load_data(this, obj);
 
@@ -65,7 +63,6 @@ Game_Player.prototype.sync_player_data_to_db = function(logout) {
 	msg.logout = logout;
 	msg.account = this.player_info.account;
 	msg.player_data.player_info = this.player_info;
-	this.hero.save_data(msg);
 	this.bag.save_data(msg);
 	this.mail.save_data(msg);
 	send_game_msg_to_db(Msg.SYNC_GAME_DB_SAVE_PLAYER, msg);
@@ -87,9 +84,7 @@ Game_Player.prototype.tick = function(now) {
 	}
 }
 
-Game_Player.prototype.daily_refresh = function() {
-	this.player_info.buy_vitality_times = 0;
-}
+Game_Player.prototype.daily_refresh = function() { }
 
 Game_Player.prototype.send_success_msg = function(msg_id, msg) {
 	send_game_msg_to_gate(this.gate_cid, this.player_cid, msg_id, 0, msg);
@@ -109,8 +104,6 @@ Game_Player.prototype.sync_login_to_client = function() {
 	msg.role_info.exp = this.player_info.exp;
 	msg.role_info.career = this.player_info.career;
 	msg.role_info.gender = this.player_info.gender;
-	msg.role_info.vitality = this.player_info.vitality;
-	msg.role_info.buy_vitality_times = this.player_info.buy_vitality_times;
 	msg.role_info.vip_level = this.player_info.vip_level;
 	msg.role_info.vip_exp = this.player_info.vip_exp;
 	msg.role_info.charge_gold = this.player_info.charge_gold;
@@ -183,36 +176,6 @@ Game_Player.prototype.update_vip = function(charge_id) {
 	msg.vip_exp = this.player_info.vip_exp;
 	this.send_success_msg(Msg.ACTIVE_VIP_INFO, msg);
 }
-	
-Game_Player.prototype.buy_vitality = function() {
-	print('buy_vitality, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
-
-	//1.检查可以购买体力次数
-	var max_buy_times = config.vip_json[this.player_info.vip_level].max_buy_vitality;
-	if (this.player_info.buy_vitality_times >= max_buy_times){
-		return send_game_msg_to_gate(this.gate_cid, this.player_cid, Msg.RES_BUY_VITALITY, Error_Code.ERROR_VITALITY_TIMES_NOT_ENOUGH);
-	}
-
-	//2.更新元宝
-	var buy_vitality_gold = config.util_json.buy_vitality_gold;
-	if (buy_vitality_gold == null || this.player_info.buy_vitality_times >= buy_vitality_gold.length) {
-		return send_game_msg_to_gate(this.gate_cid, this.player_cid, Msg.RES_BUY_VITALITY, Error_Code.ERROR_CONFIG_NOT_EXIST);
-	}	
-	var cost_gold = buy_vitality_gold[this.player_info.buy_vitality_times];
-	var result = this.bag.bag_sub_money(0, cost_gold);
-	if (result != 0) {
-		return send_game_msg_to_gate(this.gate_cid, this.player_cid, Msg.RES_BUY_VITALITY, result);
-	}
-	
-	//3.更新体力(120应该为配置)
-	this.player_info.buy_vitality_times++;
-	var maxVit = config.level_json[this.player_info.level].max_vitality;
-	this.player_info.vitality = Math.min(Math.max(0, (this.player_info.vitality + 120)), maxVit);
-	
-	var msg = new MSG_520003();
-	msg.vitality = this.player_info.vitality;
-	this.send_success_msg(Msg.RES_BUY_VITALITY, msg);
-}
 
 Game_Player.prototype.set_guild_info = function(obj) {
 	this.player_info.guild_id = obj.guild_id;
@@ -229,7 +192,7 @@ Game_Player.prototype.move_to_point = function(obj) {
 	this.centity.z = obj.pos.z;
 	this.centity.update_position();
 	
-	var msg = new MSG_520400();
+	var msg = new MSG_520300();
 	msg.cid = get_cid(this.gate_cid, this.player_cid);
 	msg.role_name = this.player_info.role_name;
 	msg.pos.x = this.centity.x;
@@ -243,7 +206,7 @@ Game_Player.prototype.enter_scene = function(scene_id, x, y, z) {
 	print('enter scene, role_id:', this.player_info.role_id, " role_name:", this.player_info.role_name, " util.now_msec:", util.now_msec());
 	this.centity.enter_scene(scene_id, x, y, z);
 	
-	var msg = new MSG_520400();
+	var msg = new MSG_520300();
 	msg.cid = get_cid(this.gate_cid, this.player_cid);
 	msg.role_name = this.player_info.role_name;
 	msg.pos.x = this.centity.x;
@@ -268,7 +231,7 @@ Game_Player.prototype.change_scene = function(obj) {
 	if(is_scene_in_process(obj.target_scene)) {
 		this.leave_scene();
 		this.enter_scene(obj.target_scene, obj.pos.x, obj.pos.y, obj.pos.z);
-		var msg = new MSG_520401();
+		var msg = new MSG_520301();
 		this.send_success_msg(Msg.RES_CHANGE_SCENE, msg);
 	}
 	else {
@@ -280,4 +243,3 @@ Game_Player.prototype.change_scene = function(obj) {
 		this.save_player_data();
 	}
 }
-

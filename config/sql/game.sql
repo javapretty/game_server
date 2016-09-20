@@ -24,8 +24,6 @@ CREATE TABLE `role` (
   create_time int(11) NOT NULL default '0',
   login_time int(11) NOT NULL default '0',
   logout_time int(11) NOT NULL default '0',
-  vitality int(11) NOT NULL default '0',
-  buy_vitality_times int(11) NOT NULL default '0',
   vip_level int(11) NOT NULL default '0',
   vip_exp int(11) NOT NULL default '0',
   charge_gold int(11) NOT NULL default '0',
@@ -35,13 +33,6 @@ CREATE TABLE `role` (
   pos_x int(11) NOT NULL default '0',
   pos_y int(11) NOT NULL default '0',
   pos_z int(11) NOT NULL default '0',
-  PRIMARY KEY (role_id)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS `hero`;
-CREATE TABLE `hero` (
-  role_id bigint(20) NOT NULL auto_increment,
-  hero_map blob NOT NULL, 
   PRIMARY KEY (role_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -71,7 +62,6 @@ CREATE TABLE `guild` (
   member_list blob NOT NULL, 
   PRIMARY KEY (guild_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 DROP TABLE IF EXISTS `rank`;
 CREATE TABLE `rank` (

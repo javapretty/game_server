@@ -38,36 +38,16 @@
     	<arg type="int32" name="exp" desc="玩家经验"/>
     	<arg type="int8" name="gender" desc="0(女)1(男)"/>
     	<arg type="int8" name="career" desc="职业"/>
-    	<arg type="int32" name="vitality" desc="玩家体力"/>
-    	<arg type="int32" name="buy_vitality_times" desc="今天购买次数"/>
     	<arg type="int32" name="vip_level" desc="vip等级"/>
     	<arg type="int32" name="vip_exp" desc="vip经验"/>
     	<arg type="int32" name="charge_gold" desc="总共充值的元宝数"/>
 	</Role_Info>
 
-	<Hero_Detail>
-		<arg type="int32" name="hero_id"/>
-		<arg type="int32" name="level"/>
-		<arg type="int32" name="exp"/>
-		<arg type="int32" name="star"/>
-		<arg type="int32" name="quality"/>
-		<arg type="int32" name="energy"/>
-		<vector type="int32" name="skill_info"/>
-		<vector type="Item_Detail" name="equip_info"/>
-		<vector type="Property_Detail" name="property_info"/>
-	</Hero_Detail>
-
 	<Item_Detail>
 		<arg type="int32" name="item_id"/>
 		<arg type="int32" name="amount"/>
-		<arg type="int32" name="level"/>
-		<arg type="int32" name="exp"/>
+		<arg type="int8" name="bind_type"/>
 	</Item_Detail>
-
-	<Property_Detail>
-		<arg type="int32" name="type"/>
-		<arg type="int32" name="name"/>
-	</Property_Detail>
 	
 	<Mail_Detail>
 		<arg type="bool" name="pickup"/>
@@ -108,7 +88,6 @@
 	<Player_Data>
 		<!--玩家保存到数据库的数据-->
 		<struct type="Game_Player_Info" name="player_info"/>
-		<struct type="Hero_Info" name="hero_info"/>
 		<struct type="Bag_Info" name="bag_info"/>
 		<struct type="Mail_Info" name="mail_info"/>
 	</Player_Data>
@@ -128,8 +107,6 @@
 		<arg type="int32" name="create_time"/>
 		<arg type="int32" name="login_time"/>
 		<arg type="int32" name="logout_time"/>
-		<arg type="int32" name="vitality"/>
-		<arg type="int32" name="buy_vitality_times"/>
 		<arg type="int32" name="vip_level"/>
 		<arg type="int32" name="vip_exp"/>
 		<arg type="int32" name="charge_gold"/>
@@ -140,12 +117,6 @@
 		<arg type="int32" name="pos_y"/>
 		<arg type="int32" name="pos_z"/>
 	</Game_Player_Info>
-	
-	<Hero_Info>
-		<head table_name="hero" index_name="role_id"/>
-		<arg type="int64" name="role_id"/>
-		<map type="Hero_Detail" key_name="hero_id" key_type="int32" name="hero_map"/>
-	</Hero_Info>
 
 	<Bag_Info>
 		<head table_name="bag" index_name="role_id"/>
