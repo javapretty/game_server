@@ -147,6 +147,7 @@
 		<arg type="int64" name="chief_id"/>
 		<arg type="int32" name="create_time"/>
 		<vector type="Guild_Member_Detail" name="member_list"/>
+		<vector type="Guild_Member_Detail" name="app_list"/>
 	</Guild_Info>
 
 	<Rank_Info>

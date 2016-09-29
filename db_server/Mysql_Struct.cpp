@@ -8,6 +8,7 @@
 #include "Mysql_Operator.h"
 #include "Mysql_Struct.h"
 #include "DB_Manager.h"
+#include "Common_Func.h"
 
 Mysql_Struct::Mysql_Struct(Xml &xml, TiXmlNode *node) : Base_Struct(xml, node) {}
 
@@ -84,22 +85,16 @@ void Mysql_Struct::create_data(int64_t key_index, Block_Buffer &buffer) {
 			Block_Buffer blob_buffer;
 			int field_len = create_data_vector(*iter, buffer, blob_buffer);
 
-			std::string blob_data;
-			blob_buffer.copy_out((char*)blob_data.c_str(), field_len);
-			DataBuf data_buf((char*)blob_data.c_str(), field_len);
-			std::istream s(&data_buf);
-			pstmt->setBlob(param_index, &s);
+			std::string blob_data = base64_encode((unsigned char *)blob_buffer.get_read_ptr(), field_len);
+			pstmt->setString(param_index, blob_data);
 		}
 		else if(iter->field_label == "struct") {
 			//blob_buffer只提供对该struct类型的初始化数据
 			Block_Buffer blob_buffer;
 			int field_len = create_data_struct(*iter, buffer, blob_buffer);
 
-			std::string blob_data;
-			blob_buffer.copy_out((char*)blob_data.c_str(), field_len);
-			DataBuf data_buf((char*)blob_data.c_str(), field_len);
-			std::istream s(&data_buf);
-			pstmt->setBlob(param_index, &s);
+			std::string blob_data = base64_encode((unsigned char *)blob_buffer.get_read_ptr(), field_len);
+			pstmt->setString(param_index, blob_data);
 
 			LOG_INFO("struct_name:%s, field_type:%s, field_name:%s, param_index:%d, field_len:%d", struct_name().c_str(),
 					iter->field_type.c_str(), iter->field_name.c_str(), param_index, field_len);
@@ -246,11 +241,9 @@ void Mysql_Struct::save_data(Block_Buffer &buffer) {
 			int field_len = build_len_vector(*iter, buffer);
 			buffer.set_read_idx(read_idx);
 
-			std::string blob_data;
-			buffer.copy_out((char*)blob_data.c_str(), field_len);
-			DataBuf data_buf((char*)blob_data.c_str(), field_len);
-			std::istream s(&data_buf);
-			pstmt->setBlob(param_index, &s);
+			std::string blob_data = base64_encode((unsigned char *)buffer.get_read_ptr(), field_len);
+			buffer.set_read_idx(read_idx + field_len);
+			pstmt->setString(param_index, blob_data);
 
 			LOG_INFO("struct_name:%s, fileld_label:%s, field_type:%s, field_name:%s, param_index:%d, field_len:%d, read_idx:%d", struct_name().c_str(),
 					iter->field_label.c_str(), iter->field_type.c_str(), iter->field_name.c_str(), param_index, field_len, buffer.get_read_idx());
@@ -260,11 +253,9 @@ void Mysql_Struct::save_data(Block_Buffer &buffer) {
 			int field_len = build_len_struct(*iter, buffer);
 			buffer.set_read_idx(read_idx);
 
-			std::string blob_data;
-			buffer.copy_out((char*)blob_data.c_str(), field_len);
-			DataBuf data_buf((char*)blob_data.c_str(), field_len);
-			std::istream s(&data_buf);
-			pstmt->setBlob(param_index, &s);
+			std::string blob_data = base64_encode((unsigned char *)buffer.get_read_ptr(), field_len);
+			buffer.set_read_idx(read_idx + field_len);
+			pstmt->setString(param_index, blob_data);
 
 			LOG_INFO("struct_name:%s, fileld_label:%s, field_type:%s, field_name:%s, param_index:%d, field_len:%d, read_idx:%d", struct_name().c_str(),
 					iter->field_label.c_str(), iter->field_type.c_str(), iter->field_name.c_str(), param_index, field_len, buffer.get_read_idx());
@@ -404,12 +395,14 @@ void Mysql_Struct::build_buffer_arg(const Field_Info &field_info, Block_Buffer &
 
 void Mysql_Struct::build_buffer_vector(const Field_Info &field_info, Block_Buffer &buffer, sql::ResultSet *result) {
 	std::string blob_str = result->getString(field_info.field_name);
-	buffer.copy(blob_str);
+	std::string decode = base64_decode(blob_str);
+	buffer.copy(decode);
 }
 
 void Mysql_Struct::build_buffer_struct(const Field_Info &field_info, Block_Buffer &buffer, sql::ResultSet *result) {
 	std::string blob_str = result->getString(field_info.field_name);
-	buffer.copy(blob_str);
+	std::string decode = base64_decode(blob_str);
+	buffer.copy(decode);
 }
 
 int Mysql_Struct::build_len_arg(const Field_Info &field_info, Block_Buffer &buffer) {

@@ -15,6 +15,14 @@ Guild.prototype.load_data = function(obj) {
 	for(var i = 0; i < obj.guild_list.length; i++) {
 		var guild_info = obj.guild_list[i];
 		print('guild_id:', guild_info.guild_id, ' guild_name:', guild_info.guild_name);
+		if(guild_info.member_list.length > 0)
+			print('member_list[0].role_id is ', guild_info.member_list[0].role_id);
+		else
+			print('member_list is empty')
+		if(guild_info.app_list.length > 0)
+			print('app_list[0].role_id is ', guild_info.app_list[0].role_id);
+		else
+			print('app_list is empty')
 		this.guild_map.set(guild_info.guild_id, guild_info);
 	}
 }
@@ -59,6 +67,7 @@ Guild.prototype.member_join_guild = function(player, guild_detail) {
 	member_detail.role_name = player.player_info.role_name;
 	member_detail.level = player.player_info.level;
 	guild_detail.member_list.push(member_detail);
+	guild_detail.app_list.push(member_detail);
 	this.is_change = true;
 }
 

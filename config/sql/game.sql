@@ -41,7 +41,7 @@ CREATE TABLE `bag` (
   role_id bigint(20) NOT NULL auto_increment,
   copper int(11) NOT NULL default '0',
   gold int(11) NOT NULL default '0',
-  item_map blob NOT NULL, 
+  item_map text NOT NULL, 
   PRIMARY KEY (role_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -49,7 +49,7 @@ DROP TABLE IF EXISTS `mail`;
 CREATE TABLE `mail` (
   role_id bigint(20) NOT NULL auto_increment,
   total_count int(11) NOT NULL default '0',
-  mail_map blob NOT NULL, 
+  mail_map text NOT NULL, 
   PRIMARY KEY (role_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -59,7 +59,8 @@ CREATE TABLE `guild` (
   guild_name varchar(120) NOT NULL default '',
   chief_id bigint(20) NOT NULL default '0',
   create_time int(11) NOT NULL default '0',
-  member_list blob NOT NULL, 
+  member_list text NOT NULL, 
+  app_list text NOT NULL, 
   PRIMARY KEY (guild_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -68,7 +69,7 @@ CREATE TABLE `rank` (
   rank_type bigint(20) NOT NULL auto_increment,
   min_value int(11) NOT NULL default '0',
   min_role_id bigint(20) NOT NULL default '0',
-  member_map blob NOT NULL, 
+  member_map text NOT NULL, 
   PRIMARY KEY (rank_type)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
