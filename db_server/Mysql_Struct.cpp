@@ -144,54 +144,41 @@ void Mysql_Struct::save_data(Block_Buffer &buffer) {
 		return;
 	}
 
-	bool rows_exist = false;
-	char str_sql[512] = {0};
-	sprintf(str_sql, "select %s from %s where %s=%ld", index_name().c_str(), table_name().c_str(), index_name().c_str(), key_index);
-	sql::ResultSet *result = MYSQL_CONNECTION->execute_query(str_sql);
-	if (result && result->rowsCount() > 0) {
-		rows_exist = true;
+	char update_sql[512] = {};
+	std::string update_value;
+	std::stringstream update_stream;
+	for(std::vector<Field_Info>::const_iterator iter = field_vec().begin();
+			iter != field_vec().end(); iter++) {
+		update_stream.str("");
+		update_stream << iter->field_name << "=?,";
+		update_value += update_stream.str();
 	}
+	update_value = update_value.substr(0, update_value.length()-1);
+	sprintf(update_sql, "UPDATE Set %s ", update_value.c_str());
 
-	if (rows_exist) {
-		//数据库中存在记录，更新记录
-		std::string str_value;
-		std::stringstream stream;
-		for(std::vector<Field_Info>::const_iterator iter = field_vec().begin();
-				iter != field_vec().end(); iter++) {
-			stream.str("");
-			stream << iter->field_name << "=?,";
-			str_value += stream.str();
-		}
-		str_value = str_value.substr(0, str_value.length()-1);
-		sprintf(str_sql, "UPDATE %s Set %s WHERE %s=%ld", table_name().c_str(), str_value.c_str(),
-				index_name().c_str(), key_index);
-	} else {
-		//数据库中不存在记录，插入记录
-		std::string str_name;
-		std::string str_value;
-		std::stringstream stream;
-		for(std::vector<Field_Info>::const_iterator iter = field_vec().begin();
-				iter != field_vec().end(); iter++) {
-			stream.str("");
-			stream << iter->field_name << ",";
-			str_name += stream.str();
+	char insert_sql[1048] = {};
+	std::string insert_name;
+	std::string insert_value;
+	std::stringstream insert_stream;
+	for(std::vector<Field_Info>::const_iterator iter = field_vec().begin();
+			iter != field_vec().end(); iter++) {
+		insert_stream.str("");
+		insert_stream << iter->field_name << ",";
+		insert_name += insert_stream.str();
 
-			stream.str("");
-			stream << "?,";
-			str_value += stream.str();
-		}
-		str_name = str_name.substr(0, str_name.length()-1);
-		str_value = str_value.substr(0, str_value.length()-1);
-		sprintf(str_sql, "INSERT INTO %s (%s) VALUES (%s)",
-				table_name().c_str(), str_name.c_str(), str_value.c_str());
+		insert_stream.str("");
+		insert_stream << "?,";
+		insert_value += insert_stream.str();
 	}
-	sql::PreparedStatement* pstmt = MYSQL_CONNECTION->create_pstmt(str_sql);
-	if (!pstmt) {
-		LOG_ERROR("create_pstmt error, sql:%s", str_sql);
-		return;
-	}
+	insert_name = insert_name.substr(0, insert_name.length()-1);
+	insert_value = insert_value.substr(0, insert_value.length()-1);
+	sprintf(insert_sql, "INSERT INTO %s (%s) VALUES (%s)",
+			table_name().c_str(), insert_name.c_str(), insert_value.c_str());
+	sprintf(insert_sql + strlen(insert_sql), " ON DUPLICATE KEY %s", update_sql);
+	sql::PreparedStatement* pstmt = MYSQL_CONNECTION->create_pstmt(insert_sql);
 
 	int param_index = 0;
+	int param_len = field_vec().size();
 	for(std::vector<Field_Info>::const_iterator iter = field_vec().begin();
 			iter != field_vec().end(); iter++) {
 		param_index++;
@@ -201,36 +188,43 @@ void Mysql_Struct::save_data(Block_Buffer &buffer) {
 				int8_t value = 0;
 				buffer.read_int8(value);
 				pstmt->setInt(param_index, value);
+				pstmt->setInt(param_index + param_len, value);
 			}
 			else if(iter->field_type == "int16") {
 				int16_t value = 0;
 				buffer.read_int16(value);
 				pstmt->setInt(param_index, value);
+				pstmt->setInt(param_index + param_len, value);
 			}
 			else if(iter->field_type == "int32") {
 				int32_t value = 0;
 				buffer.read_int32(value);
 				pstmt->setInt(param_index, value);
+				pstmt->setInt(param_index + param_len, value);
 			}
 			else if(iter->field_type == "int64") {
 				int64_t value = 0;
 				buffer.read_int64(value);
 				pstmt->setInt64(param_index, value);
+				pstmt->setInt64(param_index + param_len, value);
 			}
 			else if(iter->field_type == "double") {
 				double value = 0;
 				buffer.read_double(value);
 				pstmt->setDouble(param_index, value);
+				pstmt->setDouble(param_index + param_len, value);
 			}
 			else if(iter->field_type == "bool") {
 				bool value = false;
 				buffer.read_bool(value);
 				pstmt->setBoolean(param_index, value);
+				pstmt->setBoolean(param_index + param_len, value);
 			}
 			else if(iter->field_type == "string") {
 				std::string value = "";
 				buffer.read_string(value);
 				pstmt->setString(param_index, value);
+				pstmt->setString(param_index + param_len, value);
 			}
 			else {
 				LOG_ERROR("Can not find the field_type:%s, struct_name:%s", iter->field_type.c_str(), struct_name().c_str());
@@ -244,6 +238,7 @@ void Mysql_Struct::save_data(Block_Buffer &buffer) {
 			std::string blob_data = base64_encode((unsigned char *)buffer.get_read_ptr(), field_len);
 			buffer.set_read_idx(read_idx + field_len);
 			pstmt->setString(param_index, blob_data);
+			pstmt->setString(param_index + param_len, blob_data);
 
 			LOG_INFO("struct_name:%s, fileld_label:%s, field_type:%s, field_name:%s, param_index:%d, field_len:%d, read_idx:%d", struct_name().c_str(),
 					iter->field_label.c_str(), iter->field_type.c_str(), iter->field_name.c_str(), param_index, field_len, buffer.get_read_idx());
@@ -256,9 +251,10 @@ void Mysql_Struct::save_data(Block_Buffer &buffer) {
 			std::string blob_data = base64_encode((unsigned char *)buffer.get_read_ptr(), field_len);
 			buffer.set_read_idx(read_idx + field_len);
 			pstmt->setString(param_index, blob_data);
+			pstmt->setString(param_index + param_len, blob_data);
 
 			LOG_INFO("struct_name:%s, fileld_label:%s, field_type:%s, field_name:%s, param_index:%d, field_len:%d, read_idx:%d", struct_name().c_str(),
-					iter->field_label.c_str(), iter->field_type.c_str(), iter->field_name.c_str(), param_index, field_len, buffer.get_read_idx());
+				iter->field_label.c_str(), iter->field_type.c_str(), iter->field_name.c_str(), param_index, field_len, buffer.get_read_idx());
 		}
 	}
 	pstmt->execute();
