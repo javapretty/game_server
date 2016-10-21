@@ -160,8 +160,8 @@ int DB_Worker::process_load_player(int cid, std::string &account) {
 
 int DB_Worker::process_save_player(int cid, int status, Block_Buffer &buffer) {
 	//先把两个额外字段读出来，再保存玩家数据，防止buffer错乱
-	bool logout;
-	std::string account;
+	bool logout = false;
+	std::string account = "";
 	buffer.read_bool(logout);
 	buffer.read_string(account);
 	if (logout) {
