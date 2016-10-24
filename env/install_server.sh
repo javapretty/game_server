@@ -5,7 +5,7 @@
 ENV_PATH=`pwd`
 
 #安装系统编译环境
-yum -y net-tools.x86_64
+yum -y install net-tools.x86_64
 yum -y install gcc-c++
 yum -y install vim
 yum -y install git
